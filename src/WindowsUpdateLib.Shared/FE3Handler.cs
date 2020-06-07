@@ -1272,6 +1272,7 @@ namespace WindowsUpdateLib
         Unknown4B,
         MultipointStandardServer = 0x0000004C,
         MultipointPremiumServer = 0x0000004D,
+        Unknown4E = 0x0000004E,
         StandardEvaluationServer = 0x0000004F,
         DatacenterEvaluationServer = 0x00000050,
         PrereleaseARM = 0x00000051,
@@ -1288,7 +1289,7 @@ namespace WindowsUpdateLib
         EmbeddedIndustryAE = 0x0000005C,
         Unknown5D,
         Unknown5E,
-        StorageWorkgroundEvaluationServer = 0x0000005F,
+        StorageWorkgroupEvaluationServer = 0x0000005F,
         StorageStandardEvaluationServer = 0x00000060,
         CoreARM = 0x00000061,
         CoreN = 0x00000062,
@@ -1330,6 +1331,7 @@ namespace WindowsUpdateLib
         Unknown86,
         Holographic = 0x00000087,
         HolographicBusiness = 0x00000088,
+        Unknown89 = 0x00000089,
         ProSingleLanguage = 0x0000008A,
         ProChina = 0x0000008B,
         EnterpriseSubscription = 0x0000008C,
@@ -1362,6 +1364,7 @@ namespace WindowsUpdateLib
         UnknownA7,
         AzureServerCore = 0x000000A8,
         AzureNanoServer = 0x000000A9,
+        UnknownAA = 0x000000AA,
         EnterpriseG = 0x000000AB,
         EnterpriseGN = 0x000000AC,
         UnknownAD,
@@ -1408,7 +1411,7 @@ namespace WindowsUpdateLib
             int flightEnabled = Ring == "Retail" ? 0 : 1;
             string App = IsStore ? "WU_STORE" : "WU_OS";
 
-            ctac.DeviceAttributes = $"E:BranchReadinessLevel={BranchReadinessLevel}&CurrentBranch{branch}&OEMModel=VM&FlightRing={Ring}&AttrDataVer=92&InstallLanguage=en-US&OSUILocale=en-US&InstallationType=Client&FlightingBranchName=external&OSSkuId={(int)ReportingSku}&FlightContent={content}&App={App}&ProcessorManufacturer=GenuineIntel&OEMName_Uncleaned=VM&AppVer={ReportingVersion}&OSArchitecture={MachineType.ToString().ToUpper()}&IsFlightingEnabled={flightEnabled}&TelemetryLevel=3&DefaultUserRegion=244&WuClientVer={ReportingVersion}&OSVersion={ReportingVersion}&DeviceFamily={DeviceFamily}&IsRetailOS={flightEnabled + 1 % 1}";
+            ctac.DeviceAttributes = $"E:BranchReadinessLevel={BranchReadinessLevel}&CurrentBranch={branch}&OEMModel=VM&FlightRing={Ring}&AttrDataVer=92&InstallLanguage=en-US&OSUILocale=en-US&InstallationType=Client&FlightingBranchName=external&OSSkuId={(int)ReportingSku}&FlightContent={content}&App={App}&ProcessorManufacturer=GenuineIntel&OEMName_Uncleaned=VM&AppVer={ReportingVersion}&OSArchitecture={MachineType.ToString().ToUpper()}&IsFlightingEnabled={flightEnabled}&TelemetryLevel=3&DefaultUserRegion=244&WuClientVer={ReportingVersion}&OSVersion={ReportingVersion}&DeviceFamily={DeviceFamily}&IsRetailOS={flightEnabled + 1 % 1}";
 
             if (ReportingSku == OSSkuId.EnterpriseS || ReportingSku == OSSkuId.EnterpriseSN)
             {
