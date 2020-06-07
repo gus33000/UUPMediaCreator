@@ -1,0 +1,61 @@
+﻿<Page
+    x:Class="UUPMediaCreator.UWP.Pages.EditionPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:UUPMediaCreator.UWP.Pages"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
+    xmlns:uupmediacreator="using:UUPMediaCreator.UWP"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <uupmediacreator:WizardPageControl x:Name="WizardPage"
+                                       Title="Select the Windows edition"
+                                       Glyph="&#xE7B8;"
+                                       BackEnabled="True"
+                                       NextEnabled="True"
+                                       BackClicked="WizardPage_BackClicked"
+                                       NextClicked="WizardPage_NextClicked">
+        <Grid>
+            <ProgressRing x:Name="LoadingRing" Width="256" Height="256" IsActive="True"/>
+
+            <Grid x:Name="SelectionGrid" Visibility="Collapsed">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="2*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <controls:DataGrid
+                    x:Name="dataGrid"
+                    Margin="0,0,0,32"
+                    VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
+                    HorizontalScrollBarVisibility="Visible"
+                    VerticalScrollBarVisibility="Visible"
+                    Background="{ThemeResource SystemChromeLowColor}"
+                    AlternatingRowBackground="Transparent"
+                    AlternatingRowForeground="{ThemeResource ApplicationForegroundThemeBrush}"
+                    AreRowDetailsFrozen="True"
+                    AreRowGroupHeadersFrozen="True"
+                    AutoGenerateColumns="False"
+                    CanUserSortColumns="False"
+                    CanUserReorderColumns="False"
+                    CanUserResizeColumns="False"
+                    ColumnHeaderHeight="32"
+                    MaxColumnWidth="600"
+                    FrozenColumnCount="0"
+                    GridLinesVisibility="None"
+                    HeadersVisibility="Column"
+                    SelectedIndex="0"
+                    IsReadOnly="True"
+                    RowDetailsVisibilityMode="Collapsed"
+                    SelectionMode="Single"
+                    RowGroupHeaderPropertyNameAlternative="Range">
+                    <controls:DataGrid.Columns>
+                        <controls:DataGridTextColumn Header="Edition" Binding="{Binding Edition}" Tag="Edition" MinWidth="450" />
+                    </controls:DataGrid.Columns>
+                </controls:DataGrid>
+            </Grid>
+        </Grid>
+    </uupmediacreator:WizardPageControl>
+</Page>

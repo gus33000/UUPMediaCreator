@@ -1,0 +1,373 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Condition="'$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '15.0'">
+    <VisualStudioVersion>15.0</VisualStudioVersion>
+  </PropertyGroup>
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x86">
+      <Configuration>Debug</Configuration>
+      <Platform>x86</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x86">
+      <Configuration>Release</Configuration>
+      <Platform>x86</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|ARM">
+      <Configuration>Debug</Configuration>
+      <Platform>ARM</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|ARM">
+      <Configuration>Release</Configuration>
+      <Platform>ARM</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|ARM64">
+      <Configuration>Debug</Configuration>
+      <Platform>ARM64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|ARM64">
+      <Configuration>Release</Configuration>
+      <Platform>ARM64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|AnyCPU">
+      <Configuration>Debug</Configuration>
+      <Platform>AnyCPU</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|AnyCPU">
+      <Configuration>Release</Configuration>
+      <Platform>AnyCPU</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup>
+    <WapProjPath Condition="'$(WapProjPath)'==''">$(MSBuildExtensionsPath)\Microsoft\DesktopBridge\</WapProjPath>
+  </PropertyGroup>
+  <Import Project="$(WapProjPath)\Microsoft.DesktopBridge.props" />
+  <PropertyGroup>
+    <ProjectGuid>34cd2a97-e3ce-4606-9b64-e5b3a42e108a</ProjectGuid>
+    <TargetPlatformVersion>10.0.18362.0</TargetPlatformVersion>
+    <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
+    <DefaultLanguage>en-US</DefaultLanguage>
+    <AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
+    <EntryPointProjectUniqueName>..\UUPMediaCreator.Broker\UUPMediaCreator.Broker.csproj</EntryPointProjectUniqueName>
+    <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
+    <PackageCertificateKeyFile>UUPMediaCreator.Package_TemporaryKey.pfx</PackageCertificateKeyFile>
+    <AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
+    <AppxAutoIncrementPackageRevision>True</AppxAutoIncrementPackageRevision>
+    <AppxSymbolPackageEnabled>False</AppxSymbolPackageEnabled>
+    <GenerateTestArtifacts>True</GenerateTestArtifacts>
+    <AppxBundlePlatforms>x64</AppxBundlePlatforms>
+    <HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
+    <AppxBundle>Always</AppxBundle>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
+    <AppxBundle>Always</AppxBundle>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <AppxBundle>Always</AppxBundle>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'">
+    <AppxBundle>Always</AppxBundle>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <AppxBundle>Always</AppxBundle>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
+    <AppxBundle>Always</AppxBundle>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
+    <AppxBundle>Always</AppxBundle>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
+    <AppxBundle>Always</AppxBundle>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <AppxBundle>Always</AppxBundle>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <AppxBundle>Always</AppxBundle>
+  </PropertyGroup>
+  <ItemGroup>
+    <AppxManifest Include="Package.appxmanifest">
+      <SubType>Designer</SubType>
+    </AppxManifest>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Assets\Flags\AD.png" />
+    <Content Include="Assets\Flags\AE.png" />
+    <Content Include="Assets\Flags\AF.png" />
+    <Content Include="Assets\Flags\AG.png" />
+    <Content Include="Assets\Flags\AI.png" />
+    <Content Include="Assets\Flags\AL.png" />
+    <Content Include="Assets\Flags\AM.png" />
+    <Content Include="Assets\Flags\AO.png" />
+    <Content Include="Assets\Flags\AR.png" />
+    <Content Include="Assets\Flags\AS.png" />
+    <Content Include="Assets\Flags\AT.png" />
+    <Content Include="Assets\Flags\AU.png" />
+    <Content Include="Assets\Flags\AW.png" />
+    <Content Include="Assets\Flags\AX.png" />
+    <Content Include="Assets\Flags\AZ.png" />
+    <Content Include="Assets\Flags\BA.png" />
+    <Content Include="Assets\Flags\BB.png" />
+    <Content Include="Assets\Flags\BD.png" />
+    <Content Include="Assets\Flags\BE.png" />
+    <Content Include="Assets\Flags\BF.png" />
+    <Content Include="Assets\Flags\BG.png" />
+    <Content Include="Assets\Flags\BH.png" />
+    <Content Include="Assets\Flags\BI.png" />
+    <Content Include="Assets\Flags\BJ.png" />
+    <Content Include="Assets\Flags\BL.png" />
+    <Content Include="Assets\Flags\BM.png" />
+    <Content Include="Assets\Flags\BN.png" />
+    <Content Include="Assets\Flags\BO.png" />
+    <Content Include="Assets\Flags\BR.png" />
+    <Content Include="Assets\Flags\BS.png" />
+    <Content Include="Assets\Flags\BT.png" />
+    <Content Include="Assets\Flags\BV.png" />
+    <Content Include="Assets\Flags\BW.png" />
+    <Content Include="Assets\Flags\BY.png" />
+    <Content Include="Assets\Flags\BZ.png" />
+    <Content Include="Assets\Flags\CA.png" />
+    <Content Include="Assets\Flags\CC.png" />
+    <Content Include="Assets\Flags\CD.png" />
+    <Content Include="Assets\Flags\CF.png" />
+    <Content Include="Assets\Flags\CG.png" />
+    <Content Include="Assets\Flags\CH.png" />
+    <Content Include="Assets\Flags\CI.png" />
+    <Content Include="Assets\Flags\CK.png" />
+    <Content Include="Assets\Flags\CL.png" />
+    <Content Include="Assets\Flags\CM.png" />
+    <Content Include="Assets\Flags\CN.png" />
+    <Content Include="Assets\Flags\CO.png" />
+    <Content Include="Assets\Flags\CR.png" />
+    <Content Include="Assets\Flags\CU.png" />
+    <Content Include="Assets\Flags\CV.png" />
+    <Content Include="Assets\Flags\CW.png" />
+    <Content Include="Assets\Flags\CX.png" />
+    <Content Include="Assets\Flags\CY.png" />
+    <Content Include="Assets\Flags\CZ.png" />
+    <Content Include="Assets\Flags\DE.png" />
+    <Content Include="Assets\Flags\DJ.png" />
+    <Content Include="Assets\Flags\DK.png" />
+    <Content Include="Assets\Flags\DM.png" />
+    <Content Include="Assets\Flags\DO.png" />
+    <Content Include="Assets\Flags\DZ.png" />
+    <Content Include="Assets\Flags\EC.png" />
+    <Content Include="Assets\Flags\EE.png" />
+    <Content Include="Assets\Flags\EG.png" />
+    <Content Include="Assets\Flags\ER.png" />
+    <Content Include="Assets\Flags\ES.png" />
+    <Content Include="Assets\Flags\ET.png" />
+    <Content Include="Assets\Flags\EU.png" />
+    <Content Include="Assets\Flags\FI.png" />
+    <Content Include="Assets\Flags\FJ.png" />
+    <Content Include="Assets\Flags\FK.png" />
+    <Content Include="Assets\Flags\FM.png" />
+    <Content Include="Assets\Flags\FO.png" />
+    <Content Include="Assets\Flags\FR.png" />
+    <Content Include="Assets\Flags\GA.png" />
+    <Content Include="Assets\Flags\GB-ENG.png" />
+    <Content Include="Assets\Flags\GB-NIR.png" />
+    <Content Include="Assets\Flags\GB-SCT.png" />
+    <Content Include="Assets\Flags\GB-WLS.png" />
+    <Content Include="Assets\Flags\GB-ZET.png" />
+    <Content Include="Assets\Flags\GB.png" />
+    <Content Include="Assets\Flags\GD.png" />
+    <Content Include="Assets\Flags\GE.png" />
+    <Content Include="Assets\Flags\GF.png" />
+    <Content Include="Assets\Flags\GG.png" />
+    <Content Include="Assets\Flags\GH.png" />
+    <Content Include="Assets\Flags\GI.png" />
+    <Content Include="Assets\Flags\GL.png" />
+    <Content Include="Assets\Flags\GM.png" />
+    <Content Include="Assets\Flags\GN.png" />
+    <Content Include="Assets\Flags\GP.png" />
+    <Content Include="Assets\Flags\GQ.png" />
+    <Content Include="Assets\Flags\GR.png" />
+    <Content Include="Assets\Flags\GS.png" />
+    <Content Include="Assets\Flags\GT.png" />
+    <Content Include="Assets\Flags\GU.png" />
+    <Content Include="Assets\Flags\GW.png" />
+    <Content Include="Assets\Flags\GY.png" />
+    <Content Include="Assets\Flags\HK.png" />
+    <Content Include="Assets\Flags\HM.png" />
+    <Content Include="Assets\Flags\HN.png" />
+    <Content Include="Assets\Flags\HR.png" />
+    <Content Include="Assets\Flags\HT.png" />
+    <Content Include="Assets\Flags\HU.png" />
+    <Content Include="Assets\Flags\ID.png" />
+    <Content Include="Assets\Flags\IE.png" />
+    <Content Include="Assets\Flags\IL.png" />
+    <Content Include="Assets\Flags\IM.png" />
+    <Content Include="Assets\Flags\IN.png" />
+    <Content Include="Assets\Flags\IO.png" />
+    <Content Include="Assets\Flags\IQ.png" />
+    <Content Include="Assets\Flags\IR.png" />
+    <Content Include="Assets\Flags\IS.png" />
+    <Content Include="Assets\Flags\IT.png" />
+    <Content Include="Assets\Flags\JE.png" />
+    <Content Include="Assets\Flags\JM.png" />
+    <Content Include="Assets\Flags\JO.png" />
+    <Content Include="Assets\Flags\JP.png" />
+    <Content Include="Assets\Flags\KE.png" />
+    <Content Include="Assets\Flags\KG.png" />
+    <Content Include="Assets\Flags\KH.png" />
+    <Content Include="Assets\Flags\KI.png" />
+    <Content Include="Assets\Flags\KM.png" />
+    <Content Include="Assets\Flags\KN.png" />
+    <Content Include="Assets\Flags\KP.png" />
+    <Content Include="Assets\Flags\KR.png" />
+    <Content Include="Assets\Flags\KW.png" />
+    <Content Include="Assets\Flags\KY.png" />
+    <Content Include="Assets\Flags\KZ.png" />
+    <Content Include="Assets\Flags\LA.png" />
+    <Content Include="Assets\Flags\LB.png" />
+    <Content Include="Assets\Flags\LC.png" />
+    <Content Include="Assets\Flags\LGBT.png" />
+    <Content Include="Assets\Flags\LI.png" />
+    <Content Include="Assets\Flags\LK.png" />
+    <Content Include="Assets\Flags\LR.png" />
+    <Content Include="Assets\Flags\LS.png" />
+    <Content Include="Assets\Flags\LT.png" />
+    <Content Include="Assets\Flags\LU.png" />
+    <Content Include="Assets\Flags\LV.png" />
+    <Content Include="Assets\Flags\LY.png" />
+    <Content Include="Assets\Flags\MA.png" />
+    <Content Include="Assets\Flags\MC.png" />
+    <Content Include="Assets\Flags\MD.png" />
+    <Content Include="Assets\Flags\ME.png" />
+    <Content Include="Assets\Flags\MF.png" />
+    <Content Include="Assets\Flags\MG.png" />
+    <Content Include="Assets\Flags\MH.png" />
+    <Content Include="Assets\Flags\ML.png" />
+    <Content Include="Assets\Flags\MM.png" />
+    <Content Include="Assets\Flags\MN.png" />
+    <Content Include="Assets\Flags\MO.png" />
+    <Content Include="Assets\Flags\MP.png" />
+    <Content Include="Assets\Flags\MQ.png" />
+    <Content Include="Assets\Flags\MR.png" />
+    <Content Include="Assets\Flags\MS.png" />
+    <Content Include="Assets\Flags\MT.png" />
+    <Content Include="Assets\Flags\MU.png" />
+    <Content Include="Assets\Flags\MV.png" />
+    <Content Include="Assets\Flags\MW.png" />
+    <Content Include="Assets\Flags\MX.png" />
+    <Content Include="Assets\Flags\MY.png" />
+    <Content Include="Assets\Flags\MZ.png" />
+    <Content Include="Assets\Flags\NA.png" />
+    <Content Include="Assets\Flags\NC.png" />
+    <Content Include="Assets\Flags\NE.png" />
+    <Content Include="Assets\Flags\NF.png" />
+    <Content Include="Assets\Flags\NG.png" />
+    <Content Include="Assets\Flags\NI.png" />
+    <Content Include="Assets\Flags\NL.png" />
+    <Content Include="Assets\Flags\NO.png" />
+    <Content Include="Assets\Flags\NP.png" />
+    <Content Include="Assets\Flags\NR.png" />
+    <Content Include="Assets\Flags\NU.png" />
+    <Content Include="Assets\Flags\NZ.png" />
+    <Content Include="Assets\Flags\OM.png" />
+    <Content Include="Assets\Flags\PA.png" />
+    <Content Include="Assets\Flags\PE.png" />
+    <Content Include="Assets\Flags\PF.png" />
+    <Content Include="Assets\Flags\PG.png" />
+    <Content Include="Assets\Flags\PH.png" />
+    <Content Include="Assets\Flags\PK.png" />
+    <Content Include="Assets\Flags\PL.png" />
+    <Content Include="Assets\Flags\PM.png" />
+    <Content Include="Assets\Flags\PN.png" />
+    <Content Include="Assets\Flags\PR.png" />
+    <Content Include="Assets\Flags\PS.png" />
+    <Content Include="Assets\Flags\PT.png" />
+    <Content Include="Assets\Flags\PW.png" />
+    <Content Include="Assets\Flags\PY.png" />
+    <Content Include="Assets\Flags\QA.png" />
+    <Content Include="Assets\Flags\RE.png" />
+    <Content Include="Assets\Flags\RO.png" />
+    <Content Include="Assets\Flags\RS.png" />
+    <Content Include="Assets\Flags\RU.png" />
+    <Content Include="Assets\Flags\RW.png" />
+    <Content Include="Assets\Flags\SA.png" />
+    <Content Include="Assets\Flags\SB.png" />
+    <Content Include="Assets\Flags\SC.png" />
+    <Content Include="Assets\Flags\SD.png" />
+    <Content Include="Assets\Flags\SE.png" />
+    <Content Include="Assets\Flags\SG.png" />
+    <Content Include="Assets\Flags\SH.png" />
+    <Content Include="Assets\Flags\SI.png" />
+    <Content Include="Assets\Flags\SJ.png" />
+    <Content Include="Assets\Flags\SK.png" />
+    <Content Include="Assets\Flags\SL.png" />
+    <Content Include="Assets\Flags\SM.png" />
+    <Content Include="Assets\Flags\SN.png" />
+    <Content Include="Assets\Flags\SO.png" />
+    <Content Include="Assets\Flags\SR.png" />
+    <Content Include="Assets\Flags\SS.png" />
+    <Content Include="Assets\Flags\ST.png" />
+    <Content Include="Assets\Flags\SV.png" />
+    <Content Include="Assets\Flags\SX.png" />
+    <Content Include="Assets\Flags\SY.png" />
+    <Content Include="Assets\Flags\SZ.png" />
+    <Content Include="Assets\Flags\TC.png" />
+    <Content Include="Assets\Flags\TD.png" />
+    <Content Include="Assets\Flags\TF.png" />
+    <Content Include="Assets\Flags\TG.png" />
+    <Content Include="Assets\Flags\TH.png" />
+    <Content Include="Assets\Flags\TJ.png" />
+    <Content Include="Assets\Flags\TK.png" />
+    <Content Include="Assets\Flags\TL.png" />
+    <Content Include="Assets\Flags\TM.png" />
+    <Content Include="Assets\Flags\TN.png" />
+    <Content Include="Assets\Flags\TO.png" />
+    <Content Include="Assets\Flags\TR.png" />
+    <Content Include="Assets\Flags\TT.png" />
+    <Content Include="Assets\Flags\TV.png" />
+    <Content Include="Assets\Flags\TW.png" />
+    <Content Include="Assets\Flags\TZ.png" />
+    <Content Include="Assets\Flags\UA.png" />
+    <Content Include="Assets\Flags\UG.png" />
+    <Content Include="Assets\Flags\UM.png" />
+    <Content Include="Assets\Flags\US-CA.png" />
+    <Content Include="Assets\Flags\US.png" />
+    <Content Include="Assets\Flags\UY.png" />
+    <Content Include="Assets\Flags\UZ.png" />
+    <Content Include="Assets\Flags\VA.png" />
+    <Content Include="Assets\Flags\VC.png" />
+    <Content Include="Assets\Flags\VE.png" />
+    <Content Include="Assets\Flags\VG.png" />
+    <Content Include="Assets\Flags\VI.png" />
+    <Content Include="Assets\Flags\VN.png" />
+    <Content Include="Assets\Flags\VU.png" />
+    <Content Include="Assets\Flags\WF.png" />
+    <Content Include="Assets\Flags\WS.png" />
+    <Content Include="Assets\Flags\XK.png" />
+    <Content Include="Assets\Flags\YE.png" />
+    <Content Include="Assets\Flags\YT.png" />
+    <Content Include="Assets\Flags\ZA.png" />
+    <Content Include="Assets\Flags\ZM.png" />
+    <Content Include="Assets\Flags\ZW.png" />
+    <Content Include="Assets\LockScreenLogo.scale-200.png" />
+    <Content Include="Assets\SplashScreen.scale-200.png" />
+    <Content Include="Assets\Square150x150Logo.scale-200.png" />
+    <Content Include="Assets\Square44x44Logo.scale-200.png" />
+    <Content Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png" />
+    <Content Include="Assets\StoreLogo.png" />
+    <Content Include="Assets\Wide310x150Logo.scale-200.png" />
+    <None Include="UUPMediaCreator.Package_TemporaryKey.pfx" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\UUPMediaCreator.Broker\UUPMediaCreator.Broker.csproj" />
+    <ProjectReference Include="..\UUPMediaCreator.DismBroker\UUPMediaCreator.DismBroker.csproj" />
+    <ProjectReference Include="..\UUPMediaCreator\UUPMediaCreator.csproj" />
+  </ItemGroup>
+  <Import Project="$(WapProjPath)\Microsoft.DesktopBridge.targets" />
+</Project>

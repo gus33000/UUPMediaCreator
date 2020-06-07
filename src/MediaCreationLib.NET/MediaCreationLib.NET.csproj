@@ -1,0 +1,159 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{464E542C-2E57-46BB-8BEC-4A77E0228A17}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>MediaCreationLib.NET</RootNamespace>
+    <AssemblyName>MediaCreationLib.NET</AssemblyName>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="DiscUtils.Core, Version=0.15.1.0, Culture=neutral, PublicKeyToken=5fa5b410cc9c6289, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\DiscUtils.Core.0.15.1-ci0002\lib\net45\DiscUtils.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="DiscUtils.Registry, Version=0.15.1.0, Culture=neutral, PublicKeyToken=5fa5b410cc9c6289, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\DiscUtils.Registry.0.15.1-ci0002\lib\net45\DiscUtils.Registry.dll</HintPath>
+    </Reference>
+    <Reference Include="DiscUtils.Streams, Version=0.15.1.0, Culture=neutral, PublicKeyToken=5fa5b410cc9c6289, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\DiscUtils.Streams.0.15.1-ci0002\lib\net45\DiscUtils.Streams.dll</HintPath>
+    </Reference>
+    <Reference Include="INIFileParser, Version=2.5.2.0, Culture=neutral, PublicKeyToken=79af7b307b65cf3c, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\ini-parser.2.5.2\lib\net20\INIFileParser.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="BaseEditions\BaseEditionBuilder.cs" />
+    <Compile Include="BootlegEditions\AssemblyManifestHandler.cs" />
+    <Compile Include="BootlegEditions\BootlegEditionCreator.cs" />
+    <Compile Include="CDImage\cdimage.cs" />
+    <Compile Include="Constants.cs" />
+    <Compile Include="Installer\SetupMediaCreator.cs" />
+    <Compile Include="Planning\EditionMappingXML.cs" />
+    <Compile Include="Planning\EditionMatrixXML.cs" />
+    <Compile Include="MediaCreator.cs" />
+    <Compile Include="PathUtils.cs" />
+    <Compile Include="Planning\ConversionPlanBuilder.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Installer\RegistryOperations.cs" />
+    <Compile Include="Installer\TakeOwn.cs" />
+    <Compile Include="UUPMediaCreator.cs" />
+    <Compile Include="Installer\WindowsInstallerBuilder.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Imaging.NET\Imaging.NET.csproj">
+      <Project>{6a920e9f-bc98-4eaa-aa9b-2c9fa82443e9}</Project>
+      <Name>Imaging.NET</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\InterCommunication.NET\InterCommunication.NET.csproj">
+      <Project>{f74c9d30-95f1-4a07-ba85-f5da26824b40}</Project>
+      <Name>InterCommunication.NET</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MediaCreationLib.DismOperations.NET\MediaCreationLib.DismOperations.NET.csproj">
+      <Project>{d141a8d4-61e6-4080-b7af-d56acca26f5d}</Project>
+      <Name>MediaCreationLib.DismOperations.NET</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\thirdparty\Microsoft.Cabinet.NET\Microsoft.Cabinet.NET.csproj">
+      <Project>{7020f6c8-fc8b-42fe-bbc0-365580a6584c}</Project>
+      <Name>Microsoft.Cabinet.NET</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\thirdparty\Microsoft.Dism.NET\Microsoft.Dism.NET.csproj">
+      <Project>{c3e27d93-4cce-4ec3-8935-9aed651b233e}</Project>
+      <Name>Microsoft.Dism.NET</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\thirdparty\Microsoft.Wim.NET\Microsoft.Wim.NET.csproj">
+      <Project>{5e74b6c3-20f3-4ed8-a1e5-98325b77a515}</Project>
+      <Name>Microsoft.Wim.NET</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\thirdparty\Privileges.NET\Privileges.NET.csproj">
+      <Project>{43c8bfca-db35-41f6-8602-a3e99bdd8ec6}</Project>
+      <Name>Privileges.NET</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\VirtualHardDiskLib.NET\VirtualHardDiskLib.NET.csproj">
+      <Project>{6b098dd6-800b-42df-9309-db29c64ddd29}</Project>
+      <Name>VirtualHardDiskLib.NET</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="CDImage\cdimage.exe">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <Import Project="..\CompDB.Shared\CompDB.Shared.projitems" Label="Shared" />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

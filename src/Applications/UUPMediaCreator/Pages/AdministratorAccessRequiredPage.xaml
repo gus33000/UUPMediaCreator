@@ -1,0 +1,24 @@
+﻿<Page
+    x:Class="UUPMediaCreator.UWP.Pages.AdministratorAccessRequiredPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:UUPMediaCreator.UWP.Pages"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:uupmediacreator="using:UUPMediaCreator.UWP"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <uupmediacreator:WizardPageControl x:Name="WizardPage"
+                                       Title="Uh oh..."
+                                       Subtitle="This wizard requires Administrator privileges in order to run"
+                                       Glyph="&#xEA18;"
+                                       BackEnabled="False"
+                                       NextEnabled="True"
+                                       NextClicked="WizardPage_NextClicked">
+        <StackPanel>
+            <TextBlock Text="Please right click the application tile in the start menu, and select run as administrator." TextWrapping="Wrap"/>
+            <TextBlock Text="Click next to exit." TextWrapping="Wrap"/>
+        </StackPanel>
+    </uupmediacreator:WizardPageControl>
+</Page>

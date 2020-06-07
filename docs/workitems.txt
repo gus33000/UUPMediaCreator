@@ -1,0 +1,7 @@
+Downloader for files on WU
+Polishing the GUI wizard
+Command Line interface to be completed
+Better handling of edition package swap operations (specifically downgrades)
+Support for ModernApps
+Refactorings
+Comments
