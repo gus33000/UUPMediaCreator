@@ -1403,15 +1403,15 @@ namespace WindowsUpdateLib
         private static string Action = "http://www.microsoft.com/SoftwareDistribution/Server/ClientWebService/";
         private static string MSCV = "0";
 
-        public static CTAC BuildCTAC(string DeviceFamily, OSSkuId ReportingSku, string ReportingVersion, MachineType MachineType, string Ring, string BranchReadinessLevel, string branch, bool SyncCurrentVersionOnly, bool IsStore)
+        public static CTAC BuildCTAC(string DeviceFamily, OSSkuId ReportingSku, string ReportingVersion, MachineType MachineType, string Ring, string BranchName, string BranchReadinessLevel, string branch, bool SyncCurrentVersionOnly, bool IsStore)
         {
             CTAC ctac = new CTAC();
 
-            string content = Ring == "RP" ? "Current" : "Active";
+            string content = "Mainline";
             int flightEnabled = Ring == "Retail" ? 0 : 1;
             string App = IsStore ? "WU_STORE" : "WU_OS";
 
-            ctac.DeviceAttributes = $"E:BranchReadinessLevel={BranchReadinessLevel}&CurrentBranch={branch}&OEMModel=VM&FlightRing={Ring}&AttrDataVer=92&InstallLanguage=en-US&OSUILocale=en-US&InstallationType=Client&FlightingBranchName=external&OSSkuId={(int)ReportingSku}&FlightContent={content}&App={App}&ProcessorManufacturer=GenuineIntel&OEMName_Uncleaned=VM&AppVer={ReportingVersion}&OSArchitecture={MachineType.ToString().ToUpper()}&IsFlightingEnabled={flightEnabled}&TelemetryLevel=3&DefaultUserRegion=244&WuClientVer={ReportingVersion}&OSVersion={ReportingVersion}&DeviceFamily={DeviceFamily}&IsRetailOS={flightEnabled + 1 % 1}";
+            ctac.DeviceAttributes = $"E:BranchReadinessLevel={BranchReadinessLevel}&CurrentBranch={branch}&OEMModel=VM&FlightRing={Ring}&AttrDataVer=98&InstallLanguage=en-US&OSUILocale=en-US&InstallationType=Client&FlightingBranchName={BranchName}&OSSkuId={(int)ReportingSku}&FlightContent={content}&App={App}&ProcessorManufacturer=GenuineIntel&OEMName_Uncleaned=VM&AppVer={ReportingVersion}&OSArchitecture={MachineType.ToString().ToUpper()}&IsFlightingEnabled={flightEnabled}&TelemetryLevel=3&DefaultUserRegion=244&WuClientVer={ReportingVersion}&OSVersion={ReportingVersion}&DeviceFamily={DeviceFamily}&IsRetailOS={flightEnabled + 1 % 1}";
 
             if (ReportingSku == OSSkuId.EnterpriseS || ReportingSku == OSSkuId.EnterpriseSN)
             {

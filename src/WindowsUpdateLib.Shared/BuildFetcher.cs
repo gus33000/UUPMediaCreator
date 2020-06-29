@@ -299,39 +299,39 @@ namespace WindowsUpdateLib
             CTAC ctac;
             UpdateData[] data;
 
-            ctac = FE3Handler.BuildCTAC("Windows.Team", OSSkuId.PPIPro, "10.0.15063.534", MachineType, "WIS", "CB", "rs2_release", false, false);
+            ctac = FE3Handler.BuildCTAC("Windows.Team", OSSkuId.PPIPro, "10.0.15063.534", MachineType, "WIS", "", "CB", "rs2_release", false, false);
             data = await FE3Handler.GetUpdates(null, ctac, null, "ProductRelease");
             AddUpdatesIfNotPresentAlready(updates, data);
 
-            ctac = FE3Handler.BuildCTAC("Windows.Team", OSSkuId.PPIPro, "10.0.15063.534", MachineType, "WIF", "CB", "rs2_release", false, false);
+            ctac = FE3Handler.BuildCTAC("Windows.Team", OSSkuId.PPIPro, "10.0.15063.534", MachineType, "WIF", "", "CB", "rs2_release", false, false);
             data = await FE3Handler.GetUpdates(null, ctac, null, "ProductRelease");
             AddUpdatesIfNotPresentAlready(updates, data);
 
-            ctac = FE3Handler.BuildCTAC("Windows.Desktop", OSSkuId.Professional, "10.0.16299.15", MachineType, "Retail", "CB", "rs3_release", true, false);
+            ctac = FE3Handler.BuildCTAC("Windows.Desktop", OSSkuId.Professional, "10.0.16299.15", MachineType, "Retail", "", "CB", "rs3_release", true, false);
             data = await FE3Handler.GetUpdates(null, ctac, null, "ProductRelease");
             AddUpdatesIfNotPresentAlready(updates, data);
 
-            ctac = FE3Handler.BuildCTAC("Windows.Desktop", OSSkuId.Professional, "10.0.17134.1", MachineType, "Retail", "CB", "rs4_release", true, false);
+            ctac = FE3Handler.BuildCTAC("Windows.Desktop", OSSkuId.Professional, "10.0.17134.1", MachineType, "Retail", "", "CB", "rs4_release", true, false);
             data = await FE3Handler.GetUpdates(null, ctac, null, "ProductRelease");
             AddUpdatesIfNotPresentAlready(updates, data);
 
-            ctac = FE3Handler.BuildCTAC("Windows.Desktop", OSSkuId.Professional, "10.0.17763.1217", MachineType, "Retail", "CB", "rs5_release", true, false);
+            ctac = FE3Handler.BuildCTAC("Windows.Desktop", OSSkuId.Professional, "10.0.17763.1217", MachineType, "Retail", "", "CB", "rs5_release", true, false);
             data = await FE3Handler.GetUpdates(null, ctac, null, "ProductRelease");
             AddUpdatesIfNotPresentAlready(updates, data);
 
-            ctac = FE3Handler.BuildCTAC("Windows.Desktop", OSSkuId.Professional, "10.0.18362.836", MachineType, "Retail", "CB", "19h1_release", true, false);
+            ctac = FE3Handler.BuildCTAC("Windows.Desktop", OSSkuId.Professional, "10.0.18362.836", MachineType, "Retail", "", "CB", "19h1_release", true, false);
             data = await FE3Handler.GetUpdates(null, ctac, null, "ProductRelease");
             AddUpdatesIfNotPresentAlready(updates, data);
 
-            ctac = FE3Handler.BuildCTAC("Windows.Desktop", OSSkuId.Professional, "10.0.18362.836", MachineType, "RP", "CB", "19h1_release", false, false);
+            ctac = FE3Handler.BuildCTAC("Windows.Desktop", OSSkuId.Professional, "10.0.18362.836", MachineType, "External", "ReleasePreview", "CB", "19h1_release", false, false);
             data = await FE3Handler.GetUpdates(null, ctac, null, "ProductRelease");
             AddUpdatesIfNotPresentAlready(updates, data);
 
-            ctac = FE3Handler.BuildCTAC("Windows.Desktop", OSSkuId.Professional, "10.0.18362.836", MachineType, "WIS", "CB", "19h1_release", false, false);
+            ctac = FE3Handler.BuildCTAC("Windows.Desktop", OSSkuId.Professional, "10.0.18362.836", MachineType, "External", "Beta", "CB", "19h1_release", false, false);
             data = await FE3Handler.GetUpdates(null, ctac, null, "ProductRelease");
             AddUpdatesIfNotPresentAlready(updates, data);
 
-            ctac = FE3Handler.BuildCTAC("Windows.Desktop", OSSkuId.Professional, "10.0.18362.836", MachineType, "WIF", "CB", "19h1_release", false, false);
+            ctac = FE3Handler.BuildCTAC("Windows.Desktop", OSSkuId.Professional, "10.0.18362.836", MachineType, "External", "Dev", "CB", "19h1_release", false, false);
             data = await FE3Handler.GetUpdates(null, ctac, null, "ProductRelease");
             AddUpdatesIfNotPresentAlready(updates, data);
 
