@@ -10,6 +10,39 @@ using System.Threading.Tasks;
 
 namespace WindowsUpdateLib
 {
+    public static class StringExtensions
+    {
+        public static bool Contains(this String str, String substring,
+                                    StringComparison comp)
+        {
+            if (substring == null)
+                throw new ArgumentNullException("substring",
+                                             "substring cannot be null.");
+            else if (!Enum.IsDefined(typeof(StringComparison), comp))
+                throw new ArgumentException("comp is not a member of StringComparison",
+                                         "comp");
+
+            return str.IndexOf(substring, comp) >= 0;
+        }
+
+        public static string Replace(this string originalString, string oldValue, string newValue, StringComparison comparisonType)
+        {
+            int startIndex = 0;
+            while (true)
+            {
+                startIndex = originalString.IndexOf(oldValue, startIndex, comparisonType);
+                if (startIndex == -1)
+                    break;
+
+                originalString = originalString.Substring(0, startIndex) + newValue + originalString.Substring(startIndex + oldValue.Length);
+
+                startIndex += newValue.Length;
+            }
+
+            return originalString;
+        }
+    }
+
     public class BuildFetcher
     {
         public class AvailableBuild
@@ -104,7 +137,7 @@ namespace WindowsUpdateLib
                         x.Count(y => y == '_') == 2 &&
                         !x.Contains("tools", StringComparison.InvariantCultureIgnoreCase)))
                     {
-                        var lang = file.Split("_").Last().Replace(".xml.cab", "", StringComparison.InvariantCultureIgnoreCase);
+                        var lang = file.Split('_').Last().Replace(".xml.cab", "", StringComparison.InvariantCultureIgnoreCase);
                         if (lang.Equals("neutral", StringComparison.InvariantCultureIgnoreCase))
                             continue;
 
@@ -125,7 +158,7 @@ namespace WindowsUpdateLib
                     x.FileName.Count(y => y == '_') == 3 &&
                     !x.FileName.Contains("tools", StringComparison.InvariantCultureIgnoreCase)))
                 {
-                    var lang = file.FileName.Split("_").Last().Replace(".xml.cab", "", StringComparison.InvariantCultureIgnoreCase);
+                    var lang = file.FileName.Split('_').Last().Replace(".xml.cab", "", StringComparison.InvariantCultureIgnoreCase);
                     if (lang.Equals("neutral", StringComparison.InvariantCultureIgnoreCase))
                         continue;
 
@@ -189,7 +222,7 @@ namespace WindowsUpdateLib
 
                     foreach (var file in potentialFiles)
                     {
-                        var edition = file.Split("_").Reverse().Skip(1).First();
+                        var edition = file.Split('_').Reverse().Skip(1).First();
 
                         if (availableEditions.Any(x => x.Edition == edition))
                             continue;
@@ -209,7 +242,7 @@ namespace WindowsUpdateLib
                 // This is the old format, each cab is a file in WU
                 foreach (var file in potentialFiles)
                 {
-                    var edition = file.Split("_").Reverse().Skip(1).First();
+                    var edition = file.Split('_').Reverse().Skip(1).First();
 
                     if (availableEditions.Any(x => x.Edition == edition))
                         continue;
@@ -226,7 +259,9 @@ namespace WindowsUpdateLib
 
         private static UpdateData TrimDeltasFromUpdateData(UpdateData update)
         {
-            update.Xml.Files.File = update.Xml.Files.File.Where(x => !x.FileName.EndsWith(".psf", StringComparison.InvariantCultureIgnoreCase) && !x.FileName.StartsWith("Diff", StringComparison.InvariantCultureIgnoreCase)).ToArray();
+            update.Xml.Files.File = update.Xml.Files.File.Where(x => !x.FileName.EndsWith(".psf", StringComparison.InvariantCultureIgnoreCase)
+            && !x.FileName.StartsWith("Diff", StringComparison.InvariantCultureIgnoreCase)
+             && !x.FileName.StartsWith("Baseless", StringComparison.InvariantCultureIgnoreCase)).ToArray();
             return update;
         }
 
@@ -299,39 +334,39 @@ namespace WindowsUpdateLib
             CTAC ctac;
             UpdateData[] data;
 
-            ctac = FE3Handler.BuildCTAC("Windows.Team", OSSkuId.PPIPro, "10.0.15063.534", MachineType, "WIS", "", "CB", "rs2_release", false, false);
+            ctac = FE3Handler.BuildCTAC(OSSkuId.PPIPro, "10.0.15063.534", MachineType, "WIS", "", "CB", "rs2_release", false);
             data = await FE3Handler.GetUpdates(null, ctac, null, "ProductRelease");
             AddUpdatesIfNotPresentAlready(updates, data);
 
-            ctac = FE3Handler.BuildCTAC("Windows.Team", OSSkuId.PPIPro, "10.0.15063.534", MachineType, "WIF", "", "CB", "rs2_release", false, false);
+            ctac = FE3Handler.BuildCTAC(OSSkuId.PPIPro, "10.0.15063.534", MachineType, "WIF", "", "CB", "rs2_release", false);
             data = await FE3Handler.GetUpdates(null, ctac, null, "ProductRelease");
             AddUpdatesIfNotPresentAlready(updates, data);
 
-            ctac = FE3Handler.BuildCTAC("Windows.Desktop", OSSkuId.Professional, "10.0.16299.15", MachineType, "Retail", "", "CB", "rs3_release", true, false);
+            ctac = FE3Handler.BuildCTAC(OSSkuId.Professional, "10.0.16299.15", MachineType, "Retail", "", "CB", "rs3_release", true);
             data = await FE3Handler.GetUpdates(null, ctac, null, "ProductRelease");
             AddUpdatesIfNotPresentAlready(updates, data);
 
-            ctac = FE3Handler.BuildCTAC("Windows.Desktop", OSSkuId.Professional, "10.0.17134.1", MachineType, "Retail", "", "CB", "rs4_release", true, false);
+            ctac = FE3Handler.BuildCTAC(OSSkuId.Professional, "10.0.17134.1", MachineType, "Retail", "", "CB", "rs4_release", true);
             data = await FE3Handler.GetUpdates(null, ctac, null, "ProductRelease");
             AddUpdatesIfNotPresentAlready(updates, data);
 
-            ctac = FE3Handler.BuildCTAC("Windows.Desktop", OSSkuId.Professional, "10.0.17763.1217", MachineType, "Retail", "", "CB", "rs5_release", true, false);
+            ctac = FE3Handler.BuildCTAC(OSSkuId.Professional, "10.0.17763.1217", MachineType, "Retail", "", "CB", "rs5_release", true);
             data = await FE3Handler.GetUpdates(null, ctac, null, "ProductRelease");
             AddUpdatesIfNotPresentAlready(updates, data);
 
-            ctac = FE3Handler.BuildCTAC("Windows.Desktop", OSSkuId.Professional, "10.0.18362.836", MachineType, "Retail", "", "CB", "19h1_release", true, false);
+            ctac = FE3Handler.BuildCTAC(OSSkuId.Professional, "10.0.18362.836", MachineType, "Retail", "", "CB", "19h1_release", true);
             data = await FE3Handler.GetUpdates(null, ctac, null, "ProductRelease");
             AddUpdatesIfNotPresentAlready(updates, data);
 
-            ctac = FE3Handler.BuildCTAC("Windows.Desktop", OSSkuId.Professional, "10.0.18362.836", MachineType, "External", "ReleasePreview", "CB", "19h1_release", false, false);
+            ctac = FE3Handler.BuildCTAC(OSSkuId.Professional, "10.0.18362.836", MachineType, "External", "ReleasePreview", "CB", "19h1_release", false);
             data = await FE3Handler.GetUpdates(null, ctac, null, "ProductRelease");
             AddUpdatesIfNotPresentAlready(updates, data);
 
-            ctac = FE3Handler.BuildCTAC("Windows.Desktop", OSSkuId.Professional, "10.0.18362.836", MachineType, "External", "Beta", "CB", "19h1_release", false, false);
+            ctac = FE3Handler.BuildCTAC(OSSkuId.Professional, "10.0.18362.836", MachineType, "External", "Beta", "CB", "19h1_release", false);
             data = await FE3Handler.GetUpdates(null, ctac, null, "ProductRelease");
             AddUpdatesIfNotPresentAlready(updates, data);
 
-            ctac = FE3Handler.BuildCTAC("Windows.Desktop", OSSkuId.Professional, "10.0.18362.836", MachineType, "External", "Dev", "CB", "19h1_release", false, false);
+            ctac = FE3Handler.BuildCTAC(OSSkuId.Professional, "10.0.18362.836", MachineType, "External", "Dev", "CB", "19h1_release", false);
             data = await FE3Handler.GetUpdates(null, ctac, null, "ProductRelease");
             AddUpdatesIfNotPresentAlready(updates, data);
 

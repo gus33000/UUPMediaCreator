@@ -1403,19 +1403,152 @@ namespace WindowsUpdateLib
         private static string Action = "http://www.microsoft.com/SoftwareDistribution/Server/ClientWebService/";
         private static string MSCV = "0";
 
-        public static CTAC BuildCTAC(string DeviceFamily, OSSkuId ReportingSku, string ReportingVersion, MachineType MachineType, string Ring, string BranchName, string BranchReadinessLevel, string branch, bool SyncCurrentVersionOnly, bool IsStore)
+        public static CTAC BuildCTAC(
+            OSSkuId ReportingSku,
+            string ReportingVersion,
+            MachineType MachineType,
+            string FlightRing,
+            string FlightingBranchName,
+            string BranchReadinessLevel,
+            string CurrentBranch,
+            bool SyncCurrentVersionOnly,
+            bool IsStore = false
+        )
         {
             CTAC ctac = new CTAC();
 
             string content = "Mainline";
-            int flightEnabled = Ring == "Retail" ? 0 : 1;
+            int flightEnabled = FlightRing == "Retail" ? 0 : 1;
             string App = IsStore ? "WU_STORE" : "WU_OS";
 
-            ctac.DeviceAttributes = $"E:BranchReadinessLevel={BranchReadinessLevel}&CurrentBranch={branch}&OEMModel=VM&FlightRing={Ring}&AttrDataVer=98&InstallLanguage=en-US&OSUILocale=en-US&InstallationType=Client&FlightingBranchName={BranchName}&OSSkuId={(int)ReportingSku}&FlightContent={content}&App={App}&ProcessorManufacturer=GenuineIntel&OEMName_Uncleaned=VM&AppVer={ReportingVersion}&OSArchitecture={MachineType.ToString().ToUpper()}&IsFlightingEnabled={flightEnabled}&TelemetryLevel=3&DefaultUserRegion=244&WuClientVer={ReportingVersion}&OSVersion={ReportingVersion}&DeviceFamily={DeviceFamily}&IsRetailOS={flightEnabled + 1 % 1}";
+            string InstallType = "Client";
+            string ReportingPFN = "Client.OS.rs2";
+            string DeviceFamily = "Windows.Desktop";
+
+            if (ReportingSku == OSSkuId.Holographic)
+            {
+                InstallType = "FactoryOS";
+                ReportingPFN = "HOLOLENS.OS.rs2";
+                DeviceFamily = "Windows.Holographic";
+            }
+            else if (ReportingSku == OSSkuId.Lite)
+            {
+                InstallType = "FactoryOS";
+                ReportingPFN = "WCOSDevice0.OS";
+                DeviceFamily = "Windows.Core";
+            }
+            else if (ReportingSku == OSSkuId.Andromeda)
+            {
+                InstallType = "FactoryOS";
+                ReportingPFN = "WCOSDevice1.OS";
+                DeviceFamily = "Windows.Core";
+            }
+            else if (ReportingSku == OSSkuId.HubOS)
+            {
+                InstallType = "FactoryOS";
+                ReportingPFN = "WCOSDevice2.OS";
+                DeviceFamily = "Windows.Core";
+            }
+            else if (ReportingSku.ToString().Contains("Server", StringComparison.InvariantCultureIgnoreCase) && ReportingSku.ToString().Contains("Core", StringComparison.InvariantCultureIgnoreCase))
+            {
+                InstallType = "Server Core";
+                ReportingPFN = "Server.OS";
+                DeviceFamily = "Windows.Server";
+            }
+            else if (ReportingSku.ToString().Contains("Server", StringComparison.InvariantCultureIgnoreCase) && !ReportingSku.ToString().Contains("Core", StringComparison.InvariantCultureIgnoreCase))
+            {
+                InstallType = "Server";
+                ReportingPFN = "Server.OS";
+                DeviceFamily = "Windows.Server";
+            }
+            else if (ReportingSku == OSSkuId.PPIPro)
+            {
+                DeviceFamily = "Windows.Team";
+            }
+
+            ctac.DeviceAttributes = "E:IsContainerMgrInstalled=1&" +
+                                    $"FlightRing={FlightRing}&" +
+                                    "TelemetryLevel=3&" +
+                                    "HidOverGattReg=C:\\WINDOWS\\System32\\DriverStore\\FileRepository\\hidbthle.inf_amd64_0fc6b7cd4ccbc55c\\Microsoft.Bluetooth.Profiles.HidOverGatt.dll&" +
+                                    $"AppVer={ReportingVersion}&" +
+                                    "IsAutopilotRegistered=0&" +
+                                    "ProcessorIdentifier=AMD64 Family 23 Model 1 Stepping 1&" +
+                                    "OEMModel=System Product Name&" +
+                                    "ProcessorManufacturer=AuthenticAMD&" +
+                                    "InstallDate=1577722757&" +
+                                    "OEMModelBaseBoard=CROSSHAIR VI HERO&" +
+                                    $"BranchReadinessLevel={BranchReadinessLevel}&" +
+                                    "DataExpDateEpoch_20H1=0&" +
+                                    "IsCloudDomainJoined=0&" +
+                                    "Bios=2019&" +
+                                    "DchuAmdGrfxVen=4098&" +
+                                    "IsDeviceRetailDemo=0&" +
+                                    $"FlightingBranchName={FlightingBranchName}&" +
+                                    "OSUILocale=en-US&" +
+                                    $"DeviceFamily={DeviceFamily}&" +
+                                    "UpgEx_20H1=Green&" +
+                                    $"WuClientVer={ReportingVersion}&" +
+                                    $"IsFlightingEnabled={flightEnabled}&" +
+                                    $"OSSkuId={(int)ReportingSku}&" +
+                                    "GStatus_20H1=2&" +
+                                    $"App={App}&" +
+                                    $"CurrentBranch={CurrentBranch}&" +
+                                    "InstallLanguage=en-US&" +
+                                    "OEMName_Uncleaned=System%20manufacturer&" +
+                                    $"InstallationType={InstallType}&" +
+                                    "AttrDataVer=98&" +
+                                    "IsEdgeWithChromiumInstalled=1&" +
+                                    "TimestampEpochString_20H1=1593425114&" +
+                                    $"OSVersion={ReportingVersion}&" +
+                                    "TencentType=1&" +
+                                    $"FlightContent={content}&" +
+                                    "Steam=URL%3Asteam%20protocol&" +
+                                    "Free=8to16&" +
+                                    "TencentReg=79 d0 01 d7 9f 54 d5 01&" +
+                                    "FirmwareVersion=7704&" +
+                                    "DchuAmdGrfxExists=1&" +
+                                    "SdbVer_20H1=2340&" +
+                                    $"OSArchitecture={MachineType.ToString().ToUpper()}&" +
+                                    "DefaultUserRegion=244&" +
+                                    "UpdateManagementGroup=2";
 
             if (ReportingSku == OSSkuId.EnterpriseS || ReportingSku == OSSkuId.EnterpriseSN)
             {
                 ctac.DeviceAttributes += "&BlockFeatureUpdates=1";
+            }
+
+            if (ReportingSku == OSSkuId.Holographic)
+            {
+                ctac.DeviceAttributes += $"OneCoreFwV={ReportingVersion}" +
+                                        $"OneCoreSwV={ReportingVersion}" +
+                                        $"OneCoreManufacturerModelName=HoloLens" +
+                                        $"OneCoreManufacturer=Microsoft Corporation" +
+                                        $"OneCoreOperatorName=000-88";
+            }
+            else if (ReportingSku == OSSkuId.HubOS)
+            {
+                ctac.DeviceAttributes += $"OneCoreFwV={ReportingVersion}" +
+                                        $"OneCoreSwV={ReportingVersion}" +
+                                        $"OneCoreManufacturerModelName=Surface Hub 2X" +
+                                        $"OneCoreManufacturer=Microsoft Corporation" +
+                                        $"OneCoreOperatorName=000-88";
+            }
+            else if (ReportingSku == OSSkuId.Andromeda)
+            {
+                ctac.DeviceAttributes += $"OneCoreFwV={ReportingVersion}" +
+                                        $"OneCoreSwV={ReportingVersion}" +
+                                        $"OneCoreManufacturerModelName=Andromeda" +
+                                        $"OneCoreManufacturer=Microsoft Corporation" +
+                                        $"OneCoreOperatorName=000-88";
+            }
+
+            else if (ReportingSku == OSSkuId.Lite)
+            {
+                ctac.DeviceAttributes += $"OneCoreFwV={ReportingVersion}" +
+                                        $"OneCoreSwV={ReportingVersion}" +
+                                        $"OneCoreManufacturerModelName=Santorini" +
+                                        $"OneCoreManufacturer=Microsoft Corporation" +
+                                        $"OneCoreOperatorName=000-88";
             }
 
             ctac.CallerAttributes = "E:Interactive=1&IsSeeker=1&SheddingAware=1&";
@@ -1430,7 +1563,7 @@ namespace WindowsUpdateLib
             ctac.Products = "";
             if (!IsStore)
             {
-                ctac.Products = $"PN=Client.OS.rs2.{MachineType}&Branch={branch}&PrimaryOSProduct=1&Repairable=1&V={ReportingVersion};";
+                ctac.Products = $"PN={ReportingPFN}.{MachineType}&Branch={CurrentBranch}&PrimaryOSProduct=1&Repairable=1&V={ReportingVersion};";
             }
 
             ctac.SyncCurrentVersionOnly = SyncCurrentVersionOnly;
@@ -2114,6 +2247,18 @@ namespace WindowsUpdateLib
             }
 
             return "";
+        }
+
+        public static async Task<CGetExtendedUpdateInfo2Response.FileLocation[]> GetFileUrls(UpdateData updateData, string token, CTAC ctac)
+        {
+            var result = await GetExtendedUpdateInfo2(token, updateData.Xml.UpdateIdentity.UpdateID, updateData.Xml.UpdateIdentity.RevisionNumber, ctac);
+
+            if (result.GetExtendedUpdateInfo2Result.FileLocations != null)
+            {
+                return result.GetExtendedUpdateInfo2Result.FileLocations.FileLocation;
+            }
+
+            return null;
         }
         #endregion
     }
