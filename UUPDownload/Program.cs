@@ -20,7 +20,7 @@ namespace UUPDownload
             {
                 Logging.Log("UUPDownload - Downloads complete updates from Microsoft's Unified Update Platform");
                 Logging.Log("Copyright (c) 2020, Gustave Monce - gus33000.me - @gus33000");
-                Logging.Log("Released under the MIT license at github.com/gus33000/img2ffu");
+                Logging.Log("Released under the MIT license at github.com/gus33000/UUPMediaCreator");
                 Logging.Log("");
 
                 try
@@ -68,7 +68,7 @@ namespace UUPDownload
                     }
                 }
 
-                string OutputFolder = Path.Combine(o.OutputFolder, update.Xml.LocalizedProperties.Title);
+                string OutputFolder = Path.Combine(o.OutputFolder, update.Xml.LocalizedProperties.Title + " (" + o.MachineType.ToString() + ")");
 
                 int returnCode = 0;
 
@@ -102,9 +102,9 @@ namespace UUPDownload
                         outputtext += "  checksum=" + file.DigestAlgorithm.ToLower().Replace("sha", "sha-") + "=" + Base64Decode(file.Digest).ToLower() + "\n";
                         outputtext += "\n";
                     }
-                    File.WriteAllText(update.Xml.LocalizedProperties.Title + ".txt", outputtext);
+                    File.WriteAllText(update.Xml.LocalizedProperties.Title + " (" + o.MachineType.ToString() + ").txt", outputtext);
 
-                    string cmdline = "--no-conf --log-level=info --log=\"aria2_download.log\" --allow-overwrite=true --auto-file-renaming=false -i \"" + update.Xml.LocalizedProperties.Title + ".txt\"";
+                    string cmdline = "--no-conf --log-level=info --log=\"aria2_download.log\" --allow-overwrite=true --auto-file-renaming=false -i \"" + update.Xml.LocalizedProperties.Title + " (" + o.MachineType.ToString() + ").txt\"";
                     Process proc = new Process();
                     proc.StartInfo = new ProcessStartInfo("aria2c.exe", cmdline);
                     proc.StartInfo.UseShellExecute = false;
