@@ -59,9 +59,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Imaging.NET", "src\Imaging.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UUPMediaConverterCli", "src\UUPMediaConverterCli\UUPMediaConverterCli.csproj", "{0BAE9C75-B86F-4976-B24D-7A4B54853342}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UUPDownload", "UUPDownload\UUPDownload.csproj", "{67CB3F20-E40A-41F8-B159-A8857A7DC409}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UUPDownload", "src\UUPDownload\UUPDownload.csproj", "{67CB3F20-E40A-41F8-B159-A8857A7DC409}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindowsUpdateLib.NET", "WindowsUpdateLib.NET\WindowsUpdateLib.NET.csproj", "{B601B162-CDCD-492A-A8CF-747E0D3F6F83}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindowsUpdateLib.NET", "src\WindowsUpdateLib.NET\WindowsUpdateLib.NET.csproj", "{B601B162-CDCD-492A-A8CF-747E0D3F6F83}"
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution

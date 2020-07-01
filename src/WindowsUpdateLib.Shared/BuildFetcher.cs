@@ -358,15 +358,19 @@ namespace WindowsUpdateLib
             data = await FE3Handler.GetUpdates(null, ctac, null, "ProductRelease");
             AddUpdatesIfNotPresentAlready(updates, data);
 
-            ctac = FE3Handler.BuildCTAC(OSSkuId.Professional, "10.0.18362.836", MachineType, "External", "ReleasePreview", "CB", "19h1_release", false);
+            ctac = FE3Handler.BuildCTAC(OSSkuId.Professional, "10.0.19041.200", MachineType, "Retail", "", "CB", "vb_release", true);
             data = await FE3Handler.GetUpdates(null, ctac, null, "ProductRelease");
             AddUpdatesIfNotPresentAlready(updates, data);
 
-            ctac = FE3Handler.BuildCTAC(OSSkuId.Professional, "10.0.18362.836", MachineType, "External", "Beta", "CB", "19h1_release", false);
+            ctac = FE3Handler.BuildCTAC(OSSkuId.Professional, "10.0.19041.200", MachineType, "External", "ReleasePreview", "CB", "19h1_release", false);
             data = await FE3Handler.GetUpdates(null, ctac, null, "ProductRelease");
             AddUpdatesIfNotPresentAlready(updates, data);
 
-            ctac = FE3Handler.BuildCTAC(OSSkuId.Professional, "10.0.18362.836", MachineType, "External", "Dev", "CB", "19h1_release", false);
+            ctac = FE3Handler.BuildCTAC(OSSkuId.Professional, "10.0.19041.200", MachineType, "External", "Beta", "CB", "19h1_release", false);
+            data = await FE3Handler.GetUpdates(null, ctac, null, "ProductRelease");
+            AddUpdatesIfNotPresentAlready(updates, data);
+
+            ctac = FE3Handler.BuildCTAC(OSSkuId.Professional, "10.0.19041.200", MachineType, "External", "Dev", "CB", "19h1_release", false);
             data = await FE3Handler.GetUpdates(null, ctac, null, "ProductRelease");
             AddUpdatesIfNotPresentAlready(updates, data);
 

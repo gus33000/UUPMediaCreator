@@ -1494,7 +1494,7 @@ namespace WindowsUpdateLib
                                     $"App={App}&" +
                                     $"CurrentBranch={CurrentBranch}&" +
                                     "InstallLanguage=en-US&" +
-                                    "OEMName_Uncleaned=System%20manufacturer&" +
+                                    "OEMName_Uncleaned=System manufacturer&" +
                                     $"InstallationType={InstallType}&" +
                                     "AttrDataVer=98&" +
                                     "IsEdgeWithChromiumInstalled=1&" +
