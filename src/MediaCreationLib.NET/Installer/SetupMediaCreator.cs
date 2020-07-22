@@ -104,7 +104,11 @@ namespace MediaCreationLib.Installer
                     {
                         if (!File.Exists(Path.Combine(UUPPath, file)))
                         {
-                            break;
+                            file = pkg.Payload.PayloadItem.Path;
+                            if (!File.Exists(Path.Combine(UUPPath, file)))
+                            {
+                                break;
+                            }
                         }
 
                         BaseESD = Path.Combine(UUPPath, file);

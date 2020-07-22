@@ -1385,7 +1385,15 @@ namespace WindowsUpdateLib
         IoTEnterprise = 0x000000BC,
         Lite = 0x000000BD,
         UnknownBE,
-        IoTEnterpriseS = 0x000000BF
+        IoTEnterpriseS = 0x000000BF,
+        XboxSystemOS = 0x000000C0,
+        XboxNativeOS = 0x000000C1,
+        XboxGameOS = 0x000000C2,
+        XboxERAOS = 0x000000C3,
+        XboxDurangoHostOS = 0x000000C4,
+        XboxScarlettHostOS = 0x000000C5,
+        AzureStackHCIServerCore = 0x00000196,
+        TurbineServer = 0x00000197
     }
 
     public class CTAC
@@ -1472,9 +1480,9 @@ namespace WindowsUpdateLib
                                     "HidOverGattReg=C:\\WINDOWS\\System32\\DriverStore\\FileRepository\\hidbthle.inf_amd64_0fc6b7cd4ccbc55c\\Microsoft.Bluetooth.Profiles.HidOverGatt.dll&" +
                                     $"AppVer={ReportingVersion}&" +
                                     "IsAutopilotRegistered=0&" +
-                                    "ProcessorIdentifier=AMD64 Family 23 Model 1 Stepping 1&" +
+                                    "ProcessorIdentifier=GenuineIntel Family 23 Model 1 Stepping 1&" +
                                     "OEMModel=System Product Name&" +
-                                    "ProcessorManufacturer=AuthenticAMD&" +
+                                    "ProcessorManufacturer=GenuineIntel&" +
                                     "InstallDate=1577722757&" +
                                     "OEMModelBaseBoard=CROSSHAIR VI HERO&" +
                                     $"BranchReadinessLevel={BranchReadinessLevel}&" +

@@ -28,7 +28,7 @@ namespace MediaCreationLib.BootlegEditions
             LPFolder = null;
         }
 
-        private static void ProvisionMissingApps()
+        /*private static void ProvisionMissingApps()
         {
             string SourceEdition = "Professional";
             string TargetEdition = "PPIPro";
@@ -210,7 +210,7 @@ namespace MediaCreationLib.BootlegEditions
 
         exit:
             return;
-        }
+        }*/
 
         public static bool CreateHackedEditionFromMountedImage(
             string UUPPath,
@@ -281,7 +281,9 @@ namespace MediaCreationLib.BootlegEditions
                 LTSB = true;
             }
 
-            bool HasEditionPack = File.Exists(Path.Combine(UUPPath, $"microsoft-windows-editionpack-{EditionID}-package.esd"));
+            bool HasEditionPack = Directory.EnumerateFiles(UUPPath, "*.esd", SearchOption.AllDirectories).Any(x =>
+                Path.GetFileName(x).Equals($"microsoft-windows-editionpack-{EditionID}-package.esd", StringComparison.InvariantCulture)
+            );
             progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, "Has edition pack: " + HasEditionPack);
 
             string TemporaryFolder = Path.GetTempFileName();
@@ -296,7 +298,7 @@ namespace MediaCreationLib.BootlegEditions
             //
             progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, "Generating edition manifest");
             string packageFilter = $"microsoft-windows-edition*{EditionID}-*.esd";
-            var packages = Directory.EnumerateFiles(UUPPath, packageFilter);
+            var packages = Directory.EnumerateFiles(UUPPath, packageFilter, SearchOption.AllDirectories);
 
             string manifestFileName = Path.GetFileName(manifestPath).Replace(SourceEdition, EditionID);
             string catalogFileName = Path.GetFileName(catalogPath).Replace(SourceEdition, EditionID);
@@ -339,7 +341,7 @@ namespace MediaCreationLib.BootlegEditions
                 Directory.CreateDirectory(LPFolder);
 
                 string lpfilter1 = $"*fre_client_{languagecode}_lp.cab";
-                var paths = Directory.EnumerateFiles(UUPPath, lpfilter1);
+                var paths = Directory.EnumerateFiles(UUPPath, lpfilter1, SearchOption.AllDirectories);
                 if (paths.Count() > 0)
                 {
                     string lppackage = paths.First();
@@ -353,7 +355,16 @@ namespace MediaCreationLib.BootlegEditions
                 else
                 {
                     string lpfilter2 = $"microsoft-windows-client-languagepack-package_{languagecode}-*-{languagecode}.esd";
-                    string lppackage = Directory.EnumerateFiles(UUPPath, lpfilter2).First();
+                    string lppackage = "";
+                    if (Directory.EnumerateFiles(UUPPath, lpfilter2, SearchOption.AllDirectories).Count() > 0)
+                    {
+                        lppackage = Directory.EnumerateFiles(UUPPath, lpfilter2, SearchOption.AllDirectories).First();
+                    }
+                    else
+                    {
+                        lpfilter2 = $"microsoft-windows-client-languagepack-package_{languagecode}~*~{languagecode}~.esd";
+                        lppackage = Directory.EnumerateFiles(UUPPath, lpfilter2, SearchOption.AllDirectories).First();
+                    }
 
                     result = imagingInterface.ApplyImage(lppackage, 1, LPFolder, PreserveACL: false, progressCallback: callback2);
                     if (!result)

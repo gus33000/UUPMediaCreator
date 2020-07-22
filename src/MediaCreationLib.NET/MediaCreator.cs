@@ -224,8 +224,12 @@ namespace MediaCreationLib
 
             progressCallback?.Invoke(Common.ProcessPhase.ReadingMetadata, true, 0, "Enumerating files");
 
-            string WinREWIMFilePath = Path.Combine(UUPPath, "Winre.wim");
-            string MediaRootPath = Path.Combine(UUPPath, "MediaRoot");
+            var temp = Path.GetTempFileName();
+            File.Delete(temp);
+            Directory.CreateDirectory(temp);
+
+            string WinREWIMFilePath = Path.Combine(temp, "Winre.wim");
+            string MediaRootPath = Path.Combine(temp, "MediaRoot");
             string InstallWIMFilePath = CompressionType == Common.CompressionType.LZMS ?
                 Path.Combine(MediaRootPath, "sources", "install.esd") :
                 Path.Combine(MediaRootPath, "sources", "install.wim");
@@ -277,8 +281,12 @@ namespace MediaCreationLib
         {
             progressCallback?.Invoke(Common.ProcessPhase.ReadingMetadata, true, 0, "Enumerating files");
 
-            string WinREWIMFilePath = Path.Combine(UUPPath, "Winre.wim");
-            string MediaRootPath = Path.Combine(UUPPath, "MediaRoot");
+            var temp = Path.GetTempFileName();
+            File.Delete(temp);
+            Directory.CreateDirectory(temp);
+
+            string WinREWIMFilePath = Path.Combine(temp, "Winre.wim");
+            string MediaRootPath = Path.Combine(temp, "MediaRoot");
             string InstallWIMFilePath = CompressionType == Common.CompressionType.LZMS ?
                 Path.Combine(MediaRootPath, "sources", "install.esd") :
                 Path.Combine(MediaRootPath, "sources", "install.wim");

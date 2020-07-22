@@ -305,7 +305,11 @@ namespace MediaCreationLib.Planning
 
                 if (!File.Exists(Path.Combine(UUPPath, file)))
                 {
-                    goto error;
+                    file = pkg.Payload.PayloadItem.Path;
+                    if (!File.Exists(Path.Combine(UUPPath, file)))
+                    {
+                        goto error;
+                    }
                 }
 
                 if (virtualWindowsEditions == null && file.EndsWith(".esd", StringComparison.InvariantCultureIgnoreCase) && file.ToLower().Contains("microsoft-windows-editionspecific"))
@@ -355,7 +359,11 @@ namespace MediaCreationLib.Planning
 
                 if (!File.Exists(Path.Combine(UUPPath, file)))
                 {
-                    goto error;
+                    file = pkg.Payload.PayloadItem.Path;
+                    if (!File.Exists(Path.Combine(UUPPath, file)))
+                    {
+                        goto error;
+                    }
                 }
 
                 if (editionMatrixItems == null && file.EndsWith(".esd", StringComparison.InvariantCultureIgnoreCase) && file.ToLower().Contains("microsoft-windows-editionspecific"))

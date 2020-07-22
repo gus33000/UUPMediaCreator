@@ -99,7 +99,11 @@ namespace MediaCreationLib.BaseEditions
 
                 if (!File.Exists(Path.Combine(UUPPath, file)))
                 {
-                    goto exit;
+                    file = pkg.Payload.PayloadItem.Path;
+                    if (!File.Exists(Path.Combine(UUPPath, file)))
+                    {
+                        goto exit;
+                    }
                 }
 
                 if (feature.PackageType == "MetadataESD")
@@ -201,7 +205,7 @@ namespace MediaCreationLib.BaseEditions
 
         private static string ConvertCABToESD(string CABPath, ProgressCallback progressCallback, int progressoffset, int progressscale)
         {
-            string CABFileNameWithoutExtension = CABPath.Contains(".") ? string.Join(".", CABPath.Split('.').Reverse().Skip(1).Reverse()) : CABPath;
+            string CABFileNameWithoutExtension = Path.GetTempPath() + (CABPath.Contains(".") ? string.Join(".", CABPath.Split('.').Reverse().Skip(1).Reverse()) : CABPath).Split('\\').Last();
             if (File.Exists(CABFileNameWithoutExtension + ".ESD"))
                 return CABFileNameWithoutExtension + ".ESD";
 

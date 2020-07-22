@@ -110,7 +110,7 @@ namespace UUPMediaConverterCli
                         UUPPath,
                         LanguageCode,
                         false,
-                        Common.CompressionType.LZMS,
+                        Common.CompressionType.LZX,
                         callback);
             }
             catch (Exception ex)
@@ -119,7 +119,7 @@ namespace UUPMediaConverterCli
                 Log(ex.ToString(), severity: LoggingLevel.Error);
             }
             Console.WriteLine("The end");
-            Console.ReadLine();
+            //Console.ReadLine();
         }
 
         public enum LoggingLevel

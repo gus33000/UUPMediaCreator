@@ -68,7 +68,9 @@ namespace UUPDownload
                     }
                 }
 
-                string OutputFolder = Path.Combine(o.OutputFolder, update.Xml.LocalizedProperties.Title + " (" + o.MachineType.ToString() + ")");
+                string name = update.Xml.LocalizedProperties.Title + " (" + o.MachineType.ToString() + ") (" + update.Xml.UpdateIdentity.UpdateID + "." + update.Xml.UpdateIdentity.RevisionNumber + ")";
+
+                string OutputFolder = Path.Combine(o.OutputFolder, name);
 
                 int returnCode = 0;
 
@@ -102,9 +104,9 @@ namespace UUPDownload
                         outputtext += "  checksum=" + file.DigestAlgorithm.ToLower().Replace("sha", "sha-") + "=" + Base64Decode(file.Digest).ToLower() + "\n";
                         outputtext += "\n";
                     }
-                    File.WriteAllText(update.Xml.LocalizedProperties.Title + " (" + o.MachineType.ToString() + ").txt", outputtext);
+                    File.WriteAllText(name + ".txt", outputtext);
 
-                    string cmdline = "--no-conf --log-level=info --log=\"aria2_download.log\" --allow-overwrite=true --auto-file-renaming=false -i \"" + update.Xml.LocalizedProperties.Title + " (" + o.MachineType.ToString() + ").txt\"";
+                    string cmdline = "--no-conf --log-level=info --log=\"" + name + ".log\" --allow-overwrite=true --auto-file-renaming=false -i \"" + name + ".txt\"";
                     Process proc = new Process();
                     proc.StartInfo = new ProcessStartInfo("aria2c.exe", cmdline);
                     proc.StartInfo.UseShellExecute = false;
