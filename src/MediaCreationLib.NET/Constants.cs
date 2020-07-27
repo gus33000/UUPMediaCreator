@@ -7,7 +7,7 @@ namespace MediaCreationLib
     {
         internal static Dictionary<string, string[]> EditionDowngradeDict = new Dictionary<string, string[]>()
         {
-            { "PPIPro", new string[] { "Professional", "ProfessionalN" } },
+            //{ "PPIPro", new string[] { "Professional", "ProfessionalN" } },
             { "Professional", new string[] { "Core" } },
             { "Core", new string[] { "CoreCountrySpecific" } },
             { "CoreCountrySpecific", new string[] { "Starter" } },

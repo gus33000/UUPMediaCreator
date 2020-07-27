@@ -179,7 +179,13 @@ namespace MediaCreationLib.Installer
 
             progressCallback?.Invoke(Common.ProcessPhase.CreatingWindowsInstaller, true, 0, "Backporting missing files");
 
-            string langcode = Directory.EnumerateDirectories(Path.Combine(MediaPath, "sources"), "??-??").First().Replace(Path.Combine(MediaPath, "sources") + "\\", "");
+
+            var dirs = Directory.EnumerateDirectories(Path.Combine(MediaPath, "sources"), "??-??");
+            if (dirs.Count() == 0)
+            {
+                dirs = Directory.EnumerateDirectories(Path.Combine(MediaPath, "sources"), "*-*");
+            }
+            string langcode = dirs.First().Replace(Path.Combine(MediaPath, "sources") + "\\", "");
 
             foreach (string file in Constants.SetupFilesToBackport)
             {

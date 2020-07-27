@@ -616,6 +616,10 @@ namespace Imaging
                         var wiminfo = WimgApi.GetImageInformationAsString(wimHandle);
                         wim = WIMInformationXML.DeserializeWIM(wiminfo);
                     }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message + " - " + ex.ToString());
+                    }
                     finally
                     {
 

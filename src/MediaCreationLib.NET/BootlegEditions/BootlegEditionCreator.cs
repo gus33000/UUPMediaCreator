@@ -244,7 +244,13 @@ namespace MediaCreationLib.BootlegEditions
                 goto exit;
 
             progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, "Searching index for : " + SourceEdition);
-            var srcimage = wiminfo.IMAGE.First(x => x.WINDOWS.EDITIONID.Equals(SourceEdition, StringComparison.InvariantCultureIgnoreCase));
+            var srcimage = wiminfo.IMAGE.First(x =>
+            {
+                var img = x;
+                var win = img.WINDOWS;
+                var ed = win.EDITIONID;
+                return ed.Equals(SourceEdition, StringComparison.InvariantCultureIgnoreCase);
+            });
             var index = int.Parse(srcimage.INDEX);
             var languagecode = srcimage.WINDOWS.LANGUAGES.DEFAULT;
             progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, "Source index: " + index);
