@@ -1721,7 +1721,7 @@ namespace WindowsUpdateLib
         #endregion
 
         #region WU functions
-        public static async Task<CGetCookieResponse.GetCookieResponse> GetCookie()
+        public static async Task<(CGetCookieResponse.GetCookieResponse, string)> GetCookie()
         {
             CSOAPCommon.Envelope envelope = GetEnveloppe("GetCookie", null, false);
 
@@ -1742,10 +1742,10 @@ namespace WindowsUpdateLib
 
             CSOAPCommon.Envelope renvelope = DeserializeSOAPEnvelope(response);
 
-            return renvelope.Body.GetCookieResponse;
+            return (renvelope.Body.GetCookieResponse, response);
         }
 
-        public static async Task<CGetExtendedUpdateInfoResponse.GetExtendedUpdateInfoResponse> GetExtendedUpdateInfo(
+        public static async Task<(CGetExtendedUpdateInfoResponse.GetExtendedUpdateInfoResponse, string)> GetExtendedUpdateInfo(
             CSOAPCommon.Cookie cookie,
             string token,
             string[] revisionId,
@@ -1787,11 +1787,11 @@ namespace WindowsUpdateLib
 
             CSOAPCommon.Envelope renvelope = DeserializeSOAPEnvelope(response);
 
-            return renvelope.Body.GetExtendedUpdateInfoResponse;
+            return (renvelope.Body.GetExtendedUpdateInfoResponse, response);
         }
 
 
-        public static async Task<CGetExtendedUpdateInfo2Response.GetExtendedUpdateInfo2Response> GetExtendedUpdateInfo2(
+        public static async Task<(CGetExtendedUpdateInfo2Response.GetExtendedUpdateInfo2Response, string)> GetExtendedUpdateInfo2(
             string token,
             string UpdateID,
             string RevisionNumber,
@@ -1830,10 +1830,10 @@ namespace WindowsUpdateLib
 
             CSOAPCommon.Envelope renvelope = DeserializeSOAPEnvelope(response);
 
-            return renvelope.Body.GetExtendedUpdateInfo2Response;
+            return (renvelope.Body.GetExtendedUpdateInfo2Response, response);
         }
 
-        public static async Task<CSyncUpdatesResponse.SyncUpdatesResponse> SyncUpdates(
+        public static async Task<(CSyncUpdatesResponse.SyncUpdatesResponse, string)> SyncUpdates(
             CSOAPCommon.Cookie cookie,
             string token,
             string[] InstalledNonLeafUpdateIDs,
@@ -2130,19 +2130,19 @@ namespace WindowsUpdateLib
 
             CSOAPCommon.Envelope renvelope = DeserializeSOAPEnvelope(response);
 
-            return renvelope.Body.SyncUpdatesResponse;
+            return (renvelope.Body.SyncUpdatesResponse, response);
         }
         #endregion
 
         #region Application specific functions
         public static async Task<UpdateData[]> GetUpdates(string categoryId, CTAC ctac, string token, string filter = "Application") // Or ProductRelease
         {
-            var cookie = await GetCookie();
+            (CGetCookieResponse.GetCookieResponse cookie, string cookieresp) = await GetCookie();
 
             List<string> InstalledNonLeafUpdateIDs = new List<string>();
             List<string> OtherCachedUpdateIDs = new List<string>();
 
-            List<CSyncUpdatesResponse.SyncUpdatesResponse> responses = new List<CSyncUpdatesResponse.SyncUpdatesResponse>();
+            List<(CSyncUpdatesResponse.SyncUpdatesResponse, string)> responses = new List<(CSyncUpdatesResponse.SyncUpdatesResponse, string)>();
 
             //
             // Scan all updates
@@ -2154,15 +2154,15 @@ namespace WindowsUpdateLib
                 var result = await SyncUpdates(cookie.GetCookieResult, token, InstalledNonLeafUpdateIDs.ToArray(), OtherCachedUpdateIDs.ToArray(), new string[] { categoryId }, ctac);
 
                 // Refresh the cookie
-                cookie.GetCookieResult.EncryptedData = result.SyncUpdatesResult.NewCookie.EncryptedData;
-                cookie.GetCookieResult.Expiration = result.SyncUpdatesResult.NewCookie.Expiration;
+                cookie.GetCookieResult.EncryptedData = result.Item1.SyncUpdatesResult.NewCookie.EncryptedData;
+                cookie.GetCookieResult.Expiration = result.Item1.SyncUpdatesResult.NewCookie.Expiration;
 
-                if (result.SyncUpdatesResult.ExtendedUpdateInfo == null || result.SyncUpdatesResult.ExtendedUpdateInfo.Updates.Update == null || result.SyncUpdatesResult.ExtendedUpdateInfo.Updates.Update.Count() == 0)
+                if (result.Item1.SyncUpdatesResult.ExtendedUpdateInfo == null || result.Item1.SyncUpdatesResult.ExtendedUpdateInfo.Updates.Update == null || result.Item1.SyncUpdatesResult.ExtendedUpdateInfo.Updates.Update.Count() == 0)
                 {
                     break;
                 }
 
-                foreach (var update in result.SyncUpdatesResult.ExtendedUpdateInfo.Updates.Update)
+                foreach (var update in result.Item1.SyncUpdatesResult.ExtendedUpdateInfo.Updates.Update)
                 {
                     InstalledNonLeafUpdateIDs.Add(update.ID);
                     OtherCachedUpdateIDs.Add(update.ID);
@@ -2175,11 +2175,11 @@ namespace WindowsUpdateLib
 
             foreach (var response in responses.ToArray())
             {
-                foreach (var update in response.SyncUpdatesResult.ExtendedUpdateInfo.Updates.Update)
+                foreach (var update in response.Item1.SyncUpdatesResult.ExtendedUpdateInfo.Updates.Update)
                 {
                     UpdateData data = new UpdateData() { Update = update };
 
-                    foreach (var updateInfo in response.SyncUpdatesResult.NewUpdates.UpdateInfo)
+                    foreach (var updateInfo in response.Item1.SyncUpdatesResult.NewUpdates.UpdateInfo)
                     {
                         if (ulong.Parse(update.ID) == ulong.Parse(updateInfo.ID))
                         {
@@ -2216,6 +2216,8 @@ namespace WindowsUpdateLib
                         continue;
                     }
 
+                    data.SyncUpdatesResponse = response.Item2;
+
                     updateDatas.Add(data);
                 }
             }
@@ -2243,9 +2245,9 @@ namespace WindowsUpdateLib
         {
             var result = await GetExtendedUpdateInfo2(token, updateData.Xml.UpdateIdentity.UpdateID, updateData.Xml.UpdateIdentity.RevisionNumber, ctac);
 
-            if (result.GetExtendedUpdateInfo2Result.FileLocations != null)
+            if (result.Item1.GetExtendedUpdateInfo2Result.FileLocations != null)
             {
-                foreach (var fileLocation in result.GetExtendedUpdateInfo2Result.FileLocations.FileLocation)
+                foreach (var fileLocation in result.Item1.GetExtendedUpdateInfo2Result.FileLocations.FileLocation)
                 {
                     if (fileLocation.FileDigest == fileDigest)
                     {
@@ -2261,9 +2263,11 @@ namespace WindowsUpdateLib
         {
             var result = await GetExtendedUpdateInfo2(token, updateData.Xml.UpdateIdentity.UpdateID, updateData.Xml.UpdateIdentity.RevisionNumber, ctac);
 
-            if (result.GetExtendedUpdateInfo2Result.FileLocations != null)
+            updateData.GEI2Response = result.Item2;
+
+            if (result.Item1.GetExtendedUpdateInfo2Result.FileLocations != null)
             {
-                return result.GetExtendedUpdateInfo2Result.FileLocations.FileLocation;
+                return result.Item1.GetExtendedUpdateInfo2Result.FileLocations.FileLocation;
             }
 
             return null;
@@ -2279,5 +2283,7 @@ namespace WindowsUpdateLib
         public CAppxMetadataJSON.AppxMetadata AppxMetadata;
         public CTAC CTAC;
         public string CachedMetadata;
+        public string SyncUpdatesResponse;
+        public string GEI2Response;
     }
 }

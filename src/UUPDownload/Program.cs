@@ -67,20 +67,6 @@ namespace UUPDownload
 
                 string OutputFolder = Path.Combine(o.OutputFolder, name);
 
-                if (!Directory.Exists(OutputFolder))
-                {
-                    Directory.CreateDirectory(OutputFolder);
-                    try
-                    {
-                        File.WriteAllText(Path.Combine(OutputFolder, update.Xml.LocalizedProperties.Title + " (" + o.MachineType.ToString() + ").txt"), JsonConvert.SerializeObject(update, Newtonsoft.Json.Formatting.Indented));
-                    }
-                    catch (Exception ex)
-                    {
-                        Logging.Log(ex.ToString(), Logging.LoggingLevel.Error);
-                        throw ex;
-                    }
-                }
-
                 Logging.Log("Getting CompDBs...");
                 var compDBs = await GetCompDBs(update);
                 //Logging.Log("Done CompDBs...");
@@ -105,6 +91,20 @@ namespace UUPDownload
                 {
                     Logging.Log("Getting file urls...");
                     var urls = await FE3Handler.GetFileUrls(update, null, ctac);
+
+                    if (!Directory.Exists(OutputFolder))
+                    {
+                        Directory.CreateDirectory(OutputFolder);
+                        try
+                        {
+                            File.WriteAllText(Path.Combine(OutputFolder, update.Xml.LocalizedProperties.Title + " (" + o.MachineType.ToString() + ").txt"), JsonConvert.SerializeObject(update, Newtonsoft.Json.Formatting.Indented));
+                        }
+                        catch (Exception ex)
+                        {
+                            Logging.Log(ex.ToString(), Logging.LoggingLevel.Error);
+                            throw ex;
+                        }
+                    }
 
                     /*Logging.Log("Generating aria2 script...");
                     string outputtext = "";
