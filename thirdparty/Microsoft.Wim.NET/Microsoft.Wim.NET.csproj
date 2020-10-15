@@ -1,128 +1,27 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{5E74B6C3-20F3-4ED8-A1E5-98325B77A515}</ProjectGuid>
+    <TargetFramework>net5.0</TargetFramework>
     <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Microsoft.Wim.NET</RootNamespace>
-    <AssemblyName>Microsoft.Wim.NET</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <Deterministic>true</Deterministic>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
-    <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin\x64\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <LangVersion>7.3</LangVersion>
-    <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
     <OutputPath>bin\x64\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <LangVersion>7.3</LangVersion>
-    <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
-    <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin\x86\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>x86</PlatformTarget>
-    <LangVersion>7.3</LangVersion>
-    <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <OutputPath>bin\x86\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>x86</PlatformTarget>
-    <LangVersion>7.3</LangVersion>
-    <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xml" />
+    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+    <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
   </ItemGroup>
-  <ItemGroup>
-    <Compile Include="CopyFileProgress.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="WimCompressionType.cs" />
-    <Compile Include="WimFileInfo.cs" />
-    <Compile Include="WimgApi.ApplyImage.cs" />
-    <Compile Include="WimgApi.CaptureImage.cs" />
-    <Compile Include="WimgApi.CommitImageHandle.cs" />
-    <Compile Include="WimgApi.CopyFile.cs" />
-    <Compile Include="WimgApi.CreateFile.cs" />
-    <Compile Include="WimgApi.cs" />
-    <Compile Include="WimgApi.DeleteImage.cs" />
-    <Compile Include="WimgApi.DeleteImageMounts.cs" />
-    <Compile Include="WimgApi.ExportImage.cs" />
-    <Compile Include="WimgApi.ExtractImagePath.cs" />
-    <Compile Include="WimgApi.GetAttributes.cs" />
-    <Compile Include="WimgApi.GetImageCount.cs" />
-    <Compile Include="WimgApi.GetImageInformation.cs" />
-    <Compile Include="WimgApi.GetMessageCallbackCount.cs" />
-    <Compile Include="WimgApi.GetMountedImageHandle.cs" />
-    <Compile Include="WimgApi.GetMountedImageInfo.cs" />
-    <Compile Include="WimgApi.GetMountedImageInfoFromHandle.cs" />
-    <Compile Include="WimgApi.LoadImage.cs" />
-    <Compile Include="WimgApi.MountImage.cs" />
-    <Compile Include="WimgApi.NativeConstants.cs" />
-    <Compile Include="WimgApi.NativeStructs.cs" />
-    <Compile Include="WimgApi.RegisterLogFile.cs" />
-    <Compile Include="WimgApi.RegisterMessageCallback.cs" />
-    <Compile Include="WimgApi.RemountImage.cs" />
-    <Compile Include="WimgApi.SetBootImage.cs" />
-    <Compile Include="WimgApi.SetImageInformation.cs" />
-    <Compile Include="WimgApi.SetReferenceFile.cs" />
-    <Compile Include="WimgApi.SetTemporaryPath.cs" />
-    <Compile Include="WimgApi.SplitFile.cs" />
-    <Compile Include="WimgApi.UnmountImage.cs" />
-    <Compile Include="WimgApi.UnregisterLogFile.cs" />
-    <Compile Include="WimgApi.UnregisterMessageCallback.cs" />
-    <Compile Include="WimHandle.cs" />
-    <Compile Include="WimInfo.cs" />
-    <Compile Include="WimMessage.cs" />
-    <Compile Include="WimMessageCallback.cs" />
-    <Compile Include="WimMountInfo.cs" />
-    <Compile Include="WimRegisteredCallbacks.cs" />
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

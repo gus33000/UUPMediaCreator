@@ -366,8 +366,12 @@
     <None Include="UUPMediaCreator.Package_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\UUPMediaCreator.Broker\UUPMediaCreator.Broker.csproj" />
-    <ProjectReference Include="..\UUPMediaCreator.DismBroker\UUPMediaCreator.DismBroker.csproj" />
+    <ProjectReference Include="..\UUPMediaCreator.Broker\UUPMediaCreator.Broker.csproj">
+      <SkipGetTargetFrameworkProperties>True</SkipGetTargetFrameworkProperties>
+    </ProjectReference>
+    <ProjectReference Include="..\UUPMediaCreator.DismBroker\UUPMediaCreator.DismBroker.csproj">
+      <SkipGetTargetFrameworkProperties>True</SkipGetTargetFrameworkProperties>
+    </ProjectReference>
     <ProjectReference Include="..\UUPMediaCreator\UUPMediaCreator.csproj" />
   </ItemGroup>
   <Import Project="$(WapProjPath)\Microsoft.DesktopBridge.targets" />

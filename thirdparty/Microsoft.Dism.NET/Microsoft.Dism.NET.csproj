@@ -1,174 +1,27 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{C3E27D93-4CCE-4EC3-8935-9AED651B233E}</ProjectGuid>
+    <TargetFramework>net5.0</TargetFramework>
     <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Microsoft.Dism.NET</RootNamespace>
-    <AssemblyName>Microsoft.Dism.NET</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <Deterministic>true</Deterministic>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
-    <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin\x64\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <LangVersion>7.3</LangVersion>
-    <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
     <OutputPath>bin\x64\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <LangVersion>7.3</LangVersion>
-    <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
-    <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin\x86\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>x86</PlatformTarget>
-    <LangVersion>7.3</LangVersion>
-    <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <OutputPath>bin\x86\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>x86</PlatformTarget>
-    <LangVersion>7.3</LangVersion>
-    <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xml" />
+    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+    <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
   </ItemGroup>
-  <ItemGroup>
-    <Compile Include="CallerMemberNameAttribute.cs" />
-    <Compile Include="DismApi.AddCapability.cs" />
-    <Compile Include="DismApi.AddDriver.cs" />
-    <Compile Include="DismApi.AddPackage.cs" />
-    <Compile Include="DismApi.AddProvisionedAppxPackage.cs" />
-    <Compile Include="DismApi.ApplyFfuImage.cs" />
-    <Compile Include="DismApi.ApplyUnattend.cs" />
-    <Compile Include="DismApi.CheckImageHealth.cs" />
-    <Compile Include="DismApi.CleanupMountpoints.cs" />
-    <Compile Include="DismApi.CloseSession.cs" />
-    <Compile Include="DismApi.CommitImage.cs" />
-    <Compile Include="DismApi.Delete.cs" />
-    <Compile Include="DismApi.DisableFeature.cs" />
-    <Compile Include="DismApi.EnableFeature.cs" />
-    <Compile Include="DismApi.GetCapabilities.cs" />
-    <Compile Include="DismApi.GetCapabilityInfo.cs" />
-    <Compile Include="DismApi.GetDriverInfo.cs" />
-    <Compile Include="DismApi.GetDrivers.cs" />
-    <Compile Include="DismApi.GetFeatureInfo.cs" />
-    <Compile Include="DismApi.GetFeatureParent.cs" />
-    <Compile Include="DismApi.GetFeatures.cs" />
-    <Compile Include="DismApi.GetImageInfo.cs" />
-    <Compile Include="DismApi.GetLastErrorMessage.cs" />
-    <Compile Include="DismApi.GetMountedImages.cs" />
-    <Compile Include="DismApi.GetPackageInfo.cs" />
-    <Compile Include="DismApi.GetPackageInfoEx.cs" />
-    <Compile Include="DismApi.GetPackages.cs" />
-    <Compile Include="DismApi.GetProvisionedAppxPackages.cs" />
-    <Compile Include="DismApi.Initialize.cs" />
-    <Compile Include="DismApi.MountImage.cs" />
-    <Compile Include="DismApi.NativeMethods.cs" />
-    <Compile Include="DismApi.OpenSession.cs" />
-    <Compile Include="DismApi.RemountImage.cs" />
-    <Compile Include="DismApi.RemoveCapability.cs" />
-    <Compile Include="DismApi.RemoveDriver.cs" />
-    <Compile Include="DismApi.RemovePackage.cs" />
-    <Compile Include="DismApi.RemoveProvisionedAppxPackage.cs" />
-    <Compile Include="DismApi.RestoreImageHealth.cs" />
-    <Compile Include="DismApi.SetEdition.cs" />
-    <Compile Include="DismApi.SetProductKey.cs" />
-    <Compile Include="DismApi.Shutdown.cs" />
-    <Compile Include="DismApi.SplitFfuImage.cs" />
-    <Compile Include="DismApi.UnmountImage.cs" />
-    <Compile Include="DismApiEx.cs" />
-    <Compile Include="DismAppxPackage.cs" />
-    <Compile Include="DismAppxPackageCollection.cs" />
-    <Compile Include="DismCapability.cs" />
-    <Compile Include="DismCapabilityCollection.cs" />
-    <Compile Include="DismCapabilityInfo.cs" />
-    <Compile Include="DismCustomProperty.cs" />
-    <Compile Include="DismCustomPropertyCollection.cs" />
-    <Compile Include="DismDriver.cs" />
-    <Compile Include="DismDriverCollection.cs" />
-    <Compile Include="DismDriverPackage.cs" />
-    <Compile Include="DismDriverPackageCollection.cs" />
-    <Compile Include="DismException.cs" />
-    <Compile Include="DismFeature.cs" />
-    <Compile Include="DismFeatureCollection.cs" />
-    <Compile Include="DismFeatureInfo.cs" />
-    <Compile Include="DismImageInfo.cs" />
-    <Compile Include="DismImageInfoCollection.cs" />
-    <Compile Include="DismLanguage.cs" />
-    <Compile Include="DismMountedImageInfo.cs" />
-    <Compile Include="DismMountedImageInfoCollection.cs" />
-    <Compile Include="DismPackage.cs" />
-    <Compile Include="DismPackageCollection.cs" />
-    <Compile Include="DismPackageInfo.cs" />
-    <Compile Include="DismPackageInfoEx.cs" />
-    <Compile Include="DismProgress.cs" />
-    <Compile Include="DismProgressCallback.cs" />
-    <Compile Include="DismSession.cs" />
-    <Compile Include="DismString.cs" />
-    <Compile Include="DismUtilities.cs" />
-    <Compile Include="DismWimCustomizedInfo.cs" />
-    <Compile Include="ExtensionMethods.cs" />
-    <Compile Include="NativeConstants.cs" />
-    <Compile Include="NativeEnums.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Properties\Resources.Designer.cs" />
-    <Compile Include="Reference\DismInterop.cs" />
-    <Compile Include="SystemTime.cs" />
-    <Compile Include="TestHooks.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Properties\Resources.resx" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="DismApi.GetCurrentEdition.cs" />
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
