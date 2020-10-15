@@ -19,38 +19,43 @@ namespace Imaging
 
         private static void InitNativeLibrary()
         {
-            string arch = null;
-            switch (RuntimeInformation.OSArchitecture)
+            string libDir = "runtimes";
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                libDir = Path.Combine(libDir, "win-");
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                libDir = Path.Combine(libDir, "linux-");
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+                libDir = Path.Combine(libDir, "osx-");
+
+            switch (RuntimeInformation.ProcessArchitecture)
             {
                 case Architecture.X86:
-                    arch = "x86";
+                    libDir += "x86";
                     break;
-
                 case Architecture.X64:
-                    arch = "x64";
+                    libDir += "x64";
                     break;
-
                 case Architecture.Arm:
-                    arch = "armhf";
+                    libDir += "arm";
                     break;
-
                 case Architecture.Arm64:
-                    arch = "arm64";
+                    libDir += "arm64";
                     break;
             }
-
-            var runningDirectory = GetExecutableDirectory();
+            libDir = Path.Combine(libDir, "native");
 
             string libPath = null;
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-                libPath = Path.Combine(runningDirectory, arch, "libwim-15.dll");
+                libPath = Path.Combine(libDir, "libwim-15.dll");
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-                libPath = Path.Combine(runningDirectory, arch, "libwim.so");
+                libPath = Path.Combine(libDir, "libwim.so");
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-                libPath = Path.Combine(runningDirectory, arch, "libwim.dylib");
+                libPath = Path.Combine(libDir, "libwim.dylib");
 
-            if (libPath == null || !File.Exists(libPath))
-                throw new PlatformNotSupportedException();
+            if (libPath == null)
+                throw new PlatformNotSupportedException($"Unable to find native library.");
+            if (!File.Exists(libPath))
+                throw new PlatformNotSupportedException($"Unable to find native library [{libPath}].");
 
             try
             {

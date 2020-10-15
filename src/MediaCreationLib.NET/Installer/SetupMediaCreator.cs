@@ -129,9 +129,11 @@ namespace MediaCreationLib.Installer
                 case Common.CompressionType.LZMS:
                     compression = WimCompressionType.Lzms;
                     break;
+
                 case Common.CompressionType.LZX:
                     compression = WimCompressionType.Lzx;
                     break;
+
                 case Common.CompressionType.XPRESS:
                     compression = WimCompressionType.Xpress;
                     break;

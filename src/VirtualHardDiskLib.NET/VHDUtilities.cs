@@ -1,16 +1,14 @@
-﻿using System;
+﻿using DiscUtils;
+using DiscUtils.Ntfs;
+using DiscUtils.Partitions;
+using DiscUtils.Vhd;
+using Microsoft.Win32;
+using System;
 using System.Globalization;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
-
-using DiscUtils;
-using DiscUtils.Ntfs;
-using DiscUtils.Partitions;
-using DiscUtils.Vhd;
-
-using Microsoft.Win32;
 
 namespace VirtualHardDiskLib
 {

@@ -38,9 +38,11 @@ namespace MediaCreationLib
                 case Common.CompressionType.LZMS:
                     compression = WimCompressionType.Lzms;
                     break;
+
                 case Common.CompressionType.LZX:
                     compression = WimCompressionType.Lzx;
                     break;
+
                 case Common.CompressionType.XPRESS:
                     compression = WimCompressionType.Xpress;
                     break;
@@ -104,7 +106,7 @@ namespace MediaCreationLib
                 File.Delete(Path.Combine(MountedImagePath, "Windows", $"{EditionID}.xml"));
             }
 
-        exit:
+            exit:
             return result;
         }
 
@@ -281,7 +283,7 @@ namespace MediaCreationLib
             // TODO proper labelling of the disc image
             result = CDImage.CDImage.GenerateISOImage(OutputISOPath, OutputMediaPath, label, cdcallback);
 
-        exit:
+            exit:
             return result;
         }
     }

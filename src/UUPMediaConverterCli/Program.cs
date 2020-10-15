@@ -32,7 +32,7 @@ namespace UUPMediaConverterCli
             Log("Copyright (c) 2020");
             Log("");
 
-            /*if (args.Length < 4)
+            if (args.Length < 4)
             {
                 Log("Usage: MediaConverterCli.exe <UUP File set path> <Destination ISO file> <Edition> <Language Code>");
                 return;
@@ -41,9 +41,9 @@ namespace UUPMediaConverterCli
             string UUPPath = args[0];
             string DestinationISO = args[1];
             string Edition = args[2];
-            string LanguageCode = args[3];*/
+            string LanguageCode = args[3];
 
-            if (args.Length < 3)
+            /*if (args.Length < 3)
             {
                 Log("Usage: MediaConverterCli.exe <UUP File set path> <Destination ISO file> <Language Code>");
                 return;
@@ -51,7 +51,7 @@ namespace UUPMediaConverterCli
 
             string UUPPath = args[0];
             string DestinationISO = args[1];
-            string LanguageCode = args[2];
+            string LanguageCode = args[2];*/
 
             Log("WARNING: PRE-RELEASE SOFTWARE WITH NO EXPRESS WARRANTY OF ANY KIND.", severity: LoggingLevel.Warning);
             Log("WARNING: This tool does NOT currently integrate updates into the finished media file. Any UUP set with updates (KBXXXXX).MSU/.CAB will not have the update integrated.", severity: LoggingLevel.Warning);
@@ -93,26 +93,26 @@ namespace UUPMediaConverterCli
 
             try
             {
-                /*MediaCreationLib.MediaCreator.CreateISOMedia(
+                MediaCreationLib.MediaCreator.CreateISOMedia(
                         DestinationISO,
                         UUPPath,
                         Edition,
                         LanguageCode,
                         false,
-                        Common.CompressionType.LZMS,
-                        callback);*/
-                MediaCreationLib.MediaCreator.CreateISOMediaAdvanced(
+                        Common.CompressionType.XPRESS,
+                        callback);
+                /*MediaCreationLib.MediaCreator.CreateISOMediaAdvanced(
                         DestinationISO,
                         UUPPath,
                         LanguageCode,
                         false,
                         Common.CompressionType.LZX,
-                        callback);
+                        callback);*/
             }
             catch (Exception ex)
             {
                 Log("An error occured!", severity: LoggingLevel.Error);
-                Log(ex.ToString(), severity: LoggingLevel.Error);
+                Log(ex.HResult.ToString("x"), severity: LoggingLevel.Error);
             }
             Console.WriteLine("The end");
             //Console.ReadLine();
