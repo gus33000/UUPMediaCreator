@@ -95,7 +95,8 @@ namespace UUPDownload.Downloading
 
                 if (countSame == 60 * 5) // One minute of hang
                 {
-                    Logging.Log("Download hanged");
+                    Logging.Log("");
+                    Logging.Log("Download hung", Logging.LoggingLevel.Error);
                     countSame = 0;
                     return 0;
                 }
