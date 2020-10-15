@@ -68,6 +68,7 @@ namespace UUPDownload.Downloading
                         return;
                     }
 
+                    Logging.Log("");
                     Logging.Log(ex.ToString(), Logging.LoggingLevel.Error);
                     if (ex.InnerException != null)
                         Logging.Log(ex.InnerException.ToString(), Logging.LoggingLevel.Error);
