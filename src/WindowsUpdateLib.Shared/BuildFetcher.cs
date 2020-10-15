@@ -173,7 +173,7 @@ namespace WindowsUpdateLib
 
             availableBuildLanguages.Sort((x, y) => x.Title.CompareTo(y.Title));
 
-        exit:
+            exit:
             return availableBuildLanguages.ToArray();
         }
 
@@ -253,7 +253,7 @@ namespace WindowsUpdateLib
 
             availableEditions.Sort((x, y) => x.Edition.CompareTo(y.Edition));
 
-        exit:
+            exit:
             return availableEditions.ToArray();
         }
 
@@ -470,7 +470,6 @@ namespace WindowsUpdateLib
                         {
                             startIndex++;
                         }
-
                     }
                     if (match)
                         return startIndex - searchFor.Length;

@@ -7,10 +7,13 @@
             ReadingMetadata,
             PreparingFiles,
             CreatingWindowsInstaller,
+
             //IntegratingInstallerUpdates,
             ApplyingImage,
+
             //IntegratingUpdates,
             IntegratingWinRE,
+
             CapturingImage,
             CreatingISO,
             Error,

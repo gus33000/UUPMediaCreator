@@ -48,9 +48,11 @@ namespace UUPMediaCreator
         public Uri FlagUri { get; set; }
         public string Edition { get; set; }
         public string BuildString { get; set; }
+
         //public string FakeEdition { get; set; }
         //public string VirtualEdition { get; set; }
         public MachineType MachineType { get; set; }
+
         public MediumType MediumType { get; set; }
         public InstallationMediumType InstallationMediumType { get; set; }
         public InstallationWIMMediumType InstallationWIMMediumType { get; set; }
@@ -91,7 +93,6 @@ namespace UUPMediaCreator
 
         private void OnRequestReceived(AppServiceConnection sender, AppServiceRequestReceivedEventArgs args)
         {
-            
         }
 
         private void OnTaskCanceled(IBackgroundTaskInstance sender, BackgroundTaskCancellationReason reason)
@@ -159,7 +160,7 @@ namespace UUPMediaCreator
             // Ensure the current window is active
             Window.Current.Activate();
         }
-        
+
         private async void SystemNavigationManager_CloseRequested(object sender, SystemNavigationCloseRequestedPreviewEventArgs e)
         {
             Deferral deferral = e.GetDeferral();
@@ -199,7 +200,7 @@ namespace UUPMediaCreator
         /// </summary>
         /// <param name="sender">The Frame which failed navigation</param>
         /// <param name="e">Details about the navigation failure</param>
-        void OnNavigationFailed(object sender, NavigationFailedEventArgs e)
+        private void OnNavigationFailed(object sender, NavigationFailedEventArgs e)
         {
             throw new Exception("Failed to load Page " + e.SourcePageType.FullName);
         }

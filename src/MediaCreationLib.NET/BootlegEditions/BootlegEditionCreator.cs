@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.IO;
-using Microsoft.Cabinet;
-using Microsoft.Wim;
+﻿using Imaging;
 using IniParser;
 using IniParser.Model;
-using Imaging;
-using CompDB;
+using Microsoft.Cabinet;
+using Microsoft.Wim;
+using System;
+using System.IO;
+using System.Linq;
 using UUPMediaCreator.InterCommunication;
 using static MediaCreationLib.MediaCreator;
 
@@ -262,9 +260,11 @@ namespace MediaCreationLib.BootlegEditions
                 case Common.CompressionType.LZMS:
                     compression = WimCompressionType.Lzms;
                     break;
+
                 case Common.CompressionType.LZX:
                     compression = WimCompressionType.Lzx;
                     break;
+
                 case Common.CompressionType.XPRESS:
                     compression = WimCompressionType.Xpress;
                     break;

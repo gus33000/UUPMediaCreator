@@ -19,12 +19,12 @@
                                        BackClicked="WizardPage_BackClicked"
                                        NextClicked="WizardPage_NextClicked">
         <Grid>
-            <ProgressRing x:Name="LoadingRing" Width="256" Height="256" IsActive="True"/>
+            <ProgressRing x:Name="LoadingRing" Width="256" Height="256" IsActive="True" />
 
             <Grid x:Name="SelectionGrid" Visibility="Collapsed">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="2*"/>
-                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="2*" />
+                    <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
 
                 <controls:DataGrid
@@ -58,7 +58,7 @@
                                 <DataTemplate>
                                     <Image Width="16">
                                         <Image.Source>
-                                            <BitmapImage UriSource="{Binding FlagUri, Mode=OneWay}"/>
+                                            <BitmapImage UriSource="{Binding FlagUri, Mode=OneWay}" />
                                         </Image.Source>
                                     </Image>
                                 </DataTemplate>

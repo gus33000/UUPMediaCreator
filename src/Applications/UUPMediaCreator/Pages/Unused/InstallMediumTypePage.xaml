@@ -19,26 +19,26 @@
         <StackPanel VerticalAlignment="Center">
             <RadioButton x:Name="ISO" GroupName="MediumGroup" Margin="0,8" IsChecked="True">
                 <StackPanel Margin="0,-8,0,0">
-                    <TextBlock Text="ISO" TextWrapping="Wrap" FontSize="24" FontWeight="SemiBold"/>
-                    <TextBlock Text="TODO" TextWrapping="Wrap"/>
+                    <TextBlock Text="ISO" TextWrapping="Wrap" FontSize="24" FontWeight="SemiBold" />
+                    <TextBlock Text="TODO" TextWrapping="Wrap" />
                 </StackPanel>
             </RadioButton>
             <RadioButton x:Name="InstallWindowsImage" GroupName="MediumGroup" Margin="0,8" IsEnabled="False">
                 <StackPanel Margin="0,-8,0,0">
-                    <TextBlock Text="Install Windows Image" TextWrapping="Wrap" FontSize="24" FontWeight="SemiBold"/>
-                    <TextBlock Text="TODO" TextWrapping="Wrap"/>
+                    <TextBlock Text="Install Windows Image" TextWrapping="Wrap" FontSize="24" FontWeight="SemiBold" />
+                    <TextBlock Text="TODO" TextWrapping="Wrap" />
                 </StackPanel>
             </RadioButton>
             <RadioButton x:Name="BootWindowsImage" GroupName="MediumGroup" Margin="0,8" IsEnabled="False">
                 <StackPanel Margin="0,-8,0,0">
-                    <TextBlock Text="Boot Windows Image" TextWrapping="Wrap" FontSize="24" FontWeight="SemiBold"/>
-                    <TextBlock Text="TODO" TextWrapping="Wrap"/>
+                    <TextBlock Text="Boot Windows Image" TextWrapping="Wrap" FontSize="24" FontWeight="SemiBold" />
+                    <TextBlock Text="TODO" TextWrapping="Wrap" />
                 </StackPanel>
             </RadioButton>
             <RadioButton x:Name="VirtualHardDisk" GroupName="MediumGroup" Margin="0,8" IsEnabled="False">
                 <StackPanel Margin="0,-8,0,0">
-                    <TextBlock Text="Virtual Hard Disk" TextWrapping="Wrap" FontSize="24" FontWeight="SemiBold"/>
-                    <TextBlock Text="TODO" TextWrapping="Wrap"/>
+                    <TextBlock Text="Virtual Hard Disk" TextWrapping="Wrap" FontSize="24" FontWeight="SemiBold" />
+                    <TextBlock Text="TODO" TextWrapping="Wrap" />
                 </StackPanel>
             </RadioButton>
         </StackPanel>

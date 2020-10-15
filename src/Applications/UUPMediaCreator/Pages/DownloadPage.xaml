@@ -18,8 +18,8 @@
                                        NextEnabled="True"
                                        NextClicked="WizardPage_NextClicked">
         <StackPanel VerticalAlignment="Center">
-            <TextBlock x:Name="StatusText" Margin="0,18,0,8" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Text="TODO. In the meantime press next"/>
-            <muxc:ProgressBar x:Name="ProgressBar" Height="16"/>
+            <TextBlock x:Name="StatusText" Margin="0,18,0,8" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Text="TODO. In the meantime press next" />
+            <muxc:ProgressBar x:Name="ProgressBar" Height="16" />
         </StackPanel>
     </uupmediacreator:WizardPageControl>
 </Page>

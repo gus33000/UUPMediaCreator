@@ -3,9 +3,9 @@ using System;
 
 namespace UUPMediaCreator.DismBroker
 {
-    class Program
+    internal class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             if (args.Length < 2)
             {
@@ -27,7 +27,6 @@ namespace UUPMediaCreator.DismBroker
                     }
                 case "/SetTargetEdition":
                     {
-                        
                         break;
                     }
             }

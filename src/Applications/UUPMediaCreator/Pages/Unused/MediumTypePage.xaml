@@ -19,20 +19,20 @@
         <StackPanel VerticalAlignment="Center">
             <RadioButton x:Name="InstallMediumRadioButton" GroupName="MediumGroup" Margin="0,8" IsChecked="True">
                 <StackPanel Margin="0,-8,0,0">
-                    <TextBlock Text="Installation" TextWrapping="Wrap" FontSize="24" FontWeight="SemiBold"/>
-                    <TextBlock Text="Creates a medium containing a complete Windows Installation. The finished medium can be used as a VHD, or an ISO or written to an USB flash drive." TextWrapping="Wrap"/>
+                    <TextBlock Text="Installation" TextWrapping="Wrap" FontSize="24" FontWeight="SemiBold" />
+                    <TextBlock Text="Creates a medium containing a complete Windows Installation. The finished medium can be used as a VHD, or an ISO or written to an USB flash drive." TextWrapping="Wrap" />
                 </StackPanel>
             </RadioButton>
             <RadioButton x:Name="LanguageMediumRadioButton" GroupName="MediumGroup" Margin="0,8" IsEnabled="False">
                 <StackPanel Margin="0,-8,0,0">
-                    <TextBlock Text="Language Packs" TextWrapping="Wrap" FontSize="24" FontWeight="SemiBold"/>
-                    <TextBlock Text="Creates a medium containing Language Packs for the selected version of Windows." TextWrapping="Wrap"/>
+                    <TextBlock Text="Language Packs" TextWrapping="Wrap" FontSize="24" FontWeight="SemiBold" />
+                    <TextBlock Text="Creates a medium containing Language Packs for the selected version of Windows." TextWrapping="Wrap" />
                 </StackPanel>
             </RadioButton>
             <RadioButton x:Name="FODMediumRadioButton" GroupName="MediumGroup" Margin="0,8" IsEnabled="False">
                 <StackPanel Margin="0,-8,0,0">
-                    <TextBlock Text="Features On Demand" TextWrapping="Wrap" FontSize="24" FontWeight="SemiBold"/>
-                    <TextBlock Text="Creates a medium containing Feature On Demand packages." TextWrapping="Wrap"/>
+                    <TextBlock Text="Features On Demand" TextWrapping="Wrap" FontSize="24" FontWeight="SemiBold" />
+                    <TextBlock Text="Creates a medium containing Feature On Demand packages." TextWrapping="Wrap" />
                 </StackPanel>
             </RadioButton>
         </StackPanel>

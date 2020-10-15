@@ -20,20 +20,20 @@
         <StackPanel VerticalAlignment="Center">
             <RadioButton x:Name="AMD64RadioButton" GroupName="ArchitectureGroup" Margin="0,8" IsChecked="True">
                 <StackPanel Margin="0,-8,0,0">
-                    <TextBlock Text="x64 (x86_64 / AMD64)" TextWrapping="Wrap" FontSize="24" FontWeight="SemiBold"/>
-                    <TextBlock Text="This architecture is most commonly used on modern Laptops, Tablets and Desktops." TextWrapping="Wrap"/>
+                    <TextBlock Text="x64 (x86_64 / AMD64)" TextWrapping="Wrap" FontSize="24" FontWeight="SemiBold" />
+                    <TextBlock Text="This architecture is most commonly used on modern Laptops, Tablets and Desktops." TextWrapping="Wrap" />
                 </StackPanel>
             </RadioButton>
             <RadioButton x:Name="ARM64RadioButton" GroupName="ArchitectureGroup" Margin="0,8">
                 <StackPanel Margin="0,-8,0,0">
-                    <TextBlock Text="a64 (AArch64 / ARM64)" TextWrapping="Wrap" FontSize="24" FontWeight="SemiBold"/>
-                    <TextBlock Text="This architecture is most commonly used on always connected Laptops, Tablets and Phones." TextWrapping="Wrap"/>
+                    <TextBlock Text="a64 (AArch64 / ARM64)" TextWrapping="Wrap" FontSize="24" FontWeight="SemiBold" />
+                    <TextBlock Text="This architecture is most commonly used on always connected Laptops, Tablets and Phones." TextWrapping="Wrap" />
                 </StackPanel>
             </RadioButton>
             <RadioButton x:Name="X86RadioButton" GroupName="ArchitectureGroup" Margin="0,8">
                 <StackPanel Margin="0,-8,0,0">
-                    <TextBlock Text="x86 (i386)" TextWrapping="Wrap" FontSize="24" FontWeight="SemiBold"/>
-                    <TextBlock Text="This architecture is most commonly used on older Laptops and Desktops." TextWrapping="Wrap"/>
+                    <TextBlock Text="x86 (i386)" TextWrapping="Wrap" FontSize="24" FontWeight="SemiBold" />
+                    <TextBlock Text="This architecture is most commonly used on older Laptops and Desktops." TextWrapping="Wrap" />
                 </StackPanel>
             </RadioButton>
         </StackPanel>

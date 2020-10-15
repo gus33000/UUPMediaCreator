@@ -2,9 +2,6 @@
 //
 // Licensed under the MIT license.
 
-using Microsoft.Win32.SafeHandles;
-using System;
-using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
 namespace Microsoft.Dism

@@ -1,16 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Security.Principal;
-using System.Text;
-using System.Threading.Tasks;
 using UUPMediaCreator.InterCommunication;
 
 namespace UUPMediaConverterCli
 {
-    class Program
+    internal class Program
     {
         public static string GetExecutableDirectory()
         {
@@ -24,7 +21,7 @@ namespace UUPMediaConverterCli
             return runningDirectory.Contains("\\") ? string.Join("\\", runningDirectory.Split('\\').Reverse().Skip(1).Reverse()) : "";
         }
 
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             /*MediaCreationLib.UUPMediaCreator.ProvisionMissingApps();
             Console.ReadLine();
@@ -70,7 +67,6 @@ namespace UUPMediaConverterCli
                     return;
                 }
             }
-
 
             int prevperc = -1;
             Common.ProcessPhase prevphase = Common.ProcessPhase.ReadingMetadata;
@@ -149,10 +145,12 @@ namespace UUPMediaConverterCli
                         msg = "  Warning  ";
                         Console.ForegroundColor = ConsoleColor.Yellow;
                         break;
+
                     case LoggingLevel.Error:
                         msg = "   Error   ";
                         Console.ForegroundColor = ConsoleColor.Red;
                         break;
+
                     case LoggingLevel.Information:
                         msg = "Information";
                         Console.ForegroundColor = ConsoleColor.White;

@@ -20,7 +20,6 @@
 
  The versions of tooling as of this writing are:
 
-
  Operating System             Tooling Name        WinPE Version
 
  Windows 7                    WAIK                3.0

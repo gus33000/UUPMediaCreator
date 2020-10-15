@@ -259,7 +259,6 @@ namespace Imaging
                         //
                         WimgApi.UnregisterMessageCallback(wimHandle, callback2);
                     }
-
                 }
             }
             catch (Exception ex)
@@ -304,7 +303,6 @@ namespace Imaging
                     }
                     finally
                     {
-
                     }
                 }
             }
@@ -343,9 +341,7 @@ namespace Imaging
                     }
                     finally
                     {
-
                     }
-
                 }
             }
             catch
@@ -488,7 +484,6 @@ namespace Imaging
                         //
                         WimgApi.UnregisterMessageCallback(wimHandle, callback2);
                     }
-
                 }
             }
             catch

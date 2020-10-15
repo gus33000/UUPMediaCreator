@@ -20,89 +20,89 @@
             <StackPanel Margin="0,0,0,32">
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition/>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition />
                     </Grid.ColumnDefinitions>
-                    <TextBlock FontSize="16" Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}" FontWeight="SemiBold" Text="Getting:"/>
-                    <TextBlock FontSize="16" Margin="8,0,0,0" FontWeight="SemiBold" Grid.Column="1" x:Name="BuildStringTextBlock"/>
+                    <TextBlock FontSize="16" Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}" FontWeight="SemiBold" Text="Getting:" />
+                    <TextBlock FontSize="16" Margin="8,0,0,0" FontWeight="SemiBold" Grid.Column="1" x:Name="BuildStringTextBlock" />
                 </Grid>
 
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition/>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition />
                     </Grid.ColumnDefinitions>
-                    <TextBlock FontSize="16" Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}" FontWeight="SemiBold" Text="Edition:"/>
-                    <TextBlock FontSize="16" Margin="8,0,0,0" FontWeight="SemiBold" Grid.Column="1" x:Name="EditionTextBlock"/>
+                    <TextBlock FontSize="16" Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}" FontWeight="SemiBold" Text="Edition:" />
+                    <TextBlock FontSize="16" Margin="8,0,0,0" FontWeight="SemiBold" Grid.Column="1" x:Name="EditionTextBlock" />
                 </Grid>
 
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition/>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition />
                     </Grid.ColumnDefinitions>
-                    <TextBlock FontSize="16" Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}" FontWeight="SemiBold" Text="In the following language:"/>
+                    <TextBlock FontSize="16" Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}" FontWeight="SemiBold" Text="In the following language:" />
                     <Image Grid.Column="1" Width="16" Margin="8,0,0,0">
                         <Image.Source>
-                            <BitmapImage x:Name="FlagBitmap"/>
+                            <BitmapImage x:Name="FlagBitmap" />
                         </Image.Source>
                     </Image>
-                    <TextBlock FontSize="16" Margin="8,0,0,0" FontWeight="SemiBold" Grid.Column="2" x:Name="LanguageTextBlock"/>
+                    <TextBlock FontSize="16" Margin="8,0,0,0" FontWeight="SemiBold" Grid.Column="2" x:Name="LanguageTextBlock" />
                 </Grid>
 
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition/>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition />
                     </Grid.ColumnDefinitions>
-                    <TextBlock FontSize="16" Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}" FontWeight="SemiBold" Text="For the following architecture:"/>
-                    <TextBlock FontSize="16" Margin="8,0,0,0" FontWeight="SemiBold" Grid.Column="1" x:Name="ArchitectureTextBlock"/>
+                    <TextBlock FontSize="16" Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}" FontWeight="SemiBold" Text="For the following architecture:" />
+                    <TextBlock FontSize="16" Margin="8,0,0,0" FontWeight="SemiBold" Grid.Column="1" x:Name="ArchitectureTextBlock" />
                 </Grid>
 
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition/>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition />
                     </Grid.ColumnDefinitions>
-                    <TextBlock FontSize="16" Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}" FontWeight="SemiBold" Text="As an:"/>
-                    <TextBlock FontSize="16" Margin="8,0,0,0" FontWeight="SemiBold" Grid.Column="1" x:Name="MediumTypeTextBlock"/>
+                    <TextBlock FontSize="16" Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}" FontWeight="SemiBold" Text="As an:" />
+                    <TextBlock FontSize="16" Margin="8,0,0,0" FontWeight="SemiBold" Grid.Column="1" x:Name="MediumTypeTextBlock" />
                 </Grid>
 
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition/>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition />
                     </Grid.ColumnDefinitions>
-                    <TextBlock FontSize="16" Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}" FontWeight="SemiBold" Text="Using the following compression:"/>
-                    <TextBlock FontSize="16" Margin="8,0,0,0" FontWeight="SemiBold" Grid.Column="1" x:Name="WIMTypeTextBlock"/>
+                    <TextBlock FontSize="16" Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}" FontWeight="SemiBold" Text="Using the following compression:" />
+                    <TextBlock FontSize="16" Margin="8,0,0,0" FontWeight="SemiBold" Grid.Column="1" x:Name="WIMTypeTextBlock" />
                 </Grid>
             </StackPanel>
 
             <Grid Margin="0,0,0,8">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition/>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition />
                 </Grid.ColumnDefinitions>
                 <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE958;" />
-                <TextBlock Grid.Column="1" FontSize="16" Margin="8,0,0,0" FontWeight="SemiBold" Text="Where do you want to save your ISO image?"/>
+                <TextBlock Grid.Column="1" FontSize="16" Margin="8,0,0,0" FontWeight="SemiBold" Text="Where do you want to save your ISO image?" />
             </Grid>
 
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition/>
-                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
 
-                <TextBox x:Name="PathTextBox" TextChanged="PathTextBox_TextChanged" PlaceholderText="Path to the resulting ISO image..." Padding="12,12"/>
+                <TextBox x:Name="PathTextBox" TextChanged="PathTextBox_TextChanged" PlaceholderText="Path to the resulting ISO image..." Padding="12,12" />
                 <Button x:Name="BrowseButton" Margin="8,0,0,0" Grid.Column="1" Style="{ThemeResource AccentButtonStyle}" Padding="32,12" Click="BrowseButton_Click">
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition/>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition />
                         </Grid.ColumnDefinitions>
                         <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE838;" />
-                        <TextBlock Grid.Column="1" Margin="8,0,0,0" Text="Browse"/>
+                        <TextBlock Grid.Column="1" Margin="8,0,0,0" Text="Browse" />
                     </Grid>
                 </Button>
             </Grid>

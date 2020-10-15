@@ -18,7 +18,7 @@ namespace MediaCreationLib.CDImage
             var creationtime = File.GetCreationTimeUtc(setupexe);
             var timestamp = creationtime.ToString("MM/dd/yyyy,hh:mm:ss");
 
-            ProcessStartInfo processStartInfo = new ProcessStartInfo(cdimagepath, 
+            ProcessStartInfo processStartInfo = new ProcessStartInfo(cdimagepath,
                 $"\"-bootdata:2#p0,e,b{cdroot}\\boot\\etfsboot.com#pEF,e,b{cdroot}\\efi\\Microsoft\\boot\\efisys.bin\" -o -h -m -u2 -udfver102 -t{timestamp} -l{volumelabel}  \"{cdroot}\" \"{isopath}\"");
 
             processStartInfo.UseShellExecute = false;

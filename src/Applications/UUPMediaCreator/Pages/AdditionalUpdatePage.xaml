@@ -16,6 +16,6 @@
                                        NextEnabled="True"
                                        BackClicked="WizardPage_BackClicked"
                                        NextClicked="WizardPage_NextClicked">
-        <TextBlock Text="This page is work in progress"/>
+        <TextBlock Text="This page is work in progress" />
     </uupmediacreator:WizardPageControl>
 </Page>

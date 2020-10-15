@@ -462,7 +462,7 @@ namespace MediaCreationLib.Planning
                 EditionTargets.Add(BuildTarget(ed, hackEditions, virtualWindowsEditions, editionMatrixItems, availableBasisHackedEditions));
             }
 
-        error:
+            error:
             return result;
         }
     }

@@ -17,8 +17,8 @@
                                        NextEnabled="True"
                                        NextClicked="WizardPage_NextClicked">
         <StackPanel>
-            <TextBlock Text="Please right click the application tile in the start menu, and select run as administrator." TextWrapping="Wrap"/>
-            <TextBlock Text="Click next to exit." TextWrapping="Wrap"/>
+            <TextBlock Text="Please right click the application tile in the start menu, and select run as administrator." TextWrapping="Wrap" />
+            <TextBlock Text="Click next to exit." TextWrapping="Wrap" />
         </StackPanel>
     </uupmediacreator:WizardPageControl>
 </Page>

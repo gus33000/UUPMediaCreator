@@ -1,5 +1,4 @@
-﻿using Microsoft.PackageManagement.Archivers.Internal.Compression;
-using Microsoft.PackageManagement.Archivers.Internal.Compression.Cab;
+﻿using Microsoft.PackageManagement.Archivers.Internal.Compression.Cab;
 using System;
 using System.IO;
 using System.Linq;

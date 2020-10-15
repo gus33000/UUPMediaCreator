@@ -1,17 +1,17 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using UUPMediaCreator.InterCommunication;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.AppService;
 using Windows.Foundation.Collections;
-using UUPMediaCreator.InterCommunication;
-using System.Threading;
 
 namespace UUPMediaCreator.Broker
 {
-    class UUPMediaCreatorApplicationContext : ApplicationContext
+    internal class UUPMediaCreatorApplicationContext : ApplicationContext
     {
         private AppServiceConnection connection = null;
 

@@ -84,7 +84,6 @@ namespace MediaCreationLib.DismOperations
                 }
                 catch //(Exception ex)
                 {
-
                 }
             }
 
@@ -114,7 +113,6 @@ namespace MediaCreationLib.DismOperations
             }
             finally //(Exception ex)
             {
-
             }
 
             //
@@ -143,7 +141,6 @@ namespace MediaCreationLib.DismOperations
             }
             finally //(Exception ex)
             {
-
             }
 
             //
@@ -170,7 +167,6 @@ namespace MediaCreationLib.DismOperations
             }
             finally //(Exception ex)
             {
-
             }
 
             //
@@ -194,7 +190,6 @@ namespace MediaCreationLib.DismOperations
 
             try
             {
-
                 void callback3(DismProgress progress)
                 {
                     progressCallback?.Invoke(false, (int)Math.Round((double)progress.Current / progress.Total * 100), "Setting edition " + edition);

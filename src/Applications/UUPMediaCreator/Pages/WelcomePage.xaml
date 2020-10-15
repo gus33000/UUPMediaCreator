@@ -16,6 +16,5 @@
                                        BackEnabled="False"
                                        NextEnabled="True"
                                        NextClicked="WizardPage_NextClicked">
-
     </uupmediacreator:WizardPageControl>
 </Page>

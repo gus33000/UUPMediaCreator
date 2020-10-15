@@ -19,12 +19,12 @@
                                        BackClicked="WizardPage_BackClicked"
                                        NextClicked="WizardPage_NextClicked">
         <Grid>
-            <ProgressRing x:Name="LoadingRing" Width="256" Height="256" IsActive="True"/>
+            <ProgressRing x:Name="LoadingRing" Width="256" Height="256" IsActive="True" />
 
             <Grid x:Name="SelectionGrid" Visibility="Collapsed">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="2*"/>
-                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="2*" />
+                    <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
 
                 <controls:DataGrid
@@ -59,7 +59,7 @@
                     </controls:DataGrid.Columns>
                 </controls:DataGrid>
 
-                <TextBlock x:Name="ItemDescription" VerticalAlignment="Top" Grid.Row="1" TextWrapping="Wrap"/>
+                <TextBlock x:Name="ItemDescription" VerticalAlignment="Top" Grid.Row="1" TextWrapping="Wrap" />
             </Grid>
         </Grid>
     </uupmediacreator:WizardPageControl>

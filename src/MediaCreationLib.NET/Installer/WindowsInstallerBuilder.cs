@@ -1,14 +1,13 @@
-﻿using System;
+﻿using Imaging;
+using Microsoft.Wim;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Diagnostics;
-
 using UUPMediaCreator.InterCommunication;
-using Microsoft.Wim;
 using VirtualHardDiskLib;
 using static MediaCreationLib.MediaCreator;
-using Imaging;
 
 namespace MediaCreationLib.Installer
 {
@@ -18,11 +17,11 @@ namespace MediaCreationLib.Installer
 
         // 6 progress bars
         public static bool BuildSetupMedia(
-            string BaseESD, 
-            string OutputWinREPath, 
-            string MediaPath, 
-            WimCompressionType compressionType, 
-            bool RunsAsAdministrator, 
+            string BaseESD,
+            string OutputWinREPath,
+            string MediaPath,
+            WimCompressionType compressionType,
+            bool RunsAsAdministrator,
             ProgressCallback progressCallback = null
             )
         {
@@ -179,7 +178,6 @@ namespace MediaCreationLib.Installer
 
             progressCallback?.Invoke(Common.ProcessPhase.CreatingWindowsInstaller, true, 0, "Backporting missing files");
 
-
             var dirs = Directory.EnumerateDirectories(Path.Combine(MediaPath, "sources"), "??-??");
             if (dirs.Count() == 0)
             {
@@ -222,15 +220,15 @@ namespace MediaCreationLib.Installer
             // We're done
             //
 
-        exit:
+            exit:
             return result;
         }
 
         private static bool PreparePEImage(
-            string BaseESD, 
-            string OutputWinREPath, 
-            string MediaPath, 
-            WimCompressionType compressionType, 
+            string BaseESD,
+            string OutputWinREPath,
+            string MediaPath,
+            WimCompressionType compressionType,
             ProgressCallback progressCallback = null
             )
         {
@@ -321,14 +319,14 @@ namespace MediaCreationLib.Installer
             cleanup:
             File.Delete(tempSystemHiveBackup);
 
-        exit:
+            exit:
             return result;
         }
 
         private static bool PerformComponentCleanupOnPEImage(
-            string MediaPath, 
-            WimCompressionType compressionType, 
-            WIMInformationXML.IMAGE image, 
+            string MediaPath,
+            WimCompressionType compressionType,
+            WIMInformationXML.IMAGE image,
             ProgressCallback progressCallback = null
             )
         {
@@ -416,7 +414,7 @@ namespace MediaCreationLib.Installer
         }
 
         private static bool RunDismComponentRemovalOperation(
-            string OSPath, 
+            string OSPath,
             ProgressCallback progressCallback = null
             )
         {

@@ -1,20 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.ApplicationModel.Core;
 using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.Globalization;
 using Windows.System.Threading;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using WindowsUpdateLib;
 
@@ -43,7 +33,7 @@ namespace UUPMediaCreator.UWP.Pages
             _ = ThreadPool.RunAsync(async (IAsyncAction operation) =>
             {
                 var updates = await BuildFetcher.GetAvailableBuildsAsync(App.ConversionPlan.MachineType);
-                
+
                 await CoreApplication.MainView.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
                 {
                     WizardPage.Glyph = "\uF785";

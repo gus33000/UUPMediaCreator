@@ -25,12 +25,15 @@ namespace Imaging
                 case Architecture.X86:
                     arch = "x86";
                     break;
+
                 case Architecture.X64:
                     arch = "x64";
                     break;
+
                 case Architecture.Arm:
                     arch = "armhf";
                     break;
+
                 case Architecture.Arm64:
                     arch = "arm64";
                     break;
@@ -79,24 +82,30 @@ namespace Imaging
                                 progressCallback?.Invoke($"Scanning files ({m.NumBytesScanned} bytes scanned, Current directory: {m.CurPath})", 0, true);
                             }
                             break;
+
                         case ProgressMsg.ScanEnd:
                             {
                                 ScanProgress m = (ScanProgress)info;
                                 progressCallback?.Invoke($"Scanning files ({m.NumBytesScanned} bytes scanned, Current directory: {m.CurPath})", 0, true);
                             }
                             break;
+
                         case ProgressMsg.WriteMetadataBegin:
                             break;
+
                         case ProgressMsg.UpdateBeginCommand:
                             break;
+
                         case ProgressMsg.UpdateEndCommand:
                             break;
+
                         case ProgressMsg.WriteStreams:
                             {
                                 WriteStreamsProgress m = (WriteStreamsProgress)info;
                                 progressCallback?.Invoke(title, (int)Math.Round((double)m.CompletedBytes / m.TotalBytes * 100), false);
                             }
                             break;
+
                         case ProgressMsg.WriteMetadataEnd:
                             break;
                     }
@@ -119,7 +128,7 @@ namespace Imaging
             }
             return ReseatWIMXml(wimFile);
         }
-        
+
         public bool DeleteFileFromImage(string wimFile, int imageIndex, string fileToRemove, IImaging.ProgressCallback progressCallback = null)
         {
             string title = $"Removing {fileToRemove} from {wimFile.Split('\\').Last()}...";
@@ -135,24 +144,30 @@ namespace Imaging
                                 progressCallback?.Invoke($"Scanning files ({m.NumBytesScanned} bytes scanned, Current directory: {m.CurPath})", 0, true);
                             }
                             break;
+
                         case ProgressMsg.ScanEnd:
                             {
                                 ScanProgress m = (ScanProgress)info;
                                 progressCallback?.Invoke($"Scanning files ({m.NumBytesScanned} bytes scanned, Current directory: {m.CurPath})", 0, true);
                             }
                             break;
+
                         case ProgressMsg.WriteMetadataBegin:
                             break;
+
                         case ProgressMsg.UpdateBeginCommand:
                             break;
+
                         case ProgressMsg.UpdateEndCommand:
                             break;
+
                         case ProgressMsg.WriteStreams:
                             {
                                 WriteStreamsProgress m = (WriteStreamsProgress)info;
                                 progressCallback?.Invoke(title, (int)Math.Round((double)m.CompletedBytes / m.TotalBytes * 100), false);
                             }
                             break;
+
                         case ProgressMsg.WriteMetadataEnd:
                             break;
                     }
@@ -191,8 +206,10 @@ namespace Imaging
                                 progressCallback?.Invoke(title, (int)Math.Round((double)m.CompletedBytes / m.TotalBytes * 100), false);
                             }
                             break;
+
                         case ProgressMsg.WriteMetadataBegin:
                             break;
+
                         case ProgressMsg.WriteMetadataEnd:
                             break;
                     }
@@ -309,24 +326,30 @@ namespace Imaging
                                 progressCallback?.Invoke($"Scanning files ({m.NumBytesScanned} bytes scanned, Current directory: {m.CurPath})", 0, true);
                             }
                             break;
+
                         case ProgressMsg.ScanEnd:
                             {
                                 ScanProgress m = (ScanProgress)info;
                                 progressCallback?.Invoke($"Scanning files ({m.NumBytesScanned} bytes scanned, Current directory: {m.CurPath})", 0, true);
                             }
                             break;
+
                         case ProgressMsg.WriteMetadataBegin:
                             break;
+
                         case ProgressMsg.UpdateBeginCommand:
                             break;
+
                         case ProgressMsg.UpdateEndCommand:
                             break;
+
                         case ProgressMsg.WriteStreams:
                             {
                                 WriteStreamsProgress m = (WriteStreamsProgress)info;
                                 progressCallback?.Invoke(title, (int)Math.Round((double)m.CompletedBytes / m.TotalBytes * 100), false);
                             }
                             break;
+
                         case ProgressMsg.WriteMetadataEnd:
                             break;
                     }
@@ -364,23 +387,27 @@ namespace Imaging
                                 ExtractProgress m = (ExtractProgress)info;
                             }
                             break;
+
                         case ProgressMsg.ExtractImageEnd:
                             {
                                 ExtractProgress m = (ExtractProgress)info;
                             }
                             break;
+
                         case ProgressMsg.ExtractFileStructure:
                             {
                                 ExtractProgress m = (ExtractProgress)info;
                                 progressCallback?.Invoke($"Applying file structure ({(int)Math.Round((double)m.CurrentFileCount / m.EndFileCount * 100)}%)", 0, true);
                             }
                             break;
+
                         case ProgressMsg.ExtractStreams:
                             {
                                 ExtractProgress m = (ExtractProgress)info;
                                 progressCallback?.Invoke(title, (int)Math.Round((double)m.CompletedBytes / m.TotalBytes * 100), false);
                             }
                             break;
+
                         case ProgressMsg.ExtractMetadata:
                             {
                                 ExtractProgress m = (ExtractProgress)info;
@@ -407,14 +434,14 @@ namespace Imaging
         }
 
         public bool CaptureImage(
-            string wimFile, 
-            string imageName, 
-            string imageDescription, 
-            string imageFlag, 
+            string wimFile,
+            string imageName,
+            string imageDescription,
+            string imageFlag,
             string InputDirectory,
-            string imageDisplayName = null, 
-            string imageDisplayDescription = null, 
-            WimCompressionType compressionType = WimCompressionType.Lzx, 
+            string imageDisplayName = null,
+            string imageDisplayDescription = null,
+            WimCompressionType compressionType = WimCompressionType.Lzx,
             IImaging.ProgressCallback progressCallback = null,
             int UpdateFrom = -1,
             bool PreserveACL = true)
@@ -432,26 +459,31 @@ namespace Imaging
                                 progressCallback?.Invoke($"Scanning files ({m.NumBytesScanned} bytes scanned, {m.NumDirsScanned} Directories, {m.NumNonDirsScanned} Files, Current directory: {m.CurPath})", 0, true);
                             }
                             break;
+
                         case ProgressMsg.ScanDEntry:
                             {
                                 ScanProgress m = (ScanProgress)info;
                                 progressCallback?.Invoke($"Scanning files ({m.NumBytesScanned} bytes scanned, {m.NumDirsScanned} Directories, {m.NumNonDirsScanned} Files, Current directory: {m.CurPath})", 0, true);
                             }
                             break;
+
                         case ProgressMsg.ScanEnd:
                             {
                                 ScanProgress m = (ScanProgress)info;
                                 progressCallback?.Invoke($"Scanning files ({m.NumBytesScanned} bytes scanned, {m.NumDirsScanned} Directories, {m.NumNonDirsScanned} Files, Current directory: {m.CurPath})", 0, true);
                             }
                             break;
+
                         case ProgressMsg.WriteMetadataBegin:
                             break;
+
                         case ProgressMsg.WriteStreams:
                             {
                                 WriteStreamsProgress m = (WriteStreamsProgress)info;
                                 progressCallback?.Invoke(title, (int)Math.Round((double)m.CompletedBytes / m.TotalBytes * 100), false);
                             }
                             break;
+
                         case ProgressMsg.WriteMetadataEnd:
                             break;
                     }
@@ -507,7 +539,6 @@ namespace Imaging
                     using (Wim wim = Wim.CreateNewWim(compression))
                     {
                         wim.RegisterCallback(ProgressCallback);
-
 
                         string config = @"[ExclusionList]
 \$ntfs.log
@@ -611,7 +642,6 @@ namespace Imaging
                     }
                     finally
                     {
-
                     }
                 }
             }
@@ -651,7 +681,6 @@ namespace Imaging
                     }
                     finally
                     {
-
                     }
                 }
             }
@@ -690,9 +719,7 @@ namespace Imaging
                     }
                     finally
                     {
-
                     }
-
                 }
             }
             catch

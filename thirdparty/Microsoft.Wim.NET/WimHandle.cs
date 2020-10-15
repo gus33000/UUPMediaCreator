@@ -5,7 +5,6 @@
 using Microsoft.Win32.SafeHandles;
 using System;
 using System.ComponentModel;
-using System.Diagnostics.CodeAnalysis;
 using System.Runtime.ConstrainedExecution;
 using System.Runtime.InteropServices;
 

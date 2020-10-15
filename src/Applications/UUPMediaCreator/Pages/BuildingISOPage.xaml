@@ -19,83 +19,83 @@
         <StackPanel VerticalAlignment="Center">
             <Grid Margin="0,0,0,4">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="20"/>
-                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="20" />
+                    <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                
-                <FontIcon x:Name="ReadingMetadataGlyph" FontFamily="Segoe MDL2 Assets" Glyph=""/>
 
-                <TextBlock Margin="8,0,0,0" Grid.Column="1" Text="Reading Metadata..."/>
+                <FontIcon x:Name="ReadingMetadataGlyph" FontFamily="Segoe MDL2 Assets" Glyph="" />
+
+                <TextBlock Margin="8,0,0,0" Grid.Column="1" Text="Reading Metadata..." />
             </Grid>
 
             <Grid Margin="0,0,0,4">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="20"/>
-                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="20" />
+                    <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                
-                <FontIcon x:Name="PreparingFilesGlyph" FontFamily="Segoe MDL2 Assets" Glyph=""/>
 
-                <TextBlock Margin="8,0,0,0" Grid.Column="1" Text="Preparing files..."/>
+                <FontIcon x:Name="PreparingFilesGlyph" FontFamily="Segoe MDL2 Assets" Glyph="" />
+
+                <TextBlock Margin="8,0,0,0" Grid.Column="1" Text="Preparing files..." />
             </Grid>
 
             <Grid Margin="0,0,0,4">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="20"/>
-                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="20" />
+                    <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
-                <FontIcon x:Name="CreatingWindowsInstallerGlyph" FontFamily="Segoe MDL2 Assets" Glyph=""/>
+                <FontIcon x:Name="CreatingWindowsInstallerGlyph" FontFamily="Segoe MDL2 Assets" Glyph="" />
 
-                <TextBlock Margin="8,0,0,0" Grid.Column="1" Text="Creating Windows Installer..."/>
+                <TextBlock Margin="8,0,0,0" Grid.Column="1" Text="Creating Windows Installer..." />
             </Grid>
 
             <Grid Margin="0,0,0,4">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="20"/>
-                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="20" />
+                    <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                
-                <FontIcon x:Name="ApplyingImageGlyph" FontFamily="Segoe MDL2 Assets" Glyph=""/>
 
-                <TextBlock Margin="8,0,0,0" Grid.Column="1" Text="Applying Image..."/>
+                <FontIcon x:Name="ApplyingImageGlyph" FontFamily="Segoe MDL2 Assets" Glyph="" />
+
+                <TextBlock Margin="8,0,0,0" Grid.Column="1" Text="Applying Image..." />
             </Grid>
 
             <Grid Margin="0,0,0,4">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="20"/>
-                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="20" />
+                    <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                
-                <FontIcon x:Name="IntegratingWinREGlyph" FontFamily="Segoe MDL2 Assets" Glyph=""/>
 
-                <TextBlock Margin="8,0,0,0" Grid.Column="1" Text="Integrating Windows Recovery Environment..."/>
+                <FontIcon x:Name="IntegratingWinREGlyph" FontFamily="Segoe MDL2 Assets" Glyph="" />
+
+                <TextBlock Margin="8,0,0,0" Grid.Column="1" Text="Integrating Windows Recovery Environment..." />
             </Grid>
 
             <Grid Margin="0,0,0,4">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="20"/>
-                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="20" />
+                    <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                
-                <FontIcon x:Name="CapturingImageGlyph" FontFamily="Segoe MDL2 Assets" Glyph=""/>
 
-                <TextBlock Margin="8,0,0,0" Grid.Column="1" Text="Capturing Image..."/>
+                <FontIcon x:Name="CapturingImageGlyph" FontFamily="Segoe MDL2 Assets" Glyph="" />
+
+                <TextBlock Margin="8,0,0,0" Grid.Column="1" Text="Capturing Image..." />
             </Grid>
 
             <Grid Margin="0,0,0,4">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="20"/>
-                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="20" />
+                    <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
-                <FontIcon x:Name="CreatingISOGlyph" FontFamily="Segoe MDL2 Assets" Glyph=""/>
+                <FontIcon x:Name="CreatingISOGlyph" FontFamily="Segoe MDL2 Assets" Glyph="" />
 
-                <TextBlock Margin="8,0,0,0" Grid.Column="1" Text="Creating ISO..."/>
+                <TextBlock Margin="8,0,0,0" Grid.Column="1" Text="Creating ISO..." />
             </Grid>
-            
-            <TextBlock x:Name="StatusText" Margin="0,18,0,8" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"/>
-            <muxc:ProgressBar x:Name="ProgressBar" Height="16"/>
+
+            <TextBlock x:Name="StatusText" Margin="0,18,0,8" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" />
+            <muxc:ProgressBar x:Name="ProgressBar" Height="16" />
         </StackPanel>
     </uupmediacreator:WizardPageControl>
 </Page>

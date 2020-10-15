@@ -20,20 +20,20 @@
         <StackPanel VerticalAlignment="Center">
             <RadioButton x:Name="LZXRadioButton" GroupName="MediumGroup" Margin="0,8" IsChecked="True">
                 <StackPanel Margin="0,-8,0,0">
-                    <TextBlock Text="LZX" TextWrapping="Wrap" FontSize="24" FontWeight="SemiBold"/>
-                    <TextBlock Text="TODO" TextWrapping="Wrap"/>
+                    <TextBlock Text="LZX" TextWrapping="Wrap" FontSize="24" FontWeight="SemiBold" />
+                    <TextBlock Text="TODO" TextWrapping="Wrap" />
                 </StackPanel>
             </RadioButton>
             <RadioButton x:Name="LZMSRadioButton" GroupName="MediumGroup" Margin="0,8">
                 <StackPanel Margin="0,-8,0,0">
-                    <TextBlock Text="LZMS" TextWrapping="Wrap" FontSize="24" FontWeight="SemiBold"/>
-                    <TextBlock Text="TODO" TextWrapping="Wrap"/>
+                    <TextBlock Text="LZMS" TextWrapping="Wrap" FontSize="24" FontWeight="SemiBold" />
+                    <TextBlock Text="TODO" TextWrapping="Wrap" />
                 </StackPanel>
             </RadioButton>
             <RadioButton x:Name="XPRESSRadioButton" GroupName="MediumGroup" Margin="0,8">
                 <StackPanel Margin="0,-8,0,0">
-                    <TextBlock Text="XPRESS" TextWrapping="Wrap" FontSize="24" FontWeight="SemiBold"/>
-                    <TextBlock Text="TODO" TextWrapping="Wrap"/>
+                    <TextBlock Text="XPRESS" TextWrapping="Wrap" FontSize="24" FontWeight="SemiBold" />
+                    <TextBlock Text="TODO" TextWrapping="Wrap" />
                 </StackPanel>
             </RadioButton>
         </StackPanel>

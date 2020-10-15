@@ -71,8 +71,8 @@ namespace Microsoft.PackageManagement.Archivers.Internal.Compression
             this.currentFileBytesProcessed = currentFileBytesProcessed;
             this.currentFileTotalBytes = currentFileTotalBytes;
             this.currentArchiveName = currentArchiveName;
-            this.currentArchiveNumber = (short) currentArchiveNumber;
-            this.totalArchives = (short) totalArchives;
+            this.currentArchiveNumber = (short)currentArchiveNumber;
+            this.totalArchives = (short)totalArchives;
             this.currentArchiveBytesProcessed = currentArchiveBytesProcessed;
             this.currentArchiveTotalBytes = currentArchiveTotalBytes;
             this.fileBytesProcessed = fileBytesProcessed;

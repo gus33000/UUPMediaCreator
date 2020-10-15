@@ -13,6 +13,7 @@ using System.Xml.Serialization;
 namespace WindowsUpdateLib
 {
     #region XML Objects
+
     public class CSOAPCommon
     {
         [XmlRoot(ElementName = "Action", Namespace = "http://www.w3.org/2005/08/addressing")]
@@ -20,6 +21,7 @@ namespace WindowsUpdateLib
         {
             [XmlAttribute(AttributeName = "mustUnderstand", Namespace = "http://www.w3.org/2003/05/soap-envelope")]
             public string MustUnderstand { get; set; }
+
             [XmlText]
             public string Text { get; set; }
         }
@@ -29,6 +31,7 @@ namespace WindowsUpdateLib
         {
             [XmlElement(ElementName = "ID", Namespace = "http://www.microsoft.com/SoftwareDistribution/Server/ClientWebService")]
             public string ID { get; set; }
+
             [XmlElement(ElementName = "Xml", Namespace = "http://www.microsoft.com/SoftwareDistribution/Server/ClientWebService")]
             public string Xml { get; set; }
         }
@@ -65,6 +68,7 @@ namespace WindowsUpdateLib
         {
             [XmlElement(ElementName = "Expiration", Namespace = "http://www.microsoft.com/SoftwareDistribution/Server/ClientWebService")]
             public string Expiration { get; set; }
+
             [XmlElement(ElementName = "EncryptedData", Namespace = "http://www.microsoft.com/SoftwareDistribution/Server/ClientWebService")]
             public string EncryptedData { get; set; }
         }
@@ -74,6 +78,7 @@ namespace WindowsUpdateLib
         {
             [XmlAttribute(AttributeName = "mustUnderstand", Namespace = "http://www.w3.org/2003/05/soap-envelope")]
             public string MustUnderstand { get; set; }
+
             [XmlText]
             public string Text { get; set; }
         }
@@ -83,10 +88,13 @@ namespace WindowsUpdateLib
         {
             [XmlElement(ElementName = "Created", Namespace = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd")]
             public string Created { get; set; }
+
             [XmlElement(ElementName = "Expires", Namespace = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd")]
             public string Expires { get; set; }
+
             [XmlAttribute(AttributeName = "xmlns")]
             public string Xmlns { get; set; }
+
             [XmlAttribute(AttributeName = "Id", Namespace = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd")]
             public string Id { get; set; }
         }
@@ -96,10 +104,13 @@ namespace WindowsUpdateLib
         {
             [XmlElement(ElementName = "User")]
             public string User { get; set; }
+
             [XmlAttribute(AttributeName = "Name")]
             public string Name { get; set; }
+
             [XmlAttribute(AttributeName = "Version")]
             public string Version { get; set; }
+
             [XmlAttribute(AttributeName = "Policy")]
             public string Policy { get; set; }
         }
@@ -118,12 +129,16 @@ namespace WindowsUpdateLib
 
             [XmlElement(ElementName = "TicketType", Namespace = "")]
             public TicketType[] TicketType { get; set; }
+
             [XmlAttribute(AttributeName = "id", Namespace = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd")]
             public string Id { get; set; }
+
             [XmlAttribute(AttributeName = "wsu", Namespace = "http://www.w3.org/2000/xmlns/")]
             public string Wsu { get; set; }
+
             [XmlAttribute(AttributeName = "wuws", Namespace = "http://www.w3.org/2000/xmlns/")]
             public string Wuws { get; set; }
+
             [XmlText]
             public string Text { get; set; }
         }
@@ -141,10 +156,13 @@ namespace WindowsUpdateLib
 
             [XmlElement(ElementName = "Timestamp", Namespace = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd")]
             public Timestamp Timestamp { get; set; }
+
             [XmlElement(ElementName = "WindowsUpdateTicketsToken", Namespace = "http://schemas.microsoft.com/msus/2014/10/WindowsUpdateAuthorization")]
             public WindowsUpdateTicketsToken WindowsUpdateTicketsToken { get; set; }
+
             [XmlAttribute(AttributeName = "mustUnderstand", Namespace = "http://www.w3.org/2003/05/soap-envelope")]
             public string MustUnderstand { get; set; }
+
             [XmlAttribute(AttributeName = "o", Namespace = "http://www.w3.org/2000/xmlns/")]
             public string O { get; set; }
         }
@@ -154,12 +172,16 @@ namespace WindowsUpdateLib
         {
             [XmlElement(ElementName = "Action", Namespace = "http://www.w3.org/2005/08/addressing")]
             public Action Action { get; set; }
+
             [XmlElement(ElementName = "MessageID", Namespace = "http://www.w3.org/2005/08/addressing")]
             public string MessageID { get; set; }
+
             [XmlElement(ElementName = "To", Namespace = "http://www.w3.org/2005/08/addressing")]
             public To To { get; set; }
+
             [XmlElement(ElementName = "RelatesTo", Namespace = "http://www.w3.org/2005/08/addressing")]
             public string RelatesTo { get; set; }
+
             [XmlElement(ElementName = "Security", Namespace = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd")]
             public Security Security { get; set; }
         }
@@ -169,6 +191,7 @@ namespace WindowsUpdateLib
         {
             [XmlAttribute(AttributeName = "xsi", Namespace = "http://www.w3.org/2000/xmlns/")]
             public string Xsi { get; set; }
+
             [XmlAttribute(AttributeName = "xsd", Namespace = "http://www.w3.org/2000/xmlns/")]
             public string Xsd { get; set; }
 
@@ -210,12 +233,16 @@ namespace WindowsUpdateLib
         {
             [XmlElement(ElementName = "Header", Namespace = "http://www.w3.org/2003/05/soap-envelope")]
             public Header Header { get; set; }
+
             [XmlElement(ElementName = "Body", Namespace = "http://www.w3.org/2003/05/soap-envelope")]
             public Body Body { get; set; }
+
             [XmlAttribute(AttributeName = "a", Namespace = "http://www.w3.org/2000/xmlns/")]
             public string A { get; set; }
+
             [XmlAttribute(AttributeName = "s", Namespace = "http://www.w3.org/2000/xmlns/")]
             public string S { get; set; }
+
             [XmlAttribute(AttributeName = "u", Namespace = "http://www.w3.org/2000/xmlns/")]
             public string U { get; set; }
         }
@@ -235,12 +262,16 @@ namespace WindowsUpdateLib
         {
             [XmlElement(ElementName = "oldCookie", Namespace = "http://www.microsoft.com/SoftwareDistribution/Server/ClientWebService")]
             public OldCookie OldCookie { get; set; }
+
             [XmlElement(ElementName = "lastChange", Namespace = "http://www.microsoft.com/SoftwareDistribution/Server/ClientWebService")]
             public string LastChange { get; set; }
+
             [XmlElement(ElementName = "currentTime", Namespace = "http://www.microsoft.com/SoftwareDistribution/Server/ClientWebService")]
             public string CurrentTime { get; set; }
+
             [XmlElement(ElementName = "protocolVersion", Namespace = "http://www.microsoft.com/SoftwareDistribution/Server/ClientWebService")]
             public string ProtocolVersion { get; set; }
+
             [XmlAttribute(AttributeName = "xmlns")]
             public string Xmlns { get; set; }
         }
@@ -253,6 +284,7 @@ namespace WindowsUpdateLib
         {
             [XmlElement(ElementName = "GetCookieResult", Namespace = "http://www.microsoft.com/SoftwareDistribution/Server/ClientWebService")]
             public CSOAPCommon.Cookie GetCookieResult { get; set; }
+
             [XmlAttribute(AttributeName = "xmlns")]
             public string Xmlns { get; set; }
         }
@@ -300,6 +332,7 @@ namespace WindowsUpdateLib
         {
             [XmlElement(ElementName = "XmlUpdateFragmentTypes", Namespace = "http://www.microsoft.com/SoftwareDistribution/Server/ClientWebService")]
             public XmlUpdateFragmentTypes XmlUpdateFragmentTypes { get; set; }
+
             [XmlElement(ElementName = "Locales", Namespace = "http://www.microsoft.com/SoftwareDistribution/Server/ClientWebService")]
             public CSOAPCommon.Locales Locales { get; set; }
         }
@@ -309,10 +342,13 @@ namespace WindowsUpdateLib
         {
             [XmlElement(ElementName = "SyncCurrentVersionOnly", Namespace = "http://www.microsoft.com/SoftwareDistribution/Server/ClientWebService")]
             public string SyncCurrentVersionOnly { get; set; }
+
             [XmlElement(ElementName = "DeviceAttributes", Namespace = "http://www.microsoft.com/SoftwareDistribution/Server/ClientWebService")]
             public string DeviceAttributes { get; set; }
+
             [XmlElement(ElementName = "CallerAttributes", Namespace = "http://www.microsoft.com/SoftwareDistribution/Server/ClientWebService")]
             public string CallerAttributes { get; set; }
+
             [XmlElement(ElementName = "Products", Namespace = "http://www.microsoft.com/SoftwareDistribution/Server/ClientWebService")]
             public string Products { get; set; }
         }
@@ -322,24 +358,34 @@ namespace WindowsUpdateLib
         {
             [XmlElement(ElementName = "ExpressQuery", Namespace = "http://www.microsoft.com/SoftwareDistribution/Server/ClientWebService")]
             public string ExpressQuery { get; set; }
+
             [XmlElement(ElementName = "InstalledNonLeafUpdateIDs", Namespace = "http://www.microsoft.com/SoftwareDistribution/Server/ClientWebService")]
             public InstalledNonLeafUpdateIDs InstalledNonLeafUpdateIDs { get; set; }
+
             [XmlElement(ElementName = "OtherCachedUpdateIDs", Namespace = "http://www.microsoft.com/SoftwareDistribution/Server/ClientWebService")]
             public OtherCachedUpdateIDs OtherCachedUpdateIDs { get; set; }
+
             [XmlElement(ElementName = "SkipSoftwareSync", Namespace = "http://www.microsoft.com/SoftwareDistribution/Server/ClientWebService")]
             public string SkipSoftwareSync { get; set; }
+
             [XmlElement(ElementName = "NeedTwoGroupOutOfScopeUpdates", Namespace = "http://www.microsoft.com/SoftwareDistribution/Server/ClientWebService")]
             public string NeedTwoGroupOutOfScopeUpdates { get; set; }
+
             [XmlElement(ElementName = "FilterAppCategoryIds", Namespace = "http://www.microsoft.com/SoftwareDistribution/Server/ClientWebService")]
             public FilterAppCategoryIds FilterAppCategoryIds { get; set; }
+
             [XmlElement(ElementName = "AlsoPerformRegularSync", Namespace = "http://www.microsoft.com/SoftwareDistribution/Server/ClientWebService")]
             public string AlsoPerformRegularSync { get; set; }
+
             [XmlElement(ElementName = "ComputerSpec", Namespace = "http://www.microsoft.com/SoftwareDistribution/Server/ClientWebService")]
             public string ComputerSpec { get; set; }
+
             [XmlElement(ElementName = "ExtendedUpdateInfoParameters", Namespace = "http://www.microsoft.com/SoftwareDistribution/Server/ClientWebService")]
             public ExtendedUpdateInfoParameters ExtendedUpdateInfoParameters { get; set; }
+
             [XmlElement(ElementName = "ClientPreferredLanguages", Namespace = "http://www.microsoft.com/SoftwareDistribution/Server/ClientWebService")]
             public string ClientPreferredLanguages { get; set; }
+
             [XmlElement(ElementName = "ProductsParameters", Namespace = "http://www.microsoft.com/SoftwareDistribution/Server/ClientWebService")]
             public ProductsParameters ProductsParameters { get; set; }
         }
@@ -349,8 +395,10 @@ namespace WindowsUpdateLib
         {
             [XmlElement(ElementName = "cookie", Namespace = "http://www.microsoft.com/SoftwareDistribution/Server/ClientWebService")]
             public CSOAPCommon.Cookie Cookie { get; set; }
+
             [XmlElement(ElementName = "parameters", Namespace = "http://www.microsoft.com/SoftwareDistribution/Server/ClientWebService")]
             public Parameters Parameters { get; set; }
+
             [XmlAttribute(AttributeName = "xmlns")]
             public string Xmlns { get; set; }
         }
@@ -363,20 +411,28 @@ namespace WindowsUpdateLib
         {
             [XmlElement(ElementName = "ID", Namespace = "http://www.microsoft.com/SoftwareDistribution/Server/ClientWebService")]
             public string ID { get; set; }
+
             [XmlElement(ElementName = "Action", Namespace = "http://www.microsoft.com/SoftwareDistribution/Server/ClientWebService")]
             public string Action2 { get; set; }
+
             [XmlElement(ElementName = "IsAssigned", Namespace = "http://www.microsoft.com/SoftwareDistribution/Server/ClientWebService")]
             public string IsAssigned { get; set; }
+
             [XmlElement(ElementName = "LastChangeTime", Namespace = "http://www.microsoft.com/SoftwareDistribution/Server/ClientWebService")]
             public string LastChangeTime { get; set; }
+
             [XmlElement(ElementName = "AutoSelect", Namespace = "http://www.microsoft.com/SoftwareDistribution/Server/ClientWebService")]
             public string AutoSelect { get; set; }
+
             [XmlElement(ElementName = "AutoDownload", Namespace = "http://www.microsoft.com/SoftwareDistribution/Server/ClientWebService")]
             public string AutoDownload { get; set; }
+
             [XmlElement(ElementName = "SupersedenceBehavior", Namespace = "http://www.microsoft.com/SoftwareDistribution/Server/ClientWebService")]
             public string SupersedenceBehavior { get; set; }
+
             [XmlElement(ElementName = "Priority", Namespace = "http://www.microsoft.com/SoftwareDistribution/Server/ClientWebService")]
             public string Priority { get; set; }
+
             [XmlElement(ElementName = "HandlerSpecificAction", Namespace = "http://www.microsoft.com/SoftwareDistribution/Server/ClientWebService")]
             public string HandlerSpecificAction { get; set; }
         }
@@ -386,12 +442,16 @@ namespace WindowsUpdateLib
         {
             [XmlElement(ElementName = "ID", Namespace = "http://www.microsoft.com/SoftwareDistribution/Server/ClientWebService")]
             public string ID { get; set; }
+
             [XmlElement(ElementName = "Deployment", Namespace = "http://www.microsoft.com/SoftwareDistribution/Server/ClientWebService")]
             public Deployment Deployment { get; set; }
+
             [XmlElement(ElementName = "IsLeaf", Namespace = "http://www.microsoft.com/SoftwareDistribution/Server/ClientWebService")]
             public string IsLeaf { get; set; }
+
             [XmlElement(ElementName = "IsShared", Namespace = "http://www.microsoft.com/SoftwareDistribution/Server/ClientWebService")]
             public string IsShared { get; set; }
+
             [XmlElement(ElementName = "Xml", Namespace = "http://www.microsoft.com/SoftwareDistribution/Server/ClientWebService")]
             public string Xml { get; set; }
         }
@@ -415,14 +475,19 @@ namespace WindowsUpdateLib
         {
             [XmlElement(ElementName = "NewUpdates", Namespace = "http://www.microsoft.com/SoftwareDistribution/Server/ClientWebService")]
             public NewUpdates NewUpdates { get; set; }
+
             [XmlElement(ElementName = "OutOfScopeRevisionIDs", Namespace = "http://www.microsoft.com/SoftwareDistribution/Server/ClientWebService")]
             public CSOAPCommon.OutOfScopeRevisionIDs OutOfScopeRevisionIDs { get; set; }
+
             [XmlElement(ElementName = "Truncated", Namespace = "http://www.microsoft.com/SoftwareDistribution/Server/ClientWebService")]
             public string Truncated { get; set; }
+
             [XmlElement(ElementName = "NewCookie", Namespace = "http://www.microsoft.com/SoftwareDistribution/Server/ClientWebService")]
             public CSOAPCommon.Cookie NewCookie { get; set; }
+
             [XmlElement(ElementName = "DriverSyncNotNeeded", Namespace = "http://www.microsoft.com/SoftwareDistribution/Server/ClientWebService")]
             public string DriverSyncNotNeeded { get; set; }
+
             [XmlElement(ElementName = "ExtendedUpdateInfo", Namespace = "http://www.microsoft.com/SoftwareDistribution/Server/ClientWebService")]
             public ExtendedUpdateInfo ExtendedUpdateInfo { get; set; }
         }
@@ -432,6 +497,7 @@ namespace WindowsUpdateLib
         {
             [XmlElement(ElementName = "SyncUpdatesResult", Namespace = "http://www.microsoft.com/SoftwareDistribution/Server/ClientWebService")]
             public SyncUpdatesResult SyncUpdatesResult { get; set; }
+
             [XmlAttribute(AttributeName = "xmlns")]
             public string Xmlns { get; set; }
         }
@@ -444,6 +510,7 @@ namespace WindowsUpdateLib
         {
             [XmlElement(ElementName = "UpdateID", Namespace = "http://www.microsoft.com/SoftwareDistribution/Server/ClientWebService")]
             public string UpdateID { get; set; }
+
             [XmlElement(ElementName = "RevisionNumber", Namespace = "http://www.microsoft.com/SoftwareDistribution/Server/ClientWebService")]
             public string RevisionNumber { get; set; }
         }
@@ -460,10 +527,13 @@ namespace WindowsUpdateLib
         {
             [XmlElement(ElementName = "updateIDs", Namespace = "http://www.microsoft.com/SoftwareDistribution/Server/ClientWebService")]
             public UpdateIDs UpdateIDs { get; set; }
+
             [XmlElement(ElementName = "infoTypes", Namespace = "http://www.microsoft.com/SoftwareDistribution/Server/ClientWebService")]
             public CSOAPCommon.InfoTypes InfoTypes { get; set; }
+
             [XmlElement(ElementName = "deviceAttributes", Namespace = "http://www.microsoft.com/SoftwareDistribution/Server/ClientWebService")]
             public string DeviceAttributes { get; set; }
+
             [XmlAttribute(AttributeName = "xmlns")]
             public string Xmlns { get; set; }
         }
@@ -476,12 +546,16 @@ namespace WindowsUpdateLib
         {
             [XmlElement(ElementName = "FileDigest", Namespace = "http://www.microsoft.com/SoftwareDistribution/Server/ClientWebService")]
             public string FileDigest { get; set; }
+
             [XmlElement(ElementName = "Url", Namespace = "http://www.microsoft.com/SoftwareDistribution/Server/ClientWebService")]
             public string Url { get; set; }
+
             [XmlElement(ElementName = "PiecesHashUrl", Namespace = "http://www.microsoft.com/SoftwareDistribution/Server/ClientWebService")]
             public string PiecesHashUrl { get; set; }
+
             [XmlElement(ElementName = "BlockMapUrl", Namespace = "http://www.microsoft.com/SoftwareDistribution/Server/ClientWebService")]
             public string BlockMapUrl { get; set; }
+
             [XmlElement(ElementName = "EsrpDecryptionInformation", Namespace = "http://www.microsoft.com/SoftwareDistribution/Server/ClientWebService")]
             public string EsrpDecryptionInformation { get; set; }
         }
@@ -505,8 +579,10 @@ namespace WindowsUpdateLib
         {
             [XmlElement(ElementName = "FileDigest", Namespace = "http://www.microsoft.com/SoftwareDistribution/Server/ClientWebService")]
             public string FileDigest { get; set; }
+
             [XmlElement(ElementName = "DecryptionKey", Namespace = "http://www.microsoft.com/SoftwareDistribution/Server/ClientWebService")]
             public string DecryptionKey { get; set; }
+
             [XmlElement(ElementName = "SecurityData", Namespace = "http://www.microsoft.com/SoftwareDistribution/Server/ClientWebService")]
             public SecurityData SecurityData { get; set; }
         }
@@ -523,6 +599,7 @@ namespace WindowsUpdateLib
         {
             [XmlElement(ElementName = "FileLocations", Namespace = "http://www.microsoft.com/SoftwareDistribution/Server/ClientWebService")]
             public FileLocations FileLocations { get; set; }
+
             [XmlElement(ElementName = "FileDecryptionData", Namespace = "http://www.microsoft.com/SoftwareDistribution/Server/ClientWebService")]
             public FileDecryptionData FileDecryptionData { get; set; }
         }
@@ -532,6 +609,7 @@ namespace WindowsUpdateLib
         {
             [XmlElement(ElementName = "GetExtendedUpdateInfo2Result", Namespace = "http://www.microsoft.com/SoftwareDistribution/Server/ClientWebService")]
             public GetExtendedUpdateInfo2Result GetExtendedUpdateInfo2Result { get; set; }
+
             [XmlAttribute(AttributeName = "xmlns")]
             public string Xmlns { get; set; }
         }
@@ -551,14 +629,19 @@ namespace WindowsUpdateLib
         {
             [XmlElement(ElementName = "cookie", Namespace = "http://www.microsoft.com/SoftwareDistribution/Server/ClientWebService")]
             public CSOAPCommon.Cookie Cookie { get; set; }
+
             [XmlElement(ElementName = "revisionIDs", Namespace = "http://www.microsoft.com/SoftwareDistribution/Server/ClientWebService")]
             public RevisionIDs RevisionIDs { get; set; }
+
             [XmlElement(ElementName = "infoTypes", Namespace = "http://www.microsoft.com/SoftwareDistribution/Server/ClientWebService")]
             public CSOAPCommon.InfoTypes InfoTypes { get; set; }
+
             [XmlElement(ElementName = "locales", Namespace = "http://www.microsoft.com/SoftwareDistribution/Server/ClientWebService")]
             public CSOAPCommon.Locales Locales { get; set; }
+
             [XmlElement(ElementName = "deviceAttributes", Namespace = "http://www.microsoft.com/SoftwareDistribution/Server/ClientWebService")]
             public string DeviceAttributes { get; set; }
+
             [XmlAttribute(AttributeName = "xmlns")]
             public string Xmlns { get; set; }
         }
@@ -571,6 +654,7 @@ namespace WindowsUpdateLib
         {
             [XmlElement(ElementName = "OutOfScopeRevisionIDs", Namespace = "http://www.microsoft.com/SoftwareDistribution/Server/ClientWebService")]
             public CSOAPCommon.OutOfScopeRevisionIDs OutOfScopeRevisionIDs { get; set; }
+
             [XmlElement(ElementName = "Updates", Namespace = "http://www.microsoft.com/SoftwareDistribution/Server/ClientWebService")]
             public CSOAPCommon.Updates Updates { get; set; }
         }
@@ -580,18 +664,23 @@ namespace WindowsUpdateLib
         {
             [XmlElement(ElementName = "GetExtendedUpdateInfoResult", Namespace = "http://www.microsoft.com/SoftwareDistribution/Server/ClientWebService")]
             public GetExtendedUpdateInfoResult GetExtendedUpdateInfoResult { get; set; }
+
             [XmlAttribute(AttributeName = "xmlns")]
             public string Xmlns { get; set; }
         }
+
         [XmlRoot(ElementName = "Verification", Namespace = "http://www.microsoft.com/SoftwareDistribution/Server/ClientWebService")]
         public class Verification
         {
             [XmlAttribute(AttributeName = "Timestamp")]
             public string Timestamp { get; set; }
+
             [XmlAttribute(AttributeName = "LeafCertificateId")]
             public string LeafCertificateId { get; set; }
+
             [XmlAttribute(AttributeName = "Signature")]
             public string Signature { get; set; }
+
             [XmlAttribute(AttributeName = "Algorithm")]
             public string Algorithm { get; set; }
         }
@@ -604,8 +693,10 @@ namespace WindowsUpdateLib
         {
             [XmlElement(ElementName = "Language")]
             public string Language { get; set; }
+
             [XmlElement(ElementName = "Title")]
             public string Title { get; set; }
+
             [XmlElement(ElementName = "Description")]
             public string Description { get; set; }
         }
@@ -615,6 +706,7 @@ namespace WindowsUpdateLib
         {
             [XmlAttribute(AttributeName = "UpdateID")]
             public string UpdateID { get; set; }
+
             [XmlAttribute(AttributeName = "RevisionNumber")]
             public string RevisionNumber { get; set; }
         }
@@ -624,14 +716,19 @@ namespace WindowsUpdateLib
         {
             [XmlAttribute(AttributeName = "UpdateType")]
             public string UpdateType { get; set; }
+
             [XmlAttribute(AttributeName = "PerUser")]
             public string PerUser { get; set; }
+
             [XmlElement(ElementName = "SecuredFragment")]
             public string SecuredFragment { get; set; }
+
             [XmlAttribute(AttributeName = "PackageRank")]
             public string PackageRank { get; set; }
+
             [XmlAttribute(AttributeName = "ExplicitlyDeployable")]
             public string ExplicitlyDeployable { get; set; }
+
             [XmlAttribute(AttributeName = "ApplyPackageRank")]
             public string ApplyPackageRank { get; set; }
         }
@@ -641,10 +738,13 @@ namespace WindowsUpdateLib
         {
             [XmlAttribute(AttributeName = "Comparison")]
             public string Comparison { get; set; }
+
             [XmlAttribute(AttributeName = "MajorVersion")]
             public string MajorVersion { get; set; }
+
             [XmlAttribute(AttributeName = "MinorVersion")]
             public string MinorVersion { get; set; }
+
             [XmlAttribute(AttributeName = "BuildNumber")]
             public string BuildNumber { get; set; }
         }
@@ -654,30 +754,43 @@ namespace WindowsUpdateLib
         {
             [XmlElement(ElementName = "b.WindowsVersion")]
             public BWindowsVersion BWindowsVersion { get; set; }
+
             [XmlElement(ElementName = "True")]
             public string True { get; set; }
+
             [XmlElement(ElementName = "Or")]
             public Or Or { get; set; }
+
             [XmlElement(ElementName = "And")]
             public And And { get; set; }
+
             [XmlElement(ElementName = "b.WmiQuery")]
             public BWmiQuery BWmiQuery { get; set; }
+
             [XmlElement(ElementName = "b.RegSz")]
             public BRegSz BRegSz { get; set; }
+
             [XmlElement(ElementName = "b.SystemMetric")]
             public BSystemMetric BSystemMetric { get; set; }
+
             [XmlElement(ElementName = "b.Memory")]
             public BMemory BMemory { get; set; }
+
             [XmlElement(ElementName = "b.Direct3D")]
             public BDirect3D BDirect3D { get; set; }
+
             [XmlElement(ElementName = "b.SensorById")]
             public BSensorById BSensorById { get; set; }
+
             [XmlElement(ElementName = "b.Camera")]
             public BCamera BCamera { get; set; }
+
             [XmlElement(ElementName = "b.NFC")]
             public BNFC BNFC { get; set; }
+
             [XmlElement(ElementName = "b.VideoMemory")]
             public BVideoMemory BVideoMemory { get; set; }
+
             [XmlElement(ElementName = "AppxPackageInstalled")]
             public string AppxPackageInstalled { get; set; }
         }
@@ -687,10 +800,13 @@ namespace WindowsUpdateLib
         {
             [XmlElement(ElementName = "IsInstalled")]
             public IsInstalled IsInstalled { get; set; }
+
             [XmlElement(ElementName = "b.WindowsVersion")]
             public BWindowsVersion BWindowsVersion { get; set; }
+
             [XmlElement(ElementName = "Metadata")]
             public Metadata Metadata { get; set; }
+
             [XmlElement(ElementName = "IsInstallable")]
             public IsInstallable IsInstallable { get; set; }
         }
@@ -700,18 +816,25 @@ namespace WindowsUpdateLib
         {
             [XmlElement(ElementName = "LocalizedProperties")]
             public LocalizedProperties LocalizedProperties { get; set; }
+
             [XmlElement(ElementName = "UpdateIdentity")]
             public UpdateIdentity UpdateIdentity { get; set; }
+
             [XmlElement(ElementName = "Properties")]
             public Properties Properties { get; set; }
+
             [XmlElement(ElementName = "ApplicabilityRules")]
             public ApplicabilityRules ApplicabilityRules { get; set; }
+
             [XmlElement(ElementName = "ExtendedProperties")]
             public ExtendedProperties ExtendedProperties { get; set; }
+
             [XmlElement(ElementName = "HandlerSpecificData")]
             public HandlerSpecificData HandlerSpecificData { get; set; }
+
             [XmlElement(ElementName = "Relationships")]
             public Relationships Relationships { get; set; }
+
             [XmlElement(ElementName = "Files")]
             public Files Files { get; set; }
         }
@@ -721,28 +844,40 @@ namespace WindowsUpdateLib
         {
             [XmlAttribute(AttributeName = "DefaultPropertiesLanguage")]
             public string DefaultPropertiesLanguage { get; set; }
+
             [XmlAttribute(AttributeName = "Handler")]
             public string Handler { get; set; }
+
             [XmlAttribute(AttributeName = "CreationDate")]
             public string CreationDate { get; set; }
+
             [XmlAttribute(AttributeName = "IsAppxFramework")]
             public string IsAppxFramework { get; set; }
+
             [XmlAttribute(AttributeName = "CompatibleProtocolVersion")]
             public string CompatibleProtocolVersion { get; set; }
+
             [XmlAttribute(AttributeName = "FromStoreService")]
             public string FromStoreService { get; set; }
+
             [XmlAttribute(AttributeName = "ContentType")]
             public string ContentType { get; set; }
+
             [XmlAttribute(AttributeName = "PackageIdentityName")]
             public string PackageIdentityName { get; set; }
+
             [XmlAttribute(AttributeName = "LegacyMobileProductId")]
             public string LegacyMobileProductId { get; set; }
+
             [XmlElement(ElementName = "InstallationBehavior")]
             public string InstallationBehavior { get; set; }
+
             [XmlAttribute(AttributeName = "MaxDownloadSize")]
             public string MaxDownloadSize { get; set; }
+
             [XmlAttribute(AttributeName = "MinDownloadSize")]
             public string MinDownloadSize { get; set; }
+
             [XmlAttribute(AttributeName = "PackageContentId")]
             public string PackageContentId { get; set; }
         }
@@ -752,12 +887,16 @@ namespace WindowsUpdateLib
         {
             [XmlAttribute(AttributeName = "CategoryType")]
             public string CategoryType { get; set; }
+
             [XmlAttribute(AttributeName = "ProhibitsSubcategories")]
             public string ProhibitsSubcategories { get; set; }
+
             [XmlAttribute(AttributeName = "ProhibitsUpdates")]
             public string ProhibitsUpdates { get; set; }
+
             [XmlAttribute(AttributeName = "DisplayOrder")]
             public string DisplayOrder { get; set; }
+
             [XmlAttribute(AttributeName = "ExcludedByDefault")]
             public string ExcludedByDefault { get; set; }
         }
@@ -767,8 +906,10 @@ namespace WindowsUpdateLib
         {
             [XmlElement(ElementName = "CategoryInformation")]
             public CategoryInformation CategoryInformation { get; set; }
+
             [XmlAttribute(AttributeName = "type")]
             public string Type { get; set; }
+
             [XmlElement(ElementName = "AppxPackageInstallData")]
             public AppxPackageInstallData AppxPackageInstallData { get; set; }
         }
@@ -778,12 +919,16 @@ namespace WindowsUpdateLib
         {
             [XmlAttribute(AttributeName = "Key")]
             public string Key { get; set; }
+
             [XmlAttribute(AttributeName = "Subkey")]
             public string Subkey { get; set; }
+
             [XmlAttribute(AttributeName = "Value")]
             public string Value { get; set; }
+
             [XmlAttribute(AttributeName = "Type")]
             public string Type { get; set; }
+
             [XmlAttribute(AttributeName = "RegType32")]
             public string RegType32 { get; set; }
         }
@@ -793,6 +938,7 @@ namespace WindowsUpdateLib
         {
             [XmlElement(ElementName = "b.RegValueExists")]
             public BRegValueExists BRegValueExists { get; set; }
+
             [XmlElement(ElementName = "b.RegDword")]
             public BRegDword BRegDword { get; set; }
         }
@@ -802,12 +948,16 @@ namespace WindowsUpdateLib
         {
             [XmlAttribute(AttributeName = "Key")]
             public string Key { get; set; }
+
             [XmlAttribute(AttributeName = "Subkey")]
             public string Subkey { get; set; }
+
             [XmlAttribute(AttributeName = "Value")]
             public string Value { get; set; }
+
             [XmlAttribute(AttributeName = "Comparison")]
             public string Comparison { get; set; }
+
             [XmlAttribute(AttributeName = "Data")]
             public string Data { get; set; }
         }
@@ -817,14 +967,19 @@ namespace WindowsUpdateLib
         {
             [XmlElement(ElementName = "Not")]
             public Not Not { get; set; }
+
             [XmlElement(ElementName = "b.RegDword")]
             public BRegDword BRegDword { get; set; }
+
             [XmlElement(ElementName = "And")]
             public And[] And { get; set; }
+
             [XmlElement(ElementName = "b.RegSz")]
             public BRegSz BRegSz { get; set; }
+
             [XmlElement(ElementName = "b.WindowsVersion")]
             public BWindowsVersion BWindowsVersion { get; set; }
+
             /*[XmlElement(ElementName = "Or")]
             public Or Or { get; set; }*/ // TODO: fix
         }
@@ -834,14 +989,19 @@ namespace WindowsUpdateLib
         {
             [XmlElement(ElementName = "b.WindowsVersion")]
             public BWindowsVersion[] BWindowsVersion { get; set; }
+
             [XmlElement(ElementName = "Not")]
             public Not[] Not { get; set; }
+
             [XmlElement(ElementName = "b.RegDword")]
             public BRegDword[] BRegDword { get; set; }
+
             [XmlElement(ElementName = "Or")]
             public Or[] Or { get; set; }
+
             [XmlElement(ElementName = "b.SystemMetric")]
             public BSystemMetric[] BSystemMetric { get; set; }
+
             [XmlElement(ElementName = "b.RegSz")]
             public BRegSz BRegSz { get; set; }
         }
@@ -851,6 +1011,7 @@ namespace WindowsUpdateLib
         {
             [XmlAttribute(AttributeName = "Namespace")]
             public string Namespace { get; set; }
+
             [XmlAttribute(AttributeName = "WqlQuery")]
             public string WqlQuery { get; set; }
         }
@@ -860,8 +1021,10 @@ namespace WindowsUpdateLib
         {
             [XmlAttribute(AttributeName = "Comparison")]
             public string Comparison { get; set; }
+
             [XmlAttribute(AttributeName = "Index")]
             public string Index { get; set; }
+
             [XmlAttribute(AttributeName = "Value")]
             public string Value { get; set; }
         }
@@ -871,14 +1034,19 @@ namespace WindowsUpdateLib
         {
             [XmlAttribute(AttributeName = "Key")]
             public string Key { get; set; }
+
             [XmlAttribute(AttributeName = "Subkey")]
             public string Subkey { get; set; }
+
             [XmlAttribute(AttributeName = "Value")]
             public string Value { get; set; }
+
             [XmlAttribute(AttributeName = "Comparison")]
             public string Comparison { get; set; }
+
             [XmlAttribute(AttributeName = "Data")]
             public string Data { get; set; }
+
             [XmlAttribute(AttributeName = "RegType32")]
             public string RegType32 { get; set; }
         }
@@ -888,6 +1056,7 @@ namespace WindowsUpdateLib
         {
             [XmlElement(ElementName = "UpdateIdentity")]
             public UpdateIdentity[] UpdateIdentity { get; set; }
+
             [XmlElement(ElementName = "AtLeastOne")]
             public AtLeastOne[] AtLeastOne { get; set; }
         }
@@ -897,6 +1066,7 @@ namespace WindowsUpdateLib
         {
             [XmlElement(ElementName = "Prerequisites")]
             public Prerequisites Prerequisites { get; set; }
+
             [XmlElement(ElementName = "BundledUpdates")]
             public BundledUpdates BundledUpdates { get; set; }
         }
@@ -906,6 +1076,7 @@ namespace WindowsUpdateLib
         {
             [XmlAttribute(AttributeName = "MinSizeInMB")]
             public string MinSizeInMB { get; set; }
+
             [XmlAttribute(AttributeName = "Type")]
             public string Type { get; set; }
         }
@@ -915,8 +1086,10 @@ namespace WindowsUpdateLib
         {
             [XmlAttribute(AttributeName = "HardwareVersion")]
             public string HardwareVersion { get; set; }
+
             [XmlAttribute(AttributeName = "FeatureLevelMajor")]
             public string FeatureLevelMajor { get; set; }
+
             [XmlAttribute(AttributeName = "FeatureLevelMinor")]
             public string FeatureLevelMinor { get; set; }
         }
@@ -933,6 +1106,7 @@ namespace WindowsUpdateLib
         {
             [XmlElement(ElementName = "UpdateIdentity")]
             public UpdateIdentity[] UpdateIdentity { get; set; }
+
             [XmlAttribute(AttributeName = "IsCategory")]
             public string IsCategory { get; set; }
         }
@@ -963,8 +1137,10 @@ namespace WindowsUpdateLib
         {
             [XmlAttribute(AttributeName = "Name")]
             public string Name { get; set; }
+
             [XmlAttribute(AttributeName = "Publisher")]
             public string Publisher { get; set; }
+
             [XmlAttribute(AttributeName = "LegacyMobileProductId")]
             public string LegacyMobileProductId { get; set; }
         }
@@ -974,6 +1150,7 @@ namespace WindowsUpdateLib
         {
             [XmlElement(ElementName = "AppxFamilyMetadata")]
             public AppxFamilyMetadata AppxFamilyMetadata { get; set; }
+
             [XmlElement(ElementName = "AppxMetadata")]
             public AppxMetadata AppxMetadata { get; set; }
         }
@@ -997,10 +1174,13 @@ namespace WindowsUpdateLib
         {
             [XmlElement(ElementName = "ApplicabilityBlob")]
             public string ApplicabilityBlob { get; set; }
+
             [XmlAttribute(AttributeName = "PackageType")]
             public string PackageType { get; set; }
+
             [XmlAttribute(AttributeName = "IsAppxBundle")]
             public string IsAppxBundle { get; set; }
+
             [XmlAttribute(AttributeName = "PackageMoniker")]
             public string PackageMoniker { get; set; }
         }
@@ -1017,6 +1197,7 @@ namespace WindowsUpdateLib
         {
             [XmlAttribute(AttributeName = "Algorithm")]
             public string Algorithm { get; set; }
+
             [XmlText]
             public string Text { get; set; }
         }
@@ -1026,6 +1207,7 @@ namespace WindowsUpdateLib
         {
             [XmlAttribute(AttributeName = "Algorithm")]
             public string Algorithm { get; set; }
+
             [XmlText]
             public string Text { get; set; }
         }
@@ -1035,6 +1217,7 @@ namespace WindowsUpdateLib
         {
             [XmlAttribute(AttributeName = "Algorithm")]
             public string Algorithm { get; set; }
+
             [XmlText]
             public string Text { get; set; }
         }
@@ -1044,22 +1227,31 @@ namespace WindowsUpdateLib
         {
             [XmlElement(ElementName = "AdditionalDigest")]
             public AdditionalDigest AdditionalDigest { get; set; }
+
             [XmlElement(ElementName = "PiecesHashDigest")]
             public PiecesHashDigest PiecesHashDigest { get; set; }
+
             [XmlElement(ElementName = "BlockMapDigest")]
             public BlockMapDigest BlockMapDigest { get; set; }
+
             [XmlAttribute(AttributeName = "FileName")]
             public string FileName { get; set; }
+
             [XmlAttribute(AttributeName = "Digest")]
             public string Digest { get; set; }
+
             [XmlAttribute(AttributeName = "DigestAlgorithm")]
             public string DigestAlgorithm { get; set; }
+
             [XmlAttribute(AttributeName = "Size")]
             public string Size { get; set; }
+
             [XmlAttribute(AttributeName = "Modified")]
             public string Modified { get; set; }
+
             [XmlAttribute(AttributeName = "InstallerSpecificIdentifier")]
             public string InstallerSpecificIdentifier { get; set; }
+
             [XmlAttribute(AttributeName = "PatchingType")]
             public string PatchingType { get; set; }
         }
@@ -1076,13 +1268,16 @@ namespace WindowsUpdateLib
         {
             [XmlAttribute(AttributeName = "PackageFileName")]
             public string PackageFileName { get; set; }
+
             [XmlAttribute(AttributeName = "MainPackage")]
             public string MainPackage { get; set; }
         }
     }
-    #endregion
+
+    #endregion XML Objects
 
     #region JSON Objects
+
     public class CAppxMetadataJSON
     {
         public partial class AppxMetadata
@@ -1163,7 +1358,8 @@ namespace WindowsUpdateLib
             public long SystemId { get; set; }
         }
     }
-    #endregion
+
+    #endregion JSON Objects
 
     public enum MachineType : ushort
     {
@@ -1549,7 +1745,6 @@ namespace WindowsUpdateLib
                                         $"OneCoreManufacturer=Microsoft Corporation" +
                                         $"OneCoreOperatorName=000-88";
             }
-
             else if (ReportingSku == OSSkuId.Lite)
             {
                 ctac.DeviceAttributes += $"OneCoreFwV={ReportingVersion}" +
@@ -1580,6 +1775,7 @@ namespace WindowsUpdateLib
         }
 
         #region Data manipulation
+
         public static async Task<string> PostToWindowsUpdateAsync(string method, string message, bool secured)
         {
             string _endpoint = Endpoint;
@@ -1637,7 +1833,6 @@ namespace WindowsUpdateLib
                 },
                 Body = new CSOAPCommon.Body()
                 {
-
                 }
             };
 
@@ -1718,9 +1913,11 @@ namespace WindowsUpdateLib
         {
             return JsonSerializer.Deserialize<CAppxMetadataJSON.AppxMetadata>(json);
         }
-        #endregion
+
+        #endregion Data manipulation
 
         #region WU functions
+
         public static async Task<(CGetCookieResponse.GetCookieResponse, string)> GetCookie()
         {
             CSOAPCommon.Envelope envelope = GetEnveloppe("GetCookie", null, false);
@@ -1789,7 +1986,6 @@ namespace WindowsUpdateLib
 
             return (renvelope.Body.GetExtendedUpdateInfoResponse, response);
         }
-
 
         public static async Task<(CGetExtendedUpdateInfo2Response.GetExtendedUpdateInfo2Response, string)> GetExtendedUpdateInfo2(
             string token,
@@ -2132,9 +2328,11 @@ namespace WindowsUpdateLib
 
             return (renvelope.Body.SyncUpdatesResponse, response);
         }
-        #endregion
+
+        #endregion WU functions
 
         #region Application specific functions
+
         public static async Task<UpdateData[]> GetUpdates(string categoryId, CTAC ctac, string token, string filter = "Application") // Or ProductRelease
         {
             (CGetCookieResponse.GetCookieResponse cookie, string cookieresp) = await GetCookie();
@@ -2238,9 +2436,11 @@ namespace WindowsUpdateLib
 
             return relevantUpdateDatas.ToArray();
         }
-        #endregion
+
+        #endregion Application specific functions
 
         #region File url specific functions
+
         public static async Task<string> GetFileUrl(UpdateData updateData, string fileDigest, string token, CTAC ctac)
         {
             var result = await GetExtendedUpdateInfo2(token, updateData.Xml.UpdateIdentity.UpdateID, updateData.Xml.UpdateIdentity.RevisionNumber, ctac);
@@ -2272,7 +2472,8 @@ namespace WindowsUpdateLib
 
             return null;
         }
-        #endregion
+
+        #endregion File url specific functions
     }
 
     public class UpdateData
