@@ -19,7 +19,6 @@
 // DEALINGS IN THE SOFTWARE.
 
 using CommandLine;
-using System;
 using WindowsUpdateLib;
 
 namespace UUPDownload

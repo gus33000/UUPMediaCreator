@@ -21,11 +21,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 */
+
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace UUPDownload
 {
@@ -50,7 +47,7 @@ namespace UUPDownload
                     return;
                 }
 
-                var msg = "";
+                string msg = "";
 
                 switch (severity)
                 {
@@ -58,10 +55,12 @@ namespace UUPDownload
                         msg = "  Warning  ";
                         Console.ForegroundColor = ConsoleColor.Yellow;
                         break;
+
                     case LoggingLevel.Error:
                         msg = "   Error   ";
                         Console.ForegroundColor = ConsoleColor.Red;
                         break;
+
                     case LoggingLevel.Information:
                         msg = "Information";
                         Console.ForegroundColor = ConsoleColor.White;

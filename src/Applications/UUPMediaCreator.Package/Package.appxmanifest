@@ -7,8 +7,8 @@
   IgnorableNamespaces="uap rescap">
 
   <Identity
-    Name="518f57a9-9e18-45ff-97f1-ffd62d1fa6e8"
-    Publisher="CN=Gus"
+    Name="gmonce.uupmediacreator"
+    Publisher="CN=gmonce"
     Version="1.0.5.0" />
 
   <Properties>
