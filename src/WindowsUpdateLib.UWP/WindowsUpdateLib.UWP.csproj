@@ -125,13 +125,13 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Flurl.Http">
-      <Version>3.0.0-pre3</Version>
+      <Version>3.0.0-pre5</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
       <Version>6.2.10</Version>
     </PackageReference>
     <PackageReference Include="System.Text.Json">
-      <Version>5.0.0-preview.4.20251.6</Version>
+      <Version>5.0.0-rc.2.20475.5</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>

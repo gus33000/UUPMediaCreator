@@ -73,48 +73,44 @@ namespace Imaging
                 {
                     switch (msg)
                     {
-                        case ProgressMsg.SCAN_BEGIN:
+                        case ProgressMsg.ScanBegin:
                             {
-                                ProgressInfo_Scan m = (ProgressInfo_Scan)info;
+                                ScanProgress m = (ScanProgress)info;
                                 progressCallback?.Invoke($"Scanning files ({m.NumBytesScanned} bytes scanned, Current directory: {m.CurPath})", 0, true);
                             }
                             break;
-                        case ProgressMsg.SCAN_END:
+                        case ProgressMsg.ScanEnd:
                             {
-                                ProgressInfo_Scan m = (ProgressInfo_Scan)info;
+                                ScanProgress m = (ScanProgress)info;
                                 progressCallback?.Invoke($"Scanning files ({m.NumBytesScanned} bytes scanned, Current directory: {m.CurPath})", 0, true);
                             }
                             break;
-                        case ProgressMsg.WRITE_METADATA_BEGIN:
+                        case ProgressMsg.WriteMetadataBegin:
                             break;
-                        case ProgressMsg.UPDATE_BEGIN_COMMAND:
+                        case ProgressMsg.UpdateBeginCommand:
                             break;
-                        case ProgressMsg.UPDATE_END_COMMAND:
+                        case ProgressMsg.UpdateEndCommand:
                             break;
-                        case ProgressMsg.WRITE_STREAMS:
+                        case ProgressMsg.WriteStreams:
                             {
-                                ProgressInfo_WriteStreams m = (ProgressInfo_WriteStreams)info;
+                                WriteStreamsProgress m = (WriteStreamsProgress)info;
                                 progressCallback?.Invoke(title, (int)Math.Round((double)m.CompletedBytes / m.TotalBytes * 100), false);
                             }
                             break;
-                        case ProgressMsg.WRITE_METADATA_END:
+                        case ProgressMsg.WriteMetadataEnd:
                             break;
                     }
-                    return CallbackStatus.CONTINUE;
+                    return CallbackStatus.Continue;
                 }
 
-                using (Wim wim = Wim.OpenWim(wimFile, OpenFlags.DEFAULT))
+                using (Wim wim = Wim.OpenWim(wimFile, OpenFlags.WriteAccess))
                 {
                     wim.RegisterCallback(ProgressCallback);
                     wim.UpdateImage(
                         imageIndex,
-                        new UpdateCommand()
-                        {
-                            Add = new UpdateCommand.UpdateAdd(fileToAdd, destination, null, AddFlags.DEFAULT),
-                            AddFlags = AddFlags.DEFAULT
-                        },
-                        UpdateFlags.SEND_PROGRESS);
-                    wim.Overwrite(WriteFlags.DEFAULT, Wim.DefaultThreads);
+                        UpdateCommand.SetAdd(fileToAdd, destination, null, AddFlags.None),
+                        UpdateFlags.SendProgress);
+                    wim.Overwrite(WriteFlags.None, Wim.DefaultThreads);
                 }
             }
             catch
@@ -133,48 +129,44 @@ namespace Imaging
                 {
                     switch (msg)
                     {
-                        case ProgressMsg.SCAN_BEGIN:
+                        case ProgressMsg.ScanBegin:
                             {
-                                ProgressInfo_Scan m = (ProgressInfo_Scan)info;
+                                ScanProgress m = (ScanProgress)info;
                                 progressCallback?.Invoke($"Scanning files ({m.NumBytesScanned} bytes scanned, Current directory: {m.CurPath})", 0, true);
                             }
                             break;
-                        case ProgressMsg.SCAN_END:
+                        case ProgressMsg.ScanEnd:
                             {
-                                ProgressInfo_Scan m = (ProgressInfo_Scan)info;
+                                ScanProgress m = (ScanProgress)info;
                                 progressCallback?.Invoke($"Scanning files ({m.NumBytesScanned} bytes scanned, Current directory: {m.CurPath})", 0, true);
                             }
                             break;
-                        case ProgressMsg.WRITE_METADATA_BEGIN:
+                        case ProgressMsg.WriteMetadataBegin:
                             break;
-                        case ProgressMsg.UPDATE_BEGIN_COMMAND:
+                        case ProgressMsg.UpdateBeginCommand:
                             break;
-                        case ProgressMsg.UPDATE_END_COMMAND:
+                        case ProgressMsg.UpdateEndCommand:
                             break;
-                        case ProgressMsg.WRITE_STREAMS:
+                        case ProgressMsg.WriteStreams:
                             {
-                                ProgressInfo_WriteStreams m = (ProgressInfo_WriteStreams)info;
+                                WriteStreamsProgress m = (WriteStreamsProgress)info;
                                 progressCallback?.Invoke(title, (int)Math.Round((double)m.CompletedBytes / m.TotalBytes * 100), false);
                             }
                             break;
-                        case ProgressMsg.WRITE_METADATA_END:
+                        case ProgressMsg.WriteMetadataEnd:
                             break;
                     }
-                    return CallbackStatus.CONTINUE;
+                    return CallbackStatus.Continue;
                 }
 
-                using (Wim wim = Wim.OpenWim(wimFile, OpenFlags.DEFAULT))
+                using (Wim wim = Wim.OpenWim(wimFile, OpenFlags.None))
                 {
                     wim.RegisterCallback(ProgressCallback);
                     wim.UpdateImage(
                         imageIndex,
-                        new UpdateCommand()
-                        {
-                            Delete = new UpdateCommand.UpdateDelete(fileToRemove, DeleteFlags.DEFAULT),
-                            DeleteFlags = DeleteFlags.DEFAULT
-                        },
-                        UpdateFlags.SEND_PROGRESS);
-                    wim.Overwrite(WriteFlags.DEFAULT, Wim.DefaultThreads);
+                        UpdateCommand.SetDelete(fileToRemove, DeleteFlags.None),
+                        UpdateFlags.SendProgress);
+                    wim.Overwrite(WriteFlags.None, Wim.DefaultThreads);
                 }
             }
             catch
@@ -193,26 +185,26 @@ namespace Imaging
                 {
                     switch (msg)
                     {
-                        case ProgressMsg.WRITE_STREAMS:
+                        case ProgressMsg.WriteStreams:
                             {
-                                ProgressInfo_WriteStreams m = (ProgressInfo_WriteStreams)info;
+                                WriteStreamsProgress m = (WriteStreamsProgress)info;
                                 progressCallback?.Invoke(title, (int)Math.Round((double)m.CompletedBytes / m.TotalBytes * 100), false);
                             }
                             break;
-                        case ProgressMsg.WRITE_METADATA_BEGIN:
+                        case ProgressMsg.WriteMetadataBegin:
                             break;
-                        case ProgressMsg.WRITE_METADATA_END:
+                        case ProgressMsg.WriteMetadataEnd:
                             break;
                     }
-                    return CallbackStatus.CONTINUE;
+                    return CallbackStatus.Continue;
                 }
 
-                using (Wim srcWim = Wim.OpenWim(wimFile, OpenFlags.DEFAULT))
+                using (Wim srcWim = Wim.OpenWim(wimFile, OpenFlags.None))
                 {
                     string imageName = srcWim.GetImageName(imageIndex);
                     string imageDescription = srcWim.GetImageDescription(imageIndex);
 
-                    var compression = CompressionType.NONE;
+                    var compression = CompressionType.None;
                     switch (compressionType)
                     {
                         case WimCompressionType.Lzms:
@@ -227,7 +219,7 @@ namespace Imaging
                             }
                         case WimCompressionType.None:
                             {
-                                compression = CompressionType.NONE;
+                                compression = CompressionType.None;
                                 break;
                             }
                         case WimCompressionType.Xpress:
@@ -239,25 +231,25 @@ namespace Imaging
 
                     if (referenceWIMs != null && referenceWIMs.Count() > 0)
                     {
-                        srcWim.ReferenceResourceFiles(referenceWIMs, RefFlags.DEFAULT, OpenFlags.DEFAULT);
+                        srcWim.ReferenceResourceFiles(referenceWIMs, RefFlags.None, OpenFlags.None);
                     }
 
                     if (File.Exists(destinationWimFile))
                     {
-                        using (Wim destWim = Wim.OpenWim(destinationWimFile, OpenFlags.WRITE_ACCESS))
+                        using (Wim destWim = Wim.OpenWim(destinationWimFile, OpenFlags.WriteAccess))
                         {
                             destWim.RegisterCallback(ProgressCallback);
 
                             if (destWim.IsImageNameInUse(imageName))
                             {
-                                srcWim.ExportImage(imageIndex, destWim, imageName + " " + DateTime.UtcNow.ToString(), imageDescription, ExportFlags.DEFAULT);
+                                srcWim.ExportImage(imageIndex, destWim, imageName + " " + DateTime.UtcNow.ToString(), imageDescription, ExportFlags.None);
                             }
                             else
                             {
-                                srcWim.ExportImage(imageIndex, destWim, imageName, imageDescription, ExportFlags.DEFAULT);
+                                srcWim.ExportImage(imageIndex, destWim, imageName, imageDescription, ExportFlags.None);
                             }
 
-                            destWim.Overwrite(WriteFlags.DEFAULT, Wim.DefaultThreads);
+                            destWim.Overwrite(WriteFlags.None, Wim.DefaultThreads);
                         }
                     }
                     else
@@ -265,8 +257,8 @@ namespace Imaging
                         using (Wim destWim = Wim.CreateNewWim(compression))
                         {
                             destWim.RegisterCallback(ProgressCallback);
-                            srcWim.ExportImage(imageIndex, destWim, imageName, imageDescription, ExportFlags.DEFAULT);
-                            destWim.Write(destinationWimFile, Wim.AllImages, compression == CompressionType.LZMS ? WriteFlags.SOLID : WriteFlags.DEFAULT, Wim.DefaultThreads);
+                            srcWim.ExportImage(imageIndex, destWim, imageName, imageDescription, ExportFlags.None);
+                            destWim.Write(destinationWimFile, Wim.AllImages, compression == CompressionType.LZMS ? WriteFlags.Solid : WriteFlags.None, Wim.DefaultThreads);
                         }
                     }
                 }
@@ -285,9 +277,9 @@ namespace Imaging
                 var filename = Path.GetFileName(fileToExtract);
                 var extractDir = Environment.GetEnvironmentVariable("TEMP");
 
-                using (Wim wim = Wim.OpenWim(wimFile, OpenFlags.DEFAULT))
+                using (Wim wim = Wim.OpenWim(wimFile, OpenFlags.None))
                 {
-                    wim.ExtractPath(imageIndex, extractDir, fileToExtract, ExtractFlags.NO_PRESERVE_DIR_STRUCTURE);
+                    wim.ExtractPath(imageIndex, extractDir, fileToExtract, ExtractFlags.NoPreserveDirStructure);
                 }
                 if (File.Exists(destination))
                 {
@@ -311,47 +303,44 @@ namespace Imaging
                 {
                     switch (msg)
                     {
-                        case ProgressMsg.SCAN_BEGIN:
+                        case ProgressMsg.ScanBegin:
                             {
-                                ProgressInfo_Scan m = (ProgressInfo_Scan)info;
+                                ScanProgress m = (ScanProgress)info;
                                 progressCallback?.Invoke($"Scanning files ({m.NumBytesScanned} bytes scanned, Current directory: {m.CurPath})", 0, true);
                             }
                             break;
-                        case ProgressMsg.SCAN_END:
+                        case ProgressMsg.ScanEnd:
                             {
-                                ProgressInfo_Scan m = (ProgressInfo_Scan)info;
+                                ScanProgress m = (ScanProgress)info;
                                 progressCallback?.Invoke($"Scanning files ({m.NumBytesScanned} bytes scanned, Current directory: {m.CurPath})", 0, true);
                             }
                             break;
-                        case ProgressMsg.WRITE_METADATA_BEGIN:
+                        case ProgressMsg.WriteMetadataBegin:
                             break;
-                        case ProgressMsg.UPDATE_BEGIN_COMMAND:
+                        case ProgressMsg.UpdateBeginCommand:
                             break;
-                        case ProgressMsg.UPDATE_END_COMMAND:
+                        case ProgressMsg.UpdateEndCommand:
                             break;
-                        case ProgressMsg.WRITE_STREAMS:
+                        case ProgressMsg.WriteStreams:
                             {
-                                ProgressInfo_WriteStreams m = (ProgressInfo_WriteStreams)info;
+                                WriteStreamsProgress m = (WriteStreamsProgress)info;
                                 progressCallback?.Invoke(title, (int)Math.Round((double)m.CompletedBytes / m.TotalBytes * 100), false);
                             }
                             break;
-                        case ProgressMsg.WRITE_METADATA_END:
+                        case ProgressMsg.WriteMetadataEnd:
                             break;
                     }
-                    return CallbackStatus.CONTINUE;
+                    return CallbackStatus.Continue;
                 }
 
-                using (Wim wim = Wim.OpenWim(wimFile, OpenFlags.DEFAULT))
+                using (Wim wim = Wim.OpenWim(wimFile, OpenFlags.None))
                 {
                     wim.RegisterCallback(ProgressCallback);
                     wim.UpdateImage(
                         imageIndex,
-                        new UpdateCommand()
-                        {
-                            Rename = new UpdateCommand.UpdateRename(sourceFilePath, destinationFilePath)
-                        },
-                        UpdateFlags.SEND_PROGRESS);
-                    wim.Overwrite(WriteFlags.DEFAULT, Wim.DefaultThreads);
+                        UpdateCommand.SetRename(sourceFilePath, destinationFilePath),
+                        UpdateFlags.SendProgress);
+                    wim.Overwrite(WriteFlags.None, Wim.DefaultThreads);
                 }
             }
             catch
@@ -370,44 +359,44 @@ namespace Imaging
                 {
                     switch (msg)
                     {
-                        case ProgressMsg.EXTRACT_IMAGE_BEGIN:
+                        case ProgressMsg.ExtractImageBegin:
                             {
-                                ProgressInfo_Extract m = (ProgressInfo_Extract)info;
+                                ExtractProgress m = (ExtractProgress)info;
                             }
                             break;
-                        case ProgressMsg.EXTRACT_IMAGE_END:
+                        case ProgressMsg.ExtractImageEnd:
                             {
-                                ProgressInfo_Extract m = (ProgressInfo_Extract)info;
+                                ExtractProgress m = (ExtractProgress)info;
                             }
                             break;
-                        case ProgressMsg.EXTRACT_FILE_STRUCTURE:
+                        case ProgressMsg.ExtractFileStructure:
                             {
-                                ProgressInfo_Extract m = (ProgressInfo_Extract)info;
+                                ExtractProgress m = (ExtractProgress)info;
                                 progressCallback?.Invoke($"Applying file structure ({(int)Math.Round((double)m.CurrentFileCount / m.EndFileCount * 100)}%)", 0, true);
                             }
                             break;
-                        case ProgressMsg.EXTRACT_STREAMS:
+                        case ProgressMsg.ExtractStreams:
                             {
-                                ProgressInfo_Extract m = (ProgressInfo_Extract)info;
+                                ExtractProgress m = (ExtractProgress)info;
                                 progressCallback?.Invoke(title, (int)Math.Round((double)m.CompletedBytes / m.TotalBytes * 100), false);
                             }
                             break;
-                        case ProgressMsg.EXTRACT_METADATA:
+                        case ProgressMsg.ExtractMetadata:
                             {
-                                ProgressInfo_Extract m = (ProgressInfo_Extract)info;
+                                ExtractProgress m = (ExtractProgress)info;
                                 progressCallback?.Invoke($"Applying metadata ({(int)Math.Round((double)m.CompletedBytes / m.TotalBytes * 100)}%)", 0, true);
                             }
                             break;
                     }
-                    return CallbackStatus.CONTINUE;
+                    return CallbackStatus.Continue;
                 }
 
-                using (Wim wim = Wim.OpenWim(wimFile, OpenFlags.DEFAULT))
+                using (Wim wim = Wim.OpenWim(wimFile, OpenFlags.None))
                 {
                     wim.RegisterCallback(ProgressCallback);
                     if (referenceWIMs != null && referenceWIMs.Count() > 0)
-                        wim.ReferenceResourceFiles(referenceWIMs, RefFlags.DEFAULT, OpenFlags.DEFAULT);
-                    wim.ExtractImage(imageIndex, OutputDirectory, PreserveACL ? ExtractFlags.STRICT_ACLS : ExtractFlags.NO_ACLS);
+                        wim.ReferenceResourceFiles(referenceWIMs, RefFlags.None, OpenFlags.None);
+                    wim.ExtractImage(imageIndex, OutputDirectory, PreserveACL ? ExtractFlags.StrictAcls : ExtractFlags.NoAcls);
                 }
             }
             catch (Exception ex)
@@ -437,44 +426,44 @@ namespace Imaging
                 {
                     switch (msg)
                     {
-                        case ProgressMsg.SCAN_BEGIN:
+                        case ProgressMsg.ScanBegin:
                             {
-                                ProgressInfo_Scan m = (ProgressInfo_Scan)info;
+                                ScanProgress m = (ScanProgress)info;
                                 progressCallback?.Invoke($"Scanning files ({m.NumBytesScanned} bytes scanned, {m.NumDirsScanned} Directories, {m.NumNonDirsScanned} Files, Current directory: {m.CurPath})", 0, true);
                             }
                             break;
-                        case ProgressMsg.SCAN_DENTRY:
+                        case ProgressMsg.ScanDEntry:
                             {
-                                ProgressInfo_Scan m = (ProgressInfo_Scan)info;
+                                ScanProgress m = (ScanProgress)info;
                                 progressCallback?.Invoke($"Scanning files ({m.NumBytesScanned} bytes scanned, {m.NumDirsScanned} Directories, {m.NumNonDirsScanned} Files, Current directory: {m.CurPath})", 0, true);
                             }
                             break;
-                        case ProgressMsg.SCAN_END:
+                        case ProgressMsg.ScanEnd:
                             {
-                                ProgressInfo_Scan m = (ProgressInfo_Scan)info;
+                                ScanProgress m = (ScanProgress)info;
                                 progressCallback?.Invoke($"Scanning files ({m.NumBytesScanned} bytes scanned, {m.NumDirsScanned} Directories, {m.NumNonDirsScanned} Files, Current directory: {m.CurPath})", 0, true);
                             }
                             break;
-                        case ProgressMsg.WRITE_METADATA_BEGIN:
+                        case ProgressMsg.WriteMetadataBegin:
                             break;
-                        case ProgressMsg.WRITE_STREAMS:
+                        case ProgressMsg.WriteStreams:
                             {
-                                ProgressInfo_WriteStreams m = (ProgressInfo_WriteStreams)info;
+                                WriteStreamsProgress m = (WriteStreamsProgress)info;
                                 progressCallback?.Invoke(title, (int)Math.Round((double)m.CompletedBytes / m.TotalBytes * 100), false);
                             }
                             break;
-                        case ProgressMsg.WRITE_METADATA_END:
+                        case ProgressMsg.WriteMetadataEnd:
                             break;
                     }
-                    return CallbackStatus.CONTINUE;
+                    return CallbackStatus.Continue;
                 }
 
                 if (File.Exists(wimFile))
                 {
-                    using (Wim wim = Wim.OpenWim(wimFile, OpenFlags.WRITE_ACCESS))
+                    using (Wim wim = Wim.OpenWim(wimFile, OpenFlags.WriteAccess))
                     {
                         wim.RegisterCallback(ProgressCallback);
-                        wim.AddImage(InputDirectory, imageName, null, PreserveACL ? AddFlags.STRICT_ACLS : AddFlags.NO_ACLS);
+                        wim.AddImage(InputDirectory, imageName, null, PreserveACL ? AddFlags.StrictAcls : AddFlags.NoAcls);
                         if (!string.IsNullOrEmpty(imageDescription))
                             wim.SetImageDescription((int)wim.GetWimInfo().ImageCount, imageDescription);
                         if (!string.IsNullOrEmpty(imageDisplayName))
@@ -485,12 +474,12 @@ namespace Imaging
                             wim.SetImageFlags((int)wim.GetWimInfo().ImageCount, imageFlag);
                         if (UpdateFrom != -1)
                             wim.ReferenceTemplateImage((int)wim.GetWimInfo().ImageCount, UpdateFrom);
-                        wim.Overwrite(WriteFlags.DEFAULT, Wim.DefaultThreads);
+                        wim.Overwrite(WriteFlags.None, Wim.DefaultThreads);
                     }
                 }
                 else
                 {
-                    var compression = CompressionType.NONE;
+                    var compression = CompressionType.None;
                     switch (compressionType)
                     {
                         case WimCompressionType.Lzms:
@@ -505,7 +494,7 @@ namespace Imaging
                             }
                         case WimCompressionType.None:
                             {
-                                compression = CompressionType.NONE;
+                                compression = CompressionType.None;
                                 break;
                             }
                         case WimCompressionType.Xpress:
@@ -531,7 +520,7 @@ namespace Imaging
                         File.Delete(configpath);
                         File.WriteAllText(configpath, config);
 
-                        wim.AddImage(InputDirectory, imageName, configpath, PreserveACL ? AddFlags.STRICT_ACLS : AddFlags.NO_ACLS);
+                        wim.AddImage(InputDirectory, imageName, configpath, PreserveACL ? AddFlags.StrictAcls : AddFlags.NoAcls);
                         if (!string.IsNullOrEmpty(imageDescription))
                             wim.SetImageDescription((int)wim.GetWimInfo().ImageCount, imageDescription);
                         if (!string.IsNullOrEmpty(imageDisplayName))
@@ -540,7 +529,7 @@ namespace Imaging
                             wim.SetImageProperty((int)wim.GetWimInfo().ImageCount, "DISPLAYDESCRIPTION", imageDisplayDescription);
                         if (!string.IsNullOrEmpty(imageFlag))
                             wim.SetImageFlags((int)wim.GetWimInfo().ImageCount, imageFlag);
-                        wim.Write(wimFile, Wim.AllImages, WriteFlags.DEFAULT, Wim.DefaultThreads);
+                        wim.Write(wimFile, Wim.AllImages, WriteFlags.None, Wim.DefaultThreads);
                         File.Delete(configpath);
                     }
                 }
@@ -557,14 +546,14 @@ namespace Imaging
             List<string> fsentries = new List<string>();
             try
             {
-                using (Wim wim = Wim.OpenWim(wimFile, OpenFlags.DEFAULT))
+                using (Wim wim = Wim.OpenWim(wimFile, OpenFlags.None))
                 {
-                    CallbackStatus IterateDirTreeCallback(DirEntry dentry, object userData)
+                    int IterateDirTreeCallback(DirEntry dentry, object userData)
                     {
                         fsentries.Add(dentry.FileName);
-                        return CallbackStatus.CONTINUE;
+                        return 0;
                     };
-                    wim.IterateDirTree(imageIndex, path, IterateFlags.CHILDREN, IterateDirTreeCallback);
+                    wim.IterateDirTree(imageIndex, path, IterateDirTreeFlags.Children, IterateDirTreeCallback);
                 }
             }
             catch
@@ -580,10 +569,10 @@ namespace Imaging
         {
             try
             {
-                using (Wim wim = Wim.OpenWim(wimFile, OpenFlags.DEFAULT))
+                using (Wim wim = Wim.OpenWim(wimFile, OpenFlags.None))
                 {
-                    wim.SetWimInfo(new ManagedWimLib.WimInfo() { BootIndex = (uint)imageIndex }, ChangeFlags.BOOT_INDEX);
-                    wim.Overwrite(WriteFlags.DEFAULT, Wim.DefaultThreads);
+                    wim.SetWimInfo(new ManagedWimLib.WimInfo() { BootIndex = (uint)imageIndex }, ChangeFlags.BootIndex);
+                    wim.Overwrite(WriteFlags.None, Wim.DefaultThreads);
                 }
             }
             catch

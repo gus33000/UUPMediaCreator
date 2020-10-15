@@ -73,16 +73,16 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="DiscUtils.Core, Version=0.15.1.0, Culture=neutral, PublicKeyToken=5fa5b410cc9c6289, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\DiscUtils.Core.0.15.1-ci0002\lib\net45\DiscUtils.Core.dll</HintPath>
+      <HintPath>..\..\packages\DiscUtils.Core.0.15.1-ci0007\lib\net45\DiscUtils.Core.dll</HintPath>
     </Reference>
     <Reference Include="DiscUtils.Ntfs, Version=0.15.1.0, Culture=neutral, PublicKeyToken=5fa5b410cc9c6289, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\DiscUtils.Ntfs.0.15.1-ci0002\lib\net45\DiscUtils.Ntfs.dll</HintPath>
+      <HintPath>..\..\packages\DiscUtils.Ntfs.0.15.1-ci0007\lib\net45\DiscUtils.Ntfs.dll</HintPath>
     </Reference>
     <Reference Include="DiscUtils.Streams, Version=0.15.1.0, Culture=neutral, PublicKeyToken=5fa5b410cc9c6289, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\DiscUtils.Streams.0.15.1-ci0002\lib\net45\DiscUtils.Streams.dll</HintPath>
+      <HintPath>..\..\packages\DiscUtils.Streams.0.15.1-ci0007\lib\net45\DiscUtils.Streams.dll</HintPath>
     </Reference>
     <Reference Include="DiscUtils.Vhd, Version=0.15.1.0, Culture=neutral, PublicKeyToken=5fa5b410cc9c6289, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\DiscUtils.Vhd.0.15.1-ci0002\lib\net45\DiscUtils.Vhd.dll</HintPath>
+      <HintPath>..\..\packages\DiscUtils.Vhd.0.15.1-ci0007\lib\net45\DiscUtils.Vhd.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
