@@ -56,7 +56,10 @@ namespace MediaCreationLib.BaseEditions
                     IEnumerable<string> potentialFiles = cabinet.Files.Where(x => x.ToLower().Contains($"desktoptargetcompdb_{EditionID.ToLower()}_{LanguageCode.ToLower()}"));
 
                     if (potentialFiles.Count() == 0)
+                    {
+                        progressCallback?.Invoke(Common.ProcessPhase.ReadingMetadata, true, 0, "CompDB not found from aggregated metadata");
                         goto exit;
+                    }
 
                     string file = potentialFiles.First();
 
@@ -76,7 +79,10 @@ namespace MediaCreationLib.BaseEditions
                 IEnumerable<string> potentialFiles = files.Where(x => x.ToLower().Contains($"desktoptargetcompdb_{EditionID.ToLower()}_{LanguageCode.ToLower()}"));
 
                 if (potentialFiles.Count() == 0)
+                {
+                    progressCallback?.Invoke(Common.ProcessPhase.ReadingMetadata, true, 0, "CompDB not found from metadata cab list");
                     goto exit;
+                }
 
                 string file = potentialFiles.First();
 
@@ -91,7 +97,10 @@ namespace MediaCreationLib.BaseEditions
             }
 
             if (compDB == null)
+            {
+                progressCallback?.Invoke(Common.ProcessPhase.ReadingMetadata, true, 0, "No compDB found");
                 goto exit;
+            }
 
             foreach (CompDBXmlClass.Package feature in compDB.Features.Feature[0].Packages.Package)
             {
@@ -104,6 +113,7 @@ namespace MediaCreationLib.BaseEditions
                     file = pkg.Payload.PayloadItem.Path;
                     if (!File.Exists(Path.Combine(UUPPath, file)))
                     {
+                        progressCallback?.Invoke(Common.ProcessPhase.ReadingMetadata, true, 0, $"File {file} is missing");
                         goto exit;
                     }
                 }
@@ -125,7 +135,10 @@ namespace MediaCreationLib.BaseEditions
             }
 
             if (BaseESD == null)
+            {
+                progressCallback?.Invoke(Common.ProcessPhase.ReadingMetadata, true, 0, "Base ESD not found");
                 goto exit;
+            }
 
             progressCallback?.Invoke(Common.ProcessPhase.PreparingFiles, true, 0, "Converting Reference Cabinets");
 
@@ -139,6 +152,7 @@ namespace MediaCreationLib.BaseEditions
                 string refesd = ConvertCABToESD(Path.Combine(UUPPath, file), progressCallback, progressoffset, progressScale);
                 if (string.IsNullOrEmpty(refesd))
                 {
+                    progressCallback?.Invoke(Common.ProcessPhase.ReadingMetadata, true, 0, "Reference ESD creation from Cabinet files failed");
                     goto exit;
                 }
                 ReferencePackages.Add(refesd);

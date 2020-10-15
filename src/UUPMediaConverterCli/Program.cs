@@ -112,7 +112,7 @@ namespace UUPMediaConverterCli
             catch (Exception ex)
             {
                 Log("An error occured!", severity: LoggingLevel.Error);
-                Log(ex.HResult.ToString("x"), severity: LoggingLevel.Error);
+                Log(ex.ToString(), severity: LoggingLevel.Error);
             }
             Console.WriteLine("The end");
             //Console.ReadLine();
