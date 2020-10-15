@@ -69,6 +69,7 @@ Global
 		src\WindowsUpdateLib.Shared\WindowsUpdateLib.Shared.projitems*{0d26e90f-2cf6-4ba5-b235-72e646a3ff48}*SharedItemsImports = 13
 		src\InterCommunication.Shared\InterCommunication.Shared.projitems*{11385f97-61d8-47ef-a068-3a130232f6b6}*SharedItemsImports = 4
 		src\CompDB.Shared\CompDB.Shared.projitems*{113c95b3-1cbb-4b02-8bfe-8a623ad67f84}*SharedItemsImports = 13
+		src\CompDB.Shared\CompDB.Shared.projitems*{464e542c-2e57-46bb-8bec-4a77e0228a17}*SharedItemsImports = 5
 		src\CompDB.Shared\CompDB.Shared.projitems*{67cb3f20-e40a-41f8-b159-a8857a7dc409}*SharedItemsImports = 5
 		thirdparty\Microsoft.Cabinet.Shared\Microsoft.Cabinet.Shared.projitems*{7020f6c8-fc8b-42fe-bbc0-365580a6584c}*SharedItemsImports = 5
 		src\CompDB.Shared\CompDB.Shared.projitems*{8ebd2b3f-31c4-493a-8853-fdbe32097b7e}*SharedItemsImports = 4

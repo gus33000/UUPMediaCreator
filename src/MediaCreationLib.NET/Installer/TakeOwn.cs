@@ -21,7 +21,7 @@ namespace MediaCreationLib.Installer
             {
                 p.Enable();
 
-                Directory.SetAccessControl(path, directorySecurity);
+                new DirectoryInfo(path).SetAccessControl(directorySecurity);
                 ownershipTaken = true;
             }
             catch (PrivilegeClass.PrivilegeNotHeldException e)
@@ -63,7 +63,7 @@ namespace MediaCreationLib.Installer
             {
                 p.Enable();
 
-                Directory.SetAccessControl(path, directorySecurity);
+                new DirectoryInfo(path).SetAccessControl(directorySecurity);
             }
             catch (PrivilegeClass.PrivilegeNotHeldException e)
             {
@@ -88,7 +88,7 @@ namespace MediaCreationLib.Installer
             {
                 p.Enable();
 
-                File.SetAccessControl(path, fileSecurity);
+                new FileInfo(path).SetAccessControl(fileSecurity);
                 ownershipTaken = true;
             }
             catch (PrivilegeClass.PrivilegeNotHeldException e)
@@ -118,7 +118,7 @@ namespace MediaCreationLib.Installer
             {
                 p.Enable();
 
-                File.SetAccessControl(path, fileSecurity);
+                new FileInfo(path).SetAccessControl(fileSecurity);
             }
             catch (PrivilegeClass.PrivilegeNotHeldException e)
             {
