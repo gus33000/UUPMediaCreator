@@ -24,7 +24,11 @@ namespace UUPMediaCreator.Broker
         {
             if (connection == null)
             {
-                Process.Start("uupmediacreator:");
+                if (!await Windows.System.Launcher.LaunchUriAsync(new Uri("uupmediacreator:")))
+                {
+                    Application.Exit();
+                    return;
+                }
 
                 connection = new AppServiceConnection();
                 connection.PackageFamilyName = Package.Current.Id.FamilyName;
