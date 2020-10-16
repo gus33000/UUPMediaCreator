@@ -16,6 +16,7 @@ namespace UUPMediaCreator.Broker
             if (!Mutex.TryOpenExisting("UUPMediaCreatorMutex", out mutex))
             {
                 mutex = new Mutex(false, "UUPMediaCreatorMutex");
+                WinRT.ComWrappersSupport.InitializeComWrappers();
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
                 Application.Run(new UUPMediaCreatorApplicationContext());
