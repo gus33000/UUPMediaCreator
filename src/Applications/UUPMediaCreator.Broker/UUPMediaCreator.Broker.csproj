@@ -4,6 +4,9 @@
 		<TargetFramework>net5.0-windows</TargetFramework>
 		<RootNamespace>UUPMediaCreator.Broker</RootNamespace>
 		<UseWindowsForms>true</UseWindowsForms>
+		<TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
+		<TargetPlatformVersion>10.0.18362.6</TargetPlatformVersion>
+		<TargetPlatformIdentifier>Windows</TargetPlatformIdentifier>
 
 		<ApplicationManifest>app.manifest</ApplicationManifest>
 		<Platforms>AnyCPU;x86;x64</Platforms>
