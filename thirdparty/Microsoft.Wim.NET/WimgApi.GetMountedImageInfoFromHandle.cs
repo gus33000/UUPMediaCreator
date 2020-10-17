@@ -5,6 +5,7 @@
 using System;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
+
 using DWORD = System.UInt32;
 
 namespace Microsoft.Wim
@@ -69,13 +70,13 @@ namespace Microsoft.Wim
             /// <summary>
             /// Queries the state of a mounted image handle.
             /// </summary>
-            /// <param name="hImage">A handle to an image that has been mounted</param>
+            /// <param name="hImage">A handle to an image that has been mounted.</param>
             /// <param name="fInfoLevelId">A class of attribute information to retrieve.</param>
             /// <param name="pMountInfo">
             /// Pointer to a variable that receives mounted image structures. The size of the information
             /// written varies depending on the type of structured defined by the fInfoLevelId.
             /// </param>
-            /// <param name="cbMountInfoLength">The size of the buffer pointed to by the pMountInfo parameter, in bytes</param>
+            /// <param name="cbMountInfoLength">The size of the buffer pointed to by the pMountInfo parameter, in bytes.</param>
             /// <param name="pcbReturnLength">
             /// A pointer to a variable which contains the result of a function call that returns the
             /// size of the requested information. If the function was successful, this is the size of the information written to the

@@ -9,20 +9,6 @@ namespace Microsoft.Dism
 {
     public static partial class DismApi
     {
-        public enum RestartType
-        {
-            No,
-            Possible,
-            Required
-        }
-
-        public enum CompletelyOfflineCapableType
-        {
-            Yes,
-            No,
-            Undetermined
-        }
-
         /// <summary>
         /// Describes basic information about a package, including the date and time that the package was installed.
         /// </summary>

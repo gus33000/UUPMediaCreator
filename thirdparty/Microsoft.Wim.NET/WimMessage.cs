@@ -20,15 +20,15 @@ namespace Microsoft.Wim
         /// <summary>
         /// The count is the number of directories scanned.
         /// </summary>
-        Directories = 1
+        Directories = 1,
     }
 
     /// <summary>
     /// Represents a base class for messages sent by the WIMGAPI.
     /// </summary>
-    /// <typeparam name="W">The first type of the message.</typeparam>
-    /// <typeparam name="L">The second type of the message.</typeparam>
-    public abstract class WimMessage<W, L>
+    /// <typeparam name="TParam1">The first type of the message.</typeparam>
+    /// <typeparam name="TParam2">The second type of the message.</typeparam>
+    public abstract class WimMessage<TParam1, TParam2>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="WimMessage{W, L}"/> class.
@@ -52,12 +52,12 @@ namespace Microsoft.Wim
         /// <summary>
         /// Gets or sets the marshaled value of wParam.
         /// </summary>
-        protected W Param1 { get; set; }
+        protected TParam1 Param1 { get; set; }
 
         /// <summary>
         /// Gets or sets the marshaled value of lParam.
         /// </summary>
-        protected L Param2 { get; set; }
+        protected TParam2 Param2 { get; set; }
 
         /// <summary>
         /// Gets the wParam object from the native callback function.

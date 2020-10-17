@@ -6,6 +6,7 @@ using System;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Xml.XPath;
+
 using DWORD = System.UInt32;
 
 namespace Microsoft.Wim

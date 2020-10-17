@@ -9,6 +9,7 @@ using System.Runtime.InteropServices;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
+
 using DWORD = System.UInt32;
 
 namespace Microsoft.Wim
@@ -33,7 +34,7 @@ namespace Microsoft.Wim
 
             XmlReaderSettings xmlReaderSettings = new XmlReaderSettings
             {
-                DtdProcessing = DtdProcessing.Prohibit
+                DtdProcessing = DtdProcessing.Prohibit,
             };
 
             using (StringReader stringReader = new StringReader(xml))
@@ -114,14 +115,14 @@ namespace Microsoft.Wim
 
             XmlDocument xmlDocument = new XmlDocument
             {
-                XmlResolver = null
+                XmlResolver = null,
             };
 
             using (StringReader stringReader = new StringReader(xml))
             {
                 using (XmlReader xmlReader = new XmlTextReader(stringReader)
                 {
-                    DtdProcessing = DtdProcessing.Prohibit
+                    DtdProcessing = DtdProcessing.Prohibit,
                 })
                 {
                     xmlDocument.Load(xmlReader);

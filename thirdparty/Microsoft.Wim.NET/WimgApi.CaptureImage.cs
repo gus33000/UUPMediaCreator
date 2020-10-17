@@ -6,6 +6,7 @@ using System;
 using System.ComponentModel;
 using System.IO;
 using System.Runtime.InteropServices;
+
 using DWORD = System.UInt32;
 
 namespace Microsoft.Wim
@@ -53,7 +54,7 @@ namespace Microsoft.Wim
         /// <returns>A <see cref="WimHandle"/> of the image if the method succeeded, otherwise false.</returns>
         /// <exception cref="ArgumentNullException">wimHandle is null.
         /// -or-
-        /// path is null</exception>
+        /// path is null.</exception>
         /// <exception cref="DirectoryNotFoundException"><paramref name="path"/> does not exist.</exception>
         /// <exception cref="Win32Exception">The Windows® Imaging API reported a failure.</exception>
         public static WimHandle CaptureImage(WimHandle wimHandle, string path, WimCaptureImageOptions options)

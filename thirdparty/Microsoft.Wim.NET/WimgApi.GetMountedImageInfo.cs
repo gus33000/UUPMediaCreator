@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
+
 using DWORD = System.UInt32;
 
 namespace Microsoft.Wim

@@ -5,6 +5,7 @@
 using System;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
+
 using DWORD = System.UInt32;
 
 namespace Microsoft.Wim
@@ -17,7 +18,7 @@ namespace Microsoft.Wim
         /// <param name="wimHandle">A <see cref="WimHandle"/> of a Windows® image (.wim) file returned by the <see cref="CreateFile"/> method.</param>
         /// <param name="imageIndex">The one-based index of the image to load. An image file can store multiple images.</param>
         /// <exception cref="ArgumentNullException">wimHandle is null.</exception>
-        /// <exception cref="IndexOutOfRangeException">index is less than 0 or greater than the number of images in the Windows® image file.</exception>
+        /// <exception cref="IndexOutOfRangeException">index is less than 1 or greater than the number of images in the Windows® image file.</exception>
         /// <exception cref="Win32Exception">The Windows® Imaging API reported a failure.</exception>
         /// <remarks>If imageIndex is zero, then none of the images in the .wim file are marked for boot. At any time, only one image in a .wim file can be set to be bootable.</remarks>
         public static void SetBootImage(WimHandle wimHandle, int imageIndex)
@@ -29,7 +30,7 @@ namespace Microsoft.Wim
             }
 
             // See if the specified index is valid
-            if (imageIndex < 0 || imageIndex > WimgApi.GetImageCount(wimHandle))
+            if (imageIndex < 1 || imageIndex > WimgApi.GetImageCount(wimHandle))
             {
                 throw new IndexOutOfRangeException($"There is no image at index {imageIndex}.");
             }

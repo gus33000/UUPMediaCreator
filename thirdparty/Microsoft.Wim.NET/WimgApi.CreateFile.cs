@@ -5,6 +5,7 @@
 using System;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
+
 using DWORD = System.UInt32;
 
 namespace Microsoft.Wim
@@ -75,7 +76,7 @@ namespace Microsoft.Wim
         /// <summary>
         /// The file existed and was opened for access.
         /// </summary>
-        OpenedExisting = 1
+        OpenedExisting = 1,
     }
 
     /// <summary>

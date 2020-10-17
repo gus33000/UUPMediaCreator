@@ -152,7 +152,7 @@ namespace Microsoft.Wim
         internal const uint WIM_FLAG_NO_DIRACL = 0x00000010;
 
         /// <summary>
-        /// Disables restoring security information for files
+        /// Disables restoring security information for files.
         /// </summary>
         internal const uint WIM_FLAG_NO_FILEACL = 0x00000020;
 

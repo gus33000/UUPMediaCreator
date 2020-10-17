@@ -52,7 +52,7 @@ namespace MediaCreationLib.DismOperations
             // Initialize DISM log
             //
             string tempLog = Path.GetTempFileName();
-            DismApi.Initialize(DismLogLevel.Debug, tempLog);
+            DismApi.Initialize(DismLogLevel.LogErrorsWarningsInfo, tempLog);
 
             var session = DismApi.OpenOfflineSession(ospath);
             var packages = DismApi.GetPackages(session);
@@ -101,7 +101,7 @@ namespace MediaCreationLib.DismOperations
             // Initialize DISM log
             //
             string tempLog = Path.GetTempFileName();
-            DismApi.Initialize(DismLogLevel.Debug, tempLog);
+            DismApi.Initialize(DismLogLevel.LogErrorsWarningsInfo, tempLog);
 
             var session = DismApi.OpenOfflineSession(ospath);
 
@@ -131,7 +131,7 @@ namespace MediaCreationLib.DismOperations
             // Initialize DISM log
             //
             string tempLog = Path.GetTempFileName();
-            DismApi.Initialize(DismLogLevel.Debug, tempLog);
+            DismApi.Initialize(DismLogLevel.LogErrorsWarningsInfo, tempLog);
 
             var session = DismApi.OpenOfflineSession(ospath);
 
@@ -157,7 +157,7 @@ namespace MediaCreationLib.DismOperations
             // Initialize DISM log
             //
             string tempLog = Path.GetTempFileName();
-            DismApi.Initialize(DismLogLevel.Debug, tempLog);
+            DismApi.Initialize(DismLogLevel.LogErrorsWarningsInfo, tempLog);
 
             var session = DismApi.OpenOfflineSession(ospath);
 
@@ -185,7 +185,7 @@ namespace MediaCreationLib.DismOperations
             //
             tryagain:
             string tempLog = Path.GetTempFileName();
-            DismApi.Initialize(DismLogLevel.Debug, tempLog);
+            DismApi.Initialize(DismLogLevel.LogErrorsWarningsInfo, tempLog);
             DismSession session = DismApi.OpenOfflineSession(ospath);
 
             try

@@ -154,7 +154,7 @@ namespace Microsoft.Wim
         /// <summary>
         /// A callback method for the native CopyFileEx function.
         ///
-        /// http://msdn.microsoft.com/en-us/library/windows/desktop/aa363854(v=vs.85).aspx
+        /// http://msdn.microsoft.com/en-us/library/windows/desktop/aa363854(v=vs.85).aspx.
         /// </summary>
         /// <param name="totalFileSize">The total size of the file, in bytes.</param>
         /// <param name="totalBytesTransferred">The total number of bytes transferred from the source file to the destination file since the copy operation began.</param>

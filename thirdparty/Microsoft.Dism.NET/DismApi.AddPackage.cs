@@ -14,7 +14,7 @@ namespace Microsoft.Dism
         /// Adds a single .cab or .msu file to a Windows® image.
         /// </summary>
         /// <param name="session">A valid DISM Session. The DISM Session must be associated with an image. You can associate a session with an image by using the OpenSession method.</param>
-        /// <param name="packagePath">A relative or absolute path to the .cab or .msu file being added, a folder with one or more packages, or a folder containing the expanded files of a single .cab file.</param>
+        /// <param name="packagePath">A relative or absolute path to the .cab or .msu file being added or a folder containing the expanded files of a single .cab file.</param>
         /// <param name="ignoreCheck">Specifies whether to ignore the internal applicability checks that are done when a package is added.</param>
         /// <param name="preventPending">Specifies whether to add a package if it has pending online actions.</param>
         /// <exception cref="DismException">When a failure occurs.</exception>
@@ -29,7 +29,7 @@ namespace Microsoft.Dism
         /// Adds a single .cab or .msu file to a Windows® image.
         /// </summary>
         /// <param name="session">A valid DISM Session. The DISM Session must be associated with an image. You can associate a session with an image by using the OpenSession method.</param>
-        /// <param name="packagePath">A relative or absolute path to the .cab or .msu file being added, a folder with one or more packages, or a folder containing the expanded files of a single .cab file.</param>
+        /// <param name="packagePath">A relative or absolute path to the .cab or .msu file being added or a folder containing the expanded files of a single .cab file.</param>
         /// <param name="ignoreCheck">Specifies whether to ignore the internal applicability checks that are done when a package is added.</param>
         /// <param name="preventPending">Specifies whether to add a package if it has pending online actions.</param>
         /// <param name="progressCallback">A DismProgressCallback method to call when progress is made.</param>
@@ -46,7 +46,7 @@ namespace Microsoft.Dism
         /// Adds a single .cab or .msu file to a Windows® image.
         /// </summary>
         /// <param name="session">A valid DISM Session. The DISM Session must be associated with an image. You can associate a session with an image by using the OpenSession method.</param>
-        /// <param name="packagePath">A relative or absolute path to the .cab or .msu file being added, a folder with one or more packages, or a folder containing the expanded files of a single .cab file.</param>
+        /// <param name="packagePath">A relative or absolute path to the .cab or .msu file being added or a folder containing the expanded files of a single .cab file.</param>
         /// <param name="ignoreCheck">Specifies whether to ignore the internal applicability checks that are done when a package is added.</param>
         /// <param name="preventPending">Specifies whether to add a package if it has pending online actions.</param>
         /// <param name="progressCallback">A DismProgressCallback method to call when progress is made.</param>
@@ -71,7 +71,7 @@ namespace Microsoft.Dism
             /// Adds a single .cab or .msu file to a Windows® image.
             /// </summary>
             /// <param name="session">A valid DISM Session. The DISM Session must be associated with an image. You can associate a session with an image by using the DismOpenSession Function.</param>
-            /// <param name="packagePath">A relative or absolute path to the .cab or .msu file being added, a folder with one or more packages, or a folder containing the expanded files of a single .cab file.</param>
+            /// <param name="packagePath">A relative or absolute path to the .cab or .msu file being added or a folder containing the expanded files of a single .cab file.</param>
             /// <param name="ignoreCheck">A Boolean value to specify whether to ignore the internal applicability checks that are done when a package is added.</param>
             /// <param name="preventPending">A Boolean value to specify whether to add a package if it has pending online actions.</param>
             /// <param name="cancelEvent">Optional. You can set a CancelEvent for this function in order to cancel the operation in progress when signaled by the client. If the CancelEvent is received at a stage when the operation cannot be canceled, the operation will continue and return a success code. If the CancelEvent is received and the operation is canceled, the image state is unknown. You should verify the image state before continuing or discard the changes and start again.</param>

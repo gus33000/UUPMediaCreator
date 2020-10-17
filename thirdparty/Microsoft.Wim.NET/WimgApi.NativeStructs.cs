@@ -7,6 +7,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Runtime.InteropServices;
+
 using DWORD = System.UInt32;
 using USHORT = System.UInt16;
 
@@ -50,7 +51,7 @@ namespace Microsoft.Wim
             }
 
             /// <summary>
-            /// Converts a <see cref="FILETIME"/> to a <see cref="System.DateTime"/>
+            /// Converts a <see cref="FILETIME"/> to a <see cref="System.DateTime"/>.
             /// </summary>
             /// <param name="fileTime">The <see cref="FILETIME"/> to convert.</param>
             public static implicit operator DateTime(FILETIME fileTime)
@@ -80,7 +81,7 @@ namespace Microsoft.Wim
             /// <summary>
             /// Converts the value of the current FILETIME object to its equivalent string representation.
             /// </summary>
-            /// <returns>A string representation of value of the current FILETIME object</returns>
+            /// <returns>A string representation of value of the current FILETIME object.</returns>
             /// <exception cref="ArgumentOutOfRangeException">The date and time is outside the range of dates supported by the calendar used by the current culture.</exception>
             public override string ToString()
             {

@@ -222,13 +222,13 @@ namespace Microsoft.Wim
         private readonly WimMessageCallback _callback;
 
         /// <summary>
-        /// The user's custom data to pass around
+        /// The user's custom data to pass around.
         /// </summary>
         private readonly object _userData;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="WimMessageCallbackWrapper"/> class.
-        /// Initializes a new instance of the WimMessageCallbackWrapper class
+        /// Initializes a new instance of the WimMessageCallbackWrapper class.
         /// </summary>
         /// <param name="callback">
         /// A <see cref="WimMessageCallback" /> delegate to call when a message is received from the
