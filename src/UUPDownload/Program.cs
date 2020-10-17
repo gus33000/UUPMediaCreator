@@ -209,7 +209,7 @@ namespace UUPDownload
                     if (res.Any(x => x != 0))
                     {
                         returnCode = -1;
-                        break;
+                        continue;
                     }
                 }
             }
