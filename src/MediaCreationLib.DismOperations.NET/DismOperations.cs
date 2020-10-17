@@ -3,6 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace MediaCreationLib.DismOperations
 {
@@ -127,28 +129,44 @@ namespace MediaCreationLib.DismOperations
 
         public static void ApplyUnattend(string ospath, string unattendpath)
         {
-            //
-            // Initialize DISM log
-            //
-            string tempLog = Path.GetTempFileName();
-            DismApi.Initialize(DismLogLevel.LogErrorsWarningsInfo, tempLog);
-
-            var session = DismApi.OpenOfflineSession(ospath);
-
-            try
+            bool ok = false;
+            while (!ok)
             {
-                DismApi.ApplyUnattend(session, unattendpath, true);
-            }
-            finally //(Exception ex)
-            {
-            }
+                try
+                {
+                    //
+                    // Initialize DISM log
+                    //
+                    string tempLog = Path.GetTempFileName();
+                    DismApi.Initialize(DismLogLevel.LogErrorsWarningsInfo, tempLog);
 
-            //
-            // Clean DISM
-            //
-            DismApi.CloseSession(session);
-            DismApi.Shutdown();
-            File.Delete(tempLog);
+                    var session = DismApi.OpenOfflineSession(ospath);
+
+                    try
+                    {
+                        DismApi.ApplyUnattend(session, unattendpath, true);
+                    }
+                    finally //(Exception ex)
+                    {
+                    }
+
+                    //
+                    // Clean DISM
+                    //
+                    DismApi.CloseSession(session);
+                    DismApi.Shutdown();
+                    File.Delete(tempLog);
+
+                    ok = true;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Failed applying unattend, retrying in one second...");
+                    Console.WriteLine(ex.ToString());
+                    ok = false;
+                    Thread.Sleep(1000);
+                }
+            }
         }
 
         public static void SetProductKey(string ospath, string productkey)

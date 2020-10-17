@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
@@ -27,7 +28,7 @@ namespace UUPDownload
 
                 try
                 {
-                    PerformOperation(o).Wait();
+                    PerformSpecificOperation(o, "Professional", "fr-fr").Wait();
                 }
                 catch (Exception ex)
                 {
@@ -90,7 +91,7 @@ namespace UUPDownload
                         catch (Exception ex)
                         {
                             Logging.Log(ex.ToString(), Logging.LoggingLevel.Error);
-                            throw ex;
+                            throw;
                         }
                     }
 
@@ -101,6 +102,151 @@ namespace UUPDownload
                     else
                     {
                         files = update.Xml.Files.File.Where(x => UpdateUtils.ShouldFileGetDownloaded(x, OutputFolder, payloadItems, downloadedFiles)).OrderBy(x => ulong.Parse(x.Size));
+                    }
+
+                    returnCode = 0;
+
+                    ServicePointManager.DefaultConnectionLimit = int.MaxValue;
+                    HashSet<Task<int>> tasks = new HashSet<Task<int>>();
+                    DateTime startTime = DateTime.Now;
+
+                    int maxConcurrency = 20;
+                    using (SemaphoreSlim concurrencySemaphore = new SemaphoreSlim(maxConcurrency))
+                    {
+                        ServicePointManager.DefaultConnectionLimit = int.MaxValue;
+
+                        foreach (CExtendedUpdateInfoXml.File file2 in files)
+                        {
+                            concurrencySemaphore.Wait();
+                            tasks.Add(DownloadHelper.GetDownloadFileTask(OutputFolder, UpdateUtils.GetFilenameForCEUIFile(file2, payloadItems), urls.First(x => x.FileDigest == file2.Digest).Url, concurrencySemaphore));
+                        }
+
+                        int[] res = await Task.WhenAll(tasks.ToArray());
+                        if (res.Any(x => x != 0))
+                        {
+                            returnCode = -1;
+                            break;
+                        }
+                    }
+                }
+                while (returnCode != 0);
+            }
+            Logging.Log("Completed.");
+            if (Debugger.IsAttached)
+                Console.ReadLine();
+        }
+
+        private static bool IsFileBanned(CExtendedUpdateInfoXml.File file2, IEnumerable<CompDBXmlClass.PayloadItem> bannedItems)
+        {
+            if (bannedItems.Any(x => x.PayloadHash == file2.AdditionalDigest.Text || x.PayloadHash == file2.Digest))
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        private static async Task PerformSpecificOperation(Options o, string edition, string languagecode)
+        {
+            Logging.Log("Checking for updates...");
+
+            CTAC ctac = FE3Handler.BuildCTAC(o.ReportingSku, o.ReportingVersion, o.MachineType, o.FlightRing, o.FlightingBranchName, o.BranchReadinessLevel, o.CurrentBranch, o.SyncCurrentVersionOnly);
+            UpdateData[] data = await FE3Handler.GetUpdates(null, ctac, null, "ProductRelease");
+            data = data.Select(x => UpdateUtils.TrimDeltasFromUpdateData(x)).ToArray();
+
+            foreach (UpdateData update in data)
+            {
+                Logging.Log(update.Xml.LocalizedProperties.Title);
+                Logging.Log(update.Xml.LocalizedProperties.Description);
+
+                HashSet<CompDBXmlClass.PayloadItem> payloadItems = new HashSet<CompDBXmlClass.PayloadItem>();
+                HashSet<CompDBXmlClass.PayloadItem> bannedPayloadItems = new HashSet<CompDBXmlClass.PayloadItem>();
+
+                string name = update.Xml.UpdateIdentity.UpdateID + "." + update.Xml.UpdateIdentity.RevisionNumber;
+                string OutputFolder = Path.Combine(o.OutputFolder, name);
+
+                Logging.Log("Getting CompDBs...");
+                CompDBXmlClass.CompDB[] compDBs = await UpdateUtils.GetCompDBs(update);
+                CompDBXmlClass.CompDB specificCompDB = null;
+                if (compDBs != null)
+                {
+                    foreach (CompDBXmlClass.CompDB cdb in compDBs)
+                    {
+                        bool editionMatching = cdb.Tags?.Tag?.Any(x => x.Name.Equals("Edition", StringComparison.InvariantCultureIgnoreCase) && x.Value.Equals(edition, StringComparison.InvariantCultureIgnoreCase)) == true;
+                        bool langMatching = cdb.Tags?.Tag?.Any(x => x.Name.Equals("Language", StringComparison.InvariantCultureIgnoreCase) && x.Value.Equals(languagecode, StringComparison.InvariantCultureIgnoreCase)) == true;
+                        bool typeMatching = cdb.Tags?.Tag?.Any(x => x.Name.Equals("UpdateType", StringComparison.InvariantCultureIgnoreCase) && x.Value.Equals("Canonical", StringComparison.InvariantCultureIgnoreCase)) == true;
+                        
+                        //bool hasEditionProperty = cdb.Tags?.Tag?.Any(x => x.Name.Equals("Edition", StringComparison.InvariantCultureIgnoreCase)) == true;
+                        //bool hasLangProperty = cdb.Tags?.Tag?.Any(x => x.Name.Equals("Language", StringComparison.InvariantCultureIgnoreCase)) == true;
+
+                        if (typeMatching)
+                        {
+                            if (editionMatching && langMatching)
+                            {
+                                specificCompDB = cdb;
+                            }
+                            //else if (hasEditionProperty || hasLangProperty) // Include CUs this way
+                            else if (cdb.Tags.Type.Equals("Language", StringComparison.InvariantCultureIgnoreCase) || 
+                                cdb.Tags.Type.Equals("Edition", StringComparison.InvariantCultureIgnoreCase) ||
+                                cdb.Tags.Type.Equals("Neutral", StringComparison.InvariantCultureIgnoreCase))
+                            {
+                                foreach (CompDBXmlClass.Package pkg in cdb.Packages.Package)
+                                {
+                                    bannedPayloadItems.Add(pkg.Payload.PayloadItem);
+                                }
+                            }
+                        }
+
+                        foreach (CompDBXmlClass.Package pkg in cdb.Packages.Package)
+                        {
+                            payloadItems.Add(pkg.Payload.PayloadItem);
+                        }
+                    }
+                }
+
+                if (specificCompDB == null)
+                {
+                    Logging.Log("No update metadata matched the specified criteria", Logging.LoggingLevel.Warning);
+                    continue;
+                }
+                else
+                {
+                    foreach (CompDBXmlClass.Package pkg in specificCompDB.Packages.Package)
+                    {
+                        bannedPayloadItems.RemoveWhere(x => x.PayloadHash == pkg.Payload.PayloadItem.PayloadHash);
+                    }
+                }
+
+                int returnCode = 0;
+                HashSet<string> downloadedFiles = new HashSet<string>();
+                IEnumerable<CExtendedUpdateInfoXml.File> files = null;
+
+                do
+                {
+                    Logging.Log("Getting file urls...");
+                    CGetExtendedUpdateInfo2Response.FileLocation[] urls = await FE3Handler.GetFileUrls(update, null, ctac);
+
+                    if (!Directory.Exists(OutputFolder))
+                    {
+                        Directory.CreateDirectory(OutputFolder);
+                        try
+                        {
+                            File.WriteAllText(Path.Combine(OutputFolder, update.Xml.LocalizedProperties.Title + " (" + o.MachineType.ToString() + ").txt"), JsonConvert.SerializeObject(update, Newtonsoft.Json.Formatting.Indented));
+                        }
+                        catch (Exception ex)
+                        {
+                            Logging.Log(ex.ToString(), Logging.LoggingLevel.Error);
+                            throw;
+                        }
+                    }
+
+                    if (files != null)
+                    {
+                        files = update.Xml.Files.File.Where(x => files.Any(y => y.Digest == x.Digest)).Where(x => UpdateUtils.ShouldFileGetDownloaded(x, OutputFolder, payloadItems, downloadedFiles)).OrderBy(x => ulong.Parse(x.Size));
+                    }
+                    else
+                    {
+                        files = update.Xml.Files.File.Where(x => !IsFileBanned(x, bannedPayloadItems)).Where(x => UpdateUtils.ShouldFileGetDownloaded(x, OutputFolder, payloadItems, downloadedFiles)).OrderBy(x => ulong.Parse(x.Size));
                     }
 
                     returnCode = 0;
