@@ -23,7 +23,8 @@ using WindowsUpdateLib;
 
 namespace UUPDownload
 {
-    internal class Options
+    [Verb("request-download", isDefault: true, HelpText = "Request a download from zero using a number of different request parameters.")]
+    internal class DownloadRequestOptions
     {
         [Option('s', "reporting-sku", HelpText = @"The sku to report to the Windows Update servers. Example: Professional", Required = true)]
         public OSSkuId ReportingSku { get; set; }
@@ -37,19 +38,44 @@ namespace UUPDownload
         [Option('r', "flight-ring", HelpText = @"The ring to report to the Windows Update servers. Example: External, other example: Retail or External", Required = true)]
         public string FlightRing { get; set; }
 
-        [Option('b', "flighting-branch-name", HelpText = @"The flighting branch name to report to the Windows Update servers. Example: External, other example: Dev, Beta or ReleasePreview", Required = false, Default = "")]
-        public string FlightingBranchName { get; set; }
-
-        [Option('l', "branch-readiness-level", HelpText = @"The branch readiness level to report to the Windows Update servers. Example: CB", Required = false, Default = "CB")]
-        public string BranchReadinessLevel { get; set; }
-
         [Option('c', "current-branch", HelpText = @"The branch to report to the Windows Update servers. Example: 19h1_release", Required = true)]
         public string CurrentBranch { get; set; }
+
+        [Option('b', "flighting-branch-name", HelpText = @"The flighting branch name to report to the Windows Update servers. Example: External, other example: Dev, Beta or ReleasePreview", Required = false, Default = "")]
+        public string FlightingBranchName { get; set; }
 
         [Option('y', "sync-current-version-only", HelpText = @"Only get updates for the current version, enables getting cumulative updates.", Required = false, Default = false)]
         public bool SyncCurrentVersionOnly { get; set; }
 
+        [Option('a', "branch-readiness-level", HelpText = @"The branch readiness level to report to the Windows Update servers. Example: CB", Required = false, Default = "CB")]
+        public string BranchReadinessLevel { get; set; }
+
         [Option('o', "output-folder", HelpText = @"The folder to use for downloading the update files.", Required = false, Default = ".")]
         public string OutputFolder { get; set; }
+
+        [Option('e', "edition", HelpText = @"The edition to get. Must be used with the language parameter. Omit either of these to download everything. Example: Professional", Required = false, Default = "")]
+        public string Edition { get; set; }
+
+        [Option('l', "language", HelpText = @"The language to get. Must be used with the edition parameter. Omit either of these to download everything. Example: en-US", Required = false, Default = "")]
+        public string Language { get; set; }
+    }
+
+    [Verb("replay-download", isDefault: false, HelpText = "Replay a download from zero using a *.uupmcreplay file.")]
+    internal class DownloadReplayOptions
+    {
+        [Option('r', "replay-metadata", HelpText = @"The path to a *.uupmcreplay file to replay an older update and resume the download process. Example: D:\20236.1005.uupmcreplay", Required = true)]
+        public string ReplayMetadata { get; set; }
+
+        [Option('t', "machine-type", HelpText = @"The architecture to report to the Windows Update servers. Example: amd64", Required = true)]
+        public MachineType MachineType { get; set; }
+
+        [Option('o', "output-folder", HelpText = @"The folder to use for downloading the update files.", Required = false, Default = ".")]
+        public string OutputFolder { get; set; }
+
+        [Option('e', "edition", HelpText = @"The edition to get. Must be used with the language parameter. Omit either of these to download everything. Example: Professional", Required = false, Default = "")]
+        public string Edition { get; set; }
+
+        [Option('l', "language", HelpText = @"The language to get. Must be used with the edition parameter. Omit either of these to download everything. Example: en-US", Required = false, Default = "")]
+        public string Language { get; set; }
     }
 }
