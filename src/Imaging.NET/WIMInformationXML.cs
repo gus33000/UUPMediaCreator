@@ -40,11 +40,23 @@ namespace Imaging
             public string IMAGESTATE { get; set; }
         }
 
+        [XmlRoot(ElementName = "FALLBACK")]
+        public class FALLBACK
+        {
+            [XmlAttribute(AttributeName = "LANGUAGE")]
+            public string LANGUAGE { get; set; }
+            [XmlText]
+            public string Text { get; set; }
+        }
+
         [XmlRoot(ElementName = "LANGUAGES")]
         public class LANGUAGES
         {
             [XmlElement(ElementName = "LANGUAGE")]
             public string LANGUAGE { get; set; }
+
+            [XmlElement(ElementName = "FALLBACK")]
+            public FALLBACK FALLBACK { get; set; }
 
             [XmlElement(ElementName = "DEFAULT")]
             public string DEFAULT { get; set; }

@@ -192,6 +192,19 @@ namespace MediaCreationLib.BaseEditions
             image.DISPLAYNAME = image.NAME;
             image.DISPLAYDESCRIPTION = image.NAME;
             image.FLAGS = image.WINDOWS.EDITIONID;
+            if (image.WINDOWS.LANGUAGES == null)
+            {
+                image.WINDOWS.LANGUAGES = new WIMInformationXML.LANGUAGES()
+                {
+                    LANGUAGE = LanguageCode,
+                    FALLBACK = new WIMInformationXML.FALLBACK()
+                    {
+                        LANGUAGE = LanguageCode,
+                        Text = "en-US"
+                    },
+                    DEFAULT = LanguageCode
+                };
+            }
             result = imagingInterface.SetWIMImageInformation(OutputInstallImage, wim.IMAGE.Count, image);
             if (!result)
                 goto exit;

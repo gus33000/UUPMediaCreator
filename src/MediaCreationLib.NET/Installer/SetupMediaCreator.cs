@@ -142,7 +142,7 @@ namespace MediaCreationLib.Installer
             //
             // Build installer
             //
-            result = WindowsInstallerBuilder.BuildSetupMedia(BaseESD, OutputWindowsREPath, OutputMediaPath, compression, RunsAsAdministrator, progressCallback);
+            result = WindowsInstallerBuilder.BuildSetupMedia(BaseESD, OutputWindowsREPath, OutputMediaPath, compression, RunsAsAdministrator, LanguageCode, progressCallback);
             if (!result)
                 goto exit;
 

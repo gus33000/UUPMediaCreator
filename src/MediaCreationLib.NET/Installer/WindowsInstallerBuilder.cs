@@ -22,6 +22,7 @@ namespace MediaCreationLib.Installer
             string MediaPath,
             WimCompressionType compressionType,
             bool RunsAsAdministrator,
+            string LanguageCode,
             ProgressCallback progressCallback = null
             )
         {
@@ -66,7 +67,7 @@ namespace MediaCreationLib.Installer
             // Prepare our base PE image which will serve as a basis for all subsequent operations
             // This function also generates WinRE
             //
-            result = PreparePEImage(BaseESD, OutputWinREPath, MediaPath, compressionType, progressCallback);
+            result = PreparePEImage(BaseESD, OutputWinREPath, MediaPath, compressionType, LanguageCode, progressCallback);
             if (!result)
                 goto exit;
 
@@ -101,6 +102,19 @@ namespace MediaCreationLib.Installer
             image.NAME = BootFirstImageName;
             image.DESCRIPTION = BootFirstImageName;
             image.FLAGS = BootFirstImageFlag;
+            if (image.WINDOWS.LANGUAGES == null)
+            {
+                image.WINDOWS.LANGUAGES = new WIMInformationXML.LANGUAGES()
+                {
+                    LANGUAGE = LanguageCode,
+                    FALLBACK = new WIMInformationXML.FALLBACK()
+                    {
+                        LANGUAGE = LanguageCode,
+                        Text = "en-US"
+                    },
+                    DEFAULT = LanguageCode
+                };
+            }
             result = imagingInterface.SetWIMImageInformation(bootwim, 1, image);
             if (!result)
                 goto exit;
@@ -108,6 +122,19 @@ namespace MediaCreationLib.Installer
             image.NAME = BootSecondImageName;
             image.DESCRIPTION = BootSecondImageName;
             image.FLAGS = BootSecondImageFlag;
+            if (image.WINDOWS.LANGUAGES == null)
+            {
+                image.WINDOWS.LANGUAGES = new WIMInformationXML.LANGUAGES()
+                {
+                    LANGUAGE = LanguageCode,
+                    FALLBACK = new WIMInformationXML.FALLBACK()
+                    {
+                        LANGUAGE = LanguageCode,
+                        Text = "en-US"
+                    },
+                    DEFAULT = LanguageCode
+                };
+            }
             result = imagingInterface.SetWIMImageInformation(bootwim, 2, image);
             if (!result)
                 goto exit;
@@ -229,6 +256,7 @@ namespace MediaCreationLib.Installer
             string OutputWinREPath,
             string MediaPath,
             WimCompressionType compressionType,
+            string LanguageCode,
             ProgressCallback progressCallback = null
             )
         {
@@ -243,6 +271,29 @@ namespace MediaCreationLib.Installer
             bool result = imagingInterface.ExportImage(BaseESD, OutputWinREPath, 2, compressionType: compressionType, progressCallback: callback);
             if (!result)
                 goto exit;
+
+            WIMInformationXML.IMAGE image;
+            result = imagingInterface.GetWIMImageInformation(OutputWinREPath, 1, out image);
+            if (!result)
+                goto exit;
+
+            if (image.WINDOWS.LANGUAGES == null)
+            {
+                image.WINDOWS.LANGUAGES = new WIMInformationXML.LANGUAGES()
+                {
+                    LANGUAGE = LanguageCode,
+                    FALLBACK = new WIMInformationXML.FALLBACK()
+                    {
+                        LANGUAGE = LanguageCode,
+                        Text = "en-US"
+                    },
+                    DEFAULT = LanguageCode
+                };
+
+                result = imagingInterface.SetWIMImageInformation(OutputWinREPath, 1, image);
+                if (!result)
+                    goto exit;
+            }
 
             progressCallback?.Invoke(Common.ProcessPhase.CreatingWindowsInstaller, true, 0, "Marking image as bootable");
             result = imagingInterface.MarkImageAsBootable(OutputWinREPath, 1);
