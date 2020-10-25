@@ -90,8 +90,8 @@ namespace UUPDownload
         {
             bool getSpecific = !string.IsNullOrEmpty(Language) && !string.IsNullOrEmpty(Edition);
 
-            Logging.Log(update.Xml.LocalizedProperties.Title);
-            Logging.Log(update.Xml.LocalizedProperties.Description);
+            Logging.Log("Title: " + update.Xml.LocalizedProperties.Title);
+            Logging.Log("Description: " + update.Xml.LocalizedProperties.Description);
 
             HashSet<CompDBXmlClass.PayloadItem> payloadItems = new HashSet<CompDBXmlClass.PayloadItem>();
             HashSet<CompDBXmlClass.PayloadItem> bannedPayloadItems = new HashSet<CompDBXmlClass.PayloadItem>();
@@ -100,6 +100,7 @@ namespace UUPDownload
 
             Logging.Log("Getting CompDBs...");
             CompDBXmlClass.CompDB[] compDBs = await UpdateUtils.GetCompDBs(update);
+            Logging.Log("Parsing CompDBs...");
             CompDBXmlClass.CompDB specificCompDB = null;
             if (compDBs != null)
             {
@@ -153,13 +154,13 @@ namespace UUPDownload
             }
 
             int returnCode = 0;
-            HashSet<string> downloadedFiles = new HashSet<string>();
-            IEnumerable<CExtendedUpdateInfoXml.File> files = null;
+            IEnumerable<CExtendedUpdateInfoXml.File> filesToDownload = null;
+            ServicePointManager.DefaultConnectionLimit = int.MaxValue;
 
             do
             {
                 Logging.Log("Getting file urls...");
-                CGetExtendedUpdateInfo2Response.FileLocation[] urls = await FE3Handler.GetFileUrls(update, null, update.CTAC);
+                CGetExtendedUpdateInfo2Response.FileLocation[] fileUrls = await FE3Handler.GetFileUrls(update, null, update.CTAC);
 
                 if (!Directory.Exists(OutputFolder))
                 {
@@ -179,36 +180,35 @@ namespace UUPDownload
                     }
                 }
 
-                if (files != null)
+                if (filesToDownload != null)
                 {
-                    files = update.Xml.Files.File.Where(x => files.Any(y => y.Digest == x.Digest)).Where(x => UpdateUtils.ShouldFileGetDownloaded(x, OutputFolder, payloadItems, downloadedFiles)).OrderBy(x => ulong.Parse(x.Size));
+                    filesToDownload = filesToDownload.Where(x => UpdateUtils.ShouldFileGetDownloaded(x, OutputFolder, payloadItems));
                 }
                 else
                 {
-                    files = update.Xml.Files.File.Where(x => !IsFileBanned(x, bannedPayloadItems)).Where(x => UpdateUtils.ShouldFileGetDownloaded(x, OutputFolder, payloadItems, downloadedFiles)).OrderBy(x => ulong.Parse(x.Size));
+                    filesToDownload = update.Xml.Files.File.Where(x => !IsFileBanned(x, bannedPayloadItems)).Where(x => UpdateUtils.ShouldFileGetDownloaded(x, OutputFolder, payloadItems)).OrderBy(x => ulong.Parse(x.Size));
                 }
 
                 returnCode = 0;
 
-                ServicePointManager.DefaultConnectionLimit = int.MaxValue;
                 HashSet<Task<int>> tasks = new HashSet<Task<int>>();
-                DateTime startTime = DateTime.Now;
 
                 int maxConcurrency = 20;
                 using (SemaphoreSlim concurrencySemaphore = new SemaphoreSlim(maxConcurrency))
                 {
                     ServicePointManager.DefaultConnectionLimit = int.MaxValue;
 
-                    foreach (CExtendedUpdateInfoXml.File file2 in files)
+                    foreach (CExtendedUpdateInfoXml.File file in filesToDownload)
                     {
                         concurrencySemaphore.Wait();
-                        tasks.Add(DownloadHelper.GetDownloadFileTask(OutputFolder, UpdateUtils.GetFilenameForCEUIFile(file2, payloadItems), urls.First(x => x.FileDigest == file2.Digest).Url, concurrencySemaphore));
+                        tasks.Add(DownloadHelper.GetDownloadFileTask(OutputFolder, UpdateUtils.GetFilenameForCEUIFile(file, payloadItems), fileUrls.First(x => x.FileDigest == file.Digest).Url, concurrencySemaphore));
                     }
 
                     int[] res = await Task.WhenAll(tasks.ToArray());
                     if (res.Any(x => x != 0))
                     {
                         returnCode = -1;
+                        Logging.Log("Previous download did not fully succeed, resuming past downloads...");
                         continue;
                     }
                 }

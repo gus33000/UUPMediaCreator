@@ -19,7 +19,7 @@ namespace Imaging
 
         private static void InitNativeLibrary()
         {
-            string libDir = "runtimes";
+            string libDir = Path.Combine(GetExecutableDirectory(), "runtimes");
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 libDir = Path.Combine(libDir, "win-");
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
@@ -53,9 +53,16 @@ namespace Imaging
                 libPath = Path.Combine(libDir, "libwim.dylib");
 
             if (libPath == null)
+            {
+                Console.WriteLine($"Unable to find native library.");
                 throw new PlatformNotSupportedException($"Unable to find native library.");
+            }
+
             if (!File.Exists(libPath))
+            {
+                Console.WriteLine($"Unable to find native library [{libPath}].");
                 throw new PlatformNotSupportedException($"Unable to find native library [{libPath}].");
+            }
 
             try
             {
