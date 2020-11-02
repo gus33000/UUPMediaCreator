@@ -25,7 +25,7 @@ namespace UUPDownload
             return filename;
         }
 
-        public static bool ShouldFileGetDownloaded(CExtendedUpdateInfoXml.File file2, string OutputFolder, IEnumerable<CompDBXmlClass.PayloadItem> payloadItems, IEnumerable<string> downloadedFiles)
+        public static bool ShouldFileGetDownloaded(CExtendedUpdateInfoXml.File file2, string OutputFolder, IEnumerable<CompDBXmlClass.PayloadItem> payloadItems)
         {
             string filename = file2.FileName;
             if (payloadItems.Any(x => x.PayloadHash == file2.AdditionalDigest.Text || x.PayloadHash == file2.Digest))
@@ -42,11 +42,6 @@ namespace UUPDownload
 
             if (filename.Contains("Diff", StringComparison.InvariantCultureIgnoreCase) ||
                 filename.Contains("Baseless", StringComparison.InvariantCultureIgnoreCase))
-            {
-                return false;
-            }
-
-            if (downloadedFiles.Any(x => x.Equals(filename, StringComparison.InvariantCultureIgnoreCase)))
             {
                 return false;
             }
