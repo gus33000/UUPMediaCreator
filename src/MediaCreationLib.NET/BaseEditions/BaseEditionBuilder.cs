@@ -141,11 +141,11 @@ namespace MediaCreationLib.BaseEditions
             return result;
         }
 
-        private static string ConvertCABToESD(string CABPath, ProgressCallback progressCallback, int progressoffset, int progressscale)
+        private static string ConvertCABToESD(string cabFilePath, ProgressCallback progressCallback, int progressoffset, int progressscale)
         {
-            string CABFileNameWithoutExtension = Path.GetTempPath() + (CABPath.Contains(".") ? string.Join(".", CABPath.Split('.').Reverse().Skip(1).Reverse()) : CABPath).Split('\\').Last();
-            if (File.Exists(CABFileNameWithoutExtension + ".ESD"))
-                return CABFileNameWithoutExtension + ".ESD";
+            string esdFilePath = Path.ChangeExtension(cabFilePath, "esd");
+            if (File.Exists(esdFilePath))
+                return esdFilePath;
 
             progressCallback?.Invoke(Common.ProcessPhase.PreparingFiles, false, progressoffset, "Unpacking...");
 
@@ -160,21 +160,21 @@ namespace MediaCreationLib.BaseEditions
                 progressCallback?.Invoke(Common.ProcessPhase.PreparingFiles, false, progressoffset + (int)Math.Round((double)percent / 100 * progressScaleHalf), "Unpacking " + file + "...");
             };
 
-            CabinetHandler.ExpandFiles(CABPath, tempExtractionPath, ProgressCallback);
+            CabinetHandler.ExpandFiles(cabFilePath, tempExtractionPath, ProgressCallback);
 
             void callback(string Operation, int ProgressPercentage, bool IsIndeterminate)
             {
                 progressCallback?.Invoke(Common.ProcessPhase.PreparingFiles, IsIndeterminate, progressoffset + progressScaleHalf + (int)Math.Round((double)ProgressPercentage / 100 * progressScaleHalf), Operation);
             };
 
-            bool result = imagingInterface.CaptureImage(CABFileNameWithoutExtension + ".ESD", "Metadata ESD", null, null, tempExtractionPath, compressionType: WimCompressionType.None, PreserveACL: false, progressCallback: callback);
+            bool result = imagingInterface.CaptureImage(esdFilePath, "Metadata ESD", null, null, tempExtractionPath, compressionType: WimCompressionType.None, PreserveACL: false, progressCallback: callback);
 
             Directory.Delete(tmp, true);
 
             if (!result)
                 return null;
 
-            return CABFileNameWithoutExtension + ".ESD";
+            return esdFilePath;
         }
     }
 }
