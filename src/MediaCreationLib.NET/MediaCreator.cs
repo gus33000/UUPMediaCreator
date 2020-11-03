@@ -207,6 +207,38 @@ namespace MediaCreationLib
             return result;
         }
 
+        private static List<string> PrintEditionTarget(EditionTarget editionTarget, int padding = 0)
+        {
+            List<string> lines = new List<string>();
+            lines.Add($"-> Name: {editionTarget.PlannedEdition.EditionName}, Availability: {editionTarget.PlannedEdition.AvailabilityType}");
+            if (editionTarget.NonDestructiveTargets.Count > 0)
+            {
+                lines.Add("   Non Destructive Edition Upgrade Targets:");
+                foreach (var ed in editionTarget.NonDestructiveTargets)
+                {
+                    lines.AddRange(PrintEditionTarget(ed, padding + 1));
+                }
+            }
+            if (editionTarget.DestructiveTargets.Count > 0)
+            {
+                lines.Add("   Destructive Edition Upgrade Targets:");
+                foreach (var ed in editionTarget.DestructiveTargets)
+                {
+                    lines.AddRange(PrintEditionTarget(ed, padding + 1));
+                }
+            }
+
+            for (int j = 0; j < lines.Count; j++)
+            {
+                for (int i = 0; i < padding; i++)
+                {
+                    lines[j] = "   " + lines[j];
+                }
+            }
+
+            return lines;
+        }
+
         public static void CreateISOMediaAdvanced(
             string ISOPath,
             string UUPPath,
@@ -221,6 +253,14 @@ namespace MediaCreationLib
             result = GetTargetedPlan(UUPPath, LanguageCode, out editionTargets, progressCallback);
             if (!result)
                 goto error;
+
+            foreach (var ed in editionTargets)
+            {
+                foreach (var line in PrintEditionTarget(ed))
+                {
+                    progressCallback?.Invoke(Common.ProcessPhase.ReadingMetadata, true, 0, line);
+                }
+            }
 
             progressCallback?.Invoke(Common.ProcessPhase.ReadingMetadata, true, 0, "Enumerating files");
 

@@ -7,114 +7,170 @@ using System.Linq;
 using UUPMediaCreator.InterCommunication;
 using static MediaCreationLib.MediaCreator;
 
+#nullable enable
+
 namespace MediaCreationLib.NET
 {
     internal static class FileLocator
     {
+        internal static HashSet<CompDBXmlClass.CompDB> GetCompDBsFromUUPFiles(string UUPPath)
+        {
+            HashSet<CompDBXmlClass.CompDB> compDBs = new HashSet<CompDBXmlClass.CompDB>();
+
+            try
+            {
+                if (Directory.EnumerateFiles(UUPPath, "*aggregatedmetadata*").Count() > 0)
+                {
+                    using (CabinetHandler cabinet = new CabinetHandler(File.OpenRead(Directory.EnumerateFiles(UUPPath, "*aggregatedmetadata*").First())))
+                    {
+                        foreach (var file in cabinet.Files.Where(x => x.EndsWith(".xml.cab", StringComparison.InvariantCultureIgnoreCase)))
+                        {
+                            try
+                            {
+                                using (CabinetHandler cabinet2 = new CabinetHandler(cabinet.OpenFile(file)))
+                                {
+                                    string xmlfile = cabinet2.Files.First();
+                                    using (Stream xmlstream = cabinet2.OpenFile(xmlfile))
+                                    {
+                                        compDBs.Add(CompDBXmlClass.DeserializeCompDB(xmlstream));
+                                    }
+                                }
+                            }
+                            catch { }
+                        }
+                    }
+                }
+                else
+                {
+                    IEnumerable<string> files = Directory.EnumerateFiles(UUPPath).Select(x => Path.GetFileName(x)).Where(x => x.EndsWith(".xml.cab", StringComparison.InvariantCultureIgnoreCase));
+
+                    foreach (var file in files)
+                    {
+                        try
+                        {
+                            using (CabinetHandler cabinet2 = new CabinetHandler(File.OpenRead(Path.Combine(UUPPath, file))))
+                            {
+                                string xmlfile = cabinet2.Files.First();
+                                using (Stream xmlstream = cabinet2.OpenFile(xmlfile))
+                                {
+                                    compDBs.Add(CompDBXmlClass.DeserializeCompDB(xmlstream));
+                                }
+                            }
+                        }
+                        catch { }
+                    }
+                }
+            }
+            catch { }
+
+            return compDBs;
+        }
+
+        internal static CompDBXmlClass.CompDB? GetNeutralCompDB(HashSet<CompDBXmlClass.CompDB> compDBs)
+        {
+            foreach (var compDB in compDBs)
+            {
+                //
+                // Newer style compdbs have a tag attribute, make use of it.
+                //
+                if (compDB.Tags != null &&
+                    compDB.Tags.Type.Equals("Neutral", StringComparison.InvariantCultureIgnoreCase) &&
+                    compDB.Tags.Tag != null && 
+                    compDB.Tags.Tag.FirstOrDefault(x => x.Name.Equals("UpdateType", StringComparison.InvariantCultureIgnoreCase))?.Value?.Equals("Canonical", StringComparison.InvariantCultureIgnoreCase) == true)
+                {
+                    return compDB;
+                }
+                //
+                // Older style compdbs have no tag elements, we need to find out if it's a neutral compdb using another way
+                //
+                else if (compDB.Features?.Feature?.FirstOrDefault(x => 
+                    x.Type?.Contains("BaseNeutral", StringComparison.InvariantCultureIgnoreCase) == true) != null)
+                {
+                    return compDB;
+                }
+            }
+
+            return null;
+        }
+
+        internal static HashSet<CompDBXmlClass.CompDB> GetEditionCompDBsForLanguage(HashSet<CompDBXmlClass.CompDB> compDBs, string LanguageCode)
+        {
+            HashSet<CompDBXmlClass.CompDB> filteredCompDBs = new HashSet<CompDBXmlClass.CompDB>();
+
+            foreach (var compDB in compDBs)
+            {
+                //
+                // Newer style compdbs have a tag attribute, make use of it.
+                //
+                if (compDB.Tags != null &&
+                    compDB.Tags.Type.Equals("Edition", StringComparison.InvariantCultureIgnoreCase) &&
+                    compDB.Tags.Tag != null &&
+                    compDB.Tags.Tag.Count == 3 &&
+                    compDB.Tags.Tag.FirstOrDefault(x => x.Name.Equals("UpdateType", StringComparison.InvariantCultureIgnoreCase))?.Value?.Equals("Canonical", StringComparison.InvariantCultureIgnoreCase) == true &&
+                    compDB.Tags.Tag.FirstOrDefault(x => x.Name.Equals("Language", StringComparison.InvariantCultureIgnoreCase))?.Value?.Equals(LanguageCode, StringComparison.InvariantCultureIgnoreCase) == true &&
+                    compDB.Tags.Tag.Any(x => x.Name.Equals("Edition", StringComparison.InvariantCultureIgnoreCase)))
+                {
+                    filteredCompDBs.Add(compDB);
+                }
+                //
+                // Older style compdbs have no tag elements, we need to find out if it's an edition compdb using another way
+                //
+                else if (compDB.Features?.Feature?.FirstOrDefault(x => 
+                    x.Type?.Contains("DesktopMedia", StringComparison.InvariantCultureIgnoreCase) == true && 
+                    x.FeatureID?.Contains(LanguageCode, StringComparison.InvariantCultureIgnoreCase) == true) != null)
+                {
+                    filteredCompDBs.Add(compDB);
+                }
+            }
+
+            return filteredCompDBs;
+        }
+
         internal static (bool Succeeded, string BaseESD) LocateFilesForSetupMediaCreation(
             string UUPPath,
             string LanguageCode,
-            ProgressCallback progressCallback = null)
+            ProgressCallback? progressCallback = null)
         {
-            bool success = true;
+            progressCallback?.Invoke(Common.ProcessPhase.ReadingMetadata, true, 0, "Looking up Composition Database in order to find a Base ESD image appropriate for building windows setup files.");
 
-            string BaseESD = null;
-            HashSet<CompDBXmlClass.CompDB> compDBs = new HashSet<CompDBXmlClass.CompDB>();
-
-            progressCallback?.Invoke(Common.ProcessPhase.ReadingMetadata, true, 0, "Enumerating files");
-
-            if (Directory.EnumerateFiles(UUPPath, "*aggregatedmetadata*").Count() > 0)
+            if (GetCompDBsFromUUPFiles(UUPPath) is HashSet<CompDBXmlClass.CompDB> compDBs)
             {
-                using (CabinetHandler cabinet = new CabinetHandler(File.OpenRead(Directory.EnumerateFiles(UUPPath, "*aggregatedmetadata*").First())))
+                HashSet<CompDBXmlClass.CompDB> filteredCompDBs = GetEditionCompDBsForLanguage(compDBs, LanguageCode);
+                if (filteredCompDBs.Count > 0)
                 {
-                    IEnumerable<string> potentialFiles = cabinet.Files.Where(x =>
-                    x.ToLower().Contains($"desktoptargetcompdb_") &&
-                    x.ToLower().Contains($"_{LanguageCode.ToLower()}") &&
-                    !x.ToLower().Contains("lxp") &&
-                    !x.ToLower().Contains($"desktoptargetcompdb_{LanguageCode.ToLower()}"));
-
-                    if (potentialFiles.Count() == 0)
-                        goto error;
-
-                    foreach (var file in potentialFiles)
+                    foreach (var currentCompDB in filteredCompDBs)
                     {
-                        using (CabinetHandler cabinet2 = new CabinetHandler(cabinet.OpenFile(file)))
+                        foreach (CompDBXmlClass.Package feature in currentCompDB.Features.Feature[0].Packages.Package)
                         {
-                            string xmlfile = cabinet2.Files.First();
-                            using (Stream xmlstream = cabinet2.OpenFile(xmlfile))
+                            CompDBXmlClass.Package pkg = currentCompDB.Packages.Package.First(x => x.ID == feature.ID);
+
+                            string file = pkg.Payload.PayloadItem.Path.Split('\\').Last().Replace("~31bf3856ad364e35", "").Replace("~.", ".").Replace("~", "-").Replace("-.", ".");
+
+                            if (feature.PackageType == "MetadataESD")
                             {
-                                compDBs.Add(CompDBXmlClass.DeserializeCompDB(xmlstream));
+                                if (!File.Exists(Path.Combine(UUPPath, file)))
+                                {
+                                    file = pkg.Payload.PayloadItem.Path;
+                                    if (!File.Exists(Path.Combine(UUPPath, file)))
+                                    {
+                                        break;
+                                    }
+                                }
+
+                                return (true, Path.Combine(UUPPath, file));
                             }
                         }
                     }
                 }
+
+                progressCallback?.Invoke(Common.ProcessPhase.Error, true, 0, "While looking up the Composition Database, we couldn't find an edition composition for the specified language. This error is fatal.");
+                return (false, null);
             }
             else
             {
-                IEnumerable<string> files = Directory.EnumerateFiles(UUPPath).Select(x => Path.GetFileName(x));
-                IEnumerable<string> potentialFiles = files.Where(x =>
-                    x.ToLower().Contains($"desktoptargetcompdb_") &&
-                    x.ToLower().Contains($"_{LanguageCode.ToLower()}") &&
-                    !x.ToLower().Contains("lxp") &&
-                    !x.ToLower().Contains($"desktoptargetcompdb_{LanguageCode.ToLower()}"));
-
-                if (potentialFiles.Count() == 0)
-                    goto error;
-
-                foreach (var file in potentialFiles)
-                {
-                    using (CabinetHandler cabinet2 = new CabinetHandler(File.OpenRead(Path.Combine(UUPPath, file))))
-                    {
-                        string xmlfile = cabinet2.Files.First();
-                        using (Stream xmlstream = cabinet2.OpenFile(xmlfile))
-                        {
-                            compDBs.Add(CompDBXmlClass.DeserializeCompDB(xmlstream));
-                        }
-                    }
-                }
+                progressCallback?.Invoke(Common.ProcessPhase.Error, true, 0, "We couldn't find the Composition Database. Please make sure you have downloaded the <aggregatedmetadata> cabinet file, or the <CompDB> cabinet files (if the build is lower than RS3 RTM). This error is fatal.");
+                return (false, null);
             }
-
-            if (compDBs.Count == 0)
-                goto error;
-
-            foreach (var firstCompDB in compDBs)
-            {
-                foreach (CompDBXmlClass.Package feature in firstCompDB.Features.Feature[0].Packages.Package)
-                {
-                    CompDBXmlClass.Package pkg = firstCompDB.Packages.Package.First(x => x.ID == feature.ID);
-
-                    string file = pkg.Payload.PayloadItem.Path.Split('\\').Last().Replace("~31bf3856ad364e35", "").Replace("~.", ".").Replace("~", "-").Replace("-.", ".");
-
-                    if (feature.PackageType == "MetadataESD")
-                    {
-                        if (!File.Exists(Path.Combine(UUPPath, file)))
-                        {
-                            file = pkg.Payload.PayloadItem.Path;
-                            if (!File.Exists(Path.Combine(UUPPath, file)))
-                            {
-                                break;
-                            }
-                        }
-
-                        BaseESD = Path.Combine(UUPPath, file);
-                        break;
-                    }
-                }
-
-                if (BaseESD != null)
-                    break;
-            }
-
-            if (BaseESD == null)
-                goto error;
-
-            goto exit;
-
-            error:
-            success = false;
-
-            exit:
-            return (success, BaseESD);
         }
 
         internal static (bool Succeeded, string BaseESD, HashSet<string> ReferencePackages, HashSet<string> ReferencePackagesToConvert) LocateFilesForBaseEditionCreation(

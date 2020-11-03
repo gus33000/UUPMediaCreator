@@ -1,6 +1,6 @@
 ﻿using CompDB;
 using Imaging;
-using Microsoft.Cabinet;
+using MediaCreationLib.NET;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -184,101 +184,21 @@ namespace MediaCreationLib.Planning
             bool result = true;
             progressCallback?.Invoke(Common.ProcessPhase.ReadingMetadata, true, 0, "Enumerating files");
 
-            List<CompDBXmlClass.CompDB> compDBs = new List<CompDBXmlClass.CompDB>();
-            CompDBXmlClass.CompDB neutralCompDB = null;
+            HashSet<CompDBXmlClass.CompDB> compDBs = FileLocator.GetCompDBsFromUUPFiles(UUPPath);
+            HashSet<CompDBXmlClass.CompDB> filteredCompDBs = FileLocator.GetEditionCompDBsForLanguage(compDBs, LanguageCode);
+            CompDBXmlClass.CompDB neutralCompDB = FileLocator.GetNeutralCompDB(compDBs);
 
-            if (Directory.EnumerateFiles(UUPPath, "*aggregatedmetadata*").Count() > 0)
-            {
-                using (CabinetHandler cabinet = new CabinetHandler(File.OpenRead(Directory.EnumerateFiles(UUPPath, "*aggregatedmetadata*").First())))
-                {
-                    IEnumerable<string> potentialNeutralFiles = cabinet.Files.Where(x =>
-                    x.ToLower().Contains($"desktoptargetcompdb_neutral"));
-
-                    if (potentialNeutralFiles.Count() == 0)
-                        goto error;
-
-                    using (CabinetHandler cabinet2 = new CabinetHandler(cabinet.OpenFile(potentialNeutralFiles.First())))
-                    {
-                        string xmlfile = cabinet2.Files.First();
-                        using (Stream xmlstream = cabinet2.OpenFile(xmlfile))
-                        {
-                            neutralCompDB = CompDBXmlClass.DeserializeCompDB(xmlstream);
-                        }
-                    }
-
-                    IEnumerable<string> potentialFiles = cabinet.Files.Where(x =>
-                    x.ToLower().Contains($"desktoptargetcompdb_") &&
-                    x.ToLower().Contains($"_{LanguageCode.ToLower()}") &&
-                    !x.ToLower().Contains("lxp") &&
-                    !x.ToLower().Contains($"desktoptargetcompdb_{LanguageCode.ToLower()}"));
-
-                    if (potentialFiles.Count() == 0)
-                        goto error;
-
-                    foreach (var file in potentialFiles)
-                    {
-                        using (CabinetHandler cabinet2 = new CabinetHandler(cabinet.OpenFile(file)))
-                        {
-                            string xmlfile = cabinet2.Files.First();
-                            using (Stream xmlstream = cabinet2.OpenFile(xmlfile))
-                            {
-                                compDBs.Add(CompDBXmlClass.DeserializeCompDB(xmlstream));
-                            }
-                        }
-                    }
-                }
-            }
-            else
-            {
-                IEnumerable<string> files = Directory.EnumerateFiles(UUPPath).Select(x => Path.GetFileName(x));
-
-                IEnumerable<string> potentialNeutralFiles = files.Where(x =>
-                       x.ToLower().Contains($"desktoptargetcompdb_neutral"));
-
-                if (potentialNeutralFiles.Count() == 0)
-                    goto error;
-
-                using (CabinetHandler cabinet2 = new CabinetHandler(File.OpenRead(Path.Combine(UUPPath, potentialNeutralFiles.First()))))
-                {
-                    string xmlfile = cabinet2.Files.First();
-                    using (Stream xmlstream = cabinet2.OpenFile(xmlfile))
-                    {
-                        neutralCompDB = CompDBXmlClass.DeserializeCompDB(xmlstream);
-                    }
-                }
-
-                IEnumerable<string> potentialFiles = files.Where(x =>
-                    x.ToLower().Contains($"desktoptargetcompdb_") &&
-                    x.ToLower().Contains($"_{LanguageCode.ToLower()}") &&
-                    !x.ToLower().Contains("lxp") &&
-                    !x.ToLower().Contains($"desktoptargetcompdb_{LanguageCode.ToLower()}"));
-
-                if (potentialFiles.Count() == 0)
-                    goto error;
-
-                foreach (var file in potentialFiles)
-                {
-                    using (CabinetHandler cabinet2 = new CabinetHandler(File.OpenRead(Path.Combine(UUPPath, file))))
-                    {
-                        string xmlfile = cabinet2.Files.First();
-                        using (Stream xmlstream = cabinet2.OpenFile(xmlfile))
-                        {
-                            compDBs.Add(CompDBXmlClass.DeserializeCompDB(xmlstream));
-                        }
-                    }
-                }
-            }
-
-            if (compDBs.Count == 0)
+            if (filteredCompDBs.Count == 0)
                 goto error;
 
-            List<PlannedEdition> availableEditionsFromCanonical = new List<PlannedEdition>();
+            List<PlannedEdition> availableCanonicalEditions = new List<PlannedEdition>();
             List<PlannedEdition> availableBasisHackedEditions = new List<PlannedEdition>();
             List<PlannedEdition> hackEditions = new List<PlannedEdition>();
-            List<EditionMappingXML.Edition> virtualWindowsEditions = null;
-            Dictionary<string, string> editionMatrixItems = new Dictionary<string, string>();
 
-            foreach (var compDB in compDBs)
+            List<EditionMappingXML.Edition> virtualWindowsEditions = new List<EditionMappingXML.Edition>();
+            Dictionary<string, string> editionTargetMapping = new Dictionary<string, string>();
+
+            foreach (var compDB in filteredCompDBs)
             {
                 PlannedEdition edition = new PlannedEdition();
                 if (compDB.Tags != null)
@@ -290,29 +210,46 @@ namespace MediaCreationLib.Planning
                     edition.EditionName = compDB.Features.Feature[0].FeatureID.Split('_')[0];
                 }
                 edition.AvailabilityType = AvailabilityType.Canonical;
-                availableEditionsFromCanonical.Add(edition);
+                availableCanonicalEditions.Add(edition);
             }
 
-            availableEditionsFromCanonical = availableEditionsFromCanonical.OrderBy(x => x.EditionName).ToList();
+            availableCanonicalEditions = availableCanonicalEditions.OrderBy(x => x.EditionName).ToList();
 
-            var firstCompDB = compDBs.First();
+            var firstCompDB = filteredCompDBs.First();
 
+            //
+            // Attempt to get virtual editions from one compdb
+            //
             foreach (CompDBXmlClass.Package feature in firstCompDB.Features.Feature[0].Packages.Package)
             {
                 CompDBXmlClass.Package pkg = firstCompDB.Packages.Package.First(x => x.ID == feature.ID);
 
+                //
+                // Some download utilities that start with the letter U and finish with UPDump or start with the letter U and finish with UP.rg-adguard download files without respecting Microsoft filenames
+                // We attempt to locate files based on what we think they use first.
+                //
                 string file = pkg.Payload.PayloadItem.Path.Split('\\').Last().Replace("~31bf3856ad364e35", "").Replace("~.", ".").Replace("~", "-").Replace("-.", ".");
 
                 if (!File.Exists(Path.Combine(UUPPath, file)))
                 {
+                    //
+                    // Wow, someone actually downloaded UUP files using a tool that respects Microsoft paths, that's exceptional
+                    //
                     file = pkg.Payload.PayloadItem.Path;
                     if (!File.Exists(Path.Combine(UUPPath, file)))
                     {
+                        //
+                        // What a disapointment, they simply didn't download everything.. Oops.
+                        // TODO: generate missing files out of thin air
+                        //
                         goto error;
                     }
                 }
 
-                if (virtualWindowsEditions == null && file.EndsWith(".esd", StringComparison.InvariantCultureIgnoreCase) && file.ToLower().Contains("microsoft-windows-editionspecific"))
+                //
+                // Attempt to locate an edition specific image, this image contains the edition matrix we want
+                //
+                if (virtualWindowsEditions.Count <= 0 && file.EndsWith(".esd", StringComparison.InvariantCultureIgnoreCase) && file.ToLower().Contains("microsoft-windows-editionspecific"))
                 {
                     try
                     {
@@ -349,24 +286,49 @@ namespace MediaCreationLib.Planning
                     }
                     catch { };
                 }
+                else if (virtualWindowsEditions.Count > 0)
+                {
+                    break;
+                }
+
+                //
+                // Loop again
+                //
             }
 
+            //
+            // Attempt to get upgradable editions from one compdb
+            //
             foreach (CompDBXmlClass.Package feature in firstCompDB.Features.Feature[0].Packages.Package)
             {
                 CompDBXmlClass.Package pkg = firstCompDB.Packages.Package.First(x => x.ID == feature.ID);
 
+                //
+                // Some download utilities that start with the letter U and finish with UPDump or start with the letter U and finish with UP.rg-adguard download files without respecting Microsoft filenames
+                // We attempt to locate files based on what we think they use first.
+                //
                 string file = pkg.Payload.PayloadItem.Path.Split('\\').Last().Replace("~31bf3856ad364e35", "").Replace("~.", ".").Replace("~", "-").Replace("-.", ".");
 
                 if (!File.Exists(Path.Combine(UUPPath, file)))
                 {
+                    //
+                    // Wow, someone actually downloaded UUP files using a tool that respects Microsoft paths, that's exceptional
+                    //
                     file = pkg.Payload.PayloadItem.Path;
                     if (!File.Exists(Path.Combine(UUPPath, file)))
                     {
+                        //
+                        // What a disapointment, they simply didn't download everything.. Oops.
+                        // TODO: generate missing files out of thin air
+                        //
                         goto error;
                     }
                 }
 
-                if (editionMatrixItems == null && file.EndsWith(".esd", StringComparison.InvariantCultureIgnoreCase) && file.ToLower().Contains("microsoft-windows-editionspecific"))
+                //
+                // Attempt to locate an edition specific image, this image contains the edition matrix we want
+                //
+                if (editionTargetMapping.Count <= 0 && file.EndsWith(".esd", StringComparison.InvariantCultureIgnoreCase) && file.ToLower().Contains("microsoft-windows-editionspecific"))
                 {
                     try
                     {
@@ -393,15 +355,15 @@ namespace MediaCreationLib.Planning
                             File.Delete(tempHashMap);
 
                             var mapping = EditionMatrixXML.Deserialize(editionmatrixcontent);
-                            foreach (var ed in mapping.Edition)
+                            foreach (var edition in mapping.Edition)
                             {
-                                if (ed.Target != null && ed.Target.Count != 0)
+                                if (edition.Target != null && edition.Target.Count != 0)
                                 {
-                                    foreach (var ted in ed.Target)
+                                    foreach (var target in edition.Target)
                                     {
-                                        if (!availableEditionsFromCanonical.Any(x => x.EditionName.Equals(ted.ID, StringComparison.InvariantCultureIgnoreCase)))
+                                        if (!availableCanonicalEditions.Any(x => x.EditionName.Equals(target.ID, StringComparison.InvariantCultureIgnoreCase)))
                                         {
-                                            editionMatrixItems.Add(ed.ID, ted.ID);
+                                            editionTargetMapping.Add(edition.ID, target.ID);
                                         }
                                     }
                                 }
@@ -411,21 +373,29 @@ namespace MediaCreationLib.Planning
                     }
                     catch { };
                 }
+                else if (editionTargetMapping.Count > 0)
+                {
+                    break;
+                }
+
+                //
+                // Loop again
+                //
             }
 
             var _files = neutralCompDB.Features.Feature.First(x => x.FeatureID == "BaseNeutral").Packages.Package.Select(x => x.ID);
 
-            var packages = _files.Where(x => x.Count(y => y == '-') == 4).Where(x => x.ToLower().Contains("microsoft-windows-editionspecific"));
-            var pkgstopprio = packages.Where(x => x.ToLower().Contains("starter") || x.ToLower().Contains("professional") || x.ToLower().Contains("core"));
-            packages = packages.Except(pkgstopprio);
+            var editionSpecificPackages = _files.Where(x => x.Count(y => y == '-') == 4).Where(x => x.ToLower().Contains("microsoft-windows-editionspecific"));
+            var highPriorityPackages = editionSpecificPackages.Where(x => x.ToLower().Contains("starter") || x.ToLower().Contains("professional") || x.ToLower().Contains("core"));
+            editionSpecificPackages = editionSpecificPackages.Except(highPriorityPackages);
 
-            foreach (var file in pkgstopprio)
+            foreach (var file in highPriorityPackages)
             {
                 var sku = file.Split('-')[3];
-                if (!availableEditionsFromCanonical.Any(x => x.EditionName.Equals(sku, StringComparison.InvariantCultureIgnoreCase)))
+                if (!availableCanonicalEditions.Any(x => x.EditionName.Equals(sku, StringComparison.InvariantCultureIgnoreCase)))
                 {
-                    if (!editionMatrixItems
-                        .Where(x => availableEditionsFromCanonical.Any(y => y.EditionName.Equals(x.Key, StringComparison.InvariantCultureIgnoreCase)) ||
+                    if (editionTargetMapping != null && !editionTargetMapping
+                        .Where(x => availableCanonicalEditions.Any(y => y.EditionName.Equals(x.Key, StringComparison.InvariantCultureIgnoreCase)) ||
                                     hackEditions.Any(y => y.EditionName.Equals(x.Key, StringComparison.InvariantCultureIgnoreCase)))
                         .Any(x => x.Value.Equals(sku, StringComparison.InvariantCultureIgnoreCase)))
                     {
@@ -438,13 +408,13 @@ namespace MediaCreationLib.Planning
                 }
             }
 
-            foreach (var file in packages)
+            foreach (var file in editionSpecificPackages)
             {
                 var sku = file.Split('-')[3];
-                if (!availableEditionsFromCanonical.Any(x => x.EditionName.Equals(sku, StringComparison.InvariantCultureIgnoreCase)))
+                if (!availableCanonicalEditions.Any(x => x.EditionName.Equals(sku, StringComparison.InvariantCultureIgnoreCase)))
                 {
-                    if (!editionMatrixItems
-                        .Where(x => availableEditionsFromCanonical.Any(y => y.EditionName.Equals(x.Key, StringComparison.InvariantCultureIgnoreCase)) ||
+                    if (!editionTargetMapping
+                        .Where(x => availableCanonicalEditions.Any(y => y.EditionName.Equals(x.Key, StringComparison.InvariantCultureIgnoreCase)) ||
                                     hackEditions.Any(y => y.EditionName.Equals(x.Key, StringComparison.InvariantCultureIgnoreCase)))
                         .Any(x => x.Value.Equals(sku, StringComparison.InvariantCultureIgnoreCase)))
                     {
@@ -457,9 +427,9 @@ namespace MediaCreationLib.Planning
                 }
             }
 
-            foreach (var ed in availableEditionsFromCanonical)
+            foreach (var ed in availableCanonicalEditions)
             {
-                EditionTargets.Add(BuildTarget(ed, hackEditions, virtualWindowsEditions, editionMatrixItems, availableBasisHackedEditions));
+                EditionTargets.Add(BuildTarget(ed, hackEditions, virtualWindowsEditions, editionTargetMapping, availableBasisHackedEditions));
             }
 
             error:
