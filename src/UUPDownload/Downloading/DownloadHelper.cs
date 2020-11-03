@@ -47,11 +47,12 @@ namespace UUPDownload.Downloading
 
         public static async Task<int> GetDownloadFileTask(string OutputFolder, string filename, string url, SemaphoreSlim concurrencySemaphore)
         {
+            int returnCode = 0;
+
             if (GetFileExpirationDateTime(url) <= DateTime.Now)
             {
                 Logging.Log($"Skipping {filename} as the download link expired. This file will get downloaded shortly once the tool loops back again.", Logging.LoggingLevel.Warning);
-                concurrencySemaphore.Release();
-                return -1;
+                goto OnError;
             }
 
             try
@@ -60,7 +61,7 @@ namespace UUPDownload.Downloading
                 string filenameonlywithoutextension = Path.GetFileNameWithoutExtension(filename);
                 string extension = filenameonly.Replace(filenameonlywithoutextension, "");
                 string outputPath = filename.Replace(filenameonly, "");
-                int returnCode = 0, countSame = 0;
+                int countSame = 0;
                 DownloaderClient dlclient = new DownloaderClient();
                 DateTime startTime = DateTime.Now;
                 bool end = false;
@@ -119,24 +120,27 @@ namespace UUPDownload.Downloading
                     {
                         Logging.Log("");
                         Logging.Log("Download hung", Logging.LoggingLevel.Error);
-                        countSame = 0;
-                        concurrencySemaphore.Release();
-                        return 0;
+                        goto OnError;
                     }
                     Thread.Sleep(200);
                 }
 
-                concurrencySemaphore.Release();
-                return returnCode;
+                goto OnExit;
             }
             catch
             {
                 Logging.Log("");
                 Logging.Log("Unknown error occured while downloading", Logging.LoggingLevel.Error);
                 Logging.Log("");
-                concurrencySemaphore.Release();
-                return -1;
+                goto OnError;
             }
+
+            OnError:
+            returnCode = -1;
+
+            OnExit:
+            concurrencySemaphore.Release();
+            return returnCode;
         }
     }
 }
