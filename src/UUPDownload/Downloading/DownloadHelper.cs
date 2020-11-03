@@ -33,8 +33,27 @@ namespace UUPDownload.Downloading
             return "[" + bases + "]";
         }
 
+        private static DateTime GetFileExpirationDateTime(string Url)
+        {
+            DateTime dateTime = DateTime.MaxValue;
+            try
+            {
+                long value = long.Parse(Url.Split("P1=")[1].Split("&")[0]);
+                dateTime = DateTimeOffset.FromUnixTimeSeconds(value).ToLocalTime().DateTime;
+            }
+            catch { }
+            return dateTime;
+        }
+
         public static async Task<int> GetDownloadFileTask(string OutputFolder, string filename, string url, SemaphoreSlim concurrencySemaphore)
         {
+            if (GetFileExpirationDateTime(url) <= DateTime.Now)
+            {
+                Logging.Log($"Skipping {filename} as the download link expired. This file will get downloaded shortly once the tool loops back again.", Logging.LoggingLevel.Warning);
+                concurrencySemaphore.Release();
+                return -1;
+            }
+
             try
             {
                 string filenameonly = Path.GetFileName(filename);
@@ -101,6 +120,7 @@ namespace UUPDownload.Downloading
                         Logging.Log("");
                         Logging.Log("Download hung", Logging.LoggingLevel.Error);
                         countSame = 0;
+                        concurrencySemaphore.Release();
                         return 0;
                     }
                     Thread.Sleep(200);
@@ -114,6 +134,7 @@ namespace UUPDownload.Downloading
                 Logging.Log("");
                 Logging.Log("Unknown error occured while downloading", Logging.LoggingLevel.Error);
                 Logging.Log("");
+                concurrencySemaphore.Release();
                 return -1;
             }
         }

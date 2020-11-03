@@ -86,6 +86,18 @@ namespace UUPDownload
                 Console.ReadLine();
         }
 
+        private static DateTime GetFileExpirationDateTime(CGetExtendedUpdateInfo2Response.FileLocation fileLocation)
+        {
+            DateTime dateTime = DateTime.MaxValue;
+            try
+            {
+                long value = long.Parse(fileLocation.Url.Split("P1=")[1].Split("&")[0]);
+                dateTime = DateTimeOffset.FromUnixTimeSeconds(value).ToLocalTime().DateTime;
+            }
+            catch { }
+            return dateTime;
+        }
+
         private static async Task ProcessUpdateAsync(UpdateData update, string pOutputFolder, MachineType MachineType, string Language = "", string Edition = "", bool WriteMetadata = true)
         {
             bool getSpecific = !string.IsNullOrEmpty(Language) && !string.IsNullOrEmpty(Edition);
@@ -192,16 +204,17 @@ namespace UUPDownload
                 returnCode = 0;
 
                 HashSet<Task<int>> tasks = new HashSet<Task<int>>();
+                IEnumerable<(CExtendedUpdateInfoXml.File, CGetExtendedUpdateInfo2Response.FileLocation)> boundList = filesToDownload.Select(x => (x, fileUrls.First(y => y.FileDigest == x.Digest))).OrderBy(x => GetFileExpirationDateTime(x.Item2));
 
                 int maxConcurrency = 20;
                 using (SemaphoreSlim concurrencySemaphore = new SemaphoreSlim(maxConcurrency))
                 {
                     ServicePointManager.DefaultConnectionLimit = int.MaxValue;
 
-                    foreach (CExtendedUpdateInfoXml.File file in filesToDownload)
+                    foreach ((CExtendedUpdateInfoXml.File, CGetExtendedUpdateInfo2Response.FileLocation) boundFile in boundList)
                     {
                         concurrencySemaphore.Wait();
-                        tasks.Add(DownloadHelper.GetDownloadFileTask(OutputFolder, UpdateUtils.GetFilenameForCEUIFile(file, payloadItems), fileUrls.First(x => x.FileDigest == file.Digest).Url, concurrencySemaphore));
+                        tasks.Add(DownloadHelper.GetDownloadFileTask(OutputFolder, UpdateUtils.GetFilenameForCEUIFile(boundFile.Item1, payloadItems), boundFile.Item2.Url, concurrencySemaphore));
                     }
 
                     int[] res = await Task.WhenAll(tasks.ToArray());
