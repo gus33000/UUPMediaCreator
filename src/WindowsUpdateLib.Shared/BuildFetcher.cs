@@ -366,6 +366,10 @@ namespace WindowsUpdateLib
             data = await FE3Handler.GetUpdates(null, ctac, null, "ProductRelease");
             AddUpdatesIfNotPresentAlready(updates, data);
 
+            ctac = FE3Handler.BuildCTAC(OSSkuId.Professional, "10.0.19041.200", MachineType, "External", "FeaturePreview", "CB", "19h1_release", false);
+            data = await FE3Handler.GetUpdates(null, ctac, null, "ProductRelease");
+            AddUpdatesIfNotPresentAlready(updates, data);
+
             ctac = FE3Handler.BuildCTAC(OSSkuId.Professional, "10.0.19041.200", MachineType, "External", "Beta", "CB", "19h1_release", false);
             data = await FE3Handler.GetUpdates(null, ctac, null, "ProductRelease");
             AddUpdatesIfNotPresentAlready(updates, data);
