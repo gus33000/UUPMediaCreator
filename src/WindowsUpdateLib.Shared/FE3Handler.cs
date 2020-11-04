@@ -435,6 +435,12 @@ namespace WindowsUpdateLib
 
             [XmlElement(ElementName = "HandlerSpecificAction", Namespace = "http://www.microsoft.com/SoftwareDistribution/Server/ClientWebService")]
             public string HandlerSpecificAction { get; set; }
+
+            [XmlElement(ElementName = "FlightId", Namespace = "http://www.microsoft.com/SoftwareDistribution/Server/ClientWebService")]
+            public string FlightId { get; set; }
+
+            [XmlElement(ElementName = "FlightMetadata", Namespace = "http://www.microsoft.com/SoftwareDistribution/Server/ClientWebService")]
+            public string FlightMetadata { get; set; }
         }
 
         [XmlRoot(ElementName = "UpdateInfo", Namespace = "http://www.microsoft.com/SoftwareDistribution/Server/ClientWebService")]
@@ -880,6 +886,18 @@ namespace WindowsUpdateLib
 
             [XmlAttribute(AttributeName = "PackageContentId")]
             public string PackageContentId { get; set; }
+
+            [XmlAttribute(AttributeName = "ProductName")]
+            public string ProductName { get; set; }
+
+            [XmlAttribute(AttributeName = "ReleaseVersion")]
+            public string ReleaseVersion { get; set; }
+
+            [XmlAttribute(AttributeName = "AutoSelectOnWebsites")]
+            public string AutoSelectOnWebsites { get; set; }
+
+            [XmlAttribute(AttributeName = "BrowseOnly")]
+            public string BrowseOnly { get; set; }
         }
 
         [XmlRoot(ElementName = "CategoryInformation")]

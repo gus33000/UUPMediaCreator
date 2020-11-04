@@ -35,53 +35,69 @@ namespace WindowsUpdateLib
 
         public async static Task<string> GetBuildStringAsync(this UpdateData update)
         {
-            CExtendedUpdateInfoXml.File deploymentCab = null;
-
-            foreach (var file in update.Xml.Files.File)
-            {
-                if (file.FileName.EndsWith("desktopdeployment.cab", StringComparison.InvariantCultureIgnoreCase))
-                {
-                    deploymentCab = file;
-                    break;
-                }
-            }
-
-            if (deploymentCab == null)
-            {
-                return null;
-            }
-
-            string deploymentUrl = await FE3Handler.GetFileUrl(update, deploymentCab.Digest, null, update.CTAC);
-            string deploymentCabTemp = Path.GetTempFileName();
-            WebClient client = new WebClient();
-            await client.DownloadFileTaskAsync(new Uri(deploymentUrl), deploymentCabTemp);
-
-            string result = null;
-
             try
             {
-                using (var cabinet = new CabinetHandler(File.OpenRead(deploymentCabTemp)))
+
+                CExtendedUpdateInfoXml.File deploymentCab = null;
+
+                foreach (var file in update.Xml.Files.File)
                 {
-                    foreach (var file in cabinet.Files)
+                    if (file.FileName.EndsWith("desktopdeployment.cab", StringComparison.InvariantCultureIgnoreCase))
                     {
-                        if (file.Equals("UpdateAgent.dll", StringComparison.InvariantCultureIgnoreCase))
+                        deploymentCab = file;
+                        break;
+                    }
+                }
+
+                if (deploymentCab == null)
+                {
+                    return null;
+                }
+
+                string deploymentUrl = await FE3Handler.GetFileUrl(update, deploymentCab.Digest, null, update.CTAC);
+                string deploymentCabTemp = Path.GetTempFileName();
+                WebClient client = new WebClient();
+                await client.DownloadFileTaskAsync(new Uri(deploymentUrl), deploymentCabTemp);
+
+                string result = null;
+
+                try
+                {
+                    using (var cabinet = new CabinetHandler(File.OpenRead(deploymentCabTemp)))
+                    {
+                        foreach (var file in cabinet.Files)
                         {
-                            byte[] buffer;
-                            using (var dllstream = cabinet.OpenFile(file))
+                            if (file.Equals("UpdateAgent.dll", StringComparison.InvariantCultureIgnoreCase))
                             {
-                                buffer = new byte[dllstream.Length];
-                                await dllstream.ReadAsync(buffer, 0, (int)dllstream.Length);
+                                byte[] buffer;
+                                using (var dllstream = cabinet.OpenFile(file))
+                                {
+                                    buffer = new byte[dllstream.Length];
+                                    await dllstream.ReadAsync(buffer, 0, (int)dllstream.Length);
+                                }
+                                result = GetBuildStringFromUpdateAgent(buffer);
+                                break;
                             }
-                            result = GetBuildStringFromUpdateAgent(buffer);
-                            break;
                         }
                     }
                 }
-            }
-            catch { }
+                catch { }
 
-            File.Delete(deploymentCabTemp);
-            return result;
+                var reportedBuildNumberFromService = update.Xml.ExtendedProperties.ReleaseVersion.Split('.')[2];
+                if (!string.IsNullOrEmpty(result) && result.Count(x => x == '.') >= 2)
+                {
+                    var elements = result.Split('.');
+                    elements[2] = reportedBuildNumberFromService;
+                    result = string.Join(".", elements);
+                }
+
+                File.Delete(deploymentCabTemp);
+                return result;
+            }
+            catch
+            {
+                return null;
+            }
         }
 
         private static string GetBuildStringFromUpdateAgent(byte[] updateAgentFile)

@@ -96,83 +96,15 @@ namespace WindowsUpdateLib
 
         public static async Task<AvailableBuildLanguages[]> GetAvailableBuildLanguagesAsync(UpdateData UpdateData)
         {
-            List<AvailableBuildLanguages> availableBuildLanguages = new List<AvailableBuildLanguages>();
-
-            List<CExtendedUpdateInfoXml.File> metadataCabs = new List<CExtendedUpdateInfoXml.File>();
-
-            foreach (var file in UpdateData.Xml.Files.File)
+            List<AvailableBuildLanguages> availableBuildLanguages = (await UpdateData.GetAvailableLanguagesAsync()).Select(lang =>
             {
-                if (file.PatchingType.Equals("metadata", StringComparison.InvariantCultureIgnoreCase))
-                {
-                    metadataCabs.Add(file);
-                }
-            }
+                var boundlanguageobject = CultureInfo.GetCultureInfoByIetfLanguageTag(lang);
 
-            if (metadataCabs.Count == 0)
-            {
-                goto exit;
-            }
-
-            if (metadataCabs.Count == 1 && metadataCabs[0].FileName.Contains("metadata", StringComparison.InvariantCultureIgnoreCase))
-            {
-                // This is the new metadata format where all metadata is in a single cab
-
-                if (string.IsNullOrEmpty(UpdateData.CachedMetadata))
-                {
-                    string metadataUrl = await FE3Handler.GetFileUrl(UpdateData, metadataCabs[0].Digest, null, UpdateData.CTAC);
-                    string metadataCabTemp = Path.GetTempFileName();
-
-                    // Download the file
-                    WebClient client = new WebClient();
-                    await client.DownloadFileTaskAsync(new Uri(metadataUrl), metadataCabTemp);
-
-                    UpdateData.CachedMetadata = metadataCabTemp;
-                }
-
-                using (var cabinet = new CabinetHandler(File.OpenRead(UpdateData.CachedMetadata)))
-                {
-                    foreach (var file in cabinet.Files.Where(x =>
-                        x.Contains("desktoptargetcompdb_", StringComparison.InvariantCultureIgnoreCase) &&
-                        x.Count(y => y == '_') == 2 &&
-                        !x.Contains("tools", StringComparison.InvariantCultureIgnoreCase)))
-                    {
-                        var lang = file.Split('_').Last().Replace(".xml.cab", "", StringComparison.InvariantCultureIgnoreCase);
-                        if (lang.Equals("neutral", StringComparison.InvariantCultureIgnoreCase))
-                            continue;
-
-                        if (availableBuildLanguages.Any(x => x.LanguageCode == lang))
-                            continue;
-
-                        var boundlanguageobject = CultureInfo.GetCultureInfoByIetfLanguageTag(lang);
-
-                        availableBuildLanguages.Add(new AvailableBuildLanguages() { LanguageCode = lang, Title = boundlanguageobject.DisplayName, FlagUri = new Uri($"ms-appx:///Assets/Flags/{lang.Split('-').Last()}.png") });
-                    }
-                }
-            }
-            else
-            {
-                // This is the old format, each cab is a file in WU
-                foreach (var file in metadataCabs.Where(x =>
-                    x.FileName.StartsWith("_desktoptargetcompdb_", StringComparison.InvariantCultureIgnoreCase) &&
-                    x.FileName.Count(y => y == '_') == 3 &&
-                    !x.FileName.Contains("tools", StringComparison.InvariantCultureIgnoreCase)))
-                {
-                    var lang = file.FileName.Split('_').Last().Replace(".xml.cab", "", StringComparison.InvariantCultureIgnoreCase);
-                    if (lang.Equals("neutral", StringComparison.InvariantCultureIgnoreCase))
-                        continue;
-
-                    if (availableBuildLanguages.Any(x => x.LanguageCode == lang))
-                        continue;
-
-                    var boundlanguageobject = CultureInfo.GetCultureInfoByIetfLanguageTag(lang);
-
-                    availableBuildLanguages.Add(new AvailableBuildLanguages() { LanguageCode = lang, Title = boundlanguageobject.DisplayName, FlagUri = new Uri($"ms-appx:///Assets/Flags/{lang.Split('-').Last()}.png") });
-                }
-            }
+                return new AvailableBuildLanguages() { LanguageCode = lang, Title = boundlanguageobject.DisplayName, FlagUri = new Uri($"ms-appx:///Assets/Flags/{lang.Split('-').Last()}.png") };
+            }).ToList();
 
             availableBuildLanguages.Sort((x, y) => x.Title.CompareTo(y.Title));
 
-            exit:
             return availableBuildLanguages.ToArray();
         }
 
@@ -333,7 +265,7 @@ namespace WindowsUpdateLib
             CTAC ctac;
             UpdateData[] data;
 
-            ctac = FE3Handler.BuildCTAC(OSSkuId.PPIPro, "10.0.15063.534", MachineType, "WIS", "", "CB", "rs2_release", false);
+            /*ctac = FE3Handler.BuildCTAC(OSSkuId.PPIPro, "10.0.15063.534", MachineType, "WIS", "", "CB", "rs2_release", false);
             data = await FE3Handler.GetUpdates(null, ctac, null, "ProductRelease");
             AddUpdatesIfNotPresentAlready(updates, data);
 
@@ -355,13 +287,13 @@ namespace WindowsUpdateLib
 
             ctac = FE3Handler.BuildCTAC(OSSkuId.Professional, "10.0.18362.836", MachineType, "Retail", "", "CB", "19h1_release", true);
             data = await FE3Handler.GetUpdates(null, ctac, null, "ProductRelease");
-            AddUpdatesIfNotPresentAlready(updates, data);
+            AddUpdatesIfNotPresentAlready(updates, data);*/
 
-            ctac = FE3Handler.BuildCTAC(OSSkuId.Professional, "10.0.19041.200", MachineType, "Retail", "", "CB", "vb_release", true);
+            ctac = FE3Handler.BuildCTAC(OSSkuId.Professional, "10.0.19041.84", MachineType, "Retail", "", "CB", "vb_release", false);
             data = await FE3Handler.GetUpdates(null, ctac, null, "ProductRelease");
             AddUpdatesIfNotPresentAlready(updates, data);
 
-            ctac = FE3Handler.BuildCTAC(OSSkuId.Professional, "10.0.19041.200", MachineType, "External", "ReleasePreview", "CB", "19h1_release", false);
+            /*ctac = FE3Handler.BuildCTAC(OSSkuId.Professional, "10.0.19041.200", MachineType, "External", "ReleasePreview", "CB", "19h1_release", false);
             data = await FE3Handler.GetUpdates(null, ctac, null, "ProductRelease");
             AddUpdatesIfNotPresentAlready(updates, data);
 
@@ -375,7 +307,7 @@ namespace WindowsUpdateLib
 
             ctac = FE3Handler.BuildCTAC(OSSkuId.Professional, "10.0.19041.200", MachineType, "External", "Dev", "CB", "19h1_release", false);
             data = await FE3Handler.GetUpdates(null, ctac, null, "ProductRelease");
-            AddUpdatesIfNotPresentAlready(updates, data);
+            AddUpdatesIfNotPresentAlready(updates, data);*/
 
             return updates;
         }

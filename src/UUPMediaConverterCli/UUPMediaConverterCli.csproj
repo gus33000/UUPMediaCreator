@@ -19,8 +19,8 @@
     <ProjectReference Include="..\..\thirdparty\Microsoft.Cabinet.NET\Microsoft.Cabinet.NET.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Flurl" Version="3.0.0-pre5" />
-    <PackageReference Include="Flurl.Http" Version="3.0.0-pre5" />
+    <PackageReference Include="Flurl" Version="3.0.0" />
+    <PackageReference Include="Flurl.Http" Version="3.0.0" />
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0-rc.2.20475.5" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
