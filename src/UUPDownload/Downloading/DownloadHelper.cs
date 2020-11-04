@@ -62,7 +62,7 @@ namespace UUPDownload.Downloading
                 string extension = filenameonly.Replace(filenameonlywithoutextension, "");
                 string outputPath = filename.Replace(filenameonly, "");
                 int countSame = 0;
-                DownloaderClient dlclient = new DownloaderClient();
+                DownloaderClient dlclient = new DownloaderClient(1000000000 * 2); // 2GB max download
                 DateTime startTime = DateTime.Now;
                 bool end = false;
                 long dled = 0;
