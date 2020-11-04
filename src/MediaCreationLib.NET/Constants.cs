@@ -43,6 +43,11 @@ namespace MediaCreationLib
             { "CloudEN", "Windows 10 Lean N" },
         };
 
+        internal static string[] SetupFilesToBackportStartingWith20231 = new string[]
+        {
+            "sources\\imagelib.dll"
+        };
+
         internal static string[] SetupFilesToBackport = new string[]
         {
             "sources\\??-??\\appraiser.dll.mui",
@@ -112,7 +117,6 @@ namespace MediaCreationLib
             "sources\\idwbinfo.txt",
             "sources\\imagingprovider.dll",
             "sources\\input.dll",
-            "sources\\imagelib.dll",
             "sources\\lang.ini",
             "sources\\locale.nls",
             "sources\\logprovider.dll",

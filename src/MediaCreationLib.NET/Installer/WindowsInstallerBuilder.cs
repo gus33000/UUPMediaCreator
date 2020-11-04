@@ -243,11 +243,45 @@ namespace MediaCreationLib.Installer
                 }
             }
 
+            if (ulong.Parse(image.WINDOWS.VERSION.BUILD) >= 20231)
+            {
+                foreach (string file in Constants.SetupFilesToBackportStartingWith20231)
+                {
+                    string matchingfile = Path.Combine(MediaPath, file).Replace("??-??", langcode);
+                    string normalizedPath = file.Replace("??-??", langcode);
+                    string normalizedPathWithoutFile = normalizedPath.Contains("\\") ? string.Join("\\", normalizedPath.Split('\\').Reverse().Skip(1).Reverse()) : "";
+
+                    if (file == "sources\\background.bmp")
+                    {
+                        string matchingfile1 = Path.Combine(MediaPath, "sources", "background_cli.bmp");
+                        string matchingfile2 = Path.Combine(MediaPath, "sources", "background_srv.bmp");
+                        if (File.Exists(matchingfile1))
+                        {
+                            result = imagingInterface.AddFileToImage(bootwim, 2, matchingfile1, normalizedPath, progressCallback: callback);
+                            if (!result)
+                                goto exit;
+                        }
+                        else if (File.Exists(matchingfile2))
+                        {
+                            result = imagingInterface.AddFileToImage(bootwim, 2, matchingfile2, normalizedPath, progressCallback: callback);
+                            if (!result)
+                                goto exit;
+                        }
+                    }
+                    else if (File.Exists(matchingfile))
+                    {
+                        result = imagingInterface.AddFileToImage(bootwim, 2, matchingfile, normalizedPath, progressCallback: callback);
+                        if (!result)
+                            goto exit;
+                    }
+                }
+            }
+
             //
             // We're done
             //
 
-            exit:
+        exit:
             return result;
         }
 
@@ -370,7 +404,7 @@ namespace MediaCreationLib.Installer
             cleanup:
             File.Delete(tempSystemHiveBackup);
 
-            exit:
+        exit:
             return result;
         }
 
