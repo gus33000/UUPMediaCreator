@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -542,6 +543,26 @@ namespace WindowsUpdateLib
 
             [XmlAttribute(AttributeName = "xmlns")]
             public string Xmlns { get; set; }
+        }
+    }
+
+    public class EsrpDecryptionInformation
+    {
+        [JsonPropertyName("KeyData")]
+        public string KeyData { get; set; }
+
+        [JsonPropertyName("EncryptionBufferSize")]
+        public long EncryptionBufferSize { get; set; }
+
+        [JsonPropertyName("AlgorithmName")]
+        public string AlgorithmName { get; set; }
+
+        [JsonPropertyName("ChainingMode")]
+        public string ChainingMode { get; set; }
+
+        public static EsrpDecryptionInformation DeserializeFromJson(string json)
+        {
+            return JsonSerializer.Deserialize<EsrpDecryptionInformation>(json);
         }
     }
 
@@ -1623,7 +1644,9 @@ namespace WindowsUpdateLib
         private static string UserAgent = "Windows-Update-Agent/10.0.10011.16384 Client-Protocol/2.41";
         private static string Endpoint = "https://fe3cr.delivery.mp.microsoft.com/ClientWebService/client.asmx";
         private static string Action = "http://www.microsoft.com/SoftwareDistribution/Server/ClientWebService/";
-        private static string MSCV = "0";
+        private static CorrelationVector correlationVector = new CorrelationVector();
+        private static string MSCV = correlationVector.GetValue();
+        private static IFlurlClient flurlClient = new FlurlClient(new HttpClient(new HttpClientHandler() { AllowAutoRedirect = false, AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate }));
 
         public static CTAC BuildCTAC(
             OSSkuId ReportingSku,
@@ -1807,8 +1830,10 @@ namespace WindowsUpdateLib
                 .WithHeader("User-agent", UserAgent)
                 .WithHeader("Method", "POST");
 
+            MSCV = correlationVector.Increment();
+
             StringContent content = new StringContent(message, System.Text.Encoding.UTF8, "application/soap+xml");
-            IFlurlResponse response = await request.SendAsync(HttpMethod.Post, content);
+            IFlurlResponse response = await request.WithClient(flurlClient).SendAsync(HttpMethod.Post, content);
             return await response.ResponseMessage.Content.ReadAsStringAsync();
         }
 
@@ -2459,7 +2484,7 @@ namespace WindowsUpdateLib
 
         #region File url specific functions
 
-        public static async Task<string> GetFileUrl(UpdateData updateData, string fileDigest, string token, CTAC ctac)
+        public static async Task<(string,string)> GetFileUrl(UpdateData updateData, string fileDigest, string token, CTAC ctac)
         {
             var result = await GetExtendedUpdateInfo2(token, updateData.Xml.UpdateIdentity.UpdateID, updateData.Xml.UpdateIdentity.RevisionNumber, ctac);
 
@@ -2474,12 +2499,12 @@ namespace WindowsUpdateLib
                 {
                     if (fileLocation.FileDigest == fileDigest)
                     {
-                        return fileLocation.Url;
+                        return (fileLocation.Url, fileLocation.EsrpDecryptionInformation);
                     }
                 }
             }
 
-            return "";
+            return ("","");
         }
 
         public static async Task<CGetExtendedUpdateInfo2Response.FileLocation[]> GetFileUrls(UpdateData updateData, string token, CTAC ctac)

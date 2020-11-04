@@ -223,7 +223,7 @@ namespace UUPDownload
                     foreach ((CExtendedUpdateInfoXml.File, CGetExtendedUpdateInfo2Response.FileLocation) boundFile in boundList)
                     {
                         concurrencySemaphore.Wait();
-                        tasks.Add(DownloadHelper.GetDownloadFileTask(OutputFolder, UpdateUtils.GetFilenameForCEUIFile(boundFile.Item1, payloadItems), boundFile.Item2.Url, concurrencySemaphore));
+                        tasks.Add(DownloadHelper.GetDownloadFileTask(OutputFolder, UpdateUtils.GetFilenameForCEUIFile(boundFile.Item1, payloadItems), boundFile.Item2.Url, concurrencySemaphore)); boundFile.Item2.EsrpDecryptionInformation ;
                     }
 
                     int[] res = await Task.WhenAll(tasks.ToArray());

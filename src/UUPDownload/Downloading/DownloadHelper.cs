@@ -3,6 +3,7 @@ using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using WindowsUpdateLib;
 
 namespace UUPDownload.Downloading
 {
@@ -45,7 +46,7 @@ namespace UUPDownload.Downloading
             return dateTime;
         }
 
-        public static async Task<int> GetDownloadFileTask(string OutputFolder, string filename, string url, SemaphoreSlim concurrencySemaphore)
+        public static async Task<int> GetDownloadFileTask(string OutputFolder, string filename, string url, string EsrpDecryptionInformationStr, SemaphoreSlim concurrencySemaphore)
         {
             int returnCode = 0;
 
@@ -123,6 +124,13 @@ namespace UUPDownload.Downloading
                         goto OnError;
                     }
                     Thread.Sleep(200);
+                }
+
+                if (returnCode == 0 && !string.IsNullOrEmpty(EsrpDecryptionInformationStr))
+                {
+                    Logging.Log("Decrypting file...");
+                    EsrpDecryptionInformation esrp = EsrpDecryptionInformation.DeserializeFromJson(EsrpDecryptionInformationStr);
+                    EsrpDecryptor.Decrypt(Path.Combine(OutputFolder, outputPath, filenameonly), Path.Combine(OutputFolder, outputPath, filenameonly) + ".decrypted", Convert.FromBase64String(esrp.KeyData));
                 }
 
                 goto OnExit;
