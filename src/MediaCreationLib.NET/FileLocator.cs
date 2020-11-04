@@ -1,5 +1,4 @@
 ﻿using CompDB;
-using Microsoft.Cabinet;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -13,66 +12,13 @@ namespace MediaCreationLib.NET
 {
     internal static class FileLocator
     {
-        internal static HashSet<CompDBXmlClass.CompDB> GetCompDBsFromUUPFiles(string UUPPath)
-        {
-            HashSet<CompDBXmlClass.CompDB> compDBs = new HashSet<CompDBXmlClass.CompDB>();
-
-            try
-            {
-                if (Directory.EnumerateFiles(UUPPath, "*aggregatedmetadata*").Count() > 0)
-                {
-                    using (CabinetHandler cabinet = new CabinetHandler(File.OpenRead(Directory.EnumerateFiles(UUPPath, "*aggregatedmetadata*").First())))
-                    {
-                        foreach (var file in cabinet.Files.Where(x => x.EndsWith(".xml.cab", StringComparison.InvariantCultureIgnoreCase)))
-                        {
-                            try
-                            {
-                                using (CabinetHandler cabinet2 = new CabinetHandler(cabinet.OpenFile(file)))
-                                {
-                                    string xmlfile = cabinet2.Files.First();
-                                    using (Stream xmlstream = cabinet2.OpenFile(xmlfile))
-                                    {
-                                        compDBs.Add(CompDBXmlClass.DeserializeCompDB(xmlstream));
-                                    }
-                                }
-                            }
-                            catch { }
-                        }
-                    }
-                }
-                else
-                {
-                    IEnumerable<string> files = Directory.EnumerateFiles(UUPPath).Select(x => Path.GetFileName(x)).Where(x => x.EndsWith(".xml.cab", StringComparison.InvariantCultureIgnoreCase));
-
-                    foreach (var file in files)
-                    {
-                        try
-                        {
-                            using (CabinetHandler cabinet2 = new CabinetHandler(File.OpenRead(Path.Combine(UUPPath, file))))
-                            {
-                                string xmlfile = cabinet2.Files.First();
-                                using (Stream xmlstream = cabinet2.OpenFile(xmlfile))
-                                {
-                                    compDBs.Add(CompDBXmlClass.DeserializeCompDB(xmlstream));
-                                }
-                            }
-                        }
-                        catch { }
-                    }
-                }
-            }
-            catch { }
-
-            return compDBs;
-        }
-
         internal static (bool, HashSet<string>) VerifyFilesAreAvailableForCompDBs(HashSet<CompDBXmlClass.CompDB> compDBs, string UUPPath)
         {
             HashSet<string> missingPackages = new HashSet<string>();
 
             foreach (CompDBXmlClass.CompDB compDB in compDBs)
             {
-                (bool succeeded, HashSet<string> missingFiles) = VerifyFilesAreAvailableForCompDB(compDB, UUPPath);
+                (bool succeeded, HashSet<string> missingFiles) = Planning.NET.FileLocator.VerifyFilesAreAvailableForCompDB(compDB, UUPPath);
                 foreach (var missingFile in missingFiles)
                 {
                     if (!missingPackages.Contains(missingFile))
@@ -85,113 +31,6 @@ namespace MediaCreationLib.NET
             return (missingPackages.Count <= 0, missingPackages);
         }
 
-        internal static (bool, HashSet<string>) VerifyFilesAreAvailableForCompDB(CompDBXmlClass.CompDB compDB, string UUPPath)
-        {
-            HashSet<string> missingPackages = new HashSet<string>();
-
-            foreach (CompDBXmlClass.Package feature in compDB.Features.Feature[0].Packages.Package)
-            {
-                CompDBXmlClass.Package pkg = compDB.Packages.Package.First(x => x.ID == feature.ID);
-
-                (bool succeeded, string missingFile) = VerifyFileIsAvailableForPackage(pkg, UUPPath);
-                if (!succeeded)
-                    missingPackages.Add(missingFile);
-            }
-
-            return (missingPackages.Count <= 0, missingPackages);
-        }
-
-        internal static (bool, string) VerifyFileIsAvailableForPackage(CompDBXmlClass.Package pkg, string UUPPath)
-        {
-            string missingPackage = "";
-
-            //
-            // Some download utilities that start with the letter U and finish with UPDump or start with the letter U and finish with UP.rg-adguard download files without respecting Microsoft filenames
-            // We attempt to locate files based on what we think they use first.
-            //
-            string file = GetCommonlyUsedIncorrectFileNameFromCompDBPackage(pkg);
-
-            if (!File.Exists(Path.Combine(UUPPath, file)))
-            {
-                //
-                // Wow, someone actually downloaded UUP files using a tool that respects Microsoft paths, that's exceptional
-                //
-                file = pkg.Payload.PayloadItem.Path;
-                if (!File.Exists(Path.Combine(UUPPath, file)))
-                {
-                    //
-                    // What a disapointment, they simply didn't download everything.. Oops.
-                    // TODO: generate missing files out of thin air
-                    //
-                    missingPackage = file;
-                }
-            }
-
-            return (string.IsNullOrEmpty(missingPackage), missingPackage);
-        }
-
-        internal static CompDBXmlClass.CompDB? GetNeutralCompDB(HashSet<CompDBXmlClass.CompDB> compDBs)
-        {
-            foreach (var compDB in compDBs)
-            {
-                //
-                // Newer style compdbs have a tag attribute, make use of it.
-                //
-                if (compDB.Tags != null &&
-                    compDB.Tags.Type.Equals("Neutral", StringComparison.InvariantCultureIgnoreCase) &&
-                    compDB.Tags.Tag != null &&
-                    compDB.Tags.Tag.FirstOrDefault(x => x.Name.Equals("UpdateType", StringComparison.InvariantCultureIgnoreCase))?.Value?.Equals("Canonical", StringComparison.InvariantCultureIgnoreCase) == true)
-                {
-                    return compDB;
-                }
-                //
-                // Older style compdbs have no tag elements, we need to find out if it's a neutral compdb using another way
-                //
-                else if (compDB.Features?.Feature?.FirstOrDefault(x =>
-                    x.Type?.Contains("BaseNeutral", StringComparison.InvariantCultureIgnoreCase) == true) != null)
-                {
-                    return compDB;
-                }
-            }
-
-            return null;
-        }
-
-        internal static HashSet<CompDBXmlClass.CompDB> GetEditionCompDBsForLanguage(
-            HashSet<CompDBXmlClass.CompDB> compDBs,
-            string LanguageCode)
-        {
-            HashSet<CompDBXmlClass.CompDB> filteredCompDBs = new HashSet<CompDBXmlClass.CompDB>();
-
-            foreach (var compDB in compDBs)
-            {
-                //
-                // Newer style compdbs have a tag attribute, make use of it.
-                //
-                if (compDB.Tags != null &&
-                    compDB.Tags.Type.Equals("Edition", StringComparison.InvariantCultureIgnoreCase) &&
-                    compDB.Tags.Tag != null &&
-                    compDB.Tags.Tag.Count == 3 &&
-                    compDB.Tags.Tag.FirstOrDefault(x => x.Name.Equals("UpdateType", StringComparison.InvariantCultureIgnoreCase))?.Value?.Equals("Canonical", StringComparison.InvariantCultureIgnoreCase) == true &&
-                    compDB.Tags.Tag.FirstOrDefault(x => x.Name.Equals("Language", StringComparison.InvariantCultureIgnoreCase))?.Value?.Equals(LanguageCode, StringComparison.InvariantCultureIgnoreCase) == true &&
-                    compDB.Tags.Tag.Any(x => x.Name.Equals("Edition", StringComparison.InvariantCultureIgnoreCase)))
-                {
-                    filteredCompDBs.Add(compDB);
-                }
-                //
-                // Older style compdbs have no tag elements, we need to find out if it's an edition compdb using another way
-                //
-                else if (compDB.Features?.Feature?.FirstOrDefault(x =>
-                    x.Type?.Contains("DesktopMedia", StringComparison.InvariantCultureIgnoreCase) == true &&
-                    x.FeatureID?.Contains(LanguageCode, StringComparison.InvariantCultureIgnoreCase) == true) != null)
-                {
-                    filteredCompDBs.Add(compDB);
-                }
-            }
-
-            return filteredCompDBs;
-        }
-
         internal static CompDBXmlClass.CompDB? GetEditionCompDBForLanguage(
             HashSet<CompDBXmlClass.CompDB> compDBs,
             string Edition,
@@ -202,23 +41,26 @@ namespace MediaCreationLib.NET
                 //
                 // Newer style compdbs have a tag attribute, make use of it.
                 //
-                if (compDB.Tags != null &&
-                    compDB.Tags.Type.Equals("Edition", StringComparison.InvariantCultureIgnoreCase) &&
-                    compDB.Tags.Tag != null &&
-                    compDB.Tags.Tag.Count == 3 &&
-                    compDB.Tags.Tag.FirstOrDefault(x => x.Name.Equals("UpdateType", StringComparison.InvariantCultureIgnoreCase))?.Value?.Equals("Canonical", StringComparison.InvariantCultureIgnoreCase) == true &&
-                    compDB.Tags.Tag.FirstOrDefault(x => x.Name.Equals("Language", StringComparison.InvariantCultureIgnoreCase))?.Value?.Equals(LanguageCode, StringComparison.InvariantCultureIgnoreCase) == true &&
-                    compDB.Tags.Tag.FirstOrDefault(x => x.Name.Equals("Edition", StringComparison.InvariantCultureIgnoreCase))?.Value?.Equals(Edition, StringComparison.InvariantCultureIgnoreCase) == true)
+                if (compDB.Tags != null)
                 {
-                    return compDB;
+                    if (compDB.Tags.Type.Equals("Edition", StringComparison.InvariantCultureIgnoreCase) &&
+                       compDB.Tags.Tag != null &&
+                       compDB.Tags.Tag.Count == 3 &&
+                       compDB.Tags.Tag.FirstOrDefault(x => x.Name.Equals("UpdateType", StringComparison.InvariantCultureIgnoreCase))?.Value?.Equals("Canonical", StringComparison.InvariantCultureIgnoreCase) == true &&
+                       compDB.Tags.Tag.FirstOrDefault(x => x.Name.Equals("Language", StringComparison.InvariantCultureIgnoreCase))?.Value?.Equals(LanguageCode, StringComparison.InvariantCultureIgnoreCase) == true &&
+                       compDB.Tags.Tag.FirstOrDefault(x => x.Name.Equals("Edition", StringComparison.InvariantCultureIgnoreCase))?.Value?.Equals(Edition, StringComparison.InvariantCultureIgnoreCase) == true)
+                    {
+                        return compDB;
+                    }
                 }
                 //
                 // Older style compdbs have no tag elements, we need to find out if it's an edition compdb using another way
+                // TODO: Do not do contains
                 //
                 else if (compDB.Features?.Feature?.FirstOrDefault(x =>
-                    x.Type?.Contains("DesktopMedia", StringComparison.InvariantCultureIgnoreCase) == true &&
-                    x.FeatureID?.Contains(LanguageCode, StringComparison.InvariantCultureIgnoreCase) == true &&
-                    x.FeatureID?.Contains(Edition, StringComparison.InvariantCultureIgnoreCase) == true) != null)
+                        x.Type?.Contains("DesktopMedia", StringComparison.InvariantCultureIgnoreCase) == true &&
+                        x.FeatureID?.Contains(LanguageCode, StringComparison.InvariantCultureIgnoreCase) == true &&
+                        x.FeatureID?.Contains(Edition, StringComparison.InvariantCultureIgnoreCase) == true) != null)
                 {
                     return compDB;
                 }
@@ -234,9 +76,9 @@ namespace MediaCreationLib.NET
         {
             progressCallback?.Invoke(Common.ProcessPhase.ReadingMetadata, true, 0, "Looking up Composition Database in order to find a Base ESD image appropriate for building windows setup files.");
 
-            if (GetCompDBsFromUUPFiles(UUPPath) is HashSet<CompDBXmlClass.CompDB> compDBs)
+            if (Planning.NET.FileLocator.GetCompDBsFromUUPFiles(UUPPath) is HashSet<CompDBXmlClass.CompDB> compDBs)
             {
-                HashSet<CompDBXmlClass.CompDB> filteredCompDBs = GetEditionCompDBsForLanguage(compDBs, LanguageCode);
+                HashSet<CompDBXmlClass.CompDB> filteredCompDBs = compDBs.GetEditionCompDBsForLanguage(LanguageCode);
                 if (filteredCompDBs.Count > 0)
                 {
                     foreach (var currentCompDB in filteredCompDBs)
@@ -245,7 +87,7 @@ namespace MediaCreationLib.NET
                         {
                             CompDBXmlClass.Package pkg = currentCompDB.Packages.Package.First(x => x.ID == feature.ID);
 
-                            string file = GetCommonlyUsedIncorrectFileNameFromCompDBPackage(pkg);
+                            string file = pkg.GetCommonlyUsedIncorrectFileName();
 
                             if (feature.PackageType == "MetadataESD")
                             {
@@ -274,11 +116,6 @@ namespace MediaCreationLib.NET
             }
         }
 
-        internal static string GetCommonlyUsedIncorrectFileNameFromCompDBPackage(CompDBXmlClass.Package pkg)
-        {
-            return pkg.Payload.PayloadItem.Path.Split('\\').Last().Replace("~31bf3856ad364e35", "").Replace("~.", ".").Replace("~", "-").Replace("-.", ".");
-        }
-
         internal static (bool Succeeded, string BaseESD, HashSet<string> ReferencePackages, HashSet<string> ReferencePackagesToConvert) LocateFilesForBaseEditionCreation(
             string UUPPath,
             string LanguageCode,
@@ -292,7 +129,7 @@ namespace MediaCreationLib.NET
             string BaseESD = null;
             progressCallback?.Invoke(Common.ProcessPhase.ReadingMetadata, true, 0, "Enumerating files");
 
-            CompDBXmlClass.CompDB? compDB = GetEditionCompDBForLanguage(GetCompDBsFromUUPFiles(UUPPath), EditionID, LanguageCode);
+            CompDBXmlClass.CompDB? compDB = GetEditionCompDBForLanguage(Planning.NET.FileLocator.GetCompDBsFromUUPFiles(UUPPath), EditionID, LanguageCode);
 
             if (compDB == null)
             {
@@ -304,7 +141,7 @@ namespace MediaCreationLib.NET
             {
                 CompDBXmlClass.Package pkg = compDB.Packages.Package.First(x => x.ID == feature.ID);
 
-                string file = GetCommonlyUsedIncorrectFileNameFromCompDBPackage(pkg);
+                string file = pkg.GetCommonlyUsedIncorrectFileName();
 
                 if (!File.Exists(Path.Combine(UUPPath, file)))
                 {

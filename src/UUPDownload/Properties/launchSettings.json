@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "UUPDownload": {
+      "commandName": "Project",
+      "commandLineArgs": "-s Professional -v 10.0.20152.1000 -t amd64 -r External -b Dev -l en-us -c rs_prerelease"
+    }
+  }
+}

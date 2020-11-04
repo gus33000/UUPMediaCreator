@@ -14,6 +14,7 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\thirdparty\Microsoft.Cabinet.NET\Microsoft.Cabinet.NET.csproj" />
+    <ProjectReference Include="..\MediaCreationLib.Planning.NET\MediaCreationLib.Planning.NET.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Flurl" Version="3.0.0-pre5" />

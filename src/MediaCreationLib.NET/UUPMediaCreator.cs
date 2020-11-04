@@ -1,4 +1,5 @@
 ﻿using Imaging;
+using MediaCreationLib.Dism;
 using Microsoft.Wim;
 using System;
 using System.IO;
@@ -22,7 +23,7 @@ namespace MediaCreationLib
         {
             bool result = true;
 
-            string SourceEdition = DismOperations.DismOperations.GetCurrentEdition(MountedImagePath);
+            string SourceEdition = DismOperations.GetCurrentEdition(MountedImagePath);
 
             WIMInformationXML.WIM wiminfo;
             result = imagingInterface.GetWIMInformation(OutputInstallImage, out wiminfo);
@@ -53,7 +54,7 @@ namespace MediaCreationLib
                 progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, IsIndeterminate, ProgressInPercentage, SubOperation);
             };
 
-            DismOperations.DismOperations.SetTargetEdition(MountedImagePath, EditionID, callback);
+            DismOperations.SetTargetEdition(MountedImagePath, EditionID, callback);
 
             void callback2(string Operation, int ProgressPercentage, bool IsIndeterminate)
             {

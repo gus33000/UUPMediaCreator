@@ -2,7 +2,7 @@
 using System.IO;
 using System.Xml.Serialization;
 
-namespace MediaCreationLib.Planning
+namespace MediaCreationLib.Planning.NET
 {
     public class EditionMappingXML
     {

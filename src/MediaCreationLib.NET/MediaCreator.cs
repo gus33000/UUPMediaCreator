@@ -7,7 +7,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UUPMediaCreator.InterCommunication;
-using static MediaCreationLib.Planning.ConversionPlanBuilder;
+using MediaCreationLib.Planning.NET;
+using CompDB;
 
 namespace MediaCreationLib
 {
@@ -207,36 +208,55 @@ namespace MediaCreationLib
             return result;
         }
 
-        private static List<string> PrintEditionTarget(EditionTarget editionTarget, int padding = 0)
+
+        public static bool GetTargetedPlan(
+            string UUPPath,
+            string LanguageCode,
+            out List<EditionTarget> EditionTargets,
+            ProgressCallback progressCallback = null)
         {
-            List<string> lines = new List<string>();
-            lines.Add($"-> Name: {editionTarget.PlannedEdition.EditionName}, Availability: {editionTarget.PlannedEdition.AvailabilityType}");
-            if (editionTarget.NonDestructiveTargets.Count > 0)
+            progressCallback?.Invoke(Common.ProcessPhase.ReadingMetadata, true, 0, "Acquiring Composition Databases");
+
+            HashSet<CompDBXmlClass.CompDB> compDBs = FileLocator.GetCompDBsFromUUPFiles(UUPPath);
+
+            string EditionPack = "";
+
+            //
+            // Get base editions that are available with all their files
+            //
+            IEnumerable<CompDBXmlClass.CompDB> filteredCompDBs = compDBs.GetEditionCompDBsForLanguage(LanguageCode).Where(x =>
             {
-                lines.Add("   Non Destructive Edition Upgrade Targets:");
-                foreach (var ed in editionTarget.NonDestructiveTargets)
-                {
-                    lines.AddRange(PrintEditionTarget(ed, padding + 1));
-                }
-            }
-            if (editionTarget.DestructiveTargets.Count > 0)
+                (bool success, HashSet<string> missingfiles) = FileLocator.VerifyFilesAreAvailableForCompDB(x, UUPPath);
+                return success;
+            });
+
+            if (filteredCompDBs.Count() > 0)
             {
-                lines.Add("   Destructive Edition Upgrade Targets:");
-                foreach (var ed in editionTarget.DestructiveTargets)
+                foreach (CompDBXmlClass.Package feature in filteredCompDBs.First().Features.Feature[0].Packages.Package)
                 {
-                    lines.AddRange(PrintEditionTarget(ed, padding + 1));
+                    CompDBXmlClass.Package pkg = filteredCompDBs.First().Packages.Package.First(x => x.ID == feature.ID);
+
+                    string file = pkg.GetCommonlyUsedIncorrectFileName();
+
+                    //
+                    // We know already that all files exist, so it's just a matter of knowing which path format is used
+                    //
+                    file = !File.Exists(Path.Combine(UUPPath, file)) ? pkg.Payload.PayloadItem.Path : file;
+
+                    if (!file.EndsWith(".esd", StringComparison.InvariantCultureIgnoreCase) ||
+                        !file.Contains("microsoft-windows-editionspecific", StringComparison.InvariantCultureIgnoreCase) ||
+                        file.Contains("WOW64", StringComparison.InvariantCultureIgnoreCase) ||
+                        file.Contains("arm64.arm", StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        // We do not care about this file
+                        continue;
+                    }
+
+                    EditionPack = file;
                 }
             }
 
-            for (int j = 0; j < lines.Count; j++)
-            {
-                for (int i = 0; i < padding; i++)
-                {
-                    lines[j] = "   " + lines[j];
-                }
-            }
-
-            return lines;
+            return ConversionPlanBuilder.GetTargetedPlan(UUPPath, compDBs, Path.Combine(UUPPath, EditionPack), LanguageCode, out EditionTargets, (string msg) => progressCallback?.Invoke(Common.ProcessPhase.ReadingMetadata, true, 0, msg));
         }
 
         public static void CreateISOMediaAdvanced(
@@ -256,7 +276,7 @@ namespace MediaCreationLib
 
             foreach (var ed in editionTargets)
             {
-                foreach (var line in PrintEditionTarget(ed))
+                foreach (var line in ConversionPlanBuilder.PrintEditionTarget(ed))
                 {
                     progressCallback?.Invoke(Common.ProcessPhase.ReadingMetadata, true, 0, line);
                 }

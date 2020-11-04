@@ -21,13 +21,14 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <ProjectReference Include="..\CompDB.NET\CompDB.NET.csproj" />
     <ProjectReference Include="..\Imaging.NET\Imaging.NET.csproj" />
     <ProjectReference Include="..\InterCommunication.NET\InterCommunication.NET.csproj" />
     <ProjectReference Include="..\MediaCreationLib.DismOperations.NET\MediaCreationLib.DismOperations.NET.csproj" />
     <ProjectReference Include="..\..\thirdparty\Microsoft.Cabinet.NET\Microsoft.Cabinet.NET.csproj" />
-    <ProjectReference Include="..\..\thirdparty\Microsoft.Dism.NET\Microsoft.Dism.NET.csproj" />
     <ProjectReference Include="..\..\thirdparty\Microsoft.Wim.NET\Microsoft.Wim.NET.csproj" />
     <ProjectReference Include="..\..\thirdparty\Privileges.NET\Privileges.NET.csproj" />
+    <ProjectReference Include="..\MediaCreationLib.Planning.NET\MediaCreationLib.Planning.NET.csproj" />
     <ProjectReference Include="..\VirtualHardDiskLib.NET\VirtualHardDiskLib.NET.csproj" />
   </ItemGroup>
   <ItemGroup>
@@ -45,5 +46,4 @@
     <PackageReference Include="System.IO.FileSystem.AccessControl" Version="5.0.0-rc.2.20475.5" />
     <PackageReference Include="System.Security.AccessControl" Version="5.0.0-rc.2.20475.5" />
   </ItemGroup>
-  <Import Project="..\CompDB.Shared\CompDB.Shared.projitems" Label="Shared" />
 </Project>

@@ -11,5 +11,6 @@
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)BuildFetcher.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)FE3Handler.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UpdateDataExtensions.cs" />
   </ItemGroup>
 </Project>

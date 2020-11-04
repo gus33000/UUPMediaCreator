@@ -1,40 +1,40 @@
 ﻿using CompDB;
 using Imaging;
-using MediaCreationLib.NET;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using UUPMediaCreator.InterCommunication;
 
 #nullable enable
 
-namespace MediaCreationLib.Planning
+namespace MediaCreationLib.Planning.NET
 {
+    public class EditionTarget
+    {
+        public PlannedEdition PlannedEdition { get; set; } = new PlannedEdition();
+        public List<EditionTarget> NonDestructiveTargets = new List<EditionTarget>();
+        public List<EditionTarget> DestructiveTargets = new List<EditionTarget>();
+    }
+
+    public class PlannedEdition
+    {
+        public string EditionName { get; set; } = "";
+        public AvailabilityType AvailabilityType { get; set; }
+    }
+
+    public enum AvailabilityType
+    {
+        Canonical,
+        EditionUpgrade,
+        VirtualEdition,
+        EditionPackageSwap
+    }
+
     public class ConversionPlanBuilder
     {
+        public delegate void ProgressCallback(string SubOperation);
+
         private static WIMImaging imagingInterface = new WIMImaging();
-
-        public enum AvailabilityType
-        {
-            Canonical,
-            EditionUpgrade,
-            VirtualEdition,
-            EditionPackageSwap
-        }
-
-        public class PlannedEdition
-        {
-            public string EditionName { get; set; } = "";
-            public AvailabilityType AvailabilityType { get; set; }
-        }
-
-        public class EditionTarget
-        {
-            public PlannedEdition PlannedEdition { get; set; } = new PlannedEdition();
-            public List<EditionTarget> NonDestructiveTargets = new List<EditionTarget>();
-            public List<EditionTarget> DestructiveTargets = new List<EditionTarget>();
-        }
 
         private static List<string> editionsAdded = new List<string>();
 
@@ -245,10 +245,10 @@ namespace MediaCreationLib.Planning
 
         private static (List<PlannedEdition>, List<PlannedEdition>) GetEditionsThatCanBeTargetedUsingPackageDowngrade(
             string UUPPath,
-            HashSet<CompDBXmlClass.CompDB> compDBs, 
-            IEnumerable<PlannedEdition> availableCanonicalEditions, 
-            Dictionary<string, string> possibleEditionUpgrades, 
-            MediaCreator.ProgressCallback? progressCallback = null)
+            HashSet<CompDBXmlClass.CompDB> compDBs,
+            IEnumerable<PlannedEdition> availableCanonicalEditions,
+            Dictionary<string, string> possibleEditionUpgrades,
+            ProgressCallback? progressCallback = null)
         {
             List<PlannedEdition> availableEditionsByDowngradingInPriority = new List<PlannedEdition>();
             List<PlannedEdition> availableEditionsByDowngrading = new List<PlannedEdition>();
@@ -256,15 +256,15 @@ namespace MediaCreationLib.Planning
             //
             // Attempt to get the neutral Composition Database listing all available files
             //
-            CompDBXmlClass.CompDB? neutralCompDB = FileLocator.GetNeutralCompDB(compDBs);
+            CompDBXmlClass.CompDB? neutralCompDB = compDBs.GetNeutralCompDB();
 
             if (neutralCompDB != null)
             {
                 var packages = neutralCompDB.Features.Feature.First(x => x.FeatureID == "BaseNeutral").Packages.Package;
 
                 var editionSpecificPackages = packages.Where(x => x.ID.Count(y => y == '-') == 4).Where(x => x.ID.Contains("microsoft-windows-editionspecific", StringComparison.InvariantCultureIgnoreCase));
-                var highPriorityPackages = editionSpecificPackages.Where(x => x.ID.Contains("starter", StringComparison.InvariantCultureIgnoreCase) || 
-                                                                            x.ID.Contains("professional", StringComparison.InvariantCultureIgnoreCase) || 
+                var highPriorityPackages = editionSpecificPackages.Where(x => x.ID.Contains("starter", StringComparison.InvariantCultureIgnoreCase) ||
+                                                                            x.ID.Contains("professional", StringComparison.InvariantCultureIgnoreCase) ||
                                                                             x.ID.Contains("core", StringComparison.InvariantCultureIgnoreCase));
                 editionSpecificPackages = editionSpecificPackages.Except(highPriorityPackages);
 
@@ -275,12 +275,15 @@ namespace MediaCreationLib.Planning
                     //
                     // First check if the file exists
                     //
-                    (bool Success, string MissingFile) = FileLocator.VerifyFileIsAvailableForPackage(pkg, UUPPath);
-                    if (!Success)
+                    if (!string.IsNullOrEmpty(UUPPath))
                     {
-                        progressCallback?.Invoke(Common.ProcessPhase.ReadingMetadata, true, 0, "One edition Composition Database failed file validation, below is highlighted the files that could not be found in the UUP path. This means that you will not get all possible editions.");
-                        progressCallback?.Invoke(Common.ProcessPhase.ReadingMetadata, true, 0, $"Missing: {MissingFile}");
-                        continue;
+                        (bool Success, string MissingFile) = FileLocator.VerifyFileIsAvailableForPackage(pkg, UUPPath);
+                        if (!Success)
+                        {
+                            progressCallback?.Invoke("One edition Composition Database failed file validation, below is highlighted the files that could not be found in the UUP path. This means that you will not get all possible editions.");
+                            progressCallback?.Invoke($"Missing: {MissingFile}");
+                            continue;
+                        }
                     }
 
                     var sku = file.ID.Split('-')[3];
@@ -313,12 +316,15 @@ namespace MediaCreationLib.Planning
                     //
                     // First check if the file exists
                     //
-                    (bool Success, string MissingFile) = FileLocator.VerifyFileIsAvailableForPackage(pkg, UUPPath);
-                    if (!Success)
+                    if (!string.IsNullOrEmpty(UUPPath))
                     {
-                        progressCallback?.Invoke(Common.ProcessPhase.ReadingMetadata, true, 0, "One edition Composition Database failed file validation, below is highlighted the files that could not be found in the UUP path. This means that you will not get all possible editions.");
-                        progressCallback?.Invoke(Common.ProcessPhase.ReadingMetadata, true, 0, $"Missing: {MissingFile}");
-                        continue;
+                        (bool Success, string MissingFile) = FileLocator.VerifyFileIsAvailableForPackage(pkg, UUPPath);
+                        if (!Success)
+                        {
+                            progressCallback?.Invoke("One edition Composition Database failed file validation, below is highlighted the files that could not be found in the UUP path. This means that you will not get all possible editions.");
+                            progressCallback?.Invoke($"Missing: {MissingFile}");
+                            continue;
+                        }
                     }
 
                     var sku = file.ID.Split('-')[3];
@@ -349,33 +355,81 @@ namespace MediaCreationLib.Planning
         }
 
         public static bool GetTargetedPlan(
-            string UUPPath,
+            HashSet<CompDBXmlClass.CompDB> compDBs,
+            string EditionPack,
             string LanguageCode,
             out List<EditionTarget> EditionTargets,
-            MediaCreator.ProgressCallback? progressCallback = null)
+            ProgressCallback? progressCallback = null)
         {
+            return GetTargetedPlan("", compDBs, EditionPack, LanguageCode, out EditionTargets, progressCallback);
+        }
+
+        public static List<string> PrintEditionTarget(EditionTarget editionTarget, int padding = 0)
+        {
+            List<string> lines = new List<string>();
+            lines.Add($"-> Name: {editionTarget.PlannedEdition.EditionName}, Availability: {editionTarget.PlannedEdition.AvailabilityType}");
+            if (editionTarget.NonDestructiveTargets.Count > 0)
+            {
+                lines.Add("   Non Destructive Edition Upgrade Targets:");
+                foreach (var ed in editionTarget.NonDestructiveTargets)
+                {
+                    lines.AddRange(PrintEditionTarget(ed, padding + 1));
+                }
+            }
+            if (editionTarget.DestructiveTargets.Count > 0)
+            {
+                lines.Add("   Destructive Edition Upgrade Targets:");
+                foreach (var ed in editionTarget.DestructiveTargets)
+                {
+                    lines.AddRange(PrintEditionTarget(ed, padding + 1));
+                }
+            }
+
+            for (int j = 0; j < lines.Count; j++)
+            {
+                for (int i = 0; i < padding; i++)
+                {
+                    lines[j] = "   " + lines[j];
+                }
+            }
+
+            return lines;
+        }
+
+        public static bool GetTargetedPlan(
+            string UUPPath,
+            HashSet<CompDBXmlClass.CompDB> compDBs,
+            string EditionPack,
+            string LanguageCode,
+            out List<EditionTarget> EditionTargets,
+            ProgressCallback? progressCallback = null)
+        {
+            bool VerifyFiles = !string.IsNullOrEmpty(UUPPath);
+
             EditionTargets = new List<EditionTarget>();
 
             bool result = true;
-            progressCallback?.Invoke(Common.ProcessPhase.ReadingMetadata, true, 0, "Acquiring Composition Databases");
 
-            HashSet<CompDBXmlClass.CompDB> compDBs = FileLocator.GetCompDBsFromUUPFiles(UUPPath);
-
-            progressCallback?.Invoke(Common.ProcessPhase.ReadingMetadata, true, 0, "Acquiring Base Editions");
+            progressCallback?.Invoke("Acquiring Base Editions");
 
             //
             // Get base editions that are available with all their files
             //
-            IEnumerable<CompDBXmlClass.CompDB> filteredCompDBs = FileLocator.GetEditionCompDBsForLanguage(compDBs, LanguageCode).Where(x =>
+            IEnumerable<CompDBXmlClass.CompDB> filteredCompDBs = compDBs.GetEditionCompDBsForLanguage(LanguageCode).Where(x =>
             {
-                (bool success, HashSet<string> missingfiles) = FileLocator.VerifyFilesAreAvailableForCompDB(x, UUPPath);
-
+                bool success = !VerifyFiles;
                 if (!success)
                 {
-                    progressCallback?.Invoke(Common.ProcessPhase.ReadingMetadata, true, 0, "One edition Composition Database failed file validation, below is highlighted the files that could not be found in the UUP path. This means that you will not get all possible editions.");
-                    foreach (var file in missingfiles)
+                    (bool success2, HashSet<string> missingfiles) = FileLocator.VerifyFilesAreAvailableForCompDB(x, UUPPath);
+                    success = success2;
+
+                    if (!success)
                     {
-                        progressCallback?.Invoke(Common.ProcessPhase.ReadingMetadata, true, 0, $"Missing: {file}");
+                        progressCallback?.Invoke("One edition Composition Database failed file validation, below is highlighted the files that could not be found in the UUP path. This means that you will not get all possible editions.");
+                        foreach (var file in missingfiles)
+                        {
+                            progressCallback?.Invoke($"Missing: {file}");
+                        }
                     }
                 }
 
@@ -384,11 +438,11 @@ namespace MediaCreationLib.Planning
 
             if (filteredCompDBs.Count() == 0)
             {
-                progressCallback?.Invoke(Common.ProcessPhase.ReadingMetadata, true, 0, "No edition CompDB validated or were found, this is a fatal error, as one edition CompDB is needed at the very least for creating an ISO.");
+                progressCallback?.Invoke("No edition CompDB validated or were found, this is a fatal error, as one edition CompDB is needed at the very least for creating an ISO.");
                 goto error;
             }
 
-            progressCallback?.Invoke(Common.ProcessPhase.ReadingMetadata, true, 0, "Adding Base Editions to the conversion plan");
+            progressCallback?.Invoke("Adding Base Editions to the conversion plan");
 
             //
             // Add available canonical editions
@@ -412,7 +466,7 @@ namespace MediaCreationLib.Planning
                 return edition;
             }).OrderBy(x => x.EditionName);
 
-            progressCallback?.Invoke(Common.ProcessPhase.ReadingMetadata, true, 0, "Acquiring Edition Upgrades");
+            progressCallback?.Invoke("Acquiring Edition Upgrades");
 
             //
             // This dictionary holds the possible virtual edition upgrades
@@ -426,23 +480,8 @@ namespace MediaCreationLib.Planning
             //
             Dictionary<string, string> possibleEditionUpgrades = new Dictionary<string, string>();
 
-            foreach (CompDBXmlClass.Package feature in filteredCompDBs.First().Features.Feature[0].Packages.Package)
+            if (!string.IsNullOrEmpty(EditionPack) && File.Exists(EditionPack))
             {
-                CompDBXmlClass.Package pkg = filteredCompDBs.First().Packages.Package.First(x => x.ID == feature.ID);
-
-                string file = FileLocator.GetCommonlyUsedIncorrectFileNameFromCompDBPackage(pkg);
-
-                //
-                // We know already that all files exist, so it's just a matter of knowing which path format is used
-                //
-                file = !File.Exists(Path.Combine(UUPPath, file)) ? pkg.Payload.PayloadItem.Path : file;
-
-                if (!file.EndsWith(".esd", StringComparison.InvariantCultureIgnoreCase) || !file.Contains("microsoft-windows-editionspecific", StringComparison.InvariantCultureIgnoreCase))
-                {
-                    // We do not care about this file
-                    continue;
-                }
-
                 //
                 // Attempt to get virtual editions from one compdb
                 //
@@ -450,11 +489,10 @@ namespace MediaCreationLib.Planning
                 {
                     try
                     {
-                        var edSpecific = Path.Combine(UUPPath, file);
                         var tempHashMap = Path.GetTempFileName();
                         File.Delete(tempHashMap);
 
-                        result = imagingInterface.ExtractFileFromImage(edSpecific, 1, "$filehashes$.dat", tempHashMap);
+                        result = imagingInterface.ExtractFileFromImage(EditionPack, 1, "$filehashes$.dat", tempHashMap);
                         if (!result)
                             goto error;
 
@@ -465,7 +503,7 @@ namespace MediaCreationLib.Planning
                         {
                             string pathEditionMapping = hashmapcontent.First(x => x.ToLower().Contains("editionmappings.xml")).Split('=').First();
 
-                            result = imagingInterface.ExtractFileFromImage(edSpecific, 1, pathEditionMapping, tempHashMap);
+                            result = imagingInterface.ExtractFileFromImage(EditionPack, 1, pathEditionMapping, tempHashMap);
                             if (!result)
                                 goto error;
 
@@ -491,11 +529,10 @@ namespace MediaCreationLib.Planning
                 {
                     try
                     {
-                        var edSpecific = Path.Combine(UUPPath, file);
                         var tempHashMap = Path.GetTempFileName();
                         File.Delete(tempHashMap);
 
-                        result = imagingInterface.ExtractFileFromImage(edSpecific, 1, "$filehashes$.dat", tempHashMap);
+                        result = imagingInterface.ExtractFileFromImage(EditionPack, 1, "$filehashes$.dat", tempHashMap);
                         if (!result)
                             goto error;
 
@@ -506,7 +543,7 @@ namespace MediaCreationLib.Planning
                         {
                             string pathEditionMatrix = hashmapcontent.First(x => x.ToLower().Contains("editionmatrix.xml")).Split('=').First();
 
-                            result = imagingInterface.ExtractFileFromImage(edSpecific, 1, pathEditionMatrix, tempHashMap);
+                            result = imagingInterface.ExtractFileFromImage(EditionPack, 1, pathEditionMatrix, tempHashMap);
                             if (!result)
                                 goto error;
 
@@ -532,29 +569,20 @@ namespace MediaCreationLib.Planning
                     }
                     catch { };
                 }
-
-                if (possibleEditionUpgrades.Count > 0 && virtualWindowsEditions.Count > 0)
-                {
-                    break;
-                }
-
-                //
-                // Loop again
-                //
             }
 
-            progressCallback?.Invoke(Common.ProcessPhase.ReadingMetadata, true, 0, "Acquiring Edition Downgrades");
+            progressCallback?.Invoke("Acquiring Edition Downgrades");
 
             (List<PlannedEdition> availableEditionsByDowngradingInPriority, List<PlannedEdition> availableEditionsByDowngrading) = GetEditionsThatCanBeTargetedUsingPackageDowngrade(UUPPath, compDBs, availableCanonicalEditions, possibleEditionUpgrades);
 
-            progressCallback?.Invoke(Common.ProcessPhase.ReadingMetadata, true, 0, "Building Targets");
+            progressCallback?.Invoke("Building Targets");
 
             foreach (var ed in availableCanonicalEditions)
             {
                 EditionTargets.Add(BuildTarget(ed, availableEditionsByDowngrading, virtualWindowsEditions, possibleEditionUpgrades, availableEditionsByDowngradingInPriority));
             }
 
-            error:
+        error:
             return result;
         }
     }

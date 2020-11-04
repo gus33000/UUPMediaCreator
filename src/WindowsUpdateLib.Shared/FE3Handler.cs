@@ -2445,6 +2445,11 @@ namespace WindowsUpdateLib
         {
             var result = await GetExtendedUpdateInfo2(token, updateData.Xml.UpdateIdentity.UpdateID, updateData.Xml.UpdateIdentity.RevisionNumber, ctac);
 
+            if (updateData.Xml?.Files?.File?.FirstOrDefault(x => x.AdditionalDigest?.Text == fileDigest) is CExtendedUpdateInfoXml.File file)
+            {
+                fileDigest = file.Digest;
+            }
+
             if (result.Item1.GetExtendedUpdateInfo2Result.FileLocations != null)
             {
                 foreach (var fileLocation in result.Item1.GetExtendedUpdateInfo2Result.FileLocations.FileLocation)

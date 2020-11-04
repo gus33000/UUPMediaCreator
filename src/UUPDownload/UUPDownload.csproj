@@ -14,6 +14,8 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\thirdparty\Microsoft.Cabinet.NET\Microsoft.Cabinet.NET.csproj" />
+    <ProjectReference Include="..\CompDB.NET\CompDB.NET.csproj" />
+    <ProjectReference Include="..\MediaCreationLib.Planning.NET\MediaCreationLib.Planning.NET.csproj" />
     <ProjectReference Include="..\WindowsUpdateLib.NET\WindowsUpdateLib.NET.csproj" />
   </ItemGroup>
   <ItemGroup>
@@ -80,5 +82,4 @@
     <PackageReference Include="System.Xml.ReaderWriter" Version="4.3.1" />
     <PackageReference Include="System.Xml.XDocument" Version="4.3.0" />
   </ItemGroup>
-  <Import Project="..\CompDB.Shared\CompDB.Shared.projitems" Label="Shared" />
 </Project>
