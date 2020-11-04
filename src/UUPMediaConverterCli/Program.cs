@@ -79,8 +79,8 @@ namespace UUPMediaConverterCli
                     Log(SubOperation, severity: LoggingLevel.Error);
                     return;
                 }
-                string progress = IsIndeterminate ? "Indeterminate" : ProgressInPercentage.ToString() + "%";
-                Log($"[{phase}] [{SubOperation}] Progress: {progress}");
+                string progress = IsIndeterminate ? "" : $" [Progress: {ProgressInPercentage}%]";
+                Log($"[{phase}]{progress} {SubOperation}");
             }
 
             try
