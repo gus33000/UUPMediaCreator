@@ -1,4 +1,4 @@
-﻿using MediaCreationLib.DismOperations;
+﻿using MediaCreationLib.Dism;
 using System;
 
 namespace UUPMediaCreator.DismBroker

@@ -112,6 +112,7 @@ namespace MediaCreationLib
             "sources\\idwbinfo.txt",
             "sources\\imagingprovider.dll",
             "sources\\input.dll",
+            "sources\\imagelib.dll",
             "sources\\lang.ini",
             "sources\\locale.nls",
             "sources\\logprovider.dll",
