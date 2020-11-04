@@ -1,8 +1,7 @@
 {
   "profiles": {
     "UUPMediaConverterCli": {
-      "commandName": "Project",
-      "commandLineArgs": "\"Y:\\Drive Backups\\iMac HDD Partition - 2020-07-25\\old mess\\olddls\\19635.1_amd64_en-us_multi_6d892fb5\\UUPs\" windows.iso en-us"
+      "commandName": "Project"
     }
   }
 }

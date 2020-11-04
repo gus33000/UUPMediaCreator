@@ -7,6 +7,8 @@ using System.IO;
 using System.Linq;
 using UUPMediaCreator.InterCommunication;
 
+#nullable enable
+
 namespace MediaCreationLib.Planning
 {
     public class ConversionPlanBuilder
@@ -23,13 +25,13 @@ namespace MediaCreationLib.Planning
 
         public class PlannedEdition
         {
-            public string EditionName { get; set; }
+            public string EditionName { get; set; } = "";
             public AvailabilityType AvailabilityType { get; set; }
         }
 
         public class EditionTarget
         {
-            public PlannedEdition PlannedEdition { get; set; }
+            public PlannedEdition PlannedEdition { get; set; } = new PlannedEdition();
             public List<EditionTarget> NonDestructiveTargets = new List<EditionTarget>();
             public List<EditionTarget> DestructiveTargets = new List<EditionTarget>();
         }
@@ -38,133 +40,201 @@ namespace MediaCreationLib.Planning
 
         private static EditionTarget BuildTarget(
             PlannedEdition edition,
-            List<PlannedEdition> hackEditions,
+            List<PlannedEdition> availableEditionsByDowngrading,
             List<EditionMappingXML.Edition> virtualWindowsEditions,
-            Dictionary<string, string> editionMatrixItems,
-            List<PlannedEdition> availableBasisHackedEditions)
+            Dictionary<string, string> possibleEditionUpgrades,
+            List<PlannedEdition>? availableEditionsByDowngradingInPriority)
         {
             EditionTarget target = new EditionTarget() { PlannedEdition = edition };
             editionsAdded.Add(edition.EditionName);
 
             //
-            // Handle edition downgrades
+            // Handle edition downgrades that can be done using the current edition
+            // We do these first because they potentially can be used for other downgrades, so they should be done first
             //
-            if (availableBasisHackedEditions != null)
+            if (availableEditionsByDowngradingInPriority != null)
             {
                 foreach (var element in Constants.EditionDowngradeDict)
                 {
-                    string source = element.Key;
-                    foreach (var destination in element.Value)
+                    string editionThatCanBePackageSwapped = element.Key;
+
+                    foreach (var destinationEditionAfterPackageSwap in element.Value)
                     {
-                        if (availableBasisHackedEditions.Any(x => x.EditionName.Equals(destination, StringComparison.InvariantCultureIgnoreCase)) &&
-                        edition.EditionName.Equals(source, StringComparison.InvariantCultureIgnoreCase))
+                        //
+                        // Is the currently examined edition from the dictionary is possible to get with the current UUP set?
+                        //
+                        if (availableEditionsByDowngradingInPriority.Any(x => x.EditionName.Equals(destinationEditionAfterPackageSwap, StringComparison.InvariantCultureIgnoreCase)))
                         {
-                            if (!editionsAdded.Any(x => x.Equals(destination, StringComparison.InvariantCultureIgnoreCase)))
+                            //
+                            // If the edition we want to target is one edition that can be used for package swapping
+                            //
+                            if (edition.EditionName.Equals(editionThatCanBePackageSwapped, StringComparison.InvariantCultureIgnoreCase))
                             {
-                                var planedition = availableBasisHackedEditions.First(x => x.EditionName.Equals(destination, StringComparison.InvariantCultureIgnoreCase));
-                                availableBasisHackedEditions.Remove(planedition);
-                                target.DestructiveTargets.Add(BuildTarget(planedition, hackEditions, virtualWindowsEditions, editionMatrixItems, availableBasisHackedEditions));
+                                //
+                                // If we have not added this edition already
+                                //
+                                if (!editionsAdded.Any(x => x.Equals(destinationEditionAfterPackageSwap, StringComparison.InvariantCultureIgnoreCase)))
+                                {
+                                    //
+                                    // Get the edition that can be targeted using package swap
+                                    //
+                                    var planedition = availableEditionsByDowngradingInPriority.First(x => x.EditionName.Equals(destinationEditionAfterPackageSwap, StringComparison.InvariantCultureIgnoreCase));
+
+                                    //
+                                    // Remove it from the list of editions that can be targeted, as we are targeting it here so it doesn't get picked up again
+                                    //
+                                    availableEditionsByDowngradingInPriority.Remove(planedition);
+
+                                    //
+                                    // Add the edition
+                                    //
+                                    target.DestructiveTargets.Add(BuildTarget(planedition, availableEditionsByDowngrading, virtualWindowsEditions, possibleEditionUpgrades, availableEditionsByDowngradingInPriority));
+                                }
                             }
                         }
                     }
                 }
             }
 
-            if (virtualWindowsEditions != null)
+            //
+            // Handle editions that can be obtained by upgrading to a virtual edition
+            // Loop through all editions we can upgrade to with the current examined edition
+            //
+            foreach (var ed in virtualWindowsEditions.Where(x => x.ParentEdition.Equals(edition.EditionName, StringComparison.InvariantCultureIgnoreCase)))
             {
-                foreach (var ed in virtualWindowsEditions.Where(x => x.ParentEdition.Equals(edition.EditionName, StringComparison.InvariantCultureIgnoreCase)))
+                //
+                // Verify that we have not added this edition already
+                //
+                if (editionsAdded.Any(x => x.Equals(ed.Name, StringComparison.InvariantCultureIgnoreCase)))
                 {
-                    if (editionsAdded.Any(x => x.Equals(ed.Name, StringComparison.InvariantCultureIgnoreCase)))
-                    {
-                        continue;
-                    }
-                    editionsAdded.Add(ed.Name);
-
-                    PlannedEdition plannedEdition = new PlannedEdition() { AvailabilityType = AvailabilityType.VirtualEdition, EditionName = ed.Name };
-                    target.NonDestructiveTargets.Add(BuildTarget(plannedEdition, hackEditions, virtualWindowsEditions, editionMatrixItems, null));
+                    continue;
                 }
+
+                editionsAdded.Add(ed.Name);
+
+                PlannedEdition plannedEdition = new PlannedEdition()
+                {
+                    AvailabilityType = AvailabilityType.VirtualEdition,
+                    EditionName = ed.Name
+                };
+
+                target.NonDestructiveTargets.Add(BuildTarget(plannedEdition, availableEditionsByDowngrading, virtualWindowsEditions, possibleEditionUpgrades, null));
             }
 
+            //
+            // Sort editions by name
+            //
             target.NonDestructiveTargets = target.NonDestructiveTargets.OrderBy(x => x.PlannedEdition.EditionName).ToList();
 
-            foreach (var ed in editionMatrixItems.Where(x => x.Key.Equals(edition.EditionName, StringComparison.InvariantCultureIgnoreCase)))
+            //
+            // Handle editions that we can upgrade to using a full upgrade process
+            //
+            foreach (var ed in possibleEditionUpgrades.Where(x => x.Key.Equals(edition.EditionName, StringComparison.InvariantCultureIgnoreCase)))
             {
+                //
+                // Verify that we have not added this edition already
+                //
                 if (editionsAdded.Any(x => x.Equals(ed.Value, StringComparison.InvariantCultureIgnoreCase)))
                 {
                     continue;
                 }
+
                 editionsAdded.Add(ed.Value);
 
-                PlannedEdition plannedEdition = new PlannedEdition() { AvailabilityType = AvailabilityType.EditionUpgrade, EditionName = ed.Value };
-                target.DestructiveTargets.Add(BuildTarget(plannedEdition, hackEditions, virtualWindowsEditions, editionMatrixItems, null));
+                PlannedEdition plannedEdition = new PlannedEdition()
+                {
+                    AvailabilityType = AvailabilityType.EditionUpgrade,
+                    EditionName = ed.Value
+                };
+
+                target.DestructiveTargets.Add(BuildTarget(plannedEdition, availableEditionsByDowngrading, virtualWindowsEditions, possibleEditionUpgrades, null));
             }
 
-            var corehackeditions = hackEditions.Where(x =>
+            //
+            // Handle editions that can be obtained by doing a package swap
+            //
+            var CoreEditionsToBeHacked = availableEditionsByDowngrading.Where(x =>
             x.EditionName.StartsWith("core", StringComparison.InvariantCultureIgnoreCase) &&
             !(x.EditionName.EndsWith("n", StringComparison.InvariantCultureIgnoreCase) || x.EditionName.EndsWith("neval", StringComparison.InvariantCultureIgnoreCase)));
 
-            var corehackneditions = hackEditions.Where(x =>
+            var CoreEditionsWithNoMediaTechnologiesToBeHacked = availableEditionsByDowngrading.Where(x =>
             x.EditionName.StartsWith("core", StringComparison.InvariantCultureIgnoreCase) &&
             (x.EditionName.EndsWith("n", StringComparison.InvariantCultureIgnoreCase) || x.EditionName.EndsWith("neval", StringComparison.InvariantCultureIgnoreCase)));
 
-            var professionalhackeditions = hackEditions.Where(x =>
+            var ProfessionalEditionsToBeHacked = availableEditionsByDowngrading.Where(x =>
             !x.EditionName.StartsWith("core", StringComparison.InvariantCultureIgnoreCase) &&
             !(x.EditionName.EndsWith("n", StringComparison.InvariantCultureIgnoreCase) || x.EditionName.EndsWith("neval", StringComparison.InvariantCultureIgnoreCase)));
 
-            var professionalhackneditions = hackEditions.Where(x =>
+            var ProfessionalEditionsWithNoMediaTechnologiesToBeHacked = availableEditionsByDowngrading.Where(x =>
             !x.EditionName.StartsWith("core", StringComparison.InvariantCultureIgnoreCase) &&
             (x.EditionName.EndsWith("n", StringComparison.InvariantCultureIgnoreCase) || x.EditionName.EndsWith("neval", StringComparison.InvariantCultureIgnoreCase)));
 
             if (edition.EditionName.Equals("professional", StringComparison.InvariantCultureIgnoreCase))
             {
-                foreach (var ed in professionalhackeditions)
+                foreach (var ed in ProfessionalEditionsToBeHacked)
                 {
+                    //
+                    // Verify that we have not added this edition already
+                    //
                     if (editionsAdded.Any(x => x.Equals(ed.EditionName, StringComparison.InvariantCultureIgnoreCase)))
                     {
                         continue;
                     }
+
                     editionsAdded.Add(ed.EditionName);
 
-                    target.DestructiveTargets.Add(BuildTarget(ed, hackEditions, virtualWindowsEditions, editionMatrixItems, null));
+                    target.DestructiveTargets.Add(BuildTarget(ed, availableEditionsByDowngrading, virtualWindowsEditions, possibleEditionUpgrades, null));
                 }
             }
             else if (edition.EditionName.Equals("professionaln", StringComparison.InvariantCultureIgnoreCase))
             {
-                foreach (var ed in professionalhackneditions)
+                foreach (var ed in ProfessionalEditionsWithNoMediaTechnologiesToBeHacked)
                 {
+                    //
+                    // Verify that we have not added this edition already
+                    //
                     if (editionsAdded.Any(x => x.Equals(ed.EditionName, StringComparison.InvariantCultureIgnoreCase)))
                     {
                         continue;
                     }
+
                     editionsAdded.Add(ed.EditionName);
 
-                    target.DestructiveTargets.Add(BuildTarget(ed, hackEditions, virtualWindowsEditions, editionMatrixItems, null));
+                    target.DestructiveTargets.Add(BuildTarget(ed, availableEditionsByDowngrading, virtualWindowsEditions, possibleEditionUpgrades, null));
                 }
             }
             else if (edition.EditionName.Equals("core", StringComparison.InvariantCultureIgnoreCase))
             {
-                foreach (var ed in corehackeditions)
+                foreach (var ed in CoreEditionsToBeHacked)
                 {
+                    //
+                    // Verify that we have not added this edition already
+                    //
                     if (editionsAdded.Any(x => x.Equals(ed.EditionName, StringComparison.InvariantCultureIgnoreCase)))
                     {
                         continue;
                     }
+
                     editionsAdded.Add(ed.EditionName);
 
-                    target.DestructiveTargets.Add(BuildTarget(ed, hackEditions, virtualWindowsEditions, editionMatrixItems, null));
+                    target.DestructiveTargets.Add(BuildTarget(ed, availableEditionsByDowngrading, virtualWindowsEditions, possibleEditionUpgrades, null));
                 }
             }
             else if (edition.EditionName.Equals("coren", StringComparison.InvariantCultureIgnoreCase))
             {
-                foreach (var ed in corehackneditions)
+                foreach (var ed in CoreEditionsWithNoMediaTechnologiesToBeHacked)
                 {
+                    //
+                    // Verify that we have not added this edition already
+                    //
                     if (editionsAdded.Any(x => x.Equals(ed.EditionName, StringComparison.InvariantCultureIgnoreCase)))
                     {
                         continue;
                     }
+
                     editionsAdded.Add(ed.EditionName);
 
-                    target.DestructiveTargets.Add(BuildTarget(ed, hackEditions, virtualWindowsEditions, editionMatrixItems, null));
+                    target.DestructiveTargets.Add(BuildTarget(ed, availableEditionsByDowngrading, virtualWindowsEditions, possibleEditionUpgrades, null));
                 }
             }
 
@@ -173,34 +243,163 @@ namespace MediaCreationLib.Planning
             return target;
         }
 
+        private static (List<PlannedEdition>, List<PlannedEdition>) GetEditionsThatCanBeTargetedUsingPackageDowngrade(
+            string UUPPath,
+            HashSet<CompDBXmlClass.CompDB> compDBs, 
+            IEnumerable<PlannedEdition> availableCanonicalEditions, 
+            Dictionary<string, string> possibleEditionUpgrades, 
+            MediaCreator.ProgressCallback? progressCallback = null)
+        {
+            List<PlannedEdition> availableEditionsByDowngradingInPriority = new List<PlannedEdition>();
+            List<PlannedEdition> availableEditionsByDowngrading = new List<PlannedEdition>();
+
+            //
+            // Attempt to get the neutral Composition Database listing all available files
+            //
+            CompDBXmlClass.CompDB? neutralCompDB = FileLocator.GetNeutralCompDB(compDBs);
+
+            if (neutralCompDB != null)
+            {
+                var packages = neutralCompDB.Features.Feature.First(x => x.FeatureID == "BaseNeutral").Packages.Package;
+
+                var editionSpecificPackages = packages.Where(x => x.ID.Count(y => y == '-') == 4).Where(x => x.ID.Contains("microsoft-windows-editionspecific", StringComparison.InvariantCultureIgnoreCase));
+                var highPriorityPackages = editionSpecificPackages.Where(x => x.ID.Contains("starter", StringComparison.InvariantCultureIgnoreCase) || 
+                                                                            x.ID.Contains("professional", StringComparison.InvariantCultureIgnoreCase) || 
+                                                                            x.ID.Contains("core", StringComparison.InvariantCultureIgnoreCase));
+                editionSpecificPackages = editionSpecificPackages.Except(highPriorityPackages);
+
+                foreach (var file in highPriorityPackages)
+                {
+                    CompDBXmlClass.Package pkg = neutralCompDB.Packages.Package.First(x => x.ID == file.ID);
+
+                    //
+                    // First check if the file exists
+                    //
+                    (bool Success, string MissingFile) = FileLocator.VerifyFileIsAvailableForPackage(pkg, UUPPath);
+                    if (!Success)
+                    {
+                        progressCallback?.Invoke(Common.ProcessPhase.ReadingMetadata, true, 0, "One edition Composition Database failed file validation, below is highlighted the files that could not be found in the UUP path. This means that you will not get all possible editions.");
+                        progressCallback?.Invoke(Common.ProcessPhase.ReadingMetadata, true, 0, $"Missing: {MissingFile}");
+                        continue;
+                    }
+
+                    var sku = file.ID.Split('-')[3];
+
+                    //
+                    // If the edition not available as canonical
+                    //
+                    if (!availableCanonicalEditions.Any(x => x.EditionName.Equals(sku, StringComparison.InvariantCultureIgnoreCase)))
+                    {
+                        if (possibleEditionUpgrades != null && !possibleEditionUpgrades
+                            .Where(x => availableCanonicalEditions.Any(y => y.EditionName.Equals(x.Key, StringComparison.InvariantCultureIgnoreCase)) ||
+                                        availableEditionsByDowngrading.Any(y => y.EditionName.Equals(x.Key, StringComparison.InvariantCultureIgnoreCase)))
+                            .Any(x => x.Value.Equals(sku, StringComparison.InvariantCultureIgnoreCase)))
+                        {
+                            PlannedEdition edition = new PlannedEdition
+                            {
+                                EditionName = sku,
+                                AvailabilityType = AvailabilityType.EditionPackageSwap
+                            };
+
+                            availableEditionsByDowngradingInPriority.Add(edition);
+                        }
+                    }
+                }
+
+                foreach (var file in editionSpecificPackages)
+                {
+                    CompDBXmlClass.Package pkg = neutralCompDB.Packages.Package.First(x => x.ID == file.ID);
+
+                    //
+                    // First check if the file exists
+                    //
+                    (bool Success, string MissingFile) = FileLocator.VerifyFileIsAvailableForPackage(pkg, UUPPath);
+                    if (!Success)
+                    {
+                        progressCallback?.Invoke(Common.ProcessPhase.ReadingMetadata, true, 0, "One edition Composition Database failed file validation, below is highlighted the files that could not be found in the UUP path. This means that you will not get all possible editions.");
+                        progressCallback?.Invoke(Common.ProcessPhase.ReadingMetadata, true, 0, $"Missing: {MissingFile}");
+                        continue;
+                    }
+
+                    var sku = file.ID.Split('-')[3];
+
+                    //
+                    // If the edition not available as canonical
+                    //
+                    if (!availableCanonicalEditions.Any(x => x.EditionName.Equals(sku, StringComparison.InvariantCultureIgnoreCase)))
+                    {
+                        if (possibleEditionUpgrades != null && !possibleEditionUpgrades
+                            .Where(x => availableCanonicalEditions.Any(y => y.EditionName.Equals(x.Key, StringComparison.InvariantCultureIgnoreCase)) ||
+                                        availableEditionsByDowngrading.Any(y => y.EditionName.Equals(x.Key, StringComparison.InvariantCultureIgnoreCase)))
+                            .Any(x => x.Value.Equals(sku, StringComparison.InvariantCultureIgnoreCase)))
+                        {
+                            PlannedEdition edition = new PlannedEdition
+                            {
+                                EditionName = sku,
+                                AvailabilityType = AvailabilityType.EditionPackageSwap
+                            };
+
+                            availableEditionsByDowngrading.Add(edition);
+                        }
+                    }
+                }
+            }
+
+            return (availableEditionsByDowngradingInPriority, availableEditionsByDowngrading);
+        }
+
         public static bool GetTargetedPlan(
             string UUPPath,
             string LanguageCode,
             out List<EditionTarget> EditionTargets,
-            MediaCreator.ProgressCallback progressCallback = null)
+            MediaCreator.ProgressCallback? progressCallback = null)
         {
             EditionTargets = new List<EditionTarget>();
 
             bool result = true;
-            progressCallback?.Invoke(Common.ProcessPhase.ReadingMetadata, true, 0, "Enumerating files");
+            progressCallback?.Invoke(Common.ProcessPhase.ReadingMetadata, true, 0, "Acquiring Composition Databases");
 
             HashSet<CompDBXmlClass.CompDB> compDBs = FileLocator.GetCompDBsFromUUPFiles(UUPPath);
-            HashSet<CompDBXmlClass.CompDB> filteredCompDBs = FileLocator.GetEditionCompDBsForLanguage(compDBs, LanguageCode);
-            CompDBXmlClass.CompDB neutralCompDB = FileLocator.GetNeutralCompDB(compDBs);
 
-            if (filteredCompDBs.Count == 0)
-                goto error;
+            progressCallback?.Invoke(Common.ProcessPhase.ReadingMetadata, true, 0, "Acquiring Base Editions");
 
-            List<PlannedEdition> availableCanonicalEditions = new List<PlannedEdition>();
-            List<PlannedEdition> availableBasisHackedEditions = new List<PlannedEdition>();
-            List<PlannedEdition> hackEditions = new List<PlannedEdition>();
-
-            List<EditionMappingXML.Edition> virtualWindowsEditions = new List<EditionMappingXML.Edition>();
-            Dictionary<string, string> editionTargetMapping = new Dictionary<string, string>();
-
-            foreach (var compDB in filteredCompDBs)
+            //
+            // Get base editions that are available with all their files
+            //
+            IEnumerable<CompDBXmlClass.CompDB> filteredCompDBs = FileLocator.GetEditionCompDBsForLanguage(compDBs, LanguageCode).Where(x =>
             {
-                PlannedEdition edition = new PlannedEdition();
+                (bool success, HashSet<string> missingfiles) = FileLocator.VerifyFilesAreAvailableForCompDB(x, UUPPath);
+
+                if (!success)
+                {
+                    progressCallback?.Invoke(Common.ProcessPhase.ReadingMetadata, true, 0, "One edition Composition Database failed file validation, below is highlighted the files that could not be found in the UUP path. This means that you will not get all possible editions.");
+                    foreach (var file in missingfiles)
+                    {
+                        progressCallback?.Invoke(Common.ProcessPhase.ReadingMetadata, true, 0, $"Missing: {file}");
+                    }
+                }
+
+                return success;
+            });
+
+            if (filteredCompDBs.Count() == 0)
+            {
+                progressCallback?.Invoke(Common.ProcessPhase.ReadingMetadata, true, 0, "No edition CompDB validated or were found, this is a fatal error, as one edition CompDB is needed at the very least for creating an ISO.");
+                goto error;
+            }
+
+            progressCallback?.Invoke(Common.ProcessPhase.ReadingMetadata, true, 0, "Adding Base Editions to the conversion plan");
+
+            //
+            // Add available canonical editions
+            //
+            IEnumerable<PlannedEdition> availableCanonicalEditions = filteredCompDBs.Select(compDB =>
+            {
+                PlannedEdition edition = new PlannedEdition()
+                {
+                    AvailabilityType = AvailabilityType.Canonical
+                };
+
                 if (compDB.Tags != null)
                 {
                     edition.EditionName = compDB.Tags.Tag.First(x => x.Name.Equals("Edition", StringComparison.InvariantCultureIgnoreCase)).Value;
@@ -209,47 +408,45 @@ namespace MediaCreationLib.Planning
                 {
                     edition.EditionName = compDB.Features.Feature[0].FeatureID.Split('_')[0];
                 }
-                edition.AvailabilityType = AvailabilityType.Canonical;
-                availableCanonicalEditions.Add(edition);
-            }
 
-            availableCanonicalEditions = availableCanonicalEditions.OrderBy(x => x.EditionName).ToList();
+                return edition;
+            }).OrderBy(x => x.EditionName);
 
-            var firstCompDB = filteredCompDBs.First();
+            progressCallback?.Invoke(Common.ProcessPhase.ReadingMetadata, true, 0, "Acquiring Edition Upgrades");
 
             //
-            // Attempt to get virtual editions from one compdb
+            // This dictionary holds the possible virtual edition upgrades
+            // Example: Professional -> ProfessionalEducation
             //
-            foreach (CompDBXmlClass.Package feature in firstCompDB.Features.Feature[0].Packages.Package)
+            List<EditionMappingXML.Edition> virtualWindowsEditions = new List<EditionMappingXML.Edition>();
+
+            //
+            // This dictionary holds the possible edition upgrades
+            // Example: Core -> Professional
+            //
+            Dictionary<string, string> possibleEditionUpgrades = new Dictionary<string, string>();
+
+            foreach (CompDBXmlClass.Package feature in filteredCompDBs.First().Features.Feature[0].Packages.Package)
             {
-                CompDBXmlClass.Package pkg = firstCompDB.Packages.Package.First(x => x.ID == feature.ID);
+                CompDBXmlClass.Package pkg = filteredCompDBs.First().Packages.Package.First(x => x.ID == feature.ID);
+
+                string file = FileLocator.GetCommonlyUsedIncorrectFileNameFromCompDBPackage(pkg);
 
                 //
-                // Some download utilities that start with the letter U and finish with UPDump or start with the letter U and finish with UP.rg-adguard download files without respecting Microsoft filenames
-                // We attempt to locate files based on what we think they use first.
+                // We know already that all files exist, so it's just a matter of knowing which path format is used
                 //
-                string file = pkg.Payload.PayloadItem.Path.Split('\\').Last().Replace("~31bf3856ad364e35", "").Replace("~.", ".").Replace("~", "-").Replace("-.", ".");
+                file = !File.Exists(Path.Combine(UUPPath, file)) ? pkg.Payload.PayloadItem.Path : file;
 
-                if (!File.Exists(Path.Combine(UUPPath, file)))
+                if (!file.EndsWith(".esd", StringComparison.InvariantCultureIgnoreCase) || !file.Contains("microsoft-windows-editionspecific", StringComparison.InvariantCultureIgnoreCase))
                 {
-                    //
-                    // Wow, someone actually downloaded UUP files using a tool that respects Microsoft paths, that's exceptional
-                    //
-                    file = pkg.Payload.PayloadItem.Path;
-                    if (!File.Exists(Path.Combine(UUPPath, file)))
-                    {
-                        //
-                        // What a disapointment, they simply didn't download everything.. Oops.
-                        // TODO: generate missing files out of thin air
-                        //
-                        goto error;
-                    }
+                    // We do not care about this file
+                    continue;
                 }
 
                 //
-                // Attempt to locate an edition specific image, this image contains the edition matrix we want
+                // Attempt to get virtual editions from one compdb
                 //
-                if (virtualWindowsEditions.Count <= 0 && file.EndsWith(".esd", StringComparison.InvariantCultureIgnoreCase) && file.ToLower().Contains("microsoft-windows-editionspecific"))
+                if (virtualWindowsEditions.Count <= 0)
                 {
                     try
                     {
@@ -286,49 +483,11 @@ namespace MediaCreationLib.Planning
                     }
                     catch { };
                 }
-                else if (virtualWindowsEditions.Count > 0)
-                {
-                    break;
-                }
 
                 //
-                // Loop again
+                // Attempt to get upgradable editions from one compdb
                 //
-            }
-
-            //
-            // Attempt to get upgradable editions from one compdb
-            //
-            foreach (CompDBXmlClass.Package feature in firstCompDB.Features.Feature[0].Packages.Package)
-            {
-                CompDBXmlClass.Package pkg = firstCompDB.Packages.Package.First(x => x.ID == feature.ID);
-
-                //
-                // Some download utilities that start with the letter U and finish with UPDump or start with the letter U and finish with UP.rg-adguard download files without respecting Microsoft filenames
-                // We attempt to locate files based on what we think they use first.
-                //
-                string file = pkg.Payload.PayloadItem.Path.Split('\\').Last().Replace("~31bf3856ad364e35", "").Replace("~.", ".").Replace("~", "-").Replace("-.", ".");
-
-                if (!File.Exists(Path.Combine(UUPPath, file)))
-                {
-                    //
-                    // Wow, someone actually downloaded UUP files using a tool that respects Microsoft paths, that's exceptional
-                    //
-                    file = pkg.Payload.PayloadItem.Path;
-                    if (!File.Exists(Path.Combine(UUPPath, file)))
-                    {
-                        //
-                        // What a disapointment, they simply didn't download everything.. Oops.
-                        // TODO: generate missing files out of thin air
-                        //
-                        goto error;
-                    }
-                }
-
-                //
-                // Attempt to locate an edition specific image, this image contains the edition matrix we want
-                //
-                if (editionTargetMapping.Count <= 0 && file.EndsWith(".esd", StringComparison.InvariantCultureIgnoreCase) && file.ToLower().Contains("microsoft-windows-editionspecific"))
+                if (possibleEditionUpgrades.Count <= 0)
                 {
                     try
                     {
@@ -363,7 +522,7 @@ namespace MediaCreationLib.Planning
                                     {
                                         if (!availableCanonicalEditions.Any(x => x.EditionName.Equals(target.ID, StringComparison.InvariantCultureIgnoreCase)))
                                         {
-                                            editionTargetMapping.Add(edition.ID, target.ID);
+                                            possibleEditionUpgrades.Add(edition.ID, target.ID);
                                         }
                                     }
                                 }
@@ -373,7 +532,8 @@ namespace MediaCreationLib.Planning
                     }
                     catch { };
                 }
-                else if (editionTargetMapping.Count > 0)
+
+                if (possibleEditionUpgrades.Count > 0 && virtualWindowsEditions.Count > 0)
                 {
                     break;
                 }
@@ -383,53 +543,15 @@ namespace MediaCreationLib.Planning
                 //
             }
 
-            var _files = neutralCompDB.Features.Feature.First(x => x.FeatureID == "BaseNeutral").Packages.Package.Select(x => x.ID);
+            progressCallback?.Invoke(Common.ProcessPhase.ReadingMetadata, true, 0, "Acquiring Edition Downgrades");
 
-            var editionSpecificPackages = _files.Where(x => x.Count(y => y == '-') == 4).Where(x => x.ToLower().Contains("microsoft-windows-editionspecific"));
-            var highPriorityPackages = editionSpecificPackages.Where(x => x.ToLower().Contains("starter") || x.ToLower().Contains("professional") || x.ToLower().Contains("core"));
-            editionSpecificPackages = editionSpecificPackages.Except(highPriorityPackages);
+            (List<PlannedEdition> availableEditionsByDowngradingInPriority, List<PlannedEdition> availableEditionsByDowngrading) = GetEditionsThatCanBeTargetedUsingPackageDowngrade(UUPPath, compDBs, availableCanonicalEditions, possibleEditionUpgrades);
 
-            foreach (var file in highPriorityPackages)
-            {
-                var sku = file.Split('-')[3];
-                if (!availableCanonicalEditions.Any(x => x.EditionName.Equals(sku, StringComparison.InvariantCultureIgnoreCase)))
-                {
-                    if (editionTargetMapping != null && !editionTargetMapping
-                        .Where(x => availableCanonicalEditions.Any(y => y.EditionName.Equals(x.Key, StringComparison.InvariantCultureIgnoreCase)) ||
-                                    hackEditions.Any(y => y.EditionName.Equals(x.Key, StringComparison.InvariantCultureIgnoreCase)))
-                        .Any(x => x.Value.Equals(sku, StringComparison.InvariantCultureIgnoreCase)))
-                    {
-                        PlannedEdition edition = new PlannedEdition();
-                        edition.EditionName = sku;
-                        edition.AvailabilityType = AvailabilityType.EditionPackageSwap;
-
-                        availableBasisHackedEditions.Add(edition);
-                    }
-                }
-            }
-
-            foreach (var file in editionSpecificPackages)
-            {
-                var sku = file.Split('-')[3];
-                if (!availableCanonicalEditions.Any(x => x.EditionName.Equals(sku, StringComparison.InvariantCultureIgnoreCase)))
-                {
-                    if (!editionTargetMapping
-                        .Where(x => availableCanonicalEditions.Any(y => y.EditionName.Equals(x.Key, StringComparison.InvariantCultureIgnoreCase)) ||
-                                    hackEditions.Any(y => y.EditionName.Equals(x.Key, StringComparison.InvariantCultureIgnoreCase)))
-                        .Any(x => x.Value.Equals(sku, StringComparison.InvariantCultureIgnoreCase)))
-                    {
-                        PlannedEdition edition = new PlannedEdition();
-                        edition.EditionName = sku;
-                        edition.AvailabilityType = AvailabilityType.EditionPackageSwap;
-
-                        hackEditions.Add(edition);
-                    }
-                }
-            }
+            progressCallback?.Invoke(Common.ProcessPhase.ReadingMetadata, true, 0, "Building Targets");
 
             foreach (var ed in availableCanonicalEditions)
             {
-                EditionTargets.Add(BuildTarget(ed, hackEditions, virtualWindowsEditions, editionTargetMapping, availableBasisHackedEditions));
+                EditionTargets.Add(BuildTarget(ed, availableEditionsByDowngrading, virtualWindowsEditions, possibleEditionUpgrades, availableEditionsByDowngradingInPriority));
             }
 
             error:

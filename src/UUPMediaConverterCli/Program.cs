@@ -77,6 +77,8 @@ namespace UUPMediaConverterCli
                 {
                     Log("An error occured!", severity: LoggingLevel.Error);
                     Log(SubOperation, severity: LoggingLevel.Error);
+                    if (Debugger.IsAttached)
+                        Console.ReadLine();
                     return;
                 }
                 string progress = IsIndeterminate ? "" : $" [Progress: {ProgressInPercentage}%]";
@@ -111,6 +113,8 @@ namespace UUPMediaConverterCli
             {
                 Log("An error occured!", severity: LoggingLevel.Error);
                 Log(ex.ToString(), severity: LoggingLevel.Error);
+                if (Debugger.IsAttached)
+                    Console.ReadLine();
             }
             Console.WriteLine("The end");
         }
