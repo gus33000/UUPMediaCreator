@@ -272,51 +272,51 @@ namespace WindowsUpdateLib
             CTAC ctac;
             UpdateData[] data;
 
-            ctac = FE3Handler.BuildCTAC(OSSkuId.PPIPro, "10.0.15063.534", MachineType, "WIS", "", "CB", "rs2_release", false);
+            ctac = new CTAC(OSSkuId.PPIPro, "10.0.15063.534", MachineType, "WIS", "", "CB", "rs2_release", false);
             data = await FE3Handler.GetUpdates(null, ctac, null, "ProductRelease");
             AddUpdatesIfNotPresentAlready(updates, data);
 
-            ctac = FE3Handler.BuildCTAC(OSSkuId.PPIPro, "10.0.15063.534", MachineType, "WIF", "", "CB", "rs2_release", false);
+            ctac = new CTAC(OSSkuId.PPIPro, "10.0.15063.534", MachineType, "WIF", "", "CB", "rs2_release", false);
             data = await FE3Handler.GetUpdates(null, ctac, null, "ProductRelease");
             AddUpdatesIfNotPresentAlready(updates, data);
 
-            ctac = FE3Handler.BuildCTAC(OSSkuId.PPIPro, "10.0.19041.84", MachineType, "Retail", "", "CB", "vb_release", false);
+            ctac = new CTAC(OSSkuId.PPIPro, "10.0.19041.84", MachineType, "Retail", "", "CB", "vb_release", false);
             data = await FE3Handler.GetUpdates(null, ctac, null, "ProductRelease");
             AddUpdatesIfNotPresentAlready(updates, data);
 
-            ctac = FE3Handler.BuildCTAC(OSSkuId.Professional, "10.0.16299.15", MachineType, "Retail", "", "CB", "rs3_release", true);
+            ctac = new CTAC(OSSkuId.Professional, "10.0.16299.15", MachineType, "Retail", "", "CB", "rs3_release", true);
             data = await FE3Handler.GetUpdates(null, ctac, null, "ProductRelease");
             AddUpdatesIfNotPresentAlready(updates, data);
 
-            ctac = FE3Handler.BuildCTAC(OSSkuId.Professional, "10.0.17134.1", MachineType, "Retail", "", "CB", "rs4_release", true);
+            ctac = new CTAC(OSSkuId.Professional, "10.0.17134.1", MachineType, "Retail", "", "CB", "rs4_release", true);
             data = await FE3Handler.GetUpdates(null, ctac, null, "ProductRelease");
             AddUpdatesIfNotPresentAlready(updates, data);
 
-            ctac = FE3Handler.BuildCTAC(OSSkuId.Professional, "10.0.17763.1217", MachineType, "Retail", "", "CB", "rs5_release", true);
+            ctac = new CTAC(OSSkuId.Professional, "10.0.17763.1217", MachineType, "Retail", "", "CB", "rs5_release", true);
             data = await FE3Handler.GetUpdates(null, ctac, null, "ProductRelease");
             AddUpdatesIfNotPresentAlready(updates, data);
 
-            ctac = FE3Handler.BuildCTAC(OSSkuId.Professional, "10.0.18362.836", MachineType, "Retail", "", "CB", "19h1_release", true);
+            ctac = new CTAC(OSSkuId.Professional, "10.0.18362.836", MachineType, "Retail", "", "CB", "19h1_release", true);
             data = await FE3Handler.GetUpdates(null, ctac, null, "ProductRelease");
             AddUpdatesIfNotPresentAlready(updates, data);
 
-            ctac = FE3Handler.BuildCTAC(OSSkuId.Professional, "10.0.19041.84", MachineType, "Retail", "", "CB", "vb_release", false);
+            ctac = new CTAC(OSSkuId.Professional, "10.0.19041.84", MachineType, "Retail", "", "CB", "vb_release", false);
             data = await FE3Handler.GetUpdates(null, ctac, null, "ProductRelease");
             AddUpdatesIfNotPresentAlready(updates, data);
 
-            ctac = FE3Handler.BuildCTAC(OSSkuId.Professional, "10.0.19041.84", MachineType, "External", "ReleasePreview", "CB", "vb_release", false);
+            ctac = new CTAC(OSSkuId.Professional, "10.0.19041.84", MachineType, "External", "ReleasePreview", "CB", "vb_release", false);
             data = await FE3Handler.GetUpdates(null, ctac, null, "ProductRelease");
             AddUpdatesIfNotPresentAlready(updates, data);
 
-            ctac = FE3Handler.BuildCTAC(OSSkuId.Professional, "10.0.19041.84", MachineType, "External", "FeaturePreview", "CB", "vb_release", false);
+            ctac = new CTAC(OSSkuId.Professional, "10.0.19041.84", MachineType, "External", "FeaturePreview", "CB", "vb_release", false);
             data = await FE3Handler.GetUpdates(null, ctac, null, "ProductRelease");
             AddUpdatesIfNotPresentAlready(updates, data);
 
-            ctac = FE3Handler.BuildCTAC(OSSkuId.Professional, "10.0.19041.84", MachineType, "External", "Beta", "CB", "vb_release", false);
+            ctac = new CTAC(OSSkuId.Professional, "10.0.19041.84", MachineType, "External", "Beta", "CB", "vb_release", false);
             data = await FE3Handler.GetUpdates(null, ctac, null, "ProductRelease");
             AddUpdatesIfNotPresentAlready(updates, data);
 
-            ctac = FE3Handler.BuildCTAC(OSSkuId.Professional, "10.0.19041.84", MachineType, "External", "Dev", "CB", "vb_release", false);
+            ctac = new CTAC(OSSkuId.Professional, "10.0.19041.84", MachineType, "External", "Dev", "CB", "vb_release", false);
             data = await FE3Handler.GetUpdates(null, ctac, null, "ProductRelease");
             AddUpdatesIfNotPresentAlready(updates, data);
 
