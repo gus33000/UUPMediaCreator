@@ -203,7 +203,7 @@ namespace WindowsUpdateLib
             return update;
         }
 
-        private static void AddUpdatesIfNotPresentAlready(List<UpdateData> updates, UpdateData[] uncleanedData)
+        private static void AddUpdatesIfNotPresentAlready(ICollection<UpdateData> updates, IEnumerable<UpdateData> uncleanedData)
         {
             var data = uncleanedData.Select(x => TrimDeltasFromUpdateData(x)).ToArray();
 
@@ -266,59 +266,37 @@ namespace WindowsUpdateLib
             }
         }
 
-        private static async Task<List<UpdateData>> GetUpdates(MachineType MachineType)
+        private static async Task<IEnumerable<UpdateData>> GetUpdates(MachineType MachineType)
         {
-            List<UpdateData> updates = new List<UpdateData>();
-            CTAC ctac;
-            UpdateData[] data;
+            HashSet<UpdateData> updates = new HashSet<UpdateData>();
 
-            ctac = new CTAC(OSSkuId.PPIPro, "10.0.15063.534", MachineType, "WIS", "", "CB", "rs2_release", false);
-            data = await FE3Handler.GetUpdates(null, ctac, null, "ProductRelease");
-            AddUpdatesIfNotPresentAlready(updates, data);
+            CTAC[] ctacs = new CTAC[]
+            {
+                new CTAC(OSSkuId.PPIPro, "10.0.15063.534", MachineType, "WIS", "", "CB", "rs2_release", false),
+                new CTAC(OSSkuId.PPIPro, "10.0.15063.534", MachineType, "WIF", "", "CB", "rs2_release", false),
+                new CTAC(OSSkuId.PPIPro, "10.0.19041.84", MachineType, "Retail", "", "CB", "vb_release", false),
+                new CTAC(OSSkuId.Professional, "10.0.16299.15", MachineType, "Retail", "", "CB", "rs3_release", true),
+                new CTAC(OSSkuId.Professional, "10.0.17134.1", MachineType, "Retail", "", "CB", "rs4_release", true),
+                new CTAC(OSSkuId.Professional, "10.0.17763.1217", MachineType, "Retail", "", "CB", "rs5_release", true),
+                new CTAC(OSSkuId.Professional, "10.0.18362.836", MachineType, "Retail", "", "CB", "19h1_release", true),
+                new CTAC(OSSkuId.Professional, "10.0.19041.84", MachineType, "Retail", "", "CB", "vb_release", false),
+                new CTAC(OSSkuId.Professional, "10.0.19041.84", MachineType, "External", "ReleasePreview", "CB", "vb_release", false),
+                new CTAC(OSSkuId.Professional, "10.0.19041.84", MachineType, "External", "FeaturePreview", "CB", "vb_release", false),
+                new CTAC(OSSkuId.Professional, "10.0.19041.84", MachineType, "External", "Beta", "CB", "vb_release", false),
+                new CTAC(OSSkuId.Professional, "10.0.19041.84", MachineType, "External", "Dev", "CB", "vb_release", false)
+            };
 
-            ctac = new CTAC(OSSkuId.PPIPro, "10.0.15063.534", MachineType, "WIF", "", "CB", "rs2_release", false);
-            data = await FE3Handler.GetUpdates(null, ctac, null, "ProductRelease");
-            AddUpdatesIfNotPresentAlready(updates, data);
+            List<Task<IEnumerable<UpdateData>>> tasks = new List<Task<IEnumerable<UpdateData>>>();
+            foreach (var ctac in ctacs)
+            {
+                tasks.Add(FE3Handler.GetUpdates(null, ctac, null, "ProductRelease"));
+            }
 
-            ctac = new CTAC(OSSkuId.PPIPro, "10.0.19041.84", MachineType, "Retail", "", "CB", "vb_release", false);
-            data = await FE3Handler.GetUpdates(null, ctac, null, "ProductRelease");
-            AddUpdatesIfNotPresentAlready(updates, data);
-
-            ctac = new CTAC(OSSkuId.Professional, "10.0.16299.15", MachineType, "Retail", "", "CB", "rs3_release", true);
-            data = await FE3Handler.GetUpdates(null, ctac, null, "ProductRelease");
-            AddUpdatesIfNotPresentAlready(updates, data);
-
-            ctac = new CTAC(OSSkuId.Professional, "10.0.17134.1", MachineType, "Retail", "", "CB", "rs4_release", true);
-            data = await FE3Handler.GetUpdates(null, ctac, null, "ProductRelease");
-            AddUpdatesIfNotPresentAlready(updates, data);
-
-            ctac = new CTAC(OSSkuId.Professional, "10.0.17763.1217", MachineType, "Retail", "", "CB", "rs5_release", true);
-            data = await FE3Handler.GetUpdates(null, ctac, null, "ProductRelease");
-            AddUpdatesIfNotPresentAlready(updates, data);
-
-            ctac = new CTAC(OSSkuId.Professional, "10.0.18362.836", MachineType, "Retail", "", "CB", "19h1_release", true);
-            data = await FE3Handler.GetUpdates(null, ctac, null, "ProductRelease");
-            AddUpdatesIfNotPresentAlready(updates, data);
-
-            ctac = new CTAC(OSSkuId.Professional, "10.0.19041.84", MachineType, "Retail", "", "CB", "vb_release", false);
-            data = await FE3Handler.GetUpdates(null, ctac, null, "ProductRelease");
-            AddUpdatesIfNotPresentAlready(updates, data);
-
-            ctac = new CTAC(OSSkuId.Professional, "10.0.19041.84", MachineType, "External", "ReleasePreview", "CB", "vb_release", false);
-            data = await FE3Handler.GetUpdates(null, ctac, null, "ProductRelease");
-            AddUpdatesIfNotPresentAlready(updates, data);
-
-            ctac = new CTAC(OSSkuId.Professional, "10.0.19041.84", MachineType, "External", "FeaturePreview", "CB", "vb_release", false);
-            data = await FE3Handler.GetUpdates(null, ctac, null, "ProductRelease");
-            AddUpdatesIfNotPresentAlready(updates, data);
-
-            ctac = new CTAC(OSSkuId.Professional, "10.0.19041.84", MachineType, "External", "Beta", "CB", "vb_release", false);
-            data = await FE3Handler.GetUpdates(null, ctac, null, "ProductRelease");
-            AddUpdatesIfNotPresentAlready(updates, data);
-
-            ctac = new CTAC(OSSkuId.Professional, "10.0.19041.84", MachineType, "External", "Dev", "CB", "vb_release", false);
-            data = await FE3Handler.GetUpdates(null, ctac, null, "ProductRelease");
-            AddUpdatesIfNotPresentAlready(updates, data);
+            IEnumerable<UpdateData>[] datas = await Task.WhenAll(tasks);
+            foreach (var data in datas)
+            {
+                AddUpdatesIfNotPresentAlready(updates, data);
+            }
 
             return updates;
         }

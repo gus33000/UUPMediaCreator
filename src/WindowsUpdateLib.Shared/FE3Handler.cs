@@ -362,14 +362,14 @@ namespace WindowsUpdateLib
 
         #region Application specific functions
 
-        public static async Task<UpdateData[]> GetUpdates(string categoryId, CTAC ctac, string token, string filter = "Application") // Or ProductRelease
+        public static async Task<IEnumerable<UpdateData>> GetUpdates(string categoryId, CTAC ctac, string token, string filter = "Application") // Or ProductRelease
         {
             (CGetCookieResponse.GetCookieResponse cookie, string cookieresp) = await GetCookie();
 
-            List<string> InstalledNonLeafUpdateIDs = new List<string>();
-            List<string> OtherCachedUpdateIDs = new List<string>();
+            HashSet<string> InstalledNonLeafUpdateIDs = new HashSet<string>();
+            HashSet<string> OtherCachedUpdateIDs = new HashSet<string>();
 
-            List<(CSyncUpdatesResponse.SyncUpdatesResponse, string)> responses = new List<(CSyncUpdatesResponse.SyncUpdatesResponse, string)>();
+            HashSet<(CSyncUpdatesResponse.SyncUpdatesResponse, string)> responses = new HashSet<(CSyncUpdatesResponse.SyncUpdatesResponse, string)>();
 
             //
             // Scan all updates
@@ -398,9 +398,9 @@ namespace WindowsUpdateLib
                 responses.Add(result);
             }
 
-            List<UpdateData> updateDatas = new List<UpdateData>();
+            HashSet<UpdateData> updateDatas = new HashSet<UpdateData>();
 
-            foreach (var response in responses.ToArray())
+            foreach (var response in responses)
             {
                 foreach (var update in response.Item1.SyncUpdatesResult.ExtendedUpdateInfo.Updates.Update)
                 {
@@ -426,18 +426,18 @@ namespace WindowsUpdateLib
 
                     if (updateDatas.Any(x => x.Update.ID == update.ID))
                     {
-                        var existingDataIndex = updateDatas.IndexOf(updateDatas.First(x => x.Update.ID == update.ID));
+                        var updateData = updateDatas.First(x => x.Update.ID == update.ID);
                         if (data.Xml.LocalizedProperties == null)
                         {
-                            var backup = updateDatas[existingDataIndex].Xml;
-                            updateDatas[existingDataIndex].Xml = data.Xml;
+                            var backup = updateData.Xml;
+                            updateData.Xml = data.Xml;
 
-                            updateDatas[existingDataIndex].Xml.LocalizedProperties = backup.LocalizedProperties;
+                            updateData.Xml.LocalizedProperties = backup.LocalizedProperties;
                         }
 
-                        if (updateDatas[existingDataIndex].Xml.LocalizedProperties == null)
+                        if (updateData.Xml.LocalizedProperties == null)
                         {
-                            updateDatas[existingDataIndex].Xml.LocalizedProperties = data.Xml.LocalizedProperties;
+                            updateData.Xml.LocalizedProperties = data.Xml.LocalizedProperties;
                         }
 
                         continue;
@@ -449,9 +449,9 @@ namespace WindowsUpdateLib
                 }
             }
 
-            List<UpdateData> relevantUpdateDatas = new List<UpdateData>();
+            HashSet<UpdateData> relevantUpdateDatas = new HashSet<UpdateData>();
 
-            foreach (var updateData in updateDatas.ToArray())
+            foreach (var updateData in updateDatas)
             {
                 if (updateData.Xml.ExtendedProperties != null)
                 {
@@ -463,7 +463,7 @@ namespace WindowsUpdateLib
                 }
             }
 
-            return relevantUpdateDatas.ToArray();
+            return relevantUpdateDatas;
         }
 
         #endregion Application specific functions
