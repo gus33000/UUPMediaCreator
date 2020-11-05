@@ -134,6 +134,11 @@ namespace WindowsUpdateLib
                 if (string.IsNullOrEmpty(UpdateData.CachedMetadata))
                 {
                     (string metadataUrl, string EsrpDecryptionInformationStr) = await FE3Handler.GetFileUrl(UpdateData, metadataCabs[0].Digest, null, UpdateData.CTAC);
+                    if (string.IsNullOrEmpty(metadataUrl))
+                    {
+                        goto exit;
+                    }
+
                     string metadataCabTemp = Path.GetTempFileName();
 
                     // Download the file

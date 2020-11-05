@@ -14,6 +14,10 @@ namespace UUPDownload
             CompDBXmlClass.Package? editionPackPkg = compDBs.GetEditionPackFromCompDBs();
 
             string editionPkg = await update.DownloadFileFromDigestAsync(editionPackPkg.Payload.PayloadItem.PayloadHash);
+            if (string.IsNullOrEmpty(editionPkg))
+            {
+                return null;
+            }
 
             List<EditionTarget> targets;
             _ = ConversionPlanBuilder.GetTargetedPlan(compDBs, editionPkg, LanguageCode, out targets, null);

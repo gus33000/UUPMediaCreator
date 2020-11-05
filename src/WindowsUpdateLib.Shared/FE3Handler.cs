@@ -278,8 +278,8 @@ namespace WindowsUpdateLib
         public static async Task<(CSyncUpdatesResponse.SyncUpdatesResponse, string)> SyncUpdates(
             CSOAPCommon.Cookie cookie,
             string token,
-            string[] InstalledNonLeafUpdateIDs,
-            string[] OtherCachedUpdateIDs,
+            IEnumerable<string> InstalledNonLeafUpdateIDs,
+            IEnumerable<string> OtherCachedUpdateIDs,
             string[] CategoryIdentifiers,
             CTAC ctac
             )
@@ -307,7 +307,7 @@ namespace WindowsUpdateLib
                     },
                     OtherCachedUpdateIDs = new CSyncUpdatesRequest.OtherCachedUpdateIDs()
                     {
-                        Int = OtherCachedUpdateIDs != null ? OtherCachedUpdateIDs : new string[0]
+                        Int = OtherCachedUpdateIDs != null ? OtherCachedUpdateIDs.ToArray() : new string[0]
                     },
                     SkipSoftwareSync = "false",
                     NeedTwoGroupOutOfScopeUpdates = "true",
@@ -378,7 +378,7 @@ namespace WindowsUpdateLib
             //
             while (true)
             {
-                var result = await SyncUpdates(cookie.GetCookieResult, token, InstalledNonLeafUpdateIDs.ToArray(), OtherCachedUpdateIDs.ToArray(), new string[] { categoryId }, ctac);
+                var result = await SyncUpdates(cookie.GetCookieResult, token, InstalledNonLeafUpdateIDs, OtherCachedUpdateIDs, new string[] { categoryId }, ctac);
 
                 // Refresh the cookie
                 cookie.GetCookieResult.EncryptedData = result.Item1.SyncUpdatesResult.NewCookie.EncryptedData;

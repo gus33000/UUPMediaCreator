@@ -183,6 +183,12 @@ namespace UUPDownload
                 Logging.Log("Getting file urls...");
                 CGetExtendedUpdateInfo2Response.FileLocation[] fileUrls = await FE3Handler.GetFileUrls(update, null, update.CTAC);
 
+                if (fileUrls == null)
+                {
+                    Logging.Log("Getting file urls failed.");
+                    return;
+                }
+
                 if (!Directory.Exists(OutputFolder))
                 {
                     Directory.CreateDirectory(OutputFolder);

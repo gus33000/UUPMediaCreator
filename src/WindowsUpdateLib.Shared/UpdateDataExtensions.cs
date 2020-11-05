@@ -12,19 +12,27 @@ namespace WindowsUpdateLib
 {
     public static class UpdateDataExtensions
     {
+        private static WebClient client = new WebClient();
+
         public static async Task<string> DownloadFileFromDigestAsync(this UpdateData update, string Digest)
         {
             string metadataCabTemp = Path.GetTempFileName();
             await DownloadFileFromDigestAsync(update, Digest, metadataCabTemp);
+            if (!File.Exists(metadataCabTemp) || new FileInfo(metadataCabTemp).Length == 0)
+                return null;
             return metadataCabTemp;
         }
 
         public static async Task DownloadFileFromDigestAsync(this UpdateData update, string Digest, string Destination)
         {
             (string editionPackUrl, string EsrpDecryptionInformationStr) = await update.GetFileUrl(Digest);
+            if (string.IsNullOrEmpty(editionPackUrl))
+            {
+                // TODO: notify of result
+                return;
+            }
 
             // Download the file
-            WebClient client = new WebClient();
             await client.DownloadFileTaskAsync(new Uri(editionPackUrl), Destination);
 
             if (!string.IsNullOrEmpty(EsrpDecryptionInformationStr))
@@ -63,8 +71,12 @@ namespace WindowsUpdateLib
                 }
 
                 (string deploymentUrl, string EsrpDecryptionInformationStr) = await FE3Handler.GetFileUrl(update, deploymentCab.Digest, null, update.CTAC);
+                if (string.IsNullOrEmpty(deploymentUrl))
+                {
+                    return null;
+                }
+
                 string deploymentCabTemp = Path.GetTempFileName();
-                WebClient client = new WebClient();
                 await client.DownloadFileTaskAsync(new Uri(deploymentUrl), deploymentCabTemp);
 
                 if (!string.IsNullOrEmpty(EsrpDecryptionInformationStr))
@@ -174,7 +186,7 @@ namespace WindowsUpdateLib
         private static async Task<HashSet<CompDBXmlClass.CompDB>> GetCompDBs(UpdateData update)
         {
             HashSet<CompDBXmlClass.CompDB> neutralCompDB = new HashSet<CompDBXmlClass.CompDB>();
-            List<CExtendedUpdateInfoXml.File> metadataCabs = new List<CExtendedUpdateInfoXml.File>();
+            HashSet<CExtendedUpdateInfoXml.File> metadataCabs = new HashSet<CExtendedUpdateInfoXml.File>();
 
             foreach (CExtendedUpdateInfoXml.File file in update.Xml.Files.File)
             {
@@ -189,17 +201,21 @@ namespace WindowsUpdateLib
                 return neutralCompDB;
             }
 
-            if (metadataCabs.Count == 1 && metadataCabs[0].FileName.Contains("metadata", StringComparison.InvariantCultureIgnoreCase))
+            if (metadataCabs.Count == 1 && metadataCabs.First().FileName.Contains("metadata", StringComparison.InvariantCultureIgnoreCase))
             {
                 // This is the new metadata format where all metadata is in a single cab
 
                 if (string.IsNullOrEmpty(update.CachedMetadata))
                 {
-                    (string metadataUrl, string EsrpDecryptionInformationStr) = await FE3Handler.GetFileUrl(update, metadataCabs[0].Digest, null, update.CTAC);
+                    (string metadataUrl, string EsrpDecryptionInformationStr) = await FE3Handler.GetFileUrl(update, metadataCabs.First().Digest, null, update.CTAC);
+                    if (string.IsNullOrEmpty(metadataUrl))
+                    {
+                        return neutralCompDB;
+                    }
+
                     string metadataCabTemp = Path.GetTempFileName();
 
                     // Download the file
-                    WebClient client = new WebClient();
                     await client.DownloadFileTaskAsync(new Uri(metadataUrl), metadataCabTemp);
 
                     if (!string.IsNullOrEmpty(EsrpDecryptionInformationStr))
@@ -234,10 +250,14 @@ namespace WindowsUpdateLib
                 foreach (CExtendedUpdateInfoXml.File file in metadataCabs)
                 {
                     (string metadataUrl, string EsrpDecryptionInformationStr) = await FE3Handler.GetFileUrl(update, file.Digest, null, update.CTAC);
+                    if (string.IsNullOrEmpty(metadataUrl))
+                    {
+                        continue;
+                    }
+
                     string metadataCabTemp = Path.GetTempFileName();
 
                     // Download the file
-                    WebClient client = new WebClient();
                     await client.DownloadFileTaskAsync(new Uri(metadataUrl), metadataCabTemp);
 
                     if (!string.IsNullOrEmpty(EsrpDecryptionInformationStr))
