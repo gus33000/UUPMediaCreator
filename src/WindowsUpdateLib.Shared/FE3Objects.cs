@@ -1309,7 +1309,7 @@ namespace WindowsUpdateLib
 
     public class CAppxMetadataJSON
     {
-        public partial class AppxMetadata
+        public partial class AppxMetadataJson
         {
             [JsonPropertyName("blob.version")]
             public long BlobVersion { get; set; }

@@ -1,4 +1,5 @@
-﻿using Flurl.Http;
+﻿using CompDB;
+using Flurl.Http;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -20,7 +21,7 @@ namespace WindowsUpdateLib
 
         #region Data manipulation
 
-        public static async Task<string> PostToWindowsUpdateAsync(string method, string message, bool secured)
+        private static async Task<string> PostToWindowsUpdateAsync(string method, string message, bool secured)
         {
             string _endpoint = Constants.Endpoint;
             if (secured)
@@ -141,7 +142,7 @@ namespace WindowsUpdateLib
             }
         }
 
-        public static CExtendedUpdateInfoXml.Xml DeserializeInfoXML(string xml)
+        private static CExtendedUpdateInfoXml.Xml DeserializeInfoXML(string xml)
         {
             if (xml == null) return null;
 
@@ -155,16 +156,16 @@ namespace WindowsUpdateLib
             }
         }
 
-        public static CAppxMetadataJSON.AppxMetadata DeserializeAppxJSON(string json)
+        private static CAppxMetadataJSON.AppxMetadataJson DeserializeAppxJSON(string json)
         {
-            return JsonSerializer.Deserialize<CAppxMetadataJSON.AppxMetadata>(json);
+            return JsonSerializer.Deserialize<CAppxMetadataJSON.AppxMetadataJson>(json);
         }
 
         #endregion Data manipulation
 
         #region WU functions
 
-        public static async Task<(CGetCookieResponse.GetCookieResponse, string)> GetCookie()
+        private static async Task<(CGetCookieResponse.GetCookieResponse, string)> GetCookie()
         {
             CSOAPCommon.Envelope envelope = GetEnveloppe("GetCookie", null, false);
 
@@ -188,7 +189,7 @@ namespace WindowsUpdateLib
             return (renvelope.Body.GetCookieResponse, response);
         }
 
-        public static async Task<(CGetExtendedUpdateInfoResponse.GetExtendedUpdateInfoResponse, string)> GetExtendedUpdateInfo(
+        private static async Task<(CGetExtendedUpdateInfoResponse.GetExtendedUpdateInfoResponse, string)> GetExtendedUpdateInfo(
             CSOAPCommon.Cookie cookie,
             string token,
             string[] revisionId,
@@ -233,7 +234,7 @@ namespace WindowsUpdateLib
             return (renvelope.Body.GetExtendedUpdateInfoResponse, response);
         }
 
-        public static async Task<(CGetExtendedUpdateInfo2Response.GetExtendedUpdateInfo2Response, string)> GetExtendedUpdateInfo2(
+        private static async Task<(CGetExtendedUpdateInfo2Response.GetExtendedUpdateInfo2Response, string)> GetExtendedUpdateInfo2(
             string token,
             string UpdateID,
             string RevisionNumber,
@@ -275,7 +276,7 @@ namespace WindowsUpdateLib
             return (renvelope.Body.GetExtendedUpdateInfo2Response, response);
         }
 
-        public static async Task<(CSyncUpdatesResponse.SyncUpdatesResponse, string)> SyncUpdates(
+        private static async Task<(CSyncUpdatesResponse.SyncUpdatesResponse, string)> SyncUpdates(
             CSOAPCommon.Cookie cookie,
             string token,
             IEnumerable<string> InstalledNonLeafUpdateIDs,
@@ -362,7 +363,7 @@ namespace WindowsUpdateLib
 
         #region Application specific functions
 
-        public static async Task<IEnumerable<UpdateData>> GetUpdates(string categoryId, CTAC ctac, string token, string filter = "Application") // Or ProductRelease
+        public static async Task<IEnumerable<UpdateData>> GetUpdates(string categoryId, CTAC ctac, string token, FileExchangeV3UpdateFilter filter = FileExchangeV3UpdateFilter.Application) // Or ProductRelease
         {
             (CGetCookieResponse.GetCookieResponse cookie, string cookieresp) = await GetCookie();
 
@@ -455,7 +456,7 @@ namespace WindowsUpdateLib
             {
                 if (updateData.Xml.ExtendedProperties != null)
                 {
-                    if (updateData.Xml.ExtendedProperties.ContentType == filter && updateData.Xml.Files != null)
+                    if (updateData.Xml.ExtendedProperties.ContentType == filter.ToString() && updateData.Xml.Files != null)
                     {
                         updateData.CTAC = ctac;
                         relevantUpdateDatas.Add(updateData);
@@ -470,9 +471,9 @@ namespace WindowsUpdateLib
 
         #region File url specific functions
 
-        public static async Task<(string,string)> GetFileUrl(UpdateData updateData, string fileDigest, string token, CTAC ctac)
+        public static async Task<FileExchangeV3FileDownloadInformation> GetFileUrl(UpdateData updateData, string fileDigest, string token = null)
         {
-            var result = await GetExtendedUpdateInfo2(token, updateData.Xml.UpdateIdentity.UpdateID, updateData.Xml.UpdateIdentity.RevisionNumber, ctac);
+            var result = await GetExtendedUpdateInfo2(token, updateData.Xml.UpdateIdentity.UpdateID, updateData.Xml.UpdateIdentity.RevisionNumber, updateData.CTAC);
 
             if (updateData.Xml?.Files?.File?.FirstOrDefault(x => x.AdditionalDigest?.Text == fileDigest) is CExtendedUpdateInfoXml.File file)
             {
@@ -485,23 +486,23 @@ namespace WindowsUpdateLib
                 {
                     if (fileLocation.FileDigest == fileDigest)
                     {
-                        return (fileLocation.Url, fileLocation.EsrpDecryptionInformation);
+                        return new FileExchangeV3FileDownloadInformation(fileLocation);
                     }
                 }
             }
 
-            return ("","");
+            return null;
         }
 
-        public static async Task<CGetExtendedUpdateInfo2Response.FileLocation[]> GetFileUrls(UpdateData updateData, string token, CTAC ctac)
+        public static async Task<IEnumerable<FileExchangeV3FileDownloadInformation>> GetFileUrls(UpdateData updateData, string token = null)
         {
-            var result = await GetExtendedUpdateInfo2(token, updateData.Xml.UpdateIdentity.UpdateID, updateData.Xml.UpdateIdentity.RevisionNumber, ctac);
+            var result = await GetExtendedUpdateInfo2(token, updateData.Xml.UpdateIdentity.UpdateID, updateData.Xml.UpdateIdentity.RevisionNumber, updateData.CTAC);
 
             updateData.GEI2Response = result.Item2;
 
             if (result.Item1.GetExtendedUpdateInfo2Result.FileLocations != null)
             {
-                return result.Item1.GetExtendedUpdateInfo2Result.FileLocations.FileLocation;
+                return result.Item1.GetExtendedUpdateInfo2Result.FileLocations.FileLocation.Select(x => new FileExchangeV3FileDownloadInformation(x));
             }
 
             return null;
@@ -510,15 +511,107 @@ namespace WindowsUpdateLib
         #endregion File url specific functions
     }
 
+    public enum FileExchangeV3UpdateFilter
+    {
+        ProductRelease,
+        Application
+    }
+
+    public class FileExchangeV3FileDownloadInformation
+    {
+        public string DownloadUrl { get; private set; }
+
+        public bool IsEncrypted
+        {
+            get
+            {
+                return EsrpDecryptionInformation != null;
+            }
+        }
+
+        public DateTime ExpirationDate
+        {
+            get
+            {
+                DateTime dateTime = DateTime.MaxValue;
+                try
+                {
+                    long value = long.Parse(DownloadUrl.Split("P1=")[1].Split("&")[0]);
+                    dateTime = DateTimeOffset.FromUnixTimeSeconds(value).ToLocalTime().DateTime;
+                }
+                catch { }
+                return dateTime;
+            }
+        }
+
+        public bool IsDownloadable
+        {
+            get
+            {
+                return ExpirationDate > DateTime.Now;
+            }
+        }
+
+        public TimeSpan TimeLeft
+        {
+            get
+            {
+                return IsDownloadable ? DateTime.Now - ExpirationDate : new TimeSpan(0);
+            }
+        }
+
+        private EsrpDecryptionInformation EsrpDecryptionInformation { get; set; } = null;
+
+        public string Digest { get; private set; }
+
+        internal FileExchangeV3FileDownloadInformation(CGetExtendedUpdateInfo2Response.FileLocation fileLocation)
+        {
+            DownloadUrl = fileLocation.Url;
+            if (!string.IsNullOrEmpty(fileLocation.EsrpDecryptionInformation))
+            {
+                EsrpDecryptionInformation = EsrpDecryptionInformation.DeserializeFromJson(fileLocation.EsrpDecryptionInformation);
+            }
+            Digest = fileLocation.FileDigest;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is FileExchangeV3FileDownloadInformation info)
+                return info.Digest == Digest;
+            return false;
+        }
+
+        public override int GetHashCode()
+        {
+            return Digest.GetHashCode();
+        }
+
+        public bool Decrypt(string InputFile, string OutputFile)
+        {
+            if (!IsEncrypted)
+                return false;
+
+            try
+            {
+                EsrpDecryptor.Decrypt(InputFile, OutputFile, Convert.FromBase64String(EsrpDecryptionInformation.KeyData));
+                return true;
+            }
+            catch { }
+
+            return false;
+        }
+    }
+
     public class UpdateData
     {
         public CSyncUpdatesResponse.UpdateInfo UpdateInfo;
         public CSOAPCommon.Update Update;
         public CExtendedUpdateInfoXml.Xml Xml;
-        public CAppxMetadataJSON.AppxMetadata AppxMetadata;
+        public CAppxMetadataJSON.AppxMetadataJson AppxMetadata;
         public CTAC CTAC;
         public string CachedMetadata;
         public string SyncUpdatesResponse;
         public string GEI2Response;
+        public HashSet<CompDBXmlClass.CompDB> CompDBs;
     }
 }

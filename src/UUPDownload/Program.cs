@@ -1,4 +1,5 @@
 ﻿using CommandLine;
+using Common;
 using CompDB;
 using Newtonsoft.Json;
 using System;
@@ -7,17 +8,47 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Threading;
 using System.Threading.Tasks;
+using System.Xml;
+using System.Xml.Serialization;
 using UUPDownload.Downloading;
 using WindowsUpdateLib;
 
 namespace UUPDownload
 {
+    public class UpdateScan
+    {
+        public UpdateData UpdateData { get; set; }
+        public BuildTargets.EditionPlanningWithLanguage[] Targets { get; set; }
+        public MachineType Architecture { get; set; }
+        public string BuildString { get; set; }
+        public string Title { get; set; }
+        public string Description { get; set; }
+
+        public string Serialize()
+        {
+            var xmlSerializer = new XmlSerializer(typeof(UpdateScan));
+
+            XmlSerializerNamespaces ns = new XmlSerializerNamespaces();
+            ns.Add("s", "http://www.w3.org/2003/05/soap-envelope");
+            ns.Add("a", "http://www.w3.org/2005/08/addressing");
+
+            using (var stringWriter = new StringWriter())
+            {
+                using (var xmlWriter = XmlWriter.Create(stringWriter, new XmlWriterSettings { Indent = true }))
+                {
+                    xmlSerializer.Serialize(xmlWriter, this, ns);
+                    return stringWriter.ToString().Replace("<?xml version=\"1.0\" encoding=\"utf-16\"?>\r\n", "");
+                }
+            }
+        }
+    }
+
     internal class Program
     {
         private static void Main(string[] args)
         {
+            ServicePointManager.DefaultConnectionLimit = int.MaxValue;
             Parser.Default.ParseArguments<DownloadRequestOptions, DownloadReplayOptions>(args).MapResult(
               (DownloadRequestOptions opts) =>
               {
@@ -74,51 +105,90 @@ namespace UUPDownload
             Logging.Log("Checking for updates...");
 
             CTAC ctac = new CTAC(o.ReportingSku, o.ReportingVersion, o.MachineType, o.FlightRing, o.FlightingBranchName, o.BranchReadinessLevel, o.CurrentBranch, o.SyncCurrentVersionOnly);
-            IEnumerable<UpdateData> data = await FE3Handler.GetUpdates(null, ctac, null, "ProductRelease");
+            IEnumerable<UpdateData> data = await FE3Handler.GetUpdates(null, ctac, null, FileExchangeV3UpdateFilter.ProductRelease);
             data = data.Select(x => UpdateUtils.TrimDeltasFromUpdateData(x));
 
             foreach (UpdateData update in data)
             {
                 await ProcessUpdateAsync(update, o.OutputFolder, o.MachineType, o.Language, o.Edition, true);
+                //await BuildUpdateXml(update, o.MachineType);
             }
             Logging.Log("Completed.");
             if (Debugger.IsAttached)
                 Console.ReadLine();
         }
 
-        private static DateTime GetFileExpirationDateTime(CGetExtendedUpdateInfo2Response.FileLocation fileLocation)
+        private static async Task BuildUpdateXml(UpdateData update, MachineType MachineType)
         {
-            DateTime dateTime = DateTime.MaxValue;
-            try
+            string buildstr = "";
+            IEnumerable<string> languages = null;
+
+            var compDBs = await update.GetCompDBsAsync();
+
+            await Task.WhenAll(
+                Task.Run(async () => buildstr = await update.GetBuildStringAsync()),
+                Task.Run(async () => languages = await update.GetAvailableLanguagesAsync()));
+
+            CompDBXmlClass.Package editionPackPkg = compDBs.GetEditionPackFromCompDBs();
+            string editionPkg = await update.DownloadFileFromDigestAsync(editionPackPkg.Payload.PayloadItem.PayloadHash);
+            var plans = await Task.WhenAll(languages.Select(x => update.GetTargetedPlanAsync(x, editionPkg)));
+
+            UpdateScan scan = new UpdateScan()
             {
-                long value = long.Parse(fileLocation.Url.Split("P1=")[1].Split("&")[0]);
-                dateTime = DateTimeOffset.FromUnixTimeSeconds(value).ToLocalTime().DateTime;
-            }
-            catch { }
-            return dateTime;
+                Architecture = MachineType,
+                BuildString = buildstr,
+                Description = update.Xml.LocalizedProperties.Description,
+                Title = update.Xml.LocalizedProperties.Title,
+                Targets = plans,
+                UpdateData = update
+            };
+
+            File.WriteAllText("updatetest.xml", scan.Serialize());
         }
 
         private static async Task ProcessUpdateAsync(UpdateData update, string pOutputFolder, MachineType MachineType, string Language = "", string Edition = "", bool WriteMetadata = true)
         {
+            HashSet<CompDBXmlClass.PayloadItem> payloadItems = new HashSet<CompDBXmlClass.PayloadItem>();
+            HashSet<CompDBXmlClass.PayloadItem> bannedPayloadItems = new HashSet<CompDBXmlClass.PayloadItem>();
+            HashSet<CompDBXmlClass.CompDB> specificCompDBs = new HashSet<CompDBXmlClass.CompDB>();
+
+            string buildstr = "";
+            IEnumerable<string> languages = null;
+
+            int returnCode = 0;
+            IEnumerable<CExtendedUpdateInfoXml.File> filesToDownload = null;
+
             bool getSpecific = !string.IsNullOrEmpty(Language) && !string.IsNullOrEmpty(Edition);
             bool getSpecificLanguage = !string.IsNullOrEmpty(Language) && string.IsNullOrEmpty(Edition);
 
-            Logging.Log("Title: " + update.Xml.LocalizedProperties.Title);
-            Logging.Log("Description: " + update.Xml.LocalizedProperties.Description);
-            string buildstr = await update.GetBuildStringAsync();
-            Logging.Log("Build String: " + buildstr);
-            Logging.Log("Languages: " + string.Join(", ", (await update.GetAvailableLanguagesAsync())));
+            Logging.Log("Gathering update metadata...");
 
-            HashSet<CompDBXmlClass.PayloadItem> payloadItems = new HashSet<CompDBXmlClass.PayloadItem>();
-            HashSet<CompDBXmlClass.PayloadItem> bannedPayloadItems = new HashSet<CompDBXmlClass.PayloadItem>();
-            string name = $"{buildstr.Replace(" ", $".{MachineType.ToString().ToLower()}fre.").Replace("(", "").Replace(")", "")}_{update.Xml.UpdateIdentity.UpdateID}.{update.Xml.UpdateIdentity.RevisionNumber}";
-            string OutputFolder = Path.Combine(pOutputFolder, name);
-
-            Logging.Log("Getting CompDBs...");
             var compDBs = await update.GetCompDBsAsync();
 
+            await Task.WhenAll(
+                Task.Run(async () => buildstr = await update.GetBuildStringAsync()),
+                Task.Run(async () => languages = await update.GetAvailableLanguagesAsync()));
+
+            CompDBXmlClass.Package editionPackPkg = compDBs.GetEditionPackFromCompDBs();
+            string editionPkg = await update.DownloadFileFromDigestAsync(editionPackPkg.Payload.PayloadItem.PayloadHash);
+            var plans = await Task.WhenAll(languages.Select(x => update.GetTargetedPlanAsync(x, editionPkg)));
+
+            foreach (var plan in plans)
+            {
+                Logging.Log("");
+                Logging.Log("Editions available for language: " + plan.LanguageCode);
+                plan.EditionTargets.PrintAvailablePlan();
+            }
+
+            string name = $"{buildstr.Replace(" ", $".{MachineType.ToString().ToLower()}fre.").Replace("(", "").Replace(")", "")}_{update.Xml.UpdateIdentity.UpdateID.Split("-")[^1]}";
+            string OutputFolder = Path.Combine(pOutputFolder, name);
+
+            Logging.Log("Title: " + update.Xml.LocalizedProperties.Title);
+            Logging.Log("Description: " + update.Xml.LocalizedProperties.Description);
+            Logging.Log("Build String: " + buildstr);
+            Logging.Log("Languages: " + string.Join(", ", languages));
+
             Logging.Log("Parsing CompDBs...");
-            List<CompDBXmlClass.CompDB> specificCompDBs = new List<CompDBXmlClass.CompDB>();
 
             if (compDBs != null)
             {
@@ -174,14 +244,10 @@ namespace UUPDownload
                 }
             }
 
-            int returnCode = 0;
-            IEnumerable<CExtendedUpdateInfoXml.File> filesToDownload = null;
-            ServicePointManager.DefaultConnectionLimit = int.MaxValue;
-
             do
             {
                 Logging.Log("Getting file urls...");
-                CGetExtendedUpdateInfo2Response.FileLocation[] fileUrls = await FE3Handler.GetFileUrls(update, null, update.CTAC);
+                IEnumerable<FileExchangeV3FileDownloadInformation> fileUrls = await FE3Handler.GetFileUrls(update);
 
                 if (fileUrls == null)
                 {
@@ -197,7 +263,7 @@ namespace UUPDownload
                         string filename = Path.Combine(OutputFolder, update.Xml.LocalizedProperties.Title + " (" + MachineType.ToString() + ").uupmcreplay");
                         if (WriteMetadata && !File.Exists(filename))
                         {
-                            File.WriteAllText(filename, JsonConvert.SerializeObject(update, Formatting.Indented));
+                            File.WriteAllText(filename, JsonConvert.SerializeObject(update, Newtonsoft.Json.Formatting.Indented));
                         }
                     }
                     catch (Exception ex)
@@ -209,36 +275,27 @@ namespace UUPDownload
 
                 if (filesToDownload != null)
                 {
-                    filesToDownload = filesToDownload.Where(x => UpdateUtils.ShouldFileGetDownloaded(x, OutputFolder, payloadItems));
+                    filesToDownload = filesToDownload.AsParallel().Where(x => UpdateUtils.ShouldFileGetDownloaded(x, OutputFolder, payloadItems));
                 }
                 else
                 {
-                    filesToDownload = update.Xml.Files.File.Where(x => !IsFileBanned(x, bannedPayloadItems)).Where(x => UpdateUtils.ShouldFileGetDownloaded(x, OutputFolder, payloadItems)).OrderBy(x => ulong.Parse(x.Size));
+                    filesToDownload = update.Xml.Files.File.AsParallel().Where(x => !IsFileBanned(x, bannedPayloadItems) && UpdateUtils.ShouldFileGetDownloaded(x, OutputFolder, payloadItems)).OrderBy(x => ulong.Parse(x.Size));
                 }
 
                 returnCode = 0;
 
-                HashSet<Task<int>> tasks = new HashSet<Task<int>>();
-                IEnumerable<(CExtendedUpdateInfoXml.File, CGetExtendedUpdateInfo2Response.FileLocation)> boundList = filesToDownload.Select(x => (x, fileUrls.First(y => y.FileDigest == x.Digest))).OrderBy(x => GetFileExpirationDateTime(x.Item2));
+                IEnumerable<(CExtendedUpdateInfoXml.File, FileExchangeV3FileDownloadInformation)> boundList = filesToDownload.AsParallel().Select(x => (x, fileUrls.First(y => y.Digest == x.Digest))).OrderBy(x => x.Item2.ExpirationDate);
 
-                int maxConcurrency = 20;
-                using (SemaphoreSlim concurrencySemaphore = new SemaphoreSlim(maxConcurrency))
+                foreach ((CExtendedUpdateInfoXml.File, FileExchangeV3FileDownloadInformation) boundFile in boundList)
                 {
-                    ServicePointManager.DefaultConnectionLimit = int.MaxValue;
-
-                    foreach ((CExtendedUpdateInfoXml.File, CGetExtendedUpdateInfo2Response.FileLocation) boundFile in boundList)
-                    {
-                        concurrencySemaphore.Wait();
-                        tasks.Add(DownloadHelper.GetDownloadFileTask(OutputFolder, UpdateUtils.GetFilenameForCEUIFile(boundFile.Item1, payloadItems), boundFile.Item2.Url, boundFile.Item2.EsrpDecryptionInformation, concurrencySemaphore));
-                    }
-
-                    int[] res = await Task.WhenAll(tasks.ToArray());
-                    if (res.Any(x => x != 0))
-                    {
+                    if (await DownloadHelper.GetDownloadFileTask(OutputFolder, UpdateUtils.GetFilenameForCEUIFile(boundFile.Item1, payloadItems), boundFile.Item2) != 0)
                         returnCode = -1;
-                        Logging.Log("Previous download did not fully succeed, resuming past downloads...");
-                        continue;
-                    }
+                }
+
+                if (returnCode != 0)
+                {
+                    Logging.Log("Previous download did not fully succeed, resuming past downloads...");
+                    continue;
                 }
             }
             while (returnCode != 0);

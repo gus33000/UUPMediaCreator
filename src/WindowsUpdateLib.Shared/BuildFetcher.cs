@@ -91,7 +91,7 @@ namespace WindowsUpdateLib
                 availableBuilds.Add(availableBuild);
             }
 
-            return availableBuilds.ToArray();
+            return availableBuilds.OrderBy(x => x.Title).ToArray();
         }
 
         public static async Task<AvailableBuildLanguages[]> GetAvailableBuildLanguagesAsync(UpdateData UpdateData)
@@ -133,8 +133,8 @@ namespace WindowsUpdateLib
 
                 if (string.IsNullOrEmpty(UpdateData.CachedMetadata))
                 {
-                    (string metadataUrl, string EsrpDecryptionInformationStr) = await FE3Handler.GetFileUrl(UpdateData, metadataCabs[0].Digest, null, UpdateData.CTAC);
-                    if (string.IsNullOrEmpty(metadataUrl))
+                    var fileDownloadInfo = await FE3Handler.GetFileUrl(UpdateData, metadataCabs[0].Digest);
+                    if (fileDownloadInfo == null)
                     {
                         goto exit;
                     }
@@ -143,12 +143,12 @@ namespace WindowsUpdateLib
 
                     // Download the file
                     WebClient client = new WebClient();
-                    await client.DownloadFileTaskAsync(new Uri(metadataUrl), metadataCabTemp);
+                    await client.DownloadFileTaskAsync(new Uri(fileDownloadInfo.DownloadUrl), metadataCabTemp);
 
-                    if (!string.IsNullOrEmpty(EsrpDecryptionInformationStr))
+                    if (fileDownloadInfo.IsEncrypted)
                     {
-                        EsrpDecryptionInformation esrp = EsrpDecryptionInformation.DeserializeFromJson(EsrpDecryptionInformationStr);
-                        EsrpDecryptor.Decrypt(metadataCabTemp, metadataCabTemp + ".decrypted", Convert.FromBase64String(esrp.KeyData));
+                        if (!fileDownloadInfo.Decrypt(metadataCabTemp, metadataCabTemp + ".decrypted"))
+                            goto exit;
                         metadataCabTemp += ".decrypted";
                     }
 
@@ -294,7 +294,7 @@ namespace WindowsUpdateLib
             List<Task<IEnumerable<UpdateData>>> tasks = new List<Task<IEnumerable<UpdateData>>>();
             foreach (var ctac in ctacs)
             {
-                tasks.Add(FE3Handler.GetUpdates(null, ctac, null, "ProductRelease"));
+                tasks.Add(FE3Handler.GetUpdates(null, ctac, null, FileExchangeV3UpdateFilter.ProductRelease));
             }
 
             IEnumerable<UpdateData>[] datas = await Task.WhenAll(tasks);

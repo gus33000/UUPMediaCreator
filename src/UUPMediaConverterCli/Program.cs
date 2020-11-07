@@ -95,7 +95,7 @@ namespace UUPMediaConverterCli
                         Edition,
                         LanguageCode,
                         false,
-                        Common.CompressionType.XPRESS,
+                        Common.CompressionType.LZX,
                         callback);
                 }
                 else
@@ -105,7 +105,7 @@ namespace UUPMediaConverterCli
                            UUPPath,
                            LanguageCode,
                            false,
-                           Common.CompressionType.XPRESS,
+                           Common.CompressionType.LZX,
                            callback);
                 }
             }

@@ -25,35 +25,35 @@ namespace WindowsUpdateLib
 
         public static async Task DownloadFileFromDigestAsync(this UpdateData update, string Digest, string Destination)
         {
-            (string editionPackUrl, string EsrpDecryptionInformationStr) = await update.GetFileUrl(Digest);
-            if (string.IsNullOrEmpty(editionPackUrl))
+            FileExchangeV3FileDownloadInformation fileDownloadInfo = await update.GetFileUrl(Digest);
+            if (fileDownloadInfo == null)
             {
                 // TODO: notify of result
                 return;
             }
 
             // Download the file
-            await client.DownloadFileTaskAsync(new Uri(editionPackUrl), Destination);
+            await client.DownloadFileTaskAsync(new Uri(fileDownloadInfo.DownloadUrl), Destination);
 
-            if (!string.IsNullOrEmpty(EsrpDecryptionInformationStr))
+            if (fileDownloadInfo.IsEncrypted)
             {
-                EsrpDecryptionInformation esrp = EsrpDecryptionInformation.DeserializeFromJson(EsrpDecryptionInformationStr);
-                EsrpDecryptor.Decrypt(Destination, Destination + ".decrypted", Convert.FromBase64String(esrp.KeyData));
+                if (!fileDownloadInfo.Decrypt(Destination, Destination + ".decrypted"))
+                    return;
+
                 File.Delete(Destination);
                 File.Move(Destination + ".decrypted", Destination);
             }
         }
 
-        public static async Task<(string,string)> GetFileUrl(this UpdateData update, string Digest)
+        public static async Task<FileExchangeV3FileDownloadInformation> GetFileUrl(this UpdateData update, string Digest)
         {
-            return await FE3Handler.GetFileUrl(update, Digest, null, update.CTAC);
+            return await FE3Handler.GetFileUrl(update, Digest);
         }
 
         public async static Task<string> GetBuildStringAsync(this UpdateData update)
         {
             try
             {
-
                 CExtendedUpdateInfoXml.File deploymentCab = null;
 
                 foreach (var file in update.Xml.Files.File)
@@ -70,19 +70,19 @@ namespace WindowsUpdateLib
                     return null;
                 }
 
-                (string deploymentUrl, string EsrpDecryptionInformationStr) = await FE3Handler.GetFileUrl(update, deploymentCab.Digest, null, update.CTAC);
-                if (string.IsNullOrEmpty(deploymentUrl))
+                var fileDownloadInfo = await FE3Handler.GetFileUrl(update, deploymentCab.Digest);
+                if (fileDownloadInfo == null)
                 {
                     return null;
                 }
 
                 string deploymentCabTemp = Path.GetTempFileName();
-                await client.DownloadFileTaskAsync(new Uri(deploymentUrl), deploymentCabTemp);
+                await client.DownloadFileTaskAsync(new Uri(fileDownloadInfo.DownloadUrl), deploymentCabTemp);
 
-                if (!string.IsNullOrEmpty(EsrpDecryptionInformationStr))
+                if (fileDownloadInfo.IsEncrypted)
                 {
-                    EsrpDecryptionInformation esrp = EsrpDecryptionInformation.DeserializeFromJson(EsrpDecryptionInformationStr);
-                    EsrpDecryptor.Decrypt(deploymentCabTemp, deploymentCabTemp + ".decrypted", Convert.FromBase64String(esrp.KeyData));
+                    if (!fileDownloadInfo.Decrypt(deploymentCabTemp, deploymentCabTemp + ".decrypted"))
+                        return null;
                     File.Delete(deploymentCabTemp);
                     File.Move(deploymentCabTemp + ".decrypted", deploymentCabTemp);
                 }
@@ -207,8 +207,8 @@ namespace WindowsUpdateLib
 
                 if (string.IsNullOrEmpty(update.CachedMetadata))
                 {
-                    (string metadataUrl, string EsrpDecryptionInformationStr) = await FE3Handler.GetFileUrl(update, metadataCabs.First().Digest, null, update.CTAC);
-                    if (string.IsNullOrEmpty(metadataUrl))
+                    var fileDownloadInfo = await FE3Handler.GetFileUrl(update, metadataCabs.First().Digest);
+                    if (fileDownloadInfo == null)
                     {
                         return neutralCompDB;
                     }
@@ -216,12 +216,12 @@ namespace WindowsUpdateLib
                     string metadataCabTemp = Path.GetTempFileName();
 
                     // Download the file
-                    await client.DownloadFileTaskAsync(new Uri(metadataUrl), metadataCabTemp);
+                    await client.DownloadFileTaskAsync(new Uri(fileDownloadInfo.DownloadUrl), metadataCabTemp);
 
-                    if (!string.IsNullOrEmpty(EsrpDecryptionInformationStr))
+                    if (fileDownloadInfo.IsEncrypted)
                     {
-                        EsrpDecryptionInformation esrp = EsrpDecryptionInformation.DeserializeFromJson(EsrpDecryptionInformationStr);
-                        EsrpDecryptor.Decrypt(metadataCabTemp, metadataCabTemp + ".decrypted", Convert.FromBase64String(esrp.KeyData));
+                        if (!fileDownloadInfo.Decrypt(metadataCabTemp, metadataCabTemp + ".decrypted"))
+                            return neutralCompDB;
                         metadataCabTemp += ".decrypted";
                     }
 
@@ -249,8 +249,8 @@ namespace WindowsUpdateLib
                 // This is the old format, each cab is a file in WU
                 foreach (CExtendedUpdateInfoXml.File file in metadataCabs)
                 {
-                    (string metadataUrl, string EsrpDecryptionInformationStr) = await FE3Handler.GetFileUrl(update, file.Digest, null, update.CTAC);
-                    if (string.IsNullOrEmpty(metadataUrl))
+                    var fileDownloadInfo = await FE3Handler.GetFileUrl(update, file.Digest);
+                    if (fileDownloadInfo == null)
                     {
                         continue;
                     }
@@ -258,12 +258,12 @@ namespace WindowsUpdateLib
                     string metadataCabTemp = Path.GetTempFileName();
 
                     // Download the file
-                    await client.DownloadFileTaskAsync(new Uri(metadataUrl), metadataCabTemp);
+                    await client.DownloadFileTaskAsync(new Uri(fileDownloadInfo.DownloadUrl), metadataCabTemp);
 
-                    if (!string.IsNullOrEmpty(EsrpDecryptionInformationStr))
+                    if (fileDownloadInfo.IsEncrypted)
                     {
-                        EsrpDecryptionInformation esrp = EsrpDecryptionInformation.DeserializeFromJson(EsrpDecryptionInformationStr);
-                        EsrpDecryptor.Decrypt(metadataCabTemp, metadataCabTemp + ".decrypted", Convert.FromBase64String(esrp.KeyData));
+                        if (!fileDownloadInfo.Decrypt(metadataCabTemp, metadataCabTemp + ".decrypted"))
+                            continue;
                         metadataCabTemp += ".decrypted";
                     }
 
@@ -285,7 +285,9 @@ namespace WindowsUpdateLib
 
         public static async Task<HashSet<CompDBXmlClass.CompDB>> GetCompDBsAsync(this UpdateData update)
         {
-            return await GetCompDBs(update);
+            if (update.CompDBs == null)
+                update.CompDBs = await GetCompDBs(update);
+            return update.CompDBs;
         }
     }
 }
