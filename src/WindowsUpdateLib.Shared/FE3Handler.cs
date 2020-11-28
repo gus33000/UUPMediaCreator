@@ -234,7 +234,7 @@ namespace WindowsUpdateLib
             return (renvelope.Body.GetExtendedUpdateInfoResponse, response);
         }
 
-        private static async Task<(CGetExtendedUpdateInfo2Response.GetExtendedUpdateInfo2Response, string)> GetExtendedUpdateInfo2(
+        public static async Task<(CGetExtendedUpdateInfo2Response.GetExtendedUpdateInfo2Response, string)> GetExtendedUpdateInfo2(
             string token,
             string UpdateID,
             string RevisionNumber,

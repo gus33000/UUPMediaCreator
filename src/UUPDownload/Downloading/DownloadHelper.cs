@@ -15,7 +15,7 @@ namespace UUPDownload.Downloading
             MaxTryAgainOnFailover = 10,
             ParallelDownload = true,
             ChunkCount = 8,
-            Timeout = 20000,
+            Timeout = 5000,
             OnTheFlyDownload = false,
             BufferBlockSize = 10240,
             MaximumBytesPerSecond = 0,

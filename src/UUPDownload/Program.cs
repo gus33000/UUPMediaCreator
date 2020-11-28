@@ -49,6 +49,7 @@ namespace UUPDownload
         private static void Main(string[] args)
         {
             ServicePointManager.DefaultConnectionLimit = int.MaxValue;
+
             Parser.Default.ParseArguments<DownloadRequestOptions, DownloadReplayOptions>(args).MapResult(
               (DownloadRequestOptions opts) =>
               {
@@ -170,17 +171,20 @@ namespace UUPDownload
                 Task.Run(async () => languages = await update.GetAvailableLanguagesAsync()));
 
             CompDBXmlClass.Package editionPackPkg = compDBs.GetEditionPackFromCompDBs();
-            string editionPkg = await update.DownloadFileFromDigestAsync(editionPackPkg.Payload.PayloadItem.PayloadHash);
-            var plans = await Task.WhenAll(languages.Select(x => update.GetTargetedPlanAsync(x, editionPkg)));
-
-            foreach (var plan in plans)
+            if (editionPackPkg != null)
             {
-                Logging.Log("");
-                Logging.Log("Editions available for language: " + plan.LanguageCode);
-                plan.EditionTargets.PrintAvailablePlan();
+                string editionPkg = await update.DownloadFileFromDigestAsync(editionPackPkg.Payload.PayloadItem.PayloadHash);
+                var plans = await Task.WhenAll(languages.Select(x => update.GetTargetedPlanAsync(x, editionPkg)));
+
+                foreach (var plan in plans)
+                {
+                    Logging.Log("");
+                    Logging.Log("Editions available for language: " + plan.LanguageCode);
+                    plan.EditionTargets.PrintAvailablePlan();
+                }
             }
 
-            string name = $"{buildstr.Replace(" ", $".{MachineType.ToString().ToLower()}fre.").Replace("(", "").Replace(")", "")}_{update.Xml.UpdateIdentity.UpdateID.Split("-")[^1]}";
+            string name = $"{buildstr.Replace(" ", ".").Replace("(", "").Replace(")", "")}_{MachineType.ToString().ToLower()}fre_{update.Xml.UpdateIdentity.UpdateID.Split("-")[^1]}";
             string OutputFolder = Path.Combine(pOutputFolder, name);
 
             Logging.Log("Title: " + update.Xml.LocalizedProperties.Title);

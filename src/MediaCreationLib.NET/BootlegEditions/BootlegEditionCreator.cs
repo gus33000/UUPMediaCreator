@@ -289,7 +289,7 @@ namespace MediaCreationLib.BootlegEditions
             }
 
             bool HasEditionPack = Directory.EnumerateFiles(UUPPath, "*.esd", SearchOption.AllDirectories).Any(x =>
-                Path.GetFileName(x).Equals($"microsoft-windows-editionpack-{EditionID}-package.esd", StringComparison.InvariantCulture)
+                Path.GetFileName(x).Equals($"microsoft-windows-editionpack-{EditionID}-package.esd", StringComparison.InvariantCultureIgnoreCase)
             );
             progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, "Has edition pack: " + HasEditionPack);
 

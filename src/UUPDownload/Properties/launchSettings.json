@@ -2,7 +2,7 @@
   "profiles": {
     "UUPDownload": {
       "commandName": "Project",
-      "commandLineArgs": "-s Professional -v 10.0.20152.1000 -t amd64 -r External -b Dev -l en-us -c rs_prerelease"
+      "commandLineArgs": "-o dtccore -s DatacenterServerCore -v 10.0.17763.1217 -t amd64 -r Retail -b \"\" -a CB -c rs5_release -y"
     }
   }
 }
