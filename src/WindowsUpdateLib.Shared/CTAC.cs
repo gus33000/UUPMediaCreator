@@ -403,11 +403,11 @@ namespace WindowsUpdateLib
             CallerAttributes = "E:Interactive=1&IsSeeker=1&SheddingAware=1&";
             if (IsStore)
             {
-                CallerAttributes = "Acquisition=1&Id=Acquisition%3BMicrosoft.WindowsStore_8wekyb3d8bbwe&";
+                CallerAttributes += "Acquisition=1&Id=Acquisition%3BMicrosoft.WindowsStore_8wekyb3d8bbwe&";
             }
             else
             {
-                CallerAttributes = "Id=UpdateOrchestrator&";
+                CallerAttributes += "Id=UpdateOrchestrator&";
             }
             Products = "";
             if (!IsStore)
