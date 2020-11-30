@@ -91,6 +91,12 @@ namespace UUPDownload
                       Logging.Log("Something happened.", Logging.LoggingLevel.Error);
                       Logging.Log(ex.Message, Logging.LoggingLevel.Error);
                       Logging.Log(ex.StackTrace, Logging.LoggingLevel.Error);
+                      if (ex.InnerException != null)
+                      {
+                          Logging.Log("\tSomething happened.", Logging.LoggingLevel.Error);
+                          Logging.Log("\t" + ex.InnerException.Message, Logging.LoggingLevel.Error);
+                          Logging.Log("\t" + ex.InnerException.StackTrace, Logging.LoggingLevel.Error);
+                      }
                       if (Debugger.IsAttached)
                           Console.ReadLine();
                       return 1;
@@ -129,6 +135,8 @@ namespace UUPDownload
             await Task.WhenAll(
                 Task.Run(async () => buildstr = await update.GetBuildStringAsync()),
                 Task.Run(async () => languages = await update.GetAvailableLanguagesAsync()));
+
+            buildstr = buildstr ?? "";
 
             CompDBXmlClass.Package editionPackPkg = compDBs.GetEditionPackFromCompDBs();
             string editionPkg = await update.DownloadFileFromDigestAsync(editionPackPkg.Payload.PayloadItem.PayloadHash);
@@ -169,6 +177,8 @@ namespace UUPDownload
             await Task.WhenAll(
                 Task.Run(async () => buildstr = await update.GetBuildStringAsync()),
                 Task.Run(async () => languages = await update.GetAvailableLanguagesAsync()));
+
+            buildstr = buildstr ?? "";
 
             CompDBXmlClass.Package editionPackPkg = compDBs.GetEditionPackFromCompDBs();
             if (editionPackPkg != null)

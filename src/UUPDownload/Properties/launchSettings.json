@@ -2,7 +2,7 @@
   "profiles": {
     "UUPDownload": {
       "commandName": "Project",
-      "commandLineArgs": "-o dtccore -s DatacenterServerCore -v 10.0.17763.1217 -t amd64 -r Retail -b \"\" -a CB -c rs5_release -y"
+      "commandLineArgs": "-o holo -s Holographic -v 10.0.19041.100 -t arm64 -r External -b \"ReleasePreview\" -a CB -c vb_release"
     }
   }
 }

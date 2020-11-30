@@ -58,7 +58,7 @@ namespace WindowsUpdateLib
 
                 foreach (var file in update.Xml.Files.File)
                 {
-                    if (file.FileName.EndsWith("desktopdeployment.cab", StringComparison.InvariantCultureIgnoreCase))
+                    if (file.FileName.EndsWith("deployment.cab", StringComparison.InvariantCultureIgnoreCase))
                     {
                         deploymentCab = file;
                         break;
