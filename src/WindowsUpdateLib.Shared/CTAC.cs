@@ -360,7 +360,10 @@ namespace WindowsUpdateLib
                                     "SdbVer_20H1=2340&" +
                                     $"OSArchitecture={MachineType.ToString().ToUpper()}&" +
                                     "DefaultUserRegion=244&" +
+                                    "ReleaseType=Production&" +
                                     "UpdateManagementGroup=2";
+
+            //DeviceAttributes = "E:BranchReadinessLevel=CB&CurrentBranch=fe_release_10x&FlightRing=External&AttrDataVer=106&InstallLanguage=en-US&OSUILocale=en-US&InstallationType=Client&FlightingBranchName=Dev&OSSkuId=48&UpdateManagementGroup=2&IsDeviceRetailDemo=0&IsFlightingEnabled=1&TelemetryLevel=3&OSVersion=10.0.20279.1002&DeviceFamily=Windows.Core&WuClientVer=10.0.20279.1002&FlightContent=Mainline&ReleaseType=Production&Product=ModernPC&OEMModel=Virtual%20Machine";
 
             if (ReportingSku == OSSkuId.EnterpriseS || ReportingSku == OSSkuId.EnterpriseSN)
             {
@@ -369,34 +372,35 @@ namespace WindowsUpdateLib
 
             if (ReportingSku == OSSkuId.Holographic)
             {
-                DeviceAttributes += $"OneCoreFwV={ReportingVersion}" +
-                                        $"OneCoreSwV={ReportingVersion}" +
-                                        $"OneCoreManufacturerModelName=HoloLens" +
-                                        $"OneCoreManufacturer=Microsoft Corporation" +
+                DeviceAttributes += $"&OneCoreFwV={ReportingVersion}&" +
+                                        $"OneCoreSwV={ReportingVersion}&" +
+                                        $"OneCoreManufacturerModelName=HoloLens&" +
+                                        $"OneCoreManufacturer=Microsoft Corporation&" +
                                         $"OneCoreOperatorName=000-88";
             }
             else if (ReportingSku == OSSkuId.HubOS)
             {
-                DeviceAttributes += $"OneCoreFwV={ReportingVersion}" +
-                                        $"OneCoreSwV={ReportingVersion}" +
-                                        $"OneCoreManufacturerModelName=Surface Hub 2X" +
-                                        $"OneCoreManufacturer=Microsoft Corporation" +
+                DeviceAttributes += $"&OneCoreFwV={ReportingVersion}&" +
+                                        $"OneCoreSwV={ReportingVersion}&" +
+                                        $"OneCoreManufacturerModelName=Surface Hub 2X&" +
+                                        $"OneCoreManufacturer=Microsoft Corporation&" +
                                         $"OneCoreOperatorName=000-88";
             }
             else if (ReportingSku == OSSkuId.Andromeda)
             {
-                DeviceAttributes += $"OneCoreFwV={ReportingVersion}" +
-                                        $"OneCoreSwV={ReportingVersion}" +
-                                        $"OneCoreManufacturerModelName=Andromeda" +
-                                        $"OneCoreManufacturer=Microsoft Corporation" +
+                DeviceAttributes += $"&OneCoreFwV={ReportingVersion}&" +
+                                        $"OneCoreSwV={ReportingVersion}&" +
+                                        $"OneCoreManufacturerModelName=Andromeda&" +
+                                        $"OneCoreManufacturer=Microsoft Corporation&" +
                                         $"OneCoreOperatorName=000-88";
             }
             else if (ReportingSku == OSSkuId.Lite)
             {
-                DeviceAttributes += $"OneCoreFwV={ReportingVersion}" +
-                                        $"OneCoreSwV={ReportingVersion}" +
-                                        $"OneCoreManufacturerModelName=Santorini" +
-                                        $"OneCoreManufacturer=Microsoft Corporation" +
+                DeviceAttributes += "&Product=ModernPC";
+                DeviceAttributes += $"&OneCoreFwV={ReportingVersion}&" +
+                                        $"OneCoreSwV={ReportingVersion}&" +
+                                        $"OneCoreManufacturerModelName=Santorini&" +
+                                        $"OneCoreManufacturer=Microsoft Corporation&" +
                                         $"OneCoreOperatorName=000-88";
             }
 
