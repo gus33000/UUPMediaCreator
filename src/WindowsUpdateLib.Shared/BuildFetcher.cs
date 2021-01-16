@@ -277,18 +277,18 @@ namespace WindowsUpdateLib
 
             CTAC[] ctacs = new CTAC[]
             {
-                new CTAC(OSSkuId.PPIPro, "10.0.15063.534", MachineType, "WIS", "", "CB", "rs2_release", false),
-                new CTAC(OSSkuId.PPIPro, "10.0.15063.534", MachineType, "WIF", "", "CB", "rs2_release", false),
-                new CTAC(OSSkuId.PPIPro, "10.0.19041.84", MachineType, "Retail", "", "CB", "vb_release", false),
-                new CTAC(OSSkuId.Professional, "10.0.16299.15", MachineType, "Retail", "", "CB", "rs3_release", true),
-                new CTAC(OSSkuId.Professional, "10.0.17134.1", MachineType, "Retail", "", "CB", "rs4_release", true),
-                new CTAC(OSSkuId.Professional, "10.0.17763.1217", MachineType, "Retail", "", "CB", "rs5_release", true),
-                new CTAC(OSSkuId.Professional, "10.0.18362.836", MachineType, "Retail", "", "CB", "19h1_release", true),
-                new CTAC(OSSkuId.Professional, "10.0.19041.84", MachineType, "Retail", "", "CB", "vb_release", false),
-                new CTAC(OSSkuId.Professional, "10.0.19041.84", MachineType, "External", "ReleasePreview", "CB", "vb_release", false),
-                new CTAC(OSSkuId.Professional, "10.0.19041.84", MachineType, "External", "FeaturePreview", "CB", "vb_release", false),
-                new CTAC(OSSkuId.Professional, "10.0.19041.84", MachineType, "External", "Beta", "CB", "vb_release", false),
-                new CTAC(OSSkuId.Professional, "10.0.19041.84", MachineType, "External", "Dev", "CB", "vb_release", false)
+                new CTAC(OSSkuId.PPIPro, "10.0.15063.534", MachineType, "WIS", "", "CB", "rs2_release", "Production", false),
+                new CTAC(OSSkuId.PPIPro, "10.0.15063.534", MachineType, "WIF", "", "CB", "rs2_release", "Production", false),
+                new CTAC(OSSkuId.PPIPro, "10.0.19041.84", MachineType, "Retail", "", "CB", "vb_release", "Production", false),
+                new CTAC(OSSkuId.Professional, "10.0.16299.15", MachineType, "Retail", "", "CB", "rs3_release", "Production", true),
+                new CTAC(OSSkuId.Professional, "10.0.17134.1", MachineType, "Retail", "", "CB", "rs4_release", "Production", true),
+                new CTAC(OSSkuId.Professional, "10.0.17763.1217", MachineType, "Retail", "", "CB", "rs5_release", "Production", true),
+                new CTAC(OSSkuId.Professional, "10.0.18362.836", MachineType, "Retail", "", "CB", "19h1_release", "Production", true),
+                new CTAC(OSSkuId.Professional, "10.0.19041.84", MachineType, "Retail", "", "CB", "vb_release", "Production", false),
+                new CTAC(OSSkuId.Professional, "10.0.19041.84", MachineType, "External", "ReleasePreview", "CB", "vb_release", "Production", false),
+                new CTAC(OSSkuId.Professional, "10.0.19041.84", MachineType, "External", "FeaturePreview", "CB", "vb_release", "Production", false),
+                new CTAC(OSSkuId.Professional, "10.0.19041.84", MachineType, "External", "Beta", "CB", "vb_release", "Production", false),
+                new CTAC(OSSkuId.Professional, "10.0.19041.84", MachineType, "External", "Dev", "CB", "vb_release", "Production", false)
             };
 
             List<Task<IEnumerable<UpdateData>>> tasks = new List<Task<IEnumerable<UpdateData>>>();
