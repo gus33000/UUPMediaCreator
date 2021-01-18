@@ -58,6 +58,9 @@ namespace UUPDownload
 
         [Option('l', "language", HelpText = @"The language to get. Must be used with the edition parameter. Omit either of these to download everything. Example: en-US", Required = false, Default = "")]
         public string Language { get; set; }
+
+        [Option('z', "releasetype", HelpText = @"The release type to report to the Windows Update servers. Example: Production", Required = false, Default = "Production")]
+        public string ReleaseType { get; set; }
     }
 
     [Verb("replay-download", isDefault: false, HelpText = "Replay a download from zero using a *.uupmcreplay file.")]

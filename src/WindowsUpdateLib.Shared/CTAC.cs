@@ -249,10 +249,11 @@ namespace WindowsUpdateLib
                     string FlightingBranchName,
                     string BranchReadinessLevel,
                     string CurrentBranch,
+                    string ReleaseType,
                     bool SyncCurrentVersionOnly,
                     bool IsStore = false) : base()
         {
-            BuildCTAC(ReportingSku, ReportingVersion, MachineType, FlightRing, FlightingBranchName, BranchReadinessLevel, CurrentBranch, SyncCurrentVersionOnly, IsStore);
+            BuildCTAC(ReportingSku, ReportingVersion, MachineType, FlightRing, FlightingBranchName, BranchReadinessLevel, CurrentBranch, ReleaseType, SyncCurrentVersionOnly, IsStore);
         }
 
         private void BuildCTAC(
@@ -263,6 +264,7 @@ namespace WindowsUpdateLib
             string FlightingBranchName,
             string BranchReadinessLevel,
             string CurrentBranch,
+            string ReleaseType,
             bool SyncCurrentVersionOnly,
             bool IsStore = false
         )
@@ -360,7 +362,7 @@ namespace WindowsUpdateLib
                                     "SdbVer_20H1=2340&" +
                                     $"OSArchitecture={MachineType.ToString().ToUpper()}&" +
                                     "DefaultUserRegion=244&" +
-                                    "ReleaseType=Production&" +
+                                    $"ReleaseType={ReleaseType}&" +
                                     "UpdateManagementGroup=2";
 
             //DeviceAttributes = "E:BranchReadinessLevel=CB&CurrentBranch=fe_release_10x&FlightRing=External&AttrDataVer=106&InstallLanguage=en-US&OSUILocale=en-US&InstallationType=Client&FlightingBranchName=Dev&OSSkuId=48&UpdateManagementGroup=2&IsDeviceRetailDemo=0&IsFlightingEnabled=1&TelemetryLevel=3&OSVersion=10.0.20279.1002&DeviceFamily=Windows.Core&WuClientVer=10.0.20279.1002&FlightContent=Mainline&ReleaseType=Production&Product=ModernPC&OEMModel=Virtual%20Machine";

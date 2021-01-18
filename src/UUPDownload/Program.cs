@@ -111,7 +111,7 @@ namespace UUPDownload
         {
             Logging.Log("Checking for updates...");
 
-            CTAC ctac = new CTAC(o.ReportingSku, o.ReportingVersion, o.MachineType, o.FlightRing, o.FlightingBranchName, o.BranchReadinessLevel, o.CurrentBranch, o.SyncCurrentVersionOnly);
+            CTAC ctac = new CTAC(o.ReportingSku, o.ReportingVersion, o.MachineType, o.FlightRing, o.FlightingBranchName, o.BranchReadinessLevel, o.CurrentBranch, o.ReleaseType, o.SyncCurrentVersionOnly);
             IEnumerable<UpdateData> data = await FE3Handler.GetUpdates(null, ctac, null, FileExchangeV3UpdateFilter.ProductRelease);
             data = data.Select(x => UpdateUtils.TrimDeltasFromUpdateData(x));
 
