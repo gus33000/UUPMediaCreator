@@ -11,15 +11,8 @@ jobs:
     runs-on: windows-latest
     strategy:
       matrix:
-        architecture: [x86, x64, arm64]
-        platform: [win, osx, linux]
-        exclude:
-          - architecture: x86
-            platform: osx
-          - architecture: x86
-            platform: linux
-          - architecture: arm64
-            platform: osx
+        architecture: [x86, x64]
+        platform: [win]
     steps:
       - name: Checkout
         uses: actions/checkout@v2
