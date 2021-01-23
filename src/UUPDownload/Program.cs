@@ -189,19 +189,19 @@ namespace UUPDownload
                         }
                         else
                         {
+                            var appxFolder = Path.Combine(appxRoot, Path.GetDirectoryName(package.Payload.PayloadItem.Path));
+                            if (!Directory.Exists(appxFolder))
+                            {
+                                Logging.Log($"Creating {appxFolder}");
+                                Directory.CreateDirectory(appxFolder);
+                            }
+
+                            var appxPath = Path.Combine(appxRoot, package.Payload.PayloadItem.Path);
+                            Logging.Log($"Moving {appxFile} to {appxPath}");
+                            File.Move(appxFile, appxPath, true);
+
                             if (package.LicenseData != null)
                             {
-                                var appxFolder = Path.Combine(appxRoot, Path.GetDirectoryName(package.Payload.PayloadItem.Path));
-                                if (!Directory.Exists(appxFolder))
-                                {
-                                    Logging.Log($"Creating {appxFolder}");
-                                    Directory.CreateDirectory(appxFolder);
-                                }
-
-                                var appxPath = Path.Combine(appxRoot, package.Payload.PayloadItem.Path);
-                                Logging.Log($"Moving {appxFile} to {appxPath}");
-                                File.Move(appxFile, appxPath, true);
-
                                 var appxLicensePath = Path.Combine(appxFolder, $"{appxLicenseFileMap[Path.GetFileName(appxPath)]}");
                                 Logging.Log($"Writing license to {appxLicensePath}");
                                 File.WriteAllText(appxLicensePath, package.LicenseData);
