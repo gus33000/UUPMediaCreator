@@ -157,6 +157,8 @@ namespace UUPDownload
             {
                 cabsRoot = appxRoot;
             }
+
+            Logging.Log($"Building appx license map from cabs...");
             var appxLicenseFileMap = FeatureManifestService.GetAppxPackageLicenseFileMapFromCabs(Directory.GetFiles(cabsRoot, "*.cab", SearchOption.AllDirectories));
             var appxFiles = Directory.GetFiles(Path.GetFullPath(appxRoot), "appx_*", SearchOption.TopDirectoryOnly);
 
@@ -210,6 +212,8 @@ namespace UUPDownload
                     }
                 }
             }
+
+            Logging.Log($"Appx fixup applied.");
         }
 
         private static async Task PerformOperation(DownloadRequestOptions o)
