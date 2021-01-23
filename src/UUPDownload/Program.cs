@@ -172,10 +172,15 @@ namespace UUPDownload
                 {
                     foreach (var appxFile in appxFiles)
                     {
-                        using var fileStream = File.OpenRead(appxFile);
-                        using var sha = SHA256.Create();
+                        string payloadHash;
+                        using (var fileStream = File.OpenRead(appxFile))
+                        {
+                            using (var sha = SHA256.Create())
+                            {
+                                payloadHash = Convert.ToBase64String(sha.ComputeHash(fileStream));
+                            }
+                        }
 
-                        var payloadHash = Convert.ToBase64String(sha.ComputeHash(fileStream));
                         var package = canonicalCompdb.Appx.AppXPackages.Package.Where(p => p.Payload.PayloadItem.PayloadHash == payloadHash).FirstOrDefault();
                         if (package == null)
                         {
