@@ -165,6 +165,7 @@ namespace UUPDownload
             if (!update.CompDBs.Any(db => db.Appx != null))
             {
                 update.CompDBs = null;
+                Logging.Log($"Current replay is missing some appx package metadata. Re-downloading compdbs...");
                 var compdbs = await update.GetCompDBsAsync();
 
                 var canonicalCompdb = compdbs.Where(c => c.Tags.Tag.Where(t => t.Name == "UpdateType" && t.Value == "Canonical").Any()).FirstOrDefault();
