@@ -66,6 +66,13 @@ namespace CompDB
             public List<Package> Package { get; set; }
         }
 
+        [XmlRoot(ElementName = "AppX", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+        public class AppX
+        {
+            [XmlElement(ElementName = "AppXPackages", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+            public Packages AppXPackages { get; set; }
+        }
+
         [XmlRoot(ElementName = "Features", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
         public class Features
         {
@@ -129,6 +136,12 @@ namespace CompDB
 
             [XmlElement(ElementName = "Packages", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
             public Packages Packages { get; set; }
+
+            [XmlElement(ElementName = "AppX", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+            public AppX AppX { get; set; }
+
+            [XmlElement(ElementName = "AppXPackages", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+            public Packages AppXPackages { get; set; }
 
             [XmlAttribute(AttributeName = "xsi", Namespace = "http://www.w3.org/2000/xmlns/")]
             public string Xsi { get; set; }
