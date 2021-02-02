@@ -262,6 +262,10 @@ namespace UUPDownload
                     {
                         payloadItems.Add(pkg.Payload.PayloadItem);
                     }
+
+                    if (cdb.AppX != null)
+                        foreach (CompDBXmlClass.Package pkg in cdb.AppX.AppXPackages.Package)
+                            payloadItems.Add(pkg.Payload.PayloadItem);
                 }
             }
 
