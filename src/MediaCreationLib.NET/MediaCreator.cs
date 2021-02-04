@@ -268,11 +268,15 @@ namespace MediaCreationLib
             ProgressCallback progressCallback = null)
         {
             bool result = true;
+            string error = "";
 
             List<EditionTarget> editionTargets;
             result = GetTargetedPlan(UUPPath, LanguageCode, out editionTargets, progressCallback);
             if (!result)
+            {
+                error = "An error occurred while getting target plans for the conversion.";
                 goto error;
+            }
 
             foreach (var ed in editionTargets)
             {
@@ -299,7 +303,10 @@ namespace MediaCreationLib
             //
             result = SetupMediaCreator.CreateSetupMedia(UUPPath, LanguageCode, MediaRootPath, WinREWIMFilePath, CompressionType, progressCallback);
             if (!result)
+            {
+                error = "An error occurred while creating setup media.";
                 goto error;
+            }
 
             //
             // Build Install.WIM/ESD
@@ -308,7 +315,10 @@ namespace MediaCreationLib
             {
                 result = HandleEditionPlan(ed, UUPPath, MediaRootPath, LanguageCode, InstallWIMFilePath, WinREWIMFilePath, CompressionType, progressCallback: progressCallback);
                 if (!result)
+                {
+                    error = "An error occurred while handling edition plan for the following edition: " + ed.PlannedEdition.EditionName + " available as: " + ed.PlannedEdition.AvailabilityType;
                     goto error;
+                }
             }
 
             BootlegEditionCreator.CleanupLanguagePackFolderIfRequired();
@@ -318,13 +328,16 @@ namespace MediaCreationLib
             //
             result = UUPMediaCreator.CreateISO(MediaRootPath, ISOPath, progressCallback);
             if (!result)
+            {
+                error = "An error occurred while creating the ISO.";
                 goto error;
+            }
 
             progressCallback?.Invoke(Common.ProcessPhase.Done, true, 0, "");
             goto exit;
 
             error:
-            progressCallback?.Invoke(Common.ProcessPhase.Error, true, 0, "");
+            progressCallback?.Invoke(Common.ProcessPhase.Error, true, 0, error);
 
             exit:
             return;
@@ -339,6 +352,7 @@ namespace MediaCreationLib
             Common.CompressionType CompressionType,
             ProgressCallback progressCallback = null)
         {
+            string error = "";
             progressCallback?.Invoke(Common.ProcessPhase.ReadingMetadata, true, 0, "Enumerating files");
 
             var temp = Path.GetTempFileName();
@@ -356,27 +370,36 @@ namespace MediaCreationLib
             //
             bool result = SetupMediaCreator.CreateSetupMedia(UUPPath, LanguageCode, MediaRootPath, WinREWIMFilePath, CompressionType, progressCallback);
             if (!result)
+            {
+                error = "An error occurred while creating setup media.";
                 goto error;
+            }
 
             //
             // Build Install.WIM/ESD
             //
             result = BaseEditionBuilder.CreateBaseEdition(UUPPath, LanguageCode, Edition, WinREWIMFilePath, InstallWIMFilePath, CompressionType, progressCallback);
             if (!result)
+            {
+                error = "An error occurred while handling edition plan for the following edition: " + Edition;
                 goto error;
+            }
 
             //
             // Build ISO
             //
             result = UUPMediaCreator.CreateISO(MediaRootPath, ISOPath, progressCallback);
             if (!result)
+            {
+                error = "An error occurred while creating the ISO.";
                 goto error;
+            }
 
             progressCallback?.Invoke(Common.ProcessPhase.Done, true, 0, "");
             goto exit;
 
             error:
-            progressCallback?.Invoke(Common.ProcessPhase.Error, true, 0, "");
+            progressCallback?.Invoke(Common.ProcessPhase.Error, true, 0, error);
 
             exit:
             return;
