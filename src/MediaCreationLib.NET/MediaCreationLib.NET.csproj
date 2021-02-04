@@ -42,7 +42,7 @@
     <PackageReference Include="DiscUtils.Streams" Version="0.15.1-ci0007" />
     <PackageReference Include="ini-parser" Version="2.5.2" />
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
-    <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
+    <PackageReference Include="System.Data.DataSetExtensions" Version="4.6.0-preview3.19128.7" />
     <PackageReference Include="System.IO.FileSystem.AccessControl" Version="5.0.0" />
     <PackageReference Include="System.Security.AccessControl" Version="5.0.0" />
   </ItemGroup>

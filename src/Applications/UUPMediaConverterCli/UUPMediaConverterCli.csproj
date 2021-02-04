@@ -3,6 +3,7 @@
     <TargetFramework>net5.0</TargetFramework>
     <OutputType>Exe</OutputType>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
     <RuntimeIdentifiers>win-x86;win-x64;win-arm64;linux-x64;linux-arm64;osx-x64</RuntimeIdentifiers>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
@@ -13,19 +14,17 @@
     <OutputPath>bin\x64\Release\</OutputPath>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
-    <OutputPath>bin\x86\Debug\</OutputPath>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
-    <OutputPath>bin\x86\Release\</OutputPath>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\MediaCreationLib.DismOperations.NET\MediaCreationLib.DismOperations.NET.csproj" />
+    <ProjectReference Include="..\..\InterCommunication.NET\InterCommunication.NET.csproj" />
+    <ProjectReference Include="..\..\MediaCreationLib.NET\MediaCreationLib.NET.csproj" />
+    <ProjectReference Include="..\..\..\thirdparty\Microsoft.Cabinet.NET\Microsoft.Cabinet.NET.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Flurl" Version="3.0.1" />
+    <PackageReference Include="Flurl.Http" Version="3.0.1" />
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
-    <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
+    <PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0" />
+    <PackageReference Include="System.Data.DataSetExtensions" Version="4.6.0-preview3.19128.7" />
+    <PackageReference Include="System.ValueTuple" Version="4.5.0" />
   </ItemGroup>
 </Project>

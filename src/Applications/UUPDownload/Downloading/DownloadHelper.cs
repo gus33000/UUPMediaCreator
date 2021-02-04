@@ -31,7 +31,6 @@ namespace UUPDownload.Downloading
     {
         private static readonly DownloadConfiguration downloadOpt = new DownloadConfiguration()
         {
-            AllowedHeadRequest = false,
             MaxTryAgainOnFailover = 10,
             ParallelDownload = true,
             ChunkCount = 8,
@@ -104,8 +103,8 @@ namespace UUPDownload.Downloading
             downloader.DownloadProgressChanged += (object sender, Downloader.DownloadProgressChangedEventArgs e) =>
             {
                 TimeSpan timeellapsed = DateTime.Now - startTime;
-                double BytesPerSecondSpeed = (timeellapsed.Milliseconds > 0 ? e.BytesReceived / timeellapsed.Milliseconds : 0) * 60;
-                long remainingBytes = e.TotalBytesToReceive - e.BytesReceived;
+                double BytesPerSecondSpeed = (timeellapsed.Milliseconds > 0 ? e.ReceivedBytesSize / timeellapsed.Milliseconds : 0) * 60;
+                long remainingBytes = e.TotalBytesToReceive - e.ReceivedBytesSize;
                 double remainingTime = BytesPerSecondSpeed > 0 ? remainingBytes / BytesPerSecondSpeed : 0;
                 TimeSpan timeRemaining = TimeSpan.FromSeconds(remainingTime);
 

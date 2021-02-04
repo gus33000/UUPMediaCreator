@@ -446,13 +446,13 @@
       <Version>6.2.11</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Toolkit.Uwp.UI.Controls.DataGrid">
-      <Version>7.0.0-preview3</Version>
+      <Version>7.0.0-preview4</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.UI.Xaml">
-      <Version>2.5.0</Version>
+      <Version>2.6.0-prerelease.210113001</Version>
     </PackageReference>
     <PackageReference Include="System.Text.Json">
-      <Version>5.0.0</Version>
+      <Version>5.0.1</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>

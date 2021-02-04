@@ -368,7 +368,7 @@
     <ProjectReference Include="..\UUPMediaCreator.Broker\UUPMediaCreator.Broker.csproj">
       <SkipGetTargetFrameworkProperties>True</SkipGetTargetFrameworkProperties>
     </ProjectReference>
-    <ProjectReference Include="..\UUPMediaCreator.DismBroker\UUPMediaCreator.DismBroker.csproj">
+    <ProjectReference Include="..\UUPMediaConverterDismBroker\UUPMediaConverterDismBroker.csproj">
       <SkipGetTargetFrameworkProperties>True</SkipGetTargetFrameworkProperties>
     </ProjectReference>
     <ProjectReference Include="..\UUPMediaCreator\UUPMediaCreator.csproj" />

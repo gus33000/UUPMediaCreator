@@ -14,10 +14,10 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\thirdparty\Microsoft.Cabinet.NET\Microsoft.Cabinet.NET.csproj" />
-    <ProjectReference Include="..\CompDB.NET\CompDB.NET.csproj" />
-    <ProjectReference Include="..\MediaCreationLib.Planning.NET\MediaCreationLib.Planning.NET.csproj" />
-    <ProjectReference Include="..\WindowsUpdateLib.NET\WindowsUpdateLib.NET.csproj" />
+    <ProjectReference Include="..\..\..\thirdparty\Microsoft.Cabinet.NET\Microsoft.Cabinet.NET.csproj" />
+    <ProjectReference Include="..\..\CompDB.NET\CompDB.NET.csproj" />
+    <ProjectReference Include="..\..\MediaCreationLib.Planning.NET\MediaCreationLib.Planning.NET.csproj" />
+    <ProjectReference Include="..\..\WindowsUpdateLib.NET\WindowsUpdateLib.NET.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="aria2c.exe">
@@ -27,7 +27,7 @@
   <ItemGroup>
     <PackageReference Include="CommandLineParser" Version="2.9.0-preview1" />
     <PackageReference Include="Download.Client" Version="1.0.6-rc1" />
-    <PackageReference Include="Downloader" Version="1.9.9" />
+    <PackageReference Include="Downloader" Version="2.0.8" />
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageReference Include="Microsoft.NETCore.Platforms" Version="5.0.0" />
     <PackageReference Include="Microsoft.Win32.Primitives" Version="4.3.0" />
@@ -39,9 +39,9 @@
     <PackageReference Include="System.Collections.Concurrent" Version="4.3.0" />
     <PackageReference Include="System.ComponentModel.Composition" Version="5.0.0" />
     <PackageReference Include="System.Console" Version="4.3.1" />
-    <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
+    <PackageReference Include="System.Data.DataSetExtensions" Version="4.6.0-preview3.19128.7" />
     <PackageReference Include="System.Diagnostics.Debug" Version="4.3.0" />
-    <PackageReference Include="System.Diagnostics.DiagnosticSource" Version="5.0.0" />
+    <PackageReference Include="System.Diagnostics.DiagnosticSource" Version="5.0.1" />
     <PackageReference Include="System.Diagnostics.Tools" Version="4.3.0" />
     <PackageReference Include="System.Diagnostics.Tracing" Version="4.3.0" />
     <PackageReference Include="System.Globalization" Version="4.3.0" />

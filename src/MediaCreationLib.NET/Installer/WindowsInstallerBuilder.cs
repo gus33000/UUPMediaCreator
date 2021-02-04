@@ -558,18 +558,18 @@ namespace MediaCreationLib.Installer
             )
         {
             string parentDirectory = PathUtils.GetParentExecutableDirectory();
-            string toolpath = Path.Combine(parentDirectory, "UUPMediaCreator.DismBroker", "UUPMediaCreator.DismBroker.exe");
+            string toolpath = Path.Combine(parentDirectory, "UUPMediaConverterDismBroker", "UUPMediaConverterDismBroker.exe");
 
             if (!File.Exists(toolpath))
             {
                 parentDirectory = PathUtils.GetExecutableDirectory();
-                toolpath = Path.Combine(parentDirectory, "UUPMediaCreator.DismBroker", "UUPMediaCreator.DismBroker.exe");
+                toolpath = Path.Combine(parentDirectory, "UUPMediaConverterDismBroker", "UUPMediaConverterDismBroker.exe");
             }
 
             if (!File.Exists(toolpath))
             {
                 parentDirectory = PathUtils.GetExecutableDirectory();
-                toolpath = Path.Combine(parentDirectory, "UUPMediaCreator.DismBroker.exe");
+                toolpath = Path.Combine(parentDirectory, "UUPMediaConverterDismBroker.exe");
             }
 
             Process proc = new Process();
