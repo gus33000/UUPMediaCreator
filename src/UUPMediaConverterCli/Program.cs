@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Security.Principal;
 using UUPMediaCreator.InterCommunication;
 
@@ -23,13 +24,12 @@ namespace UUPMediaConverterCli
 
         private static void Main(string[] args)
         {
-            /*MediaCreationLib.UUPMediaCreator.ProvisionMissingApps();
-            Console.ReadLine();
-            return;*/
-
+            Log($"UUPMediaConverterCli {Assembly.GetExecutingAssembly().GetName().Version} - Converts an UUP file set to an usable ISO file");
+            Log("Copyright (c) Gustave Monce and Contributors");
+            Log("https://github.com/gus33000/UUPMediaCreator");
             Log("");
-            Log("UUP Media Converter CLI v0.2");
-            Log("Copyright (c) 2020");
+            Log("This program comes with ABSOLUTELY NO WARRANTY.");
+            Log("This is free software, and you are welcome to redistribute it under certain conditions.");
             Log("");
 
             if (args.Length < 3)
@@ -45,14 +45,26 @@ namespace UUPMediaConverterCli
             if (args.Length > 3)
                 Edition = args[3];
 
-            Log("WARNING: PRE-RELEASE SOFTWARE WITH NO EXPRESS WARRANTY OF ANY KIND.", severity: LoggingLevel.Warning);
             Log("WARNING: This tool does NOT currently integrate updates into the finished media file. Any UUP set with updates (KBXXXXX).MSU/.CAB will not have the update integrated.", severity: LoggingLevel.Warning);
             if (!IsAdministrator())
                 Log("WARNING: This tool is NOT currently running as administrator. The resulting image will be less clean/proper compared to Microsoft original.", severity: LoggingLevel.Warning);
             else
             {
-                string parentDirectory = GetExecutableDirectory();
+                string parentDirectory = GetParentExecutableDirectory();
                 string toolpath = Path.Combine(parentDirectory, "UUPMediaCreator.DismBroker", "UUPMediaCreator.DismBroker.exe");
+
+                if (!File.Exists(toolpath))
+                {
+                    parentDirectory = GetExecutableDirectory();
+                    toolpath = Path.Combine(parentDirectory, "UUPMediaCreator.DismBroker", "UUPMediaCreator.DismBroker.exe");
+                }
+
+                if (!File.Exists(toolpath))
+                {
+                    parentDirectory = GetExecutableDirectory();
+                    toolpath = Path.Combine(parentDirectory, "UUPMediaCreator.DismBroker.exe");
+                }
+
                 if (!File.Exists(toolpath))
                 {
                     Log("ERROR: Could not find: " + toolpath, severity: LoggingLevel.Error);
