@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<OutputType>WinExe</OutputType>
-		<TargetFramework>net5.0</TargetFramework>
+		<TargetFramework>net5.0-windows</TargetFramework>
 		<DefineConstants>DISABLE_XAML_GENERATED_MAIN</DefineConstants>
 		<ApplicationManifest>app.manifest</ApplicationManifest>
 		<UseWindowsForms>true</UseWindowsForms>
@@ -18,11 +18,12 @@
 		<WindowsSdkPath Condition="'$(WindowsSdkPath)' == ''">$([Microsoft.Build.Utilities.ToolLocationHelper]::GetPlatformSdkLocation("Windows", "10.0"))</WindowsSdkPath>
 		<PlatformXmlDir>$(WindowsSdkPath)\Platforms\UAP\$(TargetPlatformVersion)\</PlatformXmlDir>
 		<RealMsAppxPackageTargets>$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\AppxPackage\Microsoft.AppXPackage.Targets</RealMsAppxPackageTargets>
+		<CsWinRTWindowsMetadata>sdk</CsWinRTWindowsMetadata>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.VCRTForwarders.140" Version="1.0.6" />
-		<PackageReference Include="Microsoft.Windows.CsWinRT" Version="0.8.0" />
+		<PackageReference Include="Microsoft.VCRTForwarders.140" Version="1.0.7" />
+		<PackageReference Include="Microsoft.Windows.CsWinRT" Version="1.1.1" />
 		<FrameworkReference Include="Microsoft.WindowsDesktop.App.Wpf" />
 		<Manifest Include="$(ApplicationManifest)" />
 	</ItemGroup>
