@@ -128,7 +128,7 @@
       <Version>6.2.11</Version>
     </PackageReference>
   </ItemGroup>
-  <Import Project="..\src\CompDB.Shared\CompDB.Shared.projitems" Label="Shared" />
+  <Import Project="..\CompDB.Shared\CompDB.Shared.projitems" Label="Shared" />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>
