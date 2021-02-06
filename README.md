@@ -9,7 +9,7 @@
 
 ## Readme
 
-UUP Media Creator is a set of tool designed to help you scan, fetch updates from Microsoft own Unified Update Platform (UUP), and allow you to create medium out of it when an appropriate tool does not exist in the wild.
+UUP Media Creator is a set of tools designed to help you scan, fetch updates from Microsoft own Unified Update Platform (UUP), and allow you to create medium out of it when an appropriate tool does not exist in the wild.
 
 Right now the tooling includes:
 
