@@ -166,6 +166,7 @@ namespace MediaCreationLib
             "sources\\wdstptc.dll",
             "sources\\wdsutil.dll",
             "sources\\wimprovider.dll",
+            "sources\\wimgapi.dll",
             "sources\\win32ui.dll",
             "sources\\WinDlp.dll",
             "sources\\winsetup.dll",
