@@ -361,17 +361,24 @@ namespace MediaCreationLib.BootlegEditions
                 }
                 else
                 {
-                    string lpfilter2 = $"microsoft-windows-client-languagepack-package_{languagecode}-*-{languagecode}.esd";
                     string lppackage = "";
-                    if (Directory.EnumerateFiles(UUPPath, lpfilter2, SearchOption.AllDirectories).Count() > 0)
+
+                    string lpfilter2 = $"*fre_client_{languagecode}_lp.esd";
+                    if (Directory.EnumerateFiles(UUPPath, lpfilter2, SearchOption.AllDirectories).Count() <= 0)
                     {
-                        lppackage = Directory.EnumerateFiles(UUPPath, lpfilter2, SearchOption.AllDirectories).First();
+                        lpfilter2 = $"microsoft-windows-client-languagepack-package_{languagecode}-*-{languagecode}.esd";
+                        if (Directory.EnumerateFiles(UUPPath, lpfilter2, SearchOption.AllDirectories).Count() <= 0)
+                        {
+                            lpfilter2 = $"microsoft-windows-client-languagepack-package_{languagecode}~*~{languagecode}~.esd";
+                            if (Directory.EnumerateFiles(UUPPath, lpfilter2, SearchOption.AllDirectories).Count() <= 0)
+                            {
+                                progressCallback?.Invoke(Common.ProcessPhase.Error, true, 0, "Unable to find LP package!");
+                                goto exit;
+                            }
+                        }
                     }
-                    else
-                    {
-                        lpfilter2 = $"microsoft-windows-client-languagepack-package_{languagecode}~*~{languagecode}~.esd";
-                        lppackage = Directory.EnumerateFiles(UUPPath, lpfilter2, SearchOption.AllDirectories).First();
-                    }
+
+                    lppackage = Directory.EnumerateFiles(UUPPath, lpfilter2, SearchOption.AllDirectories).First();
 
                     result = imagingInterface.ApplyImage(lppackage, 1, LPFolder, PreserveACL: false, progressCallback: callback2);
                     if (!result)
