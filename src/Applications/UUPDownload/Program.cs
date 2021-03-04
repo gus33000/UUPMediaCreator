@@ -29,6 +29,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Serialization;
@@ -221,6 +222,8 @@ namespace UUPDownload
             }
 
             string name = $"{buildstr.Replace(" ", ".").Replace("(", "").Replace(")", "")}_{MachineType.ToString().ToLower()}fre_{update.Xml.UpdateIdentity.UpdateID.Split("-")[^1]}";
+            Regex illegalCharacters = new Regex(@"[\\/:*?""<>|]");
+            name = illegalCharacters.Replace(name, "");
             string OutputFolder = Path.Combine(pOutputFolder, name);
 
             Logging.Log("Title: " + update.Xml.LocalizedProperties.Title);
@@ -304,7 +307,10 @@ namespace UUPDownload
                     Directory.CreateDirectory(OutputFolder);
                     try
                     {
-                        string filename = Path.Combine(OutputFolder, update.Xml.LocalizedProperties.Title + " (" + MachineType.ToString() + ").uupmcreplay");
+                        string tmpname = update.Xml.LocalizedProperties.Title + " (" + MachineType.ToString() + ").uupmcreplay";
+                        illegalCharacters = new Regex(@"[\\/:*?""<>|]");
+                        tmpname = illegalCharacters.Replace(tmpname, "");
+                        string filename = Path.Combine(OutputFolder, tmpname);
                         if (WriteMetadata && !File.Exists(filename))
                         {
                             File.WriteAllText(filename, JsonConvert.SerializeObject(update, Newtonsoft.Json.Formatting.Indented));
