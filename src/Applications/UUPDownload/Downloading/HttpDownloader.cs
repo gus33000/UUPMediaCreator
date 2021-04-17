@@ -106,8 +106,24 @@ namespace Download.Downloading
                 if (status == null)
                     continue;
 
-                int row = Row + filenames.IndexOf(status.File.FileName) * 2;
-                Console.SetCursorPosition(0, row);
+                int row = filenames.IndexOf(status.File.FileName) * 2;
+                int total = filenames.Count * 2;
+
+                try
+                {
+                    Console.SetCursorPosition(0, Row + row);
+                }
+                catch (ArgumentOutOfRangeException)
+                {
+                    try
+                    {
+                        Console.SetCursorPosition(0, Console.BufferHeight - (total - row));
+                    }
+                    catch (ArgumentOutOfRangeException)
+                    {
+
+                    }
+                }
 
                 string msg = "Unknown";
 
