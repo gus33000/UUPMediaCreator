@@ -15,7 +15,7 @@ namespace UUPMediaCreator.DismBroker
             {
                 case "/PECompUninst":
                     {
-                        void callback(bool IsIndeterminate, int Percentage, string Operation)
+                        static void callback(bool IsIndeterminate, int Percentage, string Operation)
                         {
                             if (!IsIndeterminate)
                             {

@@ -1,5 +1,8 @@
 ﻿using System;
-using System.Text.Json;
+using System.IO;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Json;
+using System.Text;
 using System.Text.Json.Serialization;
 using System.Xml;
 using System.Xml.Serialization;
@@ -1289,21 +1292,23 @@ namespace WindowsUpdateLib
     #region JSON Objects
     public class EsrpDecryptionInformation
     {
-        [JsonPropertyName("KeyData")]
+        [DataMember(Name = "KeyData")]
         public string KeyData { get; set; }
 
-        [JsonPropertyName("EncryptionBufferSize")]
+        [DataMember(Name = "EncryptionBufferSize")]
         public long EncryptionBufferSize { get; set; }
 
-        [JsonPropertyName("AlgorithmName")]
+        [DataMember(Name = "AlgorithmName")]
         public string AlgorithmName { get; set; }
 
-        [JsonPropertyName("ChainingMode")]
+        [DataMember(Name = "ChainingMode")]
         public string ChainingMode { get; set; }
 
         public static EsrpDecryptionInformation DeserializeFromJson(string json)
         {
-            return JsonSerializer.Deserialize<EsrpDecryptionInformation>(json);
+            using MemoryStream memoryStream = new(Encoding.UTF8.GetBytes(json));
+            DataContractJsonSerializer serializer = new(typeof(EsrpDecryptionInformation));
+            return serializer.ReadObject(memoryStream) as EsrpDecryptionInformation;
         }
     }
 

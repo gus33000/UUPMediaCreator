@@ -560,7 +560,7 @@ namespace WindowsUpdateLib
             }
         }
 
-        private EsrpDecryptionInformation EsrpDecryptionInformation { get; set; } = null;
+        public EsrpDecryptionInformation EsrpDecryptionInformation { get; set; } = null;
 
         public string Digest { get; private set; }
 
@@ -586,14 +586,15 @@ namespace WindowsUpdateLib
             return Digest.GetHashCode();
         }
 
-        public bool Decrypt(string InputFile, string OutputFile)
+        public async Task<bool> DecryptAsync(string InputFile, string OutputFile)
         {
             if (!IsEncrypted)
                 return false;
 
             try
             {
-                EsrpDecryptor.Decrypt(InputFile, OutputFile, Convert.FromBase64String(EsrpDecryptionInformation.KeyData));
+                using EsrpDecryptor esrp = new(EsrpDecryptionInformation);
+                await esrp.DecryptFileAsync(InputFile, OutputFile);
                 return true;
             }
             catch { }

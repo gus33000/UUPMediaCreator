@@ -1,8 +1,7 @@
 {
   "profiles": {
     "UUPDownload": {
-      "commandName": "Project",
-      "commandLineArgs": "-o holo -s Holographic -v 10.0.19041.100 -t arm64 -r External -b \"ReleasePreview\" -a CB -c vb_release"
+      "commandName": "Project"
     }
   }
 }

@@ -35,13 +35,13 @@ namespace UUPDownload
         [Option('t', "machine-type", HelpText = @"The architecture to report to the Windows Update servers. Example: amd64", Required = true)]
         public MachineType MachineType { get; set; }
 
-        [Option('r', "flight-ring", HelpText = @"The ring to report to the Windows Update servers. Example: External, other example: Retail or External", Required = true)]
+        [Option('r', "flight-ring", HelpText = @"The ring to report to the Windows Update servers. Example: Retail, other example: External or Internal", Required = true)]
         public string FlightRing { get; set; }
 
         [Option('c', "current-branch", HelpText = @"The branch to report to the Windows Update servers. Example: 19h1_release", Required = true)]
         public string CurrentBranch { get; set; }
 
-        [Option('b', "flighting-branch-name", HelpText = @"The flighting branch name to report to the Windows Update servers. Example: External, other example: Dev, Beta or ReleasePreview", Required = false, Default = "")]
+        [Option('b', "flighting-branch-name", HelpText = @"The flighting branch name to report to the Windows Update servers. Example: Retail, other example: Dev, Beta or ReleasePreview", Required = false, Default = "")]
         public string FlightingBranchName { get; set; }
 
         [Option('y', "sync-current-version-only", HelpText = @"Only get updates for the current version, enables getting cumulative updates.", Required = false, Default = false)]
@@ -61,6 +61,15 @@ namespace UUPDownload
 
         [Option('z', "releasetype", HelpText = @"The release type to report to the Windows Update servers. Example: Production", Required = false, Default = "Production")]
         public string ReleaseType { get; set; }
+
+        [Option('n', "contenttype", HelpText = @"The content type to report to the Windows Update servers. Example: Mainline, Custom", Required = false, Default = "Mainline")]
+        public string ContentType { get; set; }
+
+        [Option('m', "mail", HelpText = @"Email for the Windows Insider account to use to generate authorization tokens (Optional)", Required = false, Default = "")]
+        public string Mail { get; set; }
+
+        [Option('p', "password", HelpText = @"Password for the Windows Insider account to use to generate authorization tokens (If 2FA, must be generated app password) (Optional)", Required = false, Default = "")]
+        public string Password { get; set; }
     }
 
     [Verb("replay-download", isDefault: false, HelpText = "Replay a download from zero using a *.uupmcreplay file.")]
@@ -80,5 +89,21 @@ namespace UUPDownload
 
         [Option('l', "language", HelpText = @"The language to get. Must be used with the edition parameter. Omit either of these to download everything. Example: en-US", Required = false, Default = "")]
         public string Language { get; set; }
+    }
+
+    [Verb("get-builds", isDefault: false, HelpText = "Get builds in all rings matching the request type")]
+    internal class GetBuildsOptions
+    {
+        [Option('s', "reporting-sku", HelpText = @"The sku to report to the Windows Update servers. Example: Professional", Required = true)]
+        public OSSkuId ReportingSku { get; set; }
+
+        [Option('t', "machine-type", HelpText = @"The architecture to report to the Windows Update servers. Example: amd64", Required = true)]
+        public MachineType MachineType { get; set; }
+
+        [Option('m', "mail", HelpText = @"Email for the Windows Insider account to use to generate authorization tokens (Optional)", Required = false, Default = "")]
+        public string Mail { get; set; }
+
+        [Option('p', "password", HelpText = @"Password for the Windows Insider account to use to generate authorization tokens (If 2FA, must be generated app password) (Optional)", Required = false, Default = "")]
+        public string Password { get; set; }
     }
 }

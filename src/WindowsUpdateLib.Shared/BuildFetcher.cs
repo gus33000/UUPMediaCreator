@@ -147,7 +147,7 @@ namespace WindowsUpdateLib
 
                     if (fileDownloadInfo.IsEncrypted)
                     {
-                        if (!fileDownloadInfo.Decrypt(metadataCabTemp, metadataCabTemp + ".decrypted"))
+                        if (!await fileDownloadInfo.DecryptAsync(metadataCabTemp, metadataCabTemp + ".decrypted"))
                             goto exit;
                         metadataCabTemp += ".decrypted";
                     }

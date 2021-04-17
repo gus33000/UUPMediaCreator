@@ -135,7 +135,7 @@ namespace WindowsUpdateLib
         Core = 0x00000065,
         Unknown66,
         ProfessionalWMC = 0x00000067,
-        Unknown68,
+        MobileCore = 0x00000068,
         EmbeddedIndustryEval = 0x00000069,
         EmbeddedIndustryEEval = 0x0000006A,
         EmbeddedEval = 0x0000006B,
@@ -251,9 +251,10 @@ namespace WindowsUpdateLib
                     string CurrentBranch,
                     string ReleaseType,
                     bool SyncCurrentVersionOnly,
-                    bool IsStore = false) : base()
+                    bool IsStore = false,
+                    string ContentType = "Mainline") : base()
         {
-            BuildCTAC(ReportingSku, ReportingVersion, MachineType, FlightRing, FlightingBranchName, BranchReadinessLevel, CurrentBranch, ReleaseType, SyncCurrentVersionOnly, IsStore);
+            BuildCTAC(ReportingSku, ReportingVersion, MachineType, FlightRing, FlightingBranchName, BranchReadinessLevel, CurrentBranch, ReleaseType, SyncCurrentVersionOnly, IsStore, ContentType);
         }
 
         private void BuildCTAC(
@@ -266,10 +267,10 @@ namespace WindowsUpdateLib
             string CurrentBranch,
             string ReleaseType,
             bool SyncCurrentVersionOnly,
-            bool IsStore = false
+            bool IsStore = false,
+            string content = "Mainline"
         )
         {
-            string content = "Mainline";
             int flightEnabled = FlightRing == "Retail" ? 0 : 1;
             string App = IsStore ? "WU_STORE" : "WU_OS";
 
@@ -282,6 +283,18 @@ namespace WindowsUpdateLib
                 InstallType = "FactoryOS";
                 ReportingPFN = "HOLOLENS.OS.rs2";
                 DeviceFamily = "Windows.Holographic";
+            }
+            else if (ReportingSku == OSSkuId.IoTUAP)
+            {
+                InstallType = "IoTUAP";
+                ReportingPFN = "IoTCore.OS.rs2";
+                DeviceFamily = "Windows.IoTUAP";
+            }
+            else if (ReportingSku == OSSkuId.MobileCore)
+            {
+                InstallType = "MobileCore";
+                ReportingPFN = "Mobile.OS.rs2";
+                DeviceFamily = "Windows.Mobile";
             }
             else if (ReportingSku == OSSkuId.Lite)
             {
@@ -325,10 +338,10 @@ namespace WindowsUpdateLib
                                     $"AppVer={ReportingVersion}&" +
                                     "IsAutopilotRegistered=0&" +
                                     "ProcessorIdentifier=GenuineIntel Family 23 Model 1 Stepping 1&" +
-                                    "OEMModel=System Product Name&" +
+                                    "OEMModel=RM-1085_1045&" +
                                     "ProcessorManufacturer=GenuineIntel&" +
                                     "InstallDate=1577722757&" +
-                                    "OEMModelBaseBoard=CROSSHAIR VI HERO&" +
+                                    "OEMModelBaseBoard=OEM Board Name&" +
                                     $"BranchReadinessLevel={BranchReadinessLevel}&" +
                                     "DataExpDateEpoch_20H1=0&" +
                                     "IsCloudDomainJoined=0&" +
@@ -346,7 +359,7 @@ namespace WindowsUpdateLib
                                     $"App={App}&" +
                                     $"CurrentBranch={CurrentBranch}&" +
                                     "InstallLanguage=en-US&" +
-                                    "OEMName_Uncleaned=System manufacturer&" +
+                                    "OEMName_Uncleaned=MICROSOFTMDG&" +
                                     $"InstallationType={InstallType}&" +
                                     "AttrDataVer=98&" +
                                     "IsEdgeWithChromiumInstalled=1&" +
@@ -354,7 +367,7 @@ namespace WindowsUpdateLib
                                     $"OSVersion={ReportingVersion}&" +
                                     "TencentType=1&" +
                                     $"FlightContent={content}&" +
-                                    "Steam=URL%3Asteam%20protocol&" +
+                                    "Steam=URL:steam protocol&" +
                                     "Free=8to16&" +
                                     "TencentReg=79 d0 01 d7 9f 54 d5 01&" +
                                     "FirmwareVersion=7704&" +
@@ -363,9 +376,9 @@ namespace WindowsUpdateLib
                                     $"OSArchitecture={MachineType.ToString().ToUpper()}&" +
                                     "DefaultUserRegion=244&" +
                                     $"ReleaseType={ReleaseType}&" +
-                                    "UpdateManagementGroup=2";
-
-            //DeviceAttributes = "E:BranchReadinessLevel=CB&CurrentBranch=fe_release_10x&FlightRing=External&AttrDataVer=106&InstallLanguage=en-US&OSUILocale=en-US&InstallationType=Client&FlightingBranchName=Dev&OSSkuId=48&UpdateManagementGroup=2&IsDeviceRetailDemo=0&IsFlightingEnabled=1&TelemetryLevel=3&OSVersion=10.0.20279.1002&DeviceFamily=Windows.Core&WuClientVer=10.0.20279.1002&FlightContent=Mainline&ReleaseType=Production&Product=ModernPC&OEMModel=Virtual%20Machine";
+                                    "UpdateManagementGroup=2&" +
+                                    "MobileOperatorCommercialized=000-88&" +
+                                    "PhoneTargetingName=Lumia 950 XL";
 
             if (ReportingSku == OSSkuId.EnterpriseS || ReportingSku == OSSkuId.EnterpriseSN)
             {

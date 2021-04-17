@@ -37,7 +37,7 @@ namespace WindowsUpdateLib
 
             if (fileDownloadInfo.IsEncrypted)
             {
-                if (!fileDownloadInfo.Decrypt(Destination, Destination + ".decrypted"))
+                if (!await fileDownloadInfo.DecryptAsync(Destination, Destination + ".decrypted"))
                     return;
 
                 File.Delete(Destination);
@@ -81,7 +81,7 @@ namespace WindowsUpdateLib
 
                 if (fileDownloadInfo.IsEncrypted)
                 {
-                    if (!fileDownloadInfo.Decrypt(deploymentCabTemp, deploymentCabTemp + ".decrypted"))
+                    if (!await fileDownloadInfo.DecryptAsync(deploymentCabTemp, deploymentCabTemp + ".decrypted"))
                         return null;
                     File.Delete(deploymentCabTemp);
                     File.Move(deploymentCabTemp + ".decrypted", deploymentCabTemp);
@@ -215,34 +215,42 @@ namespace WindowsUpdateLib
 
                     string metadataCabTemp = Path.GetTempFileName();
 
-                    // Download the file
-                    await client.DownloadFileTaskAsync(new Uri(fileDownloadInfo.DownloadUrl), metadataCabTemp);
-
-                    if (fileDownloadInfo.IsEncrypted)
+                    try
                     {
-                        if (!fileDownloadInfo.Decrypt(metadataCabTemp, metadataCabTemp + ".decrypted"))
-                            return neutralCompDB;
-                        metadataCabTemp += ".decrypted";
-                    }
+                        // Download the file
+                        await client.DownloadFileTaskAsync(new Uri(fileDownloadInfo.DownloadUrl), metadataCabTemp);
 
-                    update.CachedMetadata = metadataCabTemp;
+                        if (fileDownloadInfo.IsEncrypted)
+                        {
+                            if (!await fileDownloadInfo.DecryptAsync(metadataCabTemp, metadataCabTemp + ".decrypted"))
+                                return neutralCompDB;
+                            metadataCabTemp += ".decrypted";
+                        }
+
+                        update.CachedMetadata = metadataCabTemp;
+                    }
+                    catch { }
                 }
 
-                using (CabinetHandler cabinet = new CabinetHandler(File.OpenRead(update.CachedMetadata)))
+                try
                 {
-                    foreach (string file in cabinet.Files)
+                    using (CabinetHandler cabinet = new CabinetHandler(File.OpenRead(update.CachedMetadata)))
                     {
-                        using (CabinetHandler cabinet2 = new CabinetHandler(cabinet.OpenFile(file)))
+                        foreach (string file in cabinet.Files)
                         {
-                            string xmlfile = cabinet2.Files.First();
-
-                            using (Stream xmlstream = cabinet2.OpenFile(xmlfile))
+                            using (CabinetHandler cabinet2 = new CabinetHandler(cabinet.OpenFile(file)))
                             {
-                                neutralCompDB.Add(CompDBXmlClass.DeserializeCompDB(xmlstream));
+                                string xmlfile = cabinet2.Files.First();
+
+                                using (Stream xmlstream = cabinet2.OpenFile(xmlfile))
+                                {
+                                    neutralCompDB.Add(CompDBXmlClass.DeserializeCompDB(xmlstream));
+                                }
                             }
                         }
                     }
                 }
+                catch { }
             }
             else
             {
@@ -262,7 +270,7 @@ namespace WindowsUpdateLib
 
                     if (fileDownloadInfo.IsEncrypted)
                     {
-                        if (!fileDownloadInfo.Decrypt(metadataCabTemp, metadataCabTemp + ".decrypted"))
+                        if (!await fileDownloadInfo.DecryptAsync(metadataCabTemp, metadataCabTemp + ".decrypted"))
                             continue;
                         metadataCabTemp += ".decrypted";
                     }
