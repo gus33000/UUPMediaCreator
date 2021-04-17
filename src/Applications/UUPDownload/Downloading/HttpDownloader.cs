@@ -47,12 +47,9 @@ namespace Download.Downloading
 
     public class ReportProgress : IProgress<GeneralDownloadProgress>
     {
-        private DateTime startTime = DateTime.Now;
+        private Dictionary<string,FileStatus> files = new Dictionary<string, FileStatus>();
 
-        public int Row = Console.GetCursorPosition().Top;
-        private List<string> filenames = new List<string>();
-
-        private static Mutex mut = new Mutex();
+        private Mutex mutex = new Mutex();
 
         private static string FormatBytes(double bytes)
         {
@@ -86,83 +83,45 @@ namespace Download.Downloading
 
         public void Report(GeneralDownloadProgress e)
         {
-            TimeSpan timeellapsed = DateTime.Now - startTime;
-
-            mut.WaitOne();
-
-            foreach (var downloadItem in e.DownloadedStatus)
-            {
-                if (downloadItem == null)
-                    continue;
-
-                if (!filenames.Contains(downloadItem.File.FileName))
-                {
-                    filenames.Add(downloadItem.File.FileName);
-                }
-            }
+            mutex.WaitOne();
 
             foreach (FileDownloadStatus status in e.DownloadedStatus)
             {
                 if (status == null)
                     continue;
 
-                int row = filenames.IndexOf(status.File.FileName) * 2;
-                int total = filenames.Count * 2;
+                bool shouldReport = !files.ContainsKey(status.File.FileName) || files[status.File.FileName] != status.FileStatus;
 
-                try
-                {
-                    Console.SetCursorPosition(0, Row + row);
-                }
-                catch (ArgumentOutOfRangeException)
-                {
-                    try
-                    {
-                        Console.SetCursorPosition(0, Console.BufferHeight - (total - row));
-                    }
-                    catch (ArgumentOutOfRangeException)
-                    {
+                if (!shouldReport)
+                    continue;
 
-                    }
-                }
+                files[status.File.FileName] = status.FileStatus;
 
-                string msg = "Unknown";
+                string msg = "U";
 
                 switch(status.FileStatus)
                 {
                     case FileStatus.Completed:
-                        Console.ForegroundColor = ConsoleColor.Green;
-                        msg = " Completed ";
+                        msg = "C";
                         break;
                     case FileStatus.Downloading:
-                        Console.ForegroundColor = ConsoleColor.White;
-                        msg = "Downloading";
+                        msg = "D";
                         break;
                     case FileStatus.Expired:
-                        Console.ForegroundColor = ConsoleColor.Yellow;
-                        msg = "  Expired  ";
+                        msg = "E";
                         break;
                     case FileStatus.Failed:
-                        Console.ForegroundColor = ConsoleColor.Red;
-                        msg = "  Failed   ";
+                        msg = "F";
                         break;
                     case FileStatus.Verifying:
-                        Console.ForegroundColor = ConsoleColor.Blue;
-                        msg = " Verifying ";
+                        msg = "V";
                         break;
                 }
 
-                double BytesPerSecondSpeed = (timeellapsed.Milliseconds > 0 ? status.DownloadedBytes / timeellapsed.Milliseconds : 0) * 60;
-                long remainingBytes = status.File.FileSize - status.DownloadedBytes;
-                double remainingTime = BytesPerSecondSpeed > 0 ? remainingBytes / BytesPerSecondSpeed : 0;
-                TimeSpan timeRemaining = TimeSpan.FromSeconds(remainingTime);
-                
-                Console.WriteLine(DateTime.Now.ToString("'['HH':'mm':'ss']'") + "[" + msg + "] " + status.File.FileName);
-                Console.WriteLine(DateTime.Now.ToString("'['HH':'mm':'ss']'") + "[" + msg + "] " + $"{GetProgressBarString((int)Math.Round((double)status.DownloadedBytes / (double)status.File.FileSize * 100d))} {timeRemaining:hh\\:mm\\:ss\\.f}");
-                
-                Console.ForegroundColor = ConsoleColor.White;
+                Console.WriteLine($"{DateTime.Now.ToString("'['HH':'mm':'ss']'")}[{e.NumFilesDownloadedSuccessfully}/{e.NumFiles}][E:{e.NumFilesDownloadedUnsuccessfully}][{msg}] {status.File.FileName} ({FormatBytes(status.File.FileSize)})");
             }
 
-            mut.ReleaseMutex();
+            mutex.ReleaseMutex();
         }
     }
 

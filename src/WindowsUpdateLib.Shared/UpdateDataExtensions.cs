@@ -265,26 +265,30 @@ namespace WindowsUpdateLib
 
                     string metadataCabTemp = Path.GetTempFileName();
 
-                    // Download the file
-                    await client.DownloadFileTaskAsync(new Uri(fileDownloadInfo.DownloadUrl), metadataCabTemp);
-
-                    if (fileDownloadInfo.IsEncrypted)
+                    try
                     {
-                        if (!await fileDownloadInfo.DecryptAsync(metadataCabTemp, metadataCabTemp + ".decrypted"))
-                            continue;
-                        metadataCabTemp += ".decrypted";
-                    }
+                        // Download the file
+                        await client.DownloadFileTaskAsync(new Uri(fileDownloadInfo.DownloadUrl), metadataCabTemp);
 
-                    update.CachedMetadata = metadataCabTemp;
-
-                    using (CabinetHandler cabinet2 = new CabinetHandler(File.OpenRead(update.CachedMetadata)))
-                    {
-                        string xmlfile = cabinet2.Files.First();
-                        using (Stream xmlstream = cabinet2.OpenFile(xmlfile))
+                        if (fileDownloadInfo.IsEncrypted)
                         {
-                            neutralCompDB.Add(CompDBXmlClass.DeserializeCompDB(xmlstream));
+                            if (!await fileDownloadInfo.DecryptAsync(metadataCabTemp, metadataCabTemp + ".decrypted"))
+                                continue;
+                            metadataCabTemp += ".decrypted";
+                        }
+
+                        update.CachedMetadata = metadataCabTemp;
+
+                        using (CabinetHandler cabinet2 = new CabinetHandler(File.OpenRead(update.CachedMetadata)))
+                        {
+                            string xmlfile = cabinet2.Files.First();
+                            using (Stream xmlstream = cabinet2.OpenFile(xmlfile))
+                            {
+                                neutralCompDB.Add(CompDBXmlClass.DeserializeCompDB(xmlstream));
+                            }
                         }
                     }
+                    catch { }
                 }
             }
 
