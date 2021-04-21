@@ -2,8 +2,10 @@
 using MediaCreationLib.Dism;
 using Microsoft.Wim;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using UUPMediaCreator.InterCommunication;
 using static MediaCreationLib.MediaCreator;
 
@@ -12,6 +14,72 @@ namespace MediaCreationLib
     public class UUPMediaCreator
     {
         private static WIMImaging imagingInterface = new WIMImaging();
+
+        public static string LongestCommonSubstring(IList<string> values)
+        {
+            string result = string.Empty;
+
+            for (int i = 0; i < values.Count - 1; i++)
+            {
+                for (int j = i + 1; j < values.Count; j++)
+                {
+                    string tmp;
+                    if (LongestCommonSubstring(values[i], values[j], out tmp) > result.Length)
+                    {
+                        result = tmp;
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        // Source: http://en.wikibooks.org/wiki/Algorithm_Implementation/Strings/Longest_common_substring
+        public static int LongestCommonSubstring(string str1, string str2, out string sequence)
+        {
+            sequence = string.Empty;
+            if (String.IsNullOrEmpty(str1) || String.IsNullOrEmpty(str2))
+                return 0;
+
+            int[,] num = new int[str1.Length, str2.Length];
+            int maxlen = 0;
+            int lastSubsBegin = 0;
+            StringBuilder sequenceBuilder = new StringBuilder();
+
+            for (int i = 0; i < str1.Length; i++)
+            {
+                for (int j = 0; j < str2.Length; j++)
+                {
+                    if (str1[i] != str2[j])
+                        num[i, j] = 0;
+                    else
+                    {
+                        if ((i == 0) || (j == 0))
+                            num[i, j] = 1;
+                        else
+                            num[i, j] = 1 + num[i - 1, j - 1];
+
+                        if (num[i, j] > maxlen)
+                        {
+                            maxlen = num[i, j];
+                            int thisSubsBegin = i - num[i, j] + 1;
+                            if (lastSubsBegin == thisSubsBegin)
+                            {//if the current LCS is the same as the last time this block ran
+                                sequenceBuilder.Append(str1[i]);
+                            }
+                            else //this block resets the string builder if a different LCS is found
+                            {
+                                lastSubsBegin = thisSubsBegin;
+                                sequenceBuilder.Length = 0; //clear it
+                                sequenceBuilder.Append(str1.Substring(lastSubsBegin, (i + 1) - lastSubsBegin));
+                            }
+                        }
+                    }
+                }
+            }
+            sequence = sequenceBuilder.ToString();
+            return maxlen;
+        }
 
         public static bool CreateUpgradedEditionFromMountedImage(
             string MountedImagePath,
@@ -61,20 +129,50 @@ namespace MediaCreationLib
                 progressCallback?.Invoke(Common.ProcessPhase.CapturingImage, IsIndeterminate, ProgressPercentage, Operation);
             };
 
-            string name = $"Windows 10 {EditionID}";
+            string replaceStr = LongestCommonSubstring(new string[] { srcimage.DISPLAYNAME, SourceEdition });
+            string replaceStr2 = LongestCommonSubstring(new string[] { EditionID, SourceEdition });
+            
+            if (!string.IsNullOrEmpty(replaceStr2))
+                replaceStr2 = EditionID.Replace(replaceStr2, "");
+            else
+                replaceStr2 = EditionID;
+
+            string name;
+            string description;
+            string displayname;
+            string displaydescription;
+
+            if (string.IsNullOrEmpty(replaceStr))
+            {
+                name = $"Windows 10 {replaceStr2}";
+                description = name;
+                displayname = name;
+                displaydescription = name;
+            }
+            else
+            {
+                name = srcimage.NAME.Replace(replaceStr, replaceStr2, StringComparison.InvariantCultureIgnoreCase);
+                description = srcimage.DESCRIPTION.Replace(replaceStr, replaceStr2, StringComparison.InvariantCultureIgnoreCase);
+                displayname = srcimage.DISPLAYNAME.Replace(replaceStr, replaceStr2, StringComparison.InvariantCultureIgnoreCase);
+                displaydescription = srcimage.DISPLAYDESCRIPTION.Replace(replaceStr, replaceStr2, StringComparison.InvariantCultureIgnoreCase);
+            }
+
             if (Constants.FriendlyEditionNames.Any(x => x.Key.Equals(EditionID, StringComparison.InvariantCultureIgnoreCase)))
             {
                 name = Constants.FriendlyEditionNames.First(x => x.Key.Equals(EditionID, StringComparison.InvariantCultureIgnoreCase)).Value;
+                description = name;
+                displayname = name;
+                displaydescription = name;
             }
 
             result = imagingInterface.CaptureImage(
                 OutputInstallImage,
                 name,
-                name,
+                description,
                 EditionID,
                 MountedImagePath,
-                name,
-                name,
+                displayname,
+                displaydescription,
                 compression,
                 progressCallback: callback2,
                 UpdateFrom: index);
@@ -87,16 +185,24 @@ namespace MediaCreationLib
             if (!result)
                 goto exit;
 
+            //
+            // Set the correct metadata on the image
+            //
             var sku = tmpImageInfo.WINDOWS.EDITIONID;
 
             tmpImageInfo.WINDOWS = srcimage.WINDOWS;
             tmpImageInfo.WINDOWS.EDITIONID = sku;
             tmpImageInfo.FLAGS = sku;
 
+            if (tmpImageInfo.WINDOWS.INSTALLATIONTYPE.EndsWith(" Core", StringComparison.InvariantCultureIgnoreCase) && !tmpImageInfo.FLAGS.EndsWith("Core", StringComparison.InvariantCultureIgnoreCase))
+            {
+                tmpImageInfo.FLAGS += "Core";
+            }
+
             tmpImageInfo.NAME = name;
-            tmpImageInfo.DESCRIPTION = name;
-            tmpImageInfo.DISPLAYNAME = name;
-            tmpImageInfo.DISPLAYDESCRIPTION = name;
+            tmpImageInfo.DESCRIPTION = description;
+            tmpImageInfo.DISPLAYNAME = displayname;
+            tmpImageInfo.DISPLAYDESCRIPTION = displaydescription;
 
             result = imagingInterface.SetWIMImageInformation(OutputInstallImage, wiminfo.IMAGE.Count + 1, tmpImageInfo);
             if (!result)
@@ -105,6 +211,10 @@ namespace MediaCreationLib
             if (IsVirtual)
             {
                 File.Delete(Path.Combine(MountedImagePath, "Windows", $"{EditionID}.xml"));
+            }
+            else
+            {
+                File.Delete(Path.Combine(MountedImagePath, "Windows", $"{SourceEdition}.xml"));
             }
 
             exit:
@@ -131,6 +241,11 @@ namespace MediaCreationLib
                 goto exit;
 
             string skustr = "CCOMA";
+
+            if (image.IMAGE[0].WINDOWS.EDITIONID.Contains("server", StringComparison.InvariantCultureIgnoreCase))
+            {
+                skustr = "SSS";
+            }
 
             if (image.IMAGE.Count == 1)
             {

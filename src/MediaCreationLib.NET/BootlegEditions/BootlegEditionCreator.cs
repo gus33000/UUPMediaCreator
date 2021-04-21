@@ -293,8 +293,7 @@ namespace MediaCreationLib.BootlegEditions
             );
             progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, "Has edition pack: " + HasEditionPack);
 
-            string TemporaryFolder = Path.GetTempFileName();
-            File.Delete(TemporaryFolder);
+            string TemporaryFolder = TempManager.TempManager.Instance.GetTempPath();
             Directory.CreateDirectory(TemporaryFolder);
 
             string SxSFolder = Path.Combine(TemporaryFolder, "SxS");
@@ -343,8 +342,7 @@ namespace MediaCreationLib.BootlegEditions
             //
             if (LPFolder == null)
             {
-                LPFolder = Path.GetTempFileName();
-                File.Delete(LPFolder);
+                LPFolder = TempManager.TempManager.Instance.GetTempPath();
                 Directory.CreateDirectory(LPFolder);
 
                 string lpfilter1 = $"*fre_client_{languagecode}_lp.cab";
@@ -518,10 +516,8 @@ namespace MediaCreationLib.BootlegEditions
             bool HandleOEMDefaultAssociationsXml = File.Exists(Path.Combine(MountedImagePath, "Windows", "System32", "OEMDefaultAssociations.xml"));
             bool HandleOEMDefaultAssociationsDll = File.Exists(Path.Combine(MountedImagePath, "Windows", "System32", "OEMDefaultAssociations.dll"));
 
-            string OEMDefaultAssociationsXml = Path.GetTempFileName();
-            string OEMDefaultAssociationsDll = Path.GetTempFileName();
-            File.Delete(OEMDefaultAssociationsXml);
-            File.Delete(OEMDefaultAssociationsDll);
+            string OEMDefaultAssociationsXml = TempManager.TempManager.Instance.GetTempPath();
+            string OEMDefaultAssociationsDll = TempManager.TempManager.Instance.GetTempPath();
 
             string OEMDefaultAssociationsXmlInImage = Path.Combine(MountedImagePath, "Windows", "System32", "OEMDefaultAssociations.xml");
             string OEMDefaultAssociationsDllInImage = Path.Combine(MountedImagePath, "Windows", "System32", "OEMDefaultAssociations.dll");

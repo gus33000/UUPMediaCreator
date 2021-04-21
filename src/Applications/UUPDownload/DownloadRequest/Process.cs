@@ -32,9 +32,9 @@ using System.Threading.Tasks;
 using WindowsUpdateLib;
 using WindowsUpdateLib.Shared;
 
-namespace UUPDownload
+namespace UUPDownload.DownloadRequest
 {
-    public static class DownloadRequest
+    public static class Process
     {
         internal static int ParseOptions(DownloadRequestOptions opts)
         {
@@ -150,6 +150,16 @@ namespace UUPDownload
             bool getSpecific = !string.IsNullOrEmpty(Language) && !string.IsNullOrEmpty(Edition);
             bool getSpecificLanguageOnly = !string.IsNullOrEmpty(Language) && string.IsNullOrEmpty(Edition);
 
+            Logging.Log("Title: " + update.Xml.LocalizedProperties.Title);
+            Logging.Log("Description: " + update.Xml.LocalizedProperties.Description);
+
+#if DEBUG
+            foreach (var file in update.Xml.Files.File.Select(x => UpdateUtils.GetFilenameForCEUIFile(x, payloadItems)).OrderBy(x => x))
+            {
+                Console.WriteLine(file);
+            }
+#endif
+
             Logging.Log("Gathering update metadata...");
 
             var compDBs = await update.GetCompDBsAsync();
@@ -160,18 +170,14 @@ namespace UUPDownload
 
             buildstr ??= "";
 
-            CompDBXmlClass.Package editionPackPkg = compDBs.GetEditionPackFromCompDBs();
-            if (editionPackPkg != null)
+            if (string.IsNullOrEmpty(buildstr) && update.Xml.LocalizedProperties.Title.Contains("(UUP-CTv2)"))
             {
-                string editionPkg = await update.DownloadFileFromDigestAsync(editionPackPkg.Payload.PayloadItem.PayloadHash);
-                var plans = await Task.WhenAll(languages.Select(x => update.GetTargetedPlanAsync(x, editionPkg)));
-
-                foreach (var plan in plans)
-                {
-                    Logging.Log("");
-                    Logging.Log("Editions available for language: " + plan.LanguageCode);
-                    plan.EditionTargets.PrintAvailablePlan();
-                }
+                string unformattedBase = update.Xml.LocalizedProperties.Title.Split(" ")[0];
+                buildstr = $"10.0.{unformattedBase.Split(".")[0]}.{unformattedBase.Split(".")[1]} ({unformattedBase.Split(".")[2]}.{unformattedBase.Split(".")[3]})";
+            }
+            else if (string.IsNullOrEmpty(buildstr))
+            {
+                buildstr = update.Xml.LocalizedProperties.Title;
             }
 
             string name = $"{buildstr.Replace(" ", ".").Replace("(", "").Replace(")", "")}_{MachineType.ToString().ToLower()}fre_{update.Xml.UpdateIdentity.UpdateID.Split("-")[^1]}";
@@ -179,8 +185,6 @@ namespace UUPDownload
             name = illegalCharacters.Replace(name, "");
             string OutputFolder = Path.Combine(pOutputFolder, name);
 
-            Logging.Log("Title: " + update.Xml.LocalizedProperties.Title);
-            Logging.Log("Description: " + update.Xml.LocalizedProperties.Description);
             Logging.Log("Build String: " + buildstr);
             Logging.Log("Languages: " + string.Join(", ", languages));
 
@@ -188,6 +192,20 @@ namespace UUPDownload
 
             if (compDBs != null)
             {
+                CompDBXmlClass.Package editionPackPkg = compDBs.GetEditionPackFromCompDBs();
+                if (editionPackPkg != null)
+                {
+                    string editionPkg = await update.DownloadFileFromDigestAsync(editionPackPkg.Payload.PayloadItem.PayloadHash);
+                    var plans = await Task.WhenAll(languages.Select(x => update.GetTargetedPlanAsync(x, editionPkg)));
+
+                    foreach (var plan in plans)
+                    {
+                        Logging.Log("");
+                        Logging.Log("Editions available for language: " + plan.LanguageCode);
+                        plan.EditionTargets.PrintAvailablePlan();
+                    }
+                }
+
                 foreach (CompDBXmlClass.CompDB cdb in compDBs)
                 {
                     if (getSpecific || getSpecificLanguageOnly)
@@ -337,11 +355,19 @@ namespace UUPDownload
 
                 returnCode = 0;
 
-                IEnumerable<(CExtendedUpdateInfoXml.File, FileExchangeV3FileDownloadInformation)> boundList = filesToDownload.AsParallel().Select(x => (x, fileUrls.First(y => y.Digest == x.Digest))).OrderBy(x => x.Item2.ExpirationDate);
+                IEnumerable<(CExtendedUpdateInfoXml.File, FileExchangeV3FileDownloadInformation)> boundList = filesToDownload
+                    .AsParallel()
+                    .Select(x => (x, fileUrls.First(y => y.Digest == x.Digest)))
+                    .Where(x => UpdateUtils.ShouldFileGetDownloaded(x.x, payloadItems))
+                    .OrderBy(x => x.Item2.ExpirationDate);
 
                 IEnumerable<UUPFile> fileList = boundList.Select(boundFile =>
                 {
-                    return new UUPFile(boundFile.Item2, UpdateUtils.GetFilenameForCEUIFile(boundFile.Item1, payloadItems), long.Parse(boundFile.Item1.Size), boundFile.Item1.AdditionalDigest.Text);
+                    return new UUPFile(
+                        boundFile.Item2, 
+                        UpdateUtils.GetFilenameForCEUIFile(boundFile.Item1, payloadItems), 
+                        long.Parse(boundFile.Item1.Size), 
+                        boundFile.Item1.AdditionalDigest.Text);
                 });
 
                 returnCode = await helperDl.DownloadAsync(fileList.ToList(), new ReportProgress()) ? 0 : -1;

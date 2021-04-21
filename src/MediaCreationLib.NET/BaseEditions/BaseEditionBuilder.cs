@@ -98,8 +98,15 @@ namespace MediaCreationLib.BaseEditions
             // Set the correct metadata on the image
             //
             image.DISPLAYNAME = image.NAME;
-            image.DISPLAYDESCRIPTION = image.NAME;
+            image.DISPLAYDESCRIPTION = image.DESCRIPTION;
+            image.NAME = image.NAME;
+            image.DESCRIPTION = image.NAME;
             image.FLAGS = image.WINDOWS.EDITIONID;
+            if (image.WINDOWS.INSTALLATIONTYPE.EndsWith(" Core", StringComparison.InvariantCultureIgnoreCase) && !image.FLAGS.EndsWith("Core", StringComparison.InvariantCultureIgnoreCase))
+            {
+                image.FLAGS += "Core";
+            }
+
             if (image.WINDOWS.LANGUAGES == null)
             {
                 image.WINDOWS.LANGUAGES = new WIMInformationXML.LANGUAGES()
@@ -148,8 +155,7 @@ namespace MediaCreationLib.BaseEditions
 
             progressCallback?.Invoke(Common.ProcessPhase.PreparingFiles, false, progressoffset, "Unpacking...");
 
-            var tmp = Path.GetTempFileName();
-            File.Delete(tmp);
+            var tmp = TempManager.TempManager.Instance.GetTempPath();
 
             string tempExtractionPath = Path.Combine(tmp, "Package");
             int progressScaleHalf = progressscale / 2;

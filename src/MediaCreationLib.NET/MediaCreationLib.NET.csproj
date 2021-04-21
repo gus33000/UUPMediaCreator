@@ -46,4 +46,5 @@
     <PackageReference Include="System.IO.FileSystem.AccessControl" Version="5.0.0" />
     <PackageReference Include="System.Security.AccessControl" Version="5.0.0" />
   </ItemGroup>
+  <Import Project="..\..\TempManager.Shared\TempManager.Shared.projitems" Label="Shared" />
 </Project>

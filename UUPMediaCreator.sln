@@ -69,18 +69,22 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UUPMediaConverterCli", "src
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UUPDownload", "src\Applications\UUPDownload\UUPDownload.csproj", "{67CB3F20-E40A-41F8-B159-A8857A7DC409}"
 EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "TempManager.Shared", "TempManager.Shared\TempManager.Shared.shproj", "{D021F60B-B14A-442C-BB5D-260C7C26E89D}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		thirdparty\Microsoft.Cabinet.Shared\Microsoft.Cabinet.Shared.projitems*{01e07853-2229-48f3-a66c-a0a1120e3242}*SharedItemsImports = 13
 		src\WindowsUpdateLib.Shared\WindowsUpdateLib.Shared.projitems*{0d26e90f-2cf6-4ba5-b235-72e646a3ff48}*SharedItemsImports = 13
 		src\InterCommunication.Shared\InterCommunication.Shared.projitems*{11385f97-61d8-47ef-a068-3a130232f6b6}*SharedItemsImports = 4
 		src\CompDB.Shared\CompDB.Shared.projitems*{113c95b3-1cbb-4b02-8bfe-8a623ad67f84}*SharedItemsImports = 13
+		TempManager.Shared\TempManager.Shared.projitems*{464e542c-2e57-46bb-8bec-4a77e0228a17}*SharedItemsImports = 5
 		thirdparty\Microsoft.Cabinet.Shared\Microsoft.Cabinet.Shared.projitems*{7020f6c8-fc8b-42fe-bbc0-365580a6584c}*SharedItemsImports = 5
 		src\WindowsUpdateLib.Shared\WindowsUpdateLib.Shared.projitems*{8ebd2b3f-31c4-493a-8853-fdbe32097b7e}*SharedItemsImports = 4
 		src\CompDB.Shared\CompDB.Shared.projitems*{8ff9162b-7281-4274-823c-3bb7905508d2}*SharedItemsImports = 4
 		src\CompDB.Shared\CompDB.Shared.projitems*{a5ef8678-b621-451a-b58e-d1afdd92751b}*SharedItemsImports = 5
 		src\WindowsUpdateLib.Shared\WindowsUpdateLib.Shared.projitems*{b601b162-cdcd-492a-a8cf-747e0d3f6f83}*SharedItemsImports = 5
 		src\InterCommunication.Shared\InterCommunication.Shared.projitems*{b8ce22ed-2ad7-4fb2-8b72-88f345e29b86}*SharedItemsImports = 13
+		TempManager.Shared\TempManager.Shared.projitems*{d021f60b-b14a-442c-bb5d-260c7c26e89d}*SharedItemsImports = 13
 		thirdparty\Microsoft.Cabinet.Shared\Microsoft.Cabinet.Shared.projitems*{f54c1e9a-2a8b-4b1a-b260-a72b055ed10f}*SharedItemsImports = 4
 		src\InterCommunication.Shared\InterCommunication.Shared.projitems*{f74c9d30-95f1-4a07-ba85-f5da26824b40}*SharedItemsImports = 5
 	EndGlobalSection
@@ -586,6 +590,7 @@ Global
 		{34CD2A97-E3CE-4606-9B64-E5B3A42E108A} = {26CB0999-BDB7-470B-A466-743E180E9EC8}
 		{4291EF28-C146-4772-8598-982645C9FF9A} = {26CB0999-BDB7-470B-A466-743E180E9EC8}
 		{10CCCD4A-4B25-4EE3-BCC4-1297769890DE} = {26CB0999-BDB7-470B-A466-743E180E9EC8}
+		{D021F60B-B14A-442C-BB5D-260C7C26E89D} = {24BB6CC7-870A-4A61-BAC0-E22BF57CE5F4}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {FEE89471-4FE8-4620-991F-4EBAD0F4CFEA}

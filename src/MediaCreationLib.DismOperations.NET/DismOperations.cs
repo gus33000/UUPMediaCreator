@@ -221,7 +221,11 @@ namespace MediaCreationLib.Dism
                 // Clean DISM
                 //
                 DismApi.CloseSession(session);
-                DismApi.Shutdown();
+                try
+                {
+                    DismApi.Shutdown();
+                }
+                catch { }
                 if (counter < 3)
                 {
                     counter++;
@@ -232,7 +236,11 @@ namespace MediaCreationLib.Dism
             //
             // Clean DISM
             //
-            DismApi.CloseSession(session);
+            try
+            {
+                DismApi.CloseSession(session);
+            }
+            catch { }
             DismApi.Shutdown();
         }
     }

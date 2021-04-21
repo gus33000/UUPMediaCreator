@@ -252,11 +252,23 @@ namespace MediaCreationLib
                         continue;
                     }
 
-                    EditionPack = file;
+                    EditionPack = Path.Combine(UUPPath, file);
                 }
             }
 
-            return ConversionPlanBuilder.GetTargetedPlan(UUPPath, compDBs, Path.Combine(UUPPath, EditionPack), LanguageCode, out EditionTargets, (string msg) => progressCallback?.Invoke(Common.ProcessPhase.ReadingMetadata, true, 0, msg));
+            if (string.IsNullOrEmpty(EditionPack))
+            {
+                bool result = true;
+                string BaseESD = null;
+
+                (result, BaseESD) = NET.FileLocator.LocateFilesForSetupMediaCreation(UUPPath, LanguageCode, progressCallback);
+                if (result)
+                {
+                    EditionPack = BaseESD;
+                }
+            }
+
+            return ConversionPlanBuilder.GetTargetedPlan(UUPPath, compDBs, EditionPack, LanguageCode, out EditionTargets, (string msg) => progressCallback?.Invoke(Common.ProcessPhase.ReadingMetadata, true, 0, msg));
         }
 
         public static void CreateISOMediaAdvanced(
@@ -288,8 +300,7 @@ namespace MediaCreationLib
 
             progressCallback?.Invoke(Common.ProcessPhase.ReadingMetadata, true, 0, "Enumerating files");
 
-            var temp = Path.GetTempFileName();
-            File.Delete(temp);
+            var temp = TempManager.TempManager.Instance.GetTempPath();
             Directory.CreateDirectory(temp);
 
             string WinREWIMFilePath = Path.Combine(temp, "Winre.wim");
@@ -355,8 +366,7 @@ namespace MediaCreationLib
             string error = "";
             progressCallback?.Invoke(Common.ProcessPhase.ReadingMetadata, true, 0, "Enumerating files");
 
-            var temp = Path.GetTempFileName();
-            File.Delete(temp);
+            var temp = TempManager.TempManager.Instance.GetTempPath();
             Directory.CreateDirectory(temp);
 
             string WinREWIMFilePath = Path.Combine(temp, "Winre.wim");

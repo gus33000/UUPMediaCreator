@@ -492,18 +492,27 @@ namespace MediaCreationLib.Planning.NET
                         var tempHashMap = Path.GetTempFileName();
                         File.Delete(tempHashMap);
 
-                        result = imagingInterface.ExtractFileFromImage(EditionPack, 1, "$filehashes$.dat", tempHashMap);
-                        if (!result)
-                            goto error;
+                        string pathEditionMapping = "";
+                        int index = 0;
 
-                        string[] hashmapcontent = File.ReadAllLines(tempHashMap);
-                        File.Delete(tempHashMap);
+                        result = imagingInterface.ExtractFileFromImage(EditionPack, 1, "$filehashes$.dat", tempHashMap);
+                        if (result)
+                        {
+                            string[] hashmapcontent = File.ReadAllLines(tempHashMap);
+                            File.Delete(tempHashMap);
+                            pathEditionMapping = hashmapcontent.First(x => x.ToLower().Contains("editionmappings.xml")).Split('=').First();
+                            index = 1;
+                        }
+                        else
+                        {
+                            result = true;
+                            pathEditionMapping = "Windows\\Servicing\\Editions\\EditionMappings.xml";
+                            index = 3;
+                        }
 
                         try
                         {
-                            string pathEditionMapping = hashmapcontent.First(x => x.ToLower().Contains("editionmappings.xml")).Split('=').First();
-
-                            result = imagingInterface.ExtractFileFromImage(EditionPack, 1, pathEditionMapping, tempHashMap);
+                            result = imagingInterface.ExtractFileFromImage(EditionPack, index, pathEditionMapping, tempHashMap);
                             if (!result)
                                 goto error;
 
@@ -532,18 +541,27 @@ namespace MediaCreationLib.Planning.NET
                         var tempHashMap = Path.GetTempFileName();
                         File.Delete(tempHashMap);
 
-                        result = imagingInterface.ExtractFileFromImage(EditionPack, 1, "$filehashes$.dat", tempHashMap);
-                        if (!result)
-                            goto error;
+                        string pathEditionMatrix = "";
+                        int index = 0;
 
-                        string[] hashmapcontent = File.ReadAllLines(tempHashMap);
-                        File.Delete(tempHashMap);
+                        result = imagingInterface.ExtractFileFromImage(EditionPack, 1, "$filehashes$.dat", tempHashMap);
+                        if (result)
+                        {
+                            string[] hashmapcontent = File.ReadAllLines(tempHashMap);
+                            File.Delete(tempHashMap);
+                            pathEditionMatrix = hashmapcontent.First(x => x.ToLower().Contains("editionmatrix.xml")).Split('=').First();
+                            index = 1;
+                        }
+                        else
+                        {
+                            result = true;
+                            pathEditionMatrix = "Windows\\Servicing\\Editions\\EditionMatrix.xml";
+                            index = 3;
+                        }
 
                         try
                         {
-                            string pathEditionMatrix = hashmapcontent.First(x => x.ToLower().Contains("editionmatrix.xml")).Split('=').First();
-
-                            result = imagingInterface.ExtractFileFromImage(EditionPack, 1, pathEditionMatrix, tempHashMap);
+                            result = imagingInterface.ExtractFileFromImage(EditionPack, index, pathEditionMatrix, tempHashMap);
                             if (!result)
                                 goto error;
 

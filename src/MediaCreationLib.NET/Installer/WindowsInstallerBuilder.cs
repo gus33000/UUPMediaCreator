@@ -92,8 +92,7 @@ namespace MediaCreationLib.Installer
 
             string bootwim = Path.Combine(MediaPath, "sources", "boot.wim");
 
-            string tmpwimcopy = Path.GetTempFileName();
-            File.Delete(tmpwimcopy);
+            string tmpwimcopy = TempManager.TempManager.Instance.GetTempPath();
             File.Copy(bootwim, tmpwimcopy);
 
             //
@@ -167,8 +166,8 @@ namespace MediaCreationLib.Installer
             //
             // Modifying registry for each index
             //
-            string tempSoftwareHiveBackup = Path.GetTempFileName();
-            string tempSystemHiveBackup = Path.GetTempFileName();
+            string tempSoftwareHiveBackup = TempManager.TempManager.Instance.GetTempPath();
+            string tempSystemHiveBackup = TempManager.TempManager.Instance.GetTempPath();
 
             result = imagingInterface.ExtractFileFromImage(bootwim, 1, Constants.SYSTEM_Hive_Location, tempSystemHiveBackup);
             if (!result)
@@ -230,15 +229,28 @@ namespace MediaCreationLib.Installer
             // Adding missing files in index 2
             //
             progressCallback?.Invoke(Common.ProcessPhase.CreatingWindowsInstaller, true, 0, "Modifying assets for Setup PE (1)");
-            result = imagingInterface.RenameFileInImage(bootwim, 2, Path.Combine("Windows", "System32", "winpe.jpg"), Path.Combine("Windows", "System32", "setup.bmp"), progressCallback: callback);
+
+            result = imagingInterface.DeleteFileFromImage(bootwim, 2, Path.Combine("Windows", "System32", "winpe.jpg"), progressCallback: callback);
             if (!result)
             {
-                progressCallback?.Invoke(Common.ProcessPhase.CreatingWindowsInstaller, true, 0, "An error occured while modifying renaming the background file for index 2.");
+                progressCallback?.Invoke(Common.ProcessPhase.CreatingWindowsInstaller, true, 0, "An error occured while modifying deleting the background file for index 2.");
+                goto exit;
+            }
+
+            string matchingfile1 = Path.Combine(MediaPath, "sources", "background_cli.bmp");
+            string matchingfile2 = Path.Combine(MediaPath, "sources", "background_svr.bmp");
+
+            string bgfile = File.Exists(matchingfile1) ? matchingfile1 : matchingfile2;
+
+            result = imagingInterface.AddFileToImage(bootwim, 2, bgfile, Path.Combine("Windows", "System32", "setup.bmp"), progressCallback: callback);
+            if (!result)
+            {
+                progressCallback?.Invoke(Common.ProcessPhase.CreatingWindowsInstaller, true, 0, "An error occured while modifying adding the background file for index 2.");
                 goto exit;
             }
 
             progressCallback?.Invoke(Common.ProcessPhase.CreatingWindowsInstaller, true, 0, "Modifying assets for Setup PE (2)");
-            var winpejpgtmp = Path.GetTempFileName();
+            var winpejpgtmp = TempManager.TempManager.Instance.GetTempPath();
             File.WriteAllBytes(winpejpgtmp, Constants.winpejpg);
             result = imagingInterface.AddFileToImage(bootwim, 2, winpejpgtmp, Path.Combine("Windows", "System32", "winpe.jpg"), progressCallback: callback);
             File.Delete(winpejpgtmp);
@@ -265,8 +277,6 @@ namespace MediaCreationLib.Installer
 
                 if (file == "sources\\background.bmp")
                 {
-                    string matchingfile1 = Path.Combine(MediaPath, "sources", "background_cli.bmp");
-                    string matchingfile2 = Path.Combine(MediaPath, "sources", "background_srv.bmp");
                     if (File.Exists(matchingfile1))
                     {
                         result = imagingInterface.AddFileToImage(bootwim, 2, matchingfile1, normalizedPath, progressCallback: callback);
@@ -298,8 +308,6 @@ namespace MediaCreationLib.Installer
 
                     if (file == "sources\\background.bmp")
                     {
-                        string matchingfile1 = Path.Combine(MediaPath, "sources", "background_cli.bmp");
-                        string matchingfile2 = Path.Combine(MediaPath, "sources", "background_srv.bmp");
                         if (File.Exists(matchingfile1))
                         {
                             result = imagingInterface.AddFileToImage(bootwim, 2, matchingfile1, normalizedPath, progressCallback: callback);
@@ -397,7 +405,7 @@ namespace MediaCreationLib.Installer
             try
             {
                 progressCallback?.Invoke(Common.ProcessPhase.CreatingWindowsInstaller, true, 0, "Cleaning log files");
-                string logfile = Path.GetTempFileName();
+                string logfile = TempManager.TempManager.Instance.GetTempPath();
                 string pathinimage = Path.Combine("Windows", "INF", "setupapi.offline.log");
 
                 bool cresult = imagingInterface.ExtractFileFromImage(bootwim, 1, pathinimage, logfile);
@@ -432,7 +440,7 @@ namespace MediaCreationLib.Installer
             // Disable UMCI
             //
             progressCallback?.Invoke(Common.ProcessPhase.CreatingWindowsInstaller, true, 0, "Disabling UMCI");
-            string tempSystemHiveBackup = Path.GetTempFileName();
+            string tempSystemHiveBackup = TempManager.TempManager.Instance.GetTempPath();
 
             result = imagingInterface.ExtractFileFromImage(bootwim, 1, Constants.SYSTEM_Hive_Location, tempSystemHiveBackup);
             if (!result)
