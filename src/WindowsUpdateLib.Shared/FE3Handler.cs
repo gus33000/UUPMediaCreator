@@ -379,7 +379,7 @@ namespace WindowsUpdateLib
             //
             while (true)
             {
-                var result = await SyncUpdates(cookie.GetCookieResult, token, InstalledNonLeafUpdateIDs, OtherCachedUpdateIDs, new string[] { categoryId }, ctac);
+                var result = await SyncUpdates(cookie.GetCookieResult, token, InstalledNonLeafUpdateIDs, OtherCachedUpdateIDs, string.IsNullOrEmpty(categoryId) ? new string[0] : new string[] { categoryId }, ctac);
 
                 // Refresh the cookie
                 cookie.GetCookieResult.EncryptedData = result.Item1.SyncUpdatesResult.NewCookie.EncryptedData;

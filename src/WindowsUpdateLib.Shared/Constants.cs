@@ -5,7 +5,7 @@
         public const string ClientWebServiceServerNamespace     = "http://www.microsoft.com/SoftwareDistribution/Server/ClientWebService";
         public const string WindowsUpdateAuthorizationSchema    = "http://schemas.microsoft.com/msus/2014/10/WindowsUpdateAuthorization";
         public const string Endpoint                            = "https://fe3cr.delivery.mp.microsoft.com/ClientWebService/client.asmx";
-        public const string ClientProtocolVersion               = "2.41";
+        public const string ClientProtocolVersion               = "2.50";
         public const string OldCookieExpiration                 = "2016-07-27T07:18:09Z";
         public const string LastChangeDate                      = "2015-10-21T17:01:07.1472913Z";
         public const string SecurityExpirationTimestamp         = "2044-08-02T20:09:03Z";
