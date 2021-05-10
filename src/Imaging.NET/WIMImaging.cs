@@ -60,8 +60,19 @@ namespace Imaging
 
             if (!File.Exists(libPath))
             {
-                Console.WriteLine($"Unable to find native library [{libPath}].");
-                throw new PlatformNotSupportedException($"Unable to find native library [{libPath}].");
+                libDir = GetExecutableDirectory();
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                    libPath = Path.Combine(libDir, "libwim-15.dll");
+                else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                    libPath = Path.Combine(libDir, "libwim.so");
+                else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+                    libPath = Path.Combine(libDir, "libwim.dylib");
+
+                if (!File.Exists(libPath))
+                {
+                    Console.WriteLine($"Unable to find native library [{libPath}].");
+                    throw new PlatformNotSupportedException($"Unable to find native library [{libPath}].");
+                }
             }
 
             try
