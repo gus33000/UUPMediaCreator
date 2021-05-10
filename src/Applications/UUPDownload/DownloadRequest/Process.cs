@@ -92,11 +92,18 @@ namespace UUPDownload.DownloadRequest
 
             IEnumerable<UpdateData> data = await FE3Handler.GetUpdates(null, ctac, token, FileExchangeV3UpdateFilter.ProductRelease);
             data = data.Select(x => UpdateUtils.TrimDeltasFromUpdateData(x));
-
-            foreach (UpdateData update in data)
+            
+            if(data.Count() == 0)
             {
-                await ProcessUpdateAsync(update, o.OutputFolder, o.MachineType, o.Language, o.Edition, true);
-                //await BuildUpdateXml(update, o.MachineType);
+                Logging.Log("No updates found that matched the specified criteria.", Logging.LoggingLevel.Error);
+            }
+            else 
+            {
+                foreach (UpdateData update in data)
+                {
+                    await ProcessUpdateAsync(update, o.OutputFolder, o.MachineType, o.Language, o.Edition, true);
+                    //await BuildUpdateXml(update, o.MachineType);
+                }
             }
             Logging.Log("Completed.");
             if (Debugger.IsAttached)
