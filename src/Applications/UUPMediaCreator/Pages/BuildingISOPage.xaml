@@ -23,7 +23,7 @@
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
-                <FontIcon x:Name="ReadingMetadataGlyph" FontFamily="Segoe MDL2 Assets" Glyph="" />
+                <FontIcon x:Name="ReadingMetadataGlyph" FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="" />
 
                 <TextBlock Margin="8,0,0,0" Grid.Column="1" Text="Reading Metadata..." />
             </Grid>
@@ -34,7 +34,7 @@
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
-                <FontIcon x:Name="PreparingFilesGlyph" FontFamily="Segoe MDL2 Assets" Glyph="" />
+                <FontIcon x:Name="PreparingFilesGlyph" FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="" />
 
                 <TextBlock Margin="8,0,0,0" Grid.Column="1" Text="Preparing files..." />
             </Grid>
@@ -45,7 +45,7 @@
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
-                <FontIcon x:Name="CreatingWindowsInstallerGlyph" FontFamily="Segoe MDL2 Assets" Glyph="" />
+                <FontIcon x:Name="CreatingWindowsInstallerGlyph" FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="" />
 
                 <TextBlock Margin="8,0,0,0" Grid.Column="1" Text="Creating Windows Installer..." />
             </Grid>
@@ -56,7 +56,7 @@
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
-                <FontIcon x:Name="ApplyingImageGlyph" FontFamily="Segoe MDL2 Assets" Glyph="" />
+                <FontIcon x:Name="ApplyingImageGlyph" FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="" />
 
                 <TextBlock Margin="8,0,0,0" Grid.Column="1" Text="Applying Image..." />
             </Grid>
@@ -67,7 +67,7 @@
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
-                <FontIcon x:Name="IntegratingWinREGlyph" FontFamily="Segoe MDL2 Assets" Glyph="" />
+                <FontIcon x:Name="IntegratingWinREGlyph" FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="" />
 
                 <TextBlock Margin="8,0,0,0" Grid.Column="1" Text="Integrating Windows Recovery Environment..." />
             </Grid>
@@ -78,7 +78,7 @@
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
-                <FontIcon x:Name="CapturingImageGlyph" FontFamily="Segoe MDL2 Assets" Glyph="" />
+                <FontIcon x:Name="CapturingImageGlyph" FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="" />
 
                 <TextBlock Margin="8,0,0,0" Grid.Column="1" Text="Capturing Image..." />
             </Grid>
@@ -89,7 +89,7 @@
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
-                <FontIcon x:Name="CreatingISOGlyph" FontFamily="Segoe MDL2 Assets" Glyph="" />
+                <FontIcon x:Name="CreatingISOGlyph" FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="" />
 
                 <TextBlock Margin="8,0,0,0" Grid.Column="1" Text="Creating ISO..." />
             </Grid>

@@ -17,7 +17,7 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="{x:Bind Glyph, Mode=OneWay}" FontSize="256" Opacity="0.15" Grid.RowSpan="4" HorizontalAlignment="Right" Margin="0,0,-128,0" />
+        <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="{x:Bind Glyph, Mode=OneWay}" FontSize="256" Opacity="0.15" Grid.RowSpan="4" HorizontalAlignment="Right" Margin="0,0,-128,0" />
 
         <TextBlock Text="{x:Bind Title, Mode=OneWay}" FontWeight="Bold" FontSize="36" TextWrapping="Wrap" />
         <TextBlock Grid.Row="1" Text="{x:Bind Subtitle, Mode=OneWay}" FontWeight="SemiBold" FontSize="18" TextWrapping="Wrap" />
@@ -37,7 +37,7 @@
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
-                    <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE00E;" FontSize="14" />
+                    <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xE00E;" FontSize="14" />
                     <TextBlock Margin="8,0,0,0" Grid.Column="1" Text="Back" />
                 </Grid>
             </Button>
@@ -49,7 +49,7 @@
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
                     <TextBlock Text="Next" />
-                    <FontIcon Margin="8,0,0,0" Grid.Column="1" FontFamily="Segoe MDL2 Assets" Glyph="&#xE00F;" FontSize="14" />
+                    <FontIcon Margin="8,0,0,0" Grid.Column="1" FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xE00F;" FontSize="14" />
                 </Grid>
             </Button>
         </Grid>

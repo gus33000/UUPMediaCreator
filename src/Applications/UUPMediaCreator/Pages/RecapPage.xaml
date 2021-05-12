@@ -84,7 +84,7 @@
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition />
                 </Grid.ColumnDefinitions>
-                <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE958;" />
+                <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xE958;" />
                 <TextBlock Grid.Column="1" FontSize="16" Margin="8,0,0,0" FontWeight="SemiBold" Text="Where do you want to save your ISO image?" />
             </Grid>
 
@@ -101,7 +101,7 @@
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition />
                         </Grid.ColumnDefinitions>
-                        <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE838;" />
+                        <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xE838;" />
                         <TextBlock Grid.Column="1" Margin="8,0,0,0" Text="Browse" />
                     </Grid>
                 </Button>

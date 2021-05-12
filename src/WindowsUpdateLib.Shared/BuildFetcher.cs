@@ -271,25 +271,33 @@ namespace WindowsUpdateLib
             }
         }
 
+        private static Dictionary<CTAC, string> GetRingCTACs(MachineType machineType, OSSkuId osSkuId)
+        {
+            return new Dictionary<CTAC, string>()
+            {
+                { new CTAC(osSkuId, "10.0.15063.534", machineType, "WIS", "", "CB", "rs2_release", "Production", false), "Insider Slow (RS2)" },
+                { new CTAC(osSkuId, "10.0.15063.534", machineType, "WIF", "", "CB", "rs2_release", "Production", false), "Insider Fast (RS2)" },
+                { new CTAC(osSkuId, "10.0.16299.15", machineType, "Retail", "", "CB", "rs3_release", "Production", true), "Retail (RS3)" },
+                { new CTAC(osSkuId, "10.0.17134.1", machineType, "Retail", "", "CB", "rs4_release", "Production", true), "Retail (RS4)" },
+                { new CTAC(osSkuId, "10.0.17763.1217", machineType, "Retail", "", "CB", "rs5_release", "Production", true), "Retail (RS5)" },
+                { new CTAC(osSkuId, "10.0.18362.836", machineType, "Retail", "", "CB", "19h1_release", "Production", true), "Retail (TI)" },
+                { new CTAC(osSkuId, "10.0.19041.200", machineType, "Retail", "", "CB", "vb_release", "Production", true, false), "Retail (VB)"},
+                { new CTAC(osSkuId, "10.0.19041.84", machineType, "Retail", "", "CB", "vb_release", "Production", false), "Retail" },
+                { new CTAC(osSkuId, "10.0.19041.200", machineType, "External", "ReleasePreview", "CB", "vb_release", "Production", false, false), "Release Preview"},
+                { new CTAC(osSkuId, "10.0.19041.200", machineType, "External", "Beta", "CB", "vb_release", "Production", false, false), "Beta "},
+                { new CTAC(osSkuId, "10.0.19041.200", machineType, "External", "Dev", "CB", "vb_release", "Production", false, false), "Dev"},
+                { new CTAC(osSkuId, "10.0.19041.200", machineType, "RP", "External", "CB", "vb_release", "Production", false, false, "Active"), "Insider Release Preview"},
+                { new CTAC(osSkuId, "10.0.19041.200", machineType, "WIS", "External", "CB", "vb_release", "Production", false, false, "Active"), "Insider Slow"},
+                { new CTAC(osSkuId, "10.0.19041.200", machineType, "WIF", "External", "CB", "vb_release", "Production", false, false, "Active"), "Insider Fast"},
+                { new CTAC(osSkuId, "10.0.19041.200", machineType, "WIF", "External", "CB", "vb_release", "Production", false, false, "Skip"), "Skip Ahead"},
+            };
+        }
+
         private static async Task<IEnumerable<UpdateData>> GetUpdates(MachineType MachineType)
         {
             HashSet<UpdateData> updates = new HashSet<UpdateData>();
 
-            CTAC[] ctacs = new CTAC[]
-            {
-                new CTAC(OSSkuId.PPIPro, "10.0.15063.534", MachineType, "WIS", "", "CB", "rs2_release", "Production", false),
-                new CTAC(OSSkuId.PPIPro, "10.0.15063.534", MachineType, "WIF", "", "CB", "rs2_release", "Production", false),
-                new CTAC(OSSkuId.PPIPro, "10.0.19041.84", MachineType, "Retail", "", "CB", "vb_release", "Production", false),
-                new CTAC(OSSkuId.Professional, "10.0.16299.15", MachineType, "Retail", "", "CB", "rs3_release", "Production", true),
-                new CTAC(OSSkuId.Professional, "10.0.17134.1", MachineType, "Retail", "", "CB", "rs4_release", "Production", true),
-                new CTAC(OSSkuId.Professional, "10.0.17763.1217", MachineType, "Retail", "", "CB", "rs5_release", "Production", true),
-                new CTAC(OSSkuId.Professional, "10.0.18362.836", MachineType, "Retail", "", "CB", "19h1_release", "Production", true),
-                new CTAC(OSSkuId.Professional, "10.0.19041.84", MachineType, "Retail", "", "CB", "vb_release", "Production", false),
-                new CTAC(OSSkuId.Professional, "10.0.19041.84", MachineType, "External", "ReleasePreview", "CB", "vb_release", "Production", false),
-                new CTAC(OSSkuId.Professional, "10.0.19041.84", MachineType, "External", "FeaturePreview", "CB", "vb_release", "Production", false),
-                new CTAC(OSSkuId.Professional, "10.0.19041.84", MachineType, "External", "Beta", "CB", "vb_release", "Production", false),
-                new CTAC(OSSkuId.Professional, "10.0.19041.84", MachineType, "External", "Dev", "CB", "vb_release", "Production", false)
-            };
+            CTAC[] ctacs = GetRingCTACs(MachineType, OSSkuId.Professional).Union(GetRingCTACs(MachineType, OSSkuId.PPIPro)).Select(x => x.Key).ToArray();
 
             List<Task<IEnumerable<UpdateData>>> tasks = new List<Task<IEnumerable<UpdateData>>>();
             foreach (var ctac in ctacs)

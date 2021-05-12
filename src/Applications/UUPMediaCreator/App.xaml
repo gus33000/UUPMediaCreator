@@ -5,6 +5,6 @@
     xmlns:local="using:UUPMediaCreator">
 
     <Application.Resources>
-        <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
+        <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" Version="Latest" />
     </Application.Resources>
 </Application>
