@@ -4,9 +4,8 @@
   <a href="./src">Source Code</a> |
   <a href="./docs">Documentation</a> |
   <a href="./thirdparty">Third party libraries</a>
-  <br>
-  <img src="Assets/screenshot.png"><br>
-  <br>
+  <br><br><br>
+  <img src="Assets/screenshot.png"><br><br>
 </p>
 
 ## Readme
