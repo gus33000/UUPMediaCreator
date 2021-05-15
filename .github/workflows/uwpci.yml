@@ -1,4 +1,4 @@
-name:UWPCI
+name: UWPCI
 
 on:
   push:
