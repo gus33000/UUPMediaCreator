@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Threading;
-using System.Windows.Forms;
 
 namespace UUPMediaCreator.Broker
 {
     internal static class Program
     {
+        public static ManualResetEvent _Shutdown = new ManualResetEvent(false);
+
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
@@ -17,9 +18,8 @@ namespace UUPMediaCreator.Broker
             {
                 mutex = new Mutex(false, "UUPMediaCreatorMutex");
                 WinRT.ComWrappersSupport.InitializeComWrappers();
-                Application.EnableVisualStyles();
-                Application.SetCompatibleTextRenderingDefault(false);
-                Application.Run(new UUPMediaCreatorApplicationContext());
+                new UUPMediaCreatorApplicationContext();
+                _Shutdown.WaitOne();
                 mutex.Close();
             }
         }

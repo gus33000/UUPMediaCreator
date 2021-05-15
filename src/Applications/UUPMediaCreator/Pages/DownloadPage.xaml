@@ -15,10 +15,9 @@
                                        Subtitle="The wizard is downloading the required files to create the finished medium. Prepare your snacks and drinks, or maybe watch a movie while the download happens. It will be automatically followed by the conversion process."
                                        Glyph="&#xE118;"
                                        BackEnabled="False"
-                                       NextEnabled="True"
-                                       NextClicked="WizardPage_NextClicked">
+                                       NextEnabled="False">
         <StackPanel VerticalAlignment="Center">
-            <TextBlock x:Name="StatusText" Margin="0,18,0,8" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Text="TODO. In the meantime press next" />
+            <TextBlock x:Name="StatusText" Margin="0,18,0,8" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Text="Waiting..." />
             <muxc:ProgressBar x:Name="ProgressBar" Height="16" />
         </StackPanel>
     </uupmediacreator:WizardPageControl>

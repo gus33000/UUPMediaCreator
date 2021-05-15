@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Text.Json;
 using System.Threading.Tasks;
 using UUPMediaCreator.InterCommunication;
@@ -24,7 +25,7 @@ namespace UUPMediaCreator.UWP.Pages
             Loaded += BuildingVHDPage_Loaded;
         }
 
-        private async Task<string> InputTextDialogAsync(string title)
+        /*private async Task<string> InputTextDialogAsync(string title)
         {
             TextBox inputTextBox = new TextBox();
             inputTextBox.AcceptsReturn = false;
@@ -39,11 +40,11 @@ namespace UUPMediaCreator.UWP.Pages
                 return inputTextBox.Text;
             else
                 return "";
-        }
+        }*/
 
         private async void BuildingVHDPage_Loaded(object sender, RoutedEventArgs e)
         {
-            var folderPicker = new Windows.Storage.Pickers.FolderPicker();
+            /*var folderPicker = new Windows.Storage.Pickers.FolderPicker();
             folderPicker.SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.Desktop;
             folderPicker.FileTypeFilter.Add("*");
 
@@ -63,6 +64,16 @@ namespace UUPMediaCreator.UWP.Pages
                 Edition = sku,
                 LanguageCode = lang,
                 CompressionType = CompressionType.LZX,
+                IntegrateUpdates = false
+            };*/
+
+            ISOConversion job = new ISOConversion()
+            {
+                UUPPath = App.ConversionPlan.TmpOutputFolder,
+                ISOPath = App.ConversionPlan.ISOPath,
+                Edition = App.ConversionPlan.Edition,
+                LanguageCode = App.ConversionPlan.Language,
+                CompressionType = (CompressionType)App.ConversionPlan.InstallationWIMMediumType,
                 IntegrateUpdates = false
             };
 
@@ -187,12 +198,19 @@ namespace UUPMediaCreator.UWP.Pages
                                                         break;
                                                     }
                                             }
+
+                                            // cleanup
+                                            Directory.Delete(App.ConversionPlan.TmpOutputFolder, true);
+
                                             break;
                                         }
                                 }
 
                                 if (interCommunication.ISOConversionProgress.Phase == ProcessPhase.Done)
                                 {
+                                    // cleanup
+                                    Directory.Delete(App.ConversionPlan.TmpOutputFolder, true);
+
                                     // Move to finish page when done, for now, welcome page
                                     Frame.Navigate(typeof(WelcomePage));
                                     return;

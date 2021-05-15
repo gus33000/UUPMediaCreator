@@ -1,39 +1,24 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net5.0-windows</TargetFramework>
     <OutputType>Library</OutputType>
     <LangVersion>8.0</LangVersion>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
-    <OutputPath>bin\x64\Debug\</OutputPath>
-    <LangVersion>8.0</LangVersion>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
-    <OutputPath>bin\x64\Release\</OutputPath>
-    <LangVersion>8.0</LangVersion>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
-    <OutputPath>bin\x86\Debug\</OutputPath>
-    <LangVersion>8.0</LangVersion>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
-    <OutputPath>bin\x86\Release\</OutputPath>
+    <Platforms>AnyCPU;x64;x86;arm64</Platforms>
+    <OutputPath>$(SolutionDir)build\$(Platform)\$(Configuration)\VirtualDiskLib.NET\</OutputPath>
+    <IntermediateOutputPath>$(SolutionDir)intermediate\$(Platform)\$(Configuration)\VirtualDiskLib.NET\</IntermediateOutputPath>
     <LangVersion>8.0</LangVersion>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
-    <PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0" />
+    <PackageReference Include="Microsoft.Win32.Registry" Version="6.0.0-preview.3.21201.4" />
     <PackageReference Include="System.Data.DataSetExtensions" Version="4.6.0-preview3.19128.7" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="DiscUtils.Core" Version="0.15.1-ci0007" />
-    <PackageReference Include="DiscUtils.Ntfs" Version="0.15.1-ci0007" />
-    <PackageReference Include="DiscUtils.Streams" Version="0.15.1-ci0007" />
-    <PackageReference Include="DiscUtils.Vhd" Version="0.15.1-ci0007" />
+    <PackageReference Include="DiscUtils.Core" Version="0.15.1-ci0009" />
+    <PackageReference Include="DiscUtils.Ntfs" Version="0.15.1-ci0009" />
+    <PackageReference Include="DiscUtils.Streams" Version="0.15.1-ci0009" />
+    <PackageReference Include="DiscUtils.Vhd" Version="0.15.1-ci0009" />
   </ItemGroup>
 </Project>

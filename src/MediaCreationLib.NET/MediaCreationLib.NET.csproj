@@ -1,23 +1,11 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net5.0-windows</TargetFramework>
     <OutputType>Library</OutputType>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
-    <OutputPath>bin\x64\Debug\</OutputPath>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
-    <OutputPath>bin\x64\Release\</OutputPath>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
-    <OutputPath>bin\x86\Debug\</OutputPath>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
-    <OutputPath>bin\x86\Release\</OutputPath>
+    <Platforms>AnyCPU;x64;x86;arm64</Platforms>
+    <OutputPath>$(SolutionDir)build\$(Platform)\$(Configuration)\MediaCreationLib.NET\</OutputPath>
+    <IntermediateOutputPath>$(SolutionDir)intermediate\$(Platform)\$(Configuration)\MediaCreationLib.NET\</IntermediateOutputPath>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
@@ -37,14 +25,14 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="DiscUtils.Core" Version="0.15.1-ci0007" />
-    <PackageReference Include="DiscUtils.Registry" Version="0.15.1-ci0007" />
-    <PackageReference Include="DiscUtils.Streams" Version="0.15.1-ci0007" />
+    <PackageReference Include="DiscUtils.Core" Version="0.15.1-ci0009" />
+    <PackageReference Include="DiscUtils.Registry" Version="0.15.1-ci0009" />
+    <PackageReference Include="DiscUtils.Streams" Version="0.15.1-ci0009" />
     <PackageReference Include="ini-parser" Version="2.5.2" />
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageReference Include="System.Data.DataSetExtensions" Version="4.6.0-preview3.19128.7" />
-    <PackageReference Include="System.IO.FileSystem.AccessControl" Version="5.0.0" />
-    <PackageReference Include="System.Security.AccessControl" Version="5.0.0" />
+    <PackageReference Include="System.IO.FileSystem.AccessControl" Version="6.0.0-preview.3.21201.4" />
+    <PackageReference Include="System.Security.AccessControl" Version="6.0.0-preview.3.21201.4" />
   </ItemGroup>
-  <Import Project="..\..\TempManager.Shared\TempManager.Shared.projitems" Label="Shared" />
+  <Import Project="..\TempManager.Shared\TempManager.Shared.projitems" Label="Shared" />
 </Project>

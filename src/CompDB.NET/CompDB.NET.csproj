@@ -1,7 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net5.0-windows</TargetFramework>
+    <Platforms>AnyCPU;x64;x86;arm64</Platforms>
+    <OutputPath>$(SolutionDir)build\$(Platform)\$(Configuration)\CompDB.NET\</OutputPath>
+    <IntermediateOutputPath>$(SolutionDir)intermediate\$(Platform)\$(Configuration)\CompDB.NET\</IntermediateOutputPath>
   </PropertyGroup>
 
   <Import Project="..\CompDB.Shared\CompDB.Shared.projitems" Label="Shared" />

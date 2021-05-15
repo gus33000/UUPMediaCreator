@@ -38,7 +38,7 @@ namespace UUPMediaConverterCli
                 return;
             }
 
-            string UUPPath = args[0];
+            string UUPPath = Path.GetFullPath(args[0]);
             string DestinationISO = args[1];
             string LanguageCode = args[2];
             string Edition = "";

@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{11385F97-61D8-47EF-A068-3A130232F6B6}</ProjectGuid>
+    <ProjectGuid>{299C6B2C-6F02-48A2-B455-32C4BA9EA2BC}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>InterCommunication.UWP</RootNamespace>
-    <AssemblyName>InterCommunication.UWP</AssemblyName>
+    <RootNamespace>DownloadLib.UWP</RootNamespace>
+    <AssemblyName>DownloadLib.UWP</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
     <TargetPlatformVersion Condition=" '$(TargetPlatformVersion)' == '' ">10.0.19041.0</TargetPlatformVersion>
@@ -16,6 +16,7 @@
     <MinimumVisualStudioVersion>14</MinimumVisualStudioVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{A5A43C5B-DE2A-4C0C-9213-0A381AF9435A};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <LangVersion>Preview</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -121,14 +122,20 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="Properties\InterCommunication.UWP.rd.xml" />
+    <EmbeddedResource Include="Properties\DownloadLib.UWP.rd.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\WindowsUpdateLib.UWP\WindowsUpdateLib.UWP.csproj">
+      <Project>{8ebd2b3f-31c4-493a-8853-fdbe32097b7e}</Project>
+      <Name>WindowsUpdateLib.UWP</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
       <Version>6.2.12</Version>
     </PackageReference>
   </ItemGroup>
-  <Import Project="..\InterCommunication.Shared\InterCommunication.Shared.projitems" Label="Shared" />
+  <Import Project="..\DownloadLib.Shared\DownloadLib.Shared.projitems" Label="Shared" />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>

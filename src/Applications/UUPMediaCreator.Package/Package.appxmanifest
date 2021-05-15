@@ -3,17 +3,20 @@
 <Package
   xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
   xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
+  xmlns:uap5="http://schemas.microsoft.com/appx/manifest/uap/windows10/5"
+  xmlns:desktop4="http://schemas.microsoft.com/appx/manifest/desktop/windows10/4"
+  xmlns:iot2="http://schemas.microsoft.com/appx/manifest/iot/windows10/2"
   xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
-  IgnorableNamespaces="uap rescap">
+  IgnorableNamespaces="uap uap5 rescap desktop4 iot2">
 
   <Identity
     Name="gmonce.uupmediacreator"
     Publisher="CN=gmonce"
-    Version="1.0.6.0" />
+    Version="1.0.17.0" />
 
   <Properties>
     <DisplayName>UUP Media Creator</DisplayName>
-    <PublisherDisplayName>Gus</PublisherDisplayName>
+    <PublisherDisplayName>Gustave Monce</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
 
@@ -28,7 +31,7 @@
 
   <Applications>
     <Application Id="UUPMediaCreator.Broker"
-        Executable="$targetnametoken$.exe"
+        Executable="UUPMediaCreator.Broker.exe"
         EntryPoint="$targetentrypoint$">
       <uap:VisualElements
         DisplayName="UUP Media Creator"
@@ -40,6 +43,7 @@
         <uap:SplashScreen Image="Assets\SplashScreen.png" />
       </uap:VisualElements>
     </Application>
+    
     <Application Id="UUPMediaCreator.UWP"
       Executable="UUPMediaCreator.exe"
       EntryPoint="UUPMediaCreator.App">
@@ -62,6 +66,64 @@
         <uap:Extension Category="windows.appService">
           <uap:AppService Name="UUPMediaCreatorService" />
         </uap:Extension>
+      </Extensions>
+    </Application>
+
+    <Application Id="UUPDownload"
+                 Executable="UUPDownload\UUPDownload.exe"
+                 EntryPoint="$targetentrypoint$"
+                 desktop4:Subsystem="console"
+                 desktop4:SupportsMultipleInstances="true"
+                 iot2:Subsystem="console"
+                 iot2:SupportsMultipleInstances="true">
+      <uap:VisualElements
+        DisplayName="UUP Downloader"
+        Square150x150Logo="Assets\Square150x150Logo.png"
+        Square44x44Logo="Assets\Square44x44Logo.png"
+        Description="Unified Update Platform Downloader"
+        BackgroundColor="transparent"
+        AppListEntry="none">
+        <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png" />
+        <uap:SplashScreen Image="Assets\SplashScreen.png" />
+      </uap:VisualElements>
+      <Extensions>
+        <uap5:Extension
+          Category="windows.appExecutionAlias"
+          Executable="UUPDownload\UUPDownload.exe"
+          EntryPoint="UUPDownload.App">
+          <uap5:AppExecutionAlias desktop4:Subsystem="console">
+            <uap5:ExecutionAlias Alias="UUPDownload.exe" />
+          </uap5:AppExecutionAlias>
+        </uap5:Extension>
+      </Extensions>
+    </Application>
+
+    <Application Id="UUPMediaConverterCli"
+                 Executable="UUPMediaConverterCli\UUPMediaConverterCli.exe"
+                 EntryPoint="$targetentrypoint$"
+                 desktop4:Subsystem="console"
+                 desktop4:SupportsMultipleInstances="true"
+                 iot2:Subsystem="console"
+                 iot2:SupportsMultipleInstances="true">
+      <uap:VisualElements
+        DisplayName="UUP Media Converter CLI"
+        Square150x150Logo="Assets\Square150x150Logo.png"
+        Square44x44Logo="Assets\Square44x44Logo.png"
+        Description="Unified Update Platform Media Converter CLI"
+        BackgroundColor="transparent"
+        AppListEntry="none">
+        <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png" />
+        <uap:SplashScreen Image="Assets\SplashScreen.png" />
+      </uap:VisualElements>
+      <Extensions>
+        <uap5:Extension
+          Category="windows.appExecutionAlias"
+          Executable="UUPMediaConverterCli\UUPMediaConverterCli.exe"
+          EntryPoint="UUPMediaConverterCli.App">
+          <uap5:AppExecutionAlias desktop4:Subsystem="console">
+            <uap5:ExecutionAlias Alias="UUPMediaConverterCli.exe" />
+          </uap5:AppExecutionAlias>
+        </uap5:Extension>
       </Extensions>
     </Application>
   </Applications>

@@ -29,6 +29,7 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using UUPDownload.Downloading;
 using WindowsUpdateLib;
 using WindowsUpdateLib.Shared;
 
@@ -60,6 +61,10 @@ namespace UUPDownload.DownloadRequest
             try
             {
                 UpdateData update = JsonConvert.DeserializeObject<UpdateData>(File.ReadAllText(opts.ReplayMetadata));
+
+                Logging.Log("Title: " + update.Xml.LocalizedProperties.Title);
+                Logging.Log("Description: " + update.Xml.LocalizedProperties.Description);
+
                 ProcessUpdateAsync(update, opts.OutputFolder, opts.MachineType, opts.Language, opts.Edition, true).Wait();
             }
             catch (Exception ex)
@@ -101,45 +106,15 @@ namespace UUPDownload.DownloadRequest
             {
                 foreach (UpdateData update in data)
                 {
+                    Logging.Log("Title: " + update.Xml.LocalizedProperties.Title);
+                    Logging.Log("Description: " + update.Xml.LocalizedProperties.Description);
+
                     await ProcessUpdateAsync(update, o.OutputFolder, o.MachineType, o.Language, o.Edition, true);
-                    //await BuildUpdateXml(update, o.MachineType);
                 }
             }
             Logging.Log("Completed.");
             if (Debugger.IsAttached)
                 Console.ReadLine();
-        }
-
-#pragma warning disable IDE0051 // Remove unused private members
-        private static async Task BuildUpdateXml(UpdateData update, MachineType MachineType)
-#pragma warning restore IDE0051 // Remove unused private members
-        {
-            string buildstr = "";
-            IEnumerable<string> languages = null;
-
-            var compDBs = await update.GetCompDBsAsync();
-
-            await Task.WhenAll(
-                Task.Run(async () => buildstr = await update.GetBuildStringAsync()),
-                Task.Run(async () => languages = await update.GetAvailableLanguagesAsync()));
-
-            buildstr ??= "";
-
-            CompDBXmlClass.Package editionPackPkg = compDBs.GetEditionPackFromCompDBs();
-            string editionPkg = await update.DownloadFileFromDigestAsync(editionPackPkg.Payload.PayloadItem.PayloadHash);
-            var plans = await Task.WhenAll(languages.Select(x => update.GetTargetedPlanAsync(x, editionPkg)));
-
-            UpdateScan scan = new()
-            {
-                Architecture = MachineType,
-                BuildString = buildstr,
-                Description = update.Xml.LocalizedProperties.Description,
-                Title = update.Xml.LocalizedProperties.Title,
-                Targets = plans,
-                UpdateData = update
-            };
-
-            File.WriteAllText("updatetest.xml", scan.Serialize());
         }
 
         private static async Task ProcessUpdateAsync(UpdateData update, string pOutputFolder, MachineType MachineType, string Language = "", string Edition = "", bool WriteMetadata = true)
@@ -156,16 +131,6 @@ namespace UUPDownload.DownloadRequest
 
             bool getSpecific = !string.IsNullOrEmpty(Language) && !string.IsNullOrEmpty(Edition);
             bool getSpecificLanguageOnly = !string.IsNullOrEmpty(Language) && string.IsNullOrEmpty(Edition);
-
-            Logging.Log("Title: " + update.Xml.LocalizedProperties.Title);
-            Logging.Log("Description: " + update.Xml.LocalizedProperties.Description);
-
-#if DEBUG
-            foreach (var file in update.Xml.Files.File.Select(x => UpdateUtils.GetFilenameForCEUIFile(x, payloadItems)).OrderBy(x => x))
-            {
-                Console.WriteLine(file);
-            }
-#endif
 
             Logging.Log("Gathering update metadata...");
 

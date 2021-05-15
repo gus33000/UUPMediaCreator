@@ -29,7 +29,6 @@ using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
-using UUPDownload;
 using WindowsUpdateLib;
 
 namespace Download.Downloading
@@ -43,86 +42,6 @@ namespace Download.Downloading
         public int NumFiles;
 
         public FileDownloadStatus[] DownloadedStatus;
-    }
-
-    public class ReportProgress : IProgress<GeneralDownloadProgress>
-    {
-        private Dictionary<string,FileStatus> files = new Dictionary<string, FileStatus>();
-
-        private Mutex mutex = new Mutex();
-
-        private static string FormatBytes(double bytes)
-        {
-            string[] suffix = { "B", "KB", "MB", "GB", "TB" };
-            int i;
-            double dblSByte = bytes;
-            for (i = 0; i < suffix.Length && bytes >= 1024; i++, bytes /= 1024)
-            {
-                dblSByte = bytes / 1024.0;
-            }
-
-            return $"{dblSByte:0.##}{suffix[i]}";
-        }
-
-        private static string GetProgressBarString(int perc)
-        {
-            if (perc < 0)
-                perc = 0;
-            if (perc > 100)
-                perc = 100;
-
-            int eqsLength = (int)((double)perc / 100 * 55);
-            string bases = new string('=', eqsLength) + new string(' ', 55 - eqsLength);
-            bases = bases.Insert(28, perc + "%");
-            if (perc == 100)
-                bases = bases[1..];
-            else if (perc < 10)
-                bases = bases.Insert(28, " ");
-            return "[" + bases + "]";
-        }
-
-        public void Report(GeneralDownloadProgress e)
-        {
-            mutex.WaitOne();
-
-            foreach (FileDownloadStatus status in e.DownloadedStatus)
-            {
-                if (status == null)
-                    continue;
-
-                bool shouldReport = !files.ContainsKey(status.File.FileName) || files[status.File.FileName] != status.FileStatus;
-
-                if (!shouldReport)
-                    continue;
-
-                files[status.File.FileName] = status.FileStatus;
-
-                string msg = "U";
-
-                switch(status.FileStatus)
-                {
-                    case FileStatus.Completed:
-                        msg = "C";
-                        break;
-                    case FileStatus.Downloading:
-                        msg = "D";
-                        break;
-                    case FileStatus.Expired:
-                        msg = "E";
-                        break;
-                    case FileStatus.Failed:
-                        msg = "F";
-                        break;
-                    case FileStatus.Verifying:
-                        msg = "V";
-                        break;
-                }
-
-                Console.WriteLine($"{DateTime.Now.ToString("'['HH':'mm':'ss']'")}[{e.NumFilesDownloadedSuccessfully}/{e.NumFiles}][E:{e.NumFilesDownloadedUnsuccessfully}][{msg}] {status.File.FileName} ({FormatBytes(status.File.FileSize)})");
-            }
-
-            mutex.ReleaseMutex();
-        }
     }
 
     public enum FileStatus
@@ -177,8 +96,12 @@ namespace Download.Downloading
         {
             var filter = new HttpClientHandler
             {
+#if NET5_0_OR_GREATER
                 AutomaticDecompression = DecompressionMethods.All,
-                MaxConnectionsPerServer = 512
+                MaxConnectionsPerServer = 512,
+#else
+                AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate,
+#endif
             };
 
             if (proxy != null || !useSystemProxy)
@@ -372,7 +295,7 @@ namespace Download.Downloading
                         var fileStreamToHash = File.Open(filePath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite);
                         totalBytesRead = fileStreamToHash.Length;
                         var hashResult = await HashWithProgress(fileStreamToHash).ConfigureAwait(false);
-                        await fileStreamToHash.DisposeAsync().ConfigureAwait(false);
+                        fileStreamToHash.Dispose();
 
                         if (hashResult)
                         {
@@ -410,7 +333,7 @@ namespace Download.Downloading
                 Directory.CreateDirectory(Path.GetDirectoryName(filePath));
 
                 //Open the file as stream.
-                await using var streamToWriteTo = File.Open(tempFilePath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.Read);
+                using var streamToWriteTo = File.Open(tempFilePath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.Read);
 
                 //Set the seek position to current range position (via totalBytesRead or currRange). This is needed.
                 streamToWriteTo.Seek(totalBytesRead, SeekOrigin.Begin);
@@ -440,12 +363,12 @@ namespace Download.Downloading
                     //TODO: may throw an exception if the server suddently closes the connection (e.g. file expired.)
 
                     using var fullFileResp = await httpClient.GetAsync(downloadFile.WUFile.DownloadUrl, cancellationToken).ConfigureAwait(false);
-                    await using var streamToReadFrom = await fullFileResp.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
+                    using var streamToReadFrom = await fullFileResp.Content.ReadAsStreamAsync().ConfigureAwait(false);
 
                     if (esrpDecrypter != null)
                         await esrpDecrypter.DecryptStreamFullAsync(streamToReadFrom, streamToWriteTo, (ulong)contentLength.Value, cancellationToken).ConfigureAwait(false);
                     else
-                        await streamToReadFrom.CopyToAsync(streamToWriteTo, cancellationToken).ConfigureAwait(false);
+                        await streamToReadFrom.CopyToAsync(streamToWriteTo).ConfigureAwait(false);
 
                     downloadProgress?.Report(new FileDownloadStatus(downloadFile)
                     {
@@ -476,7 +399,7 @@ namespace Download.Downloading
                     if (filePartResp.IsSuccessStatusCode)
                     {
                         //get the underlying stream
-                        await using var streamToReadFrom = await filePartResp.Content.ReadAsStreamAsync(cancellationToken);
+                        using var streamToReadFrom = await filePartResp.Content.ReadAsStreamAsync();
 
                         int bytesRead;
                         var buffer = new byte[blockBufferSize];
@@ -484,7 +407,7 @@ namespace Download.Downloading
                         //read the content
                         //TODO: it may throw an exception (stream closed because file expired?)
                         //In that case we would wrap into another try catch and try to read the reason behind this
-                        while ((bytesRead = await streamToReadFrom.ReadAsync(buffer.AsMemory(0, buffer.Length), cancellationToken).ConfigureAwait(false)) > 0)
+                        while ((bytesRead = await streamToReadFrom.ReadAsync(buffer, 0, buffer.Length, cancellationToken).ConfigureAwait(false)) > 0)
                         {
                             totalBytesRead += bytesRead;
 
@@ -525,7 +448,7 @@ namespace Download.Downloading
                             else
                             {
                                 //simply write to the file
-                                await streamToWriteTo.WriteAsync(buffer.AsMemory(0, bytesRead), cancellationToken).ConfigureAwait(false);
+                                await streamToWriteTo.WriteAsync(buffer, 0, bytesRead, cancellationToken).ConfigureAwait(false);
                             }
 
                             //report progress
@@ -574,7 +497,7 @@ namespace Download.Downloading
                     if (hashResult)
                     {
                         streamToWriteTo.Close();
-                        File.Move(tempFilePath, filePath, true);
+                        File.Move(tempFilePath, filePath);
                     }
 
                     return hashResult;
@@ -582,7 +505,7 @@ namespace Download.Downloading
                 else
                 {
                     streamToWriteTo.Close();
-                    File.Move(tempFilePath, filePath, true);
+                    File.Move(tempFilePath, filePath);
 
                     downloadProgress?.Report(new FileDownloadStatus(downloadFile)
                     {
@@ -650,7 +573,7 @@ namespace Download.Downloading
         }
 
 
-        #region Helpers
+#region Helpers
 
         private static async ValueTask<bool> IsDownloadedFileValidSHA256(Stream fileStream, string base64Hash, IProgress<long> progress = null, CancellationToken cancellationToken = default)
         {
@@ -668,15 +591,15 @@ namespace Download.Downloading
             var buffer = new byte[bufSizeEffective];
             using var ms = new MemoryStream(buffer);
             using var cs = new CryptoStream(ms, hashAlgorithm, CryptoStreamMode.Write);
-            while ((readBytes = await fileStream.ReadAsync(buffer.AsMemory(0, buffer.Length), cancellationToken).ConfigureAwait(false)) > 0)
+            while ((readBytes = await fileStream.ReadAsync(buffer, 0, buffer.Length, cancellationToken).ConfigureAwait(false)) > 0)
             {
-                await cs.WriteAsync(buffer.AsMemory(0, readBytes), cancellationToken).ConfigureAwait(false);
+                await cs.WriteAsync(buffer, 0, readBytes, cancellationToken).ConfigureAwait(false);
                 ms.Position = 0;
                 totalBytesRead += readBytes;
                 progress?.Report(totalBytesRead);
                 cancellationToken.ThrowIfCancellationRequested();
             }
-            await cs.FlushFinalBlockAsync(cancellationToken).ConfigureAwait(false);
+            cs.FlushFinalBlock();
             return hashAlgorithm.Hash;
         }
 
@@ -703,7 +626,7 @@ namespace Download.Downloading
             return request;
         }
 
-        #endregion
+#endregion
 
         public void Dispose()
         {

@@ -39,6 +39,7 @@ namespace UUPMediaCreator.UWP.Pages
         private void PathTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             WizardPage.NextEnabled = !string.IsNullOrEmpty(PathTextBox.Text);
+            App.ConversionPlan.ISOPath = PathTextBox.Text;
         }
 
         private async void BrowseButton_Click(object sender, RoutedEventArgs e)

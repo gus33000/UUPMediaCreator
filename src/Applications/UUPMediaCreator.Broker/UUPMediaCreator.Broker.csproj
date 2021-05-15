@@ -1,19 +1,22 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<OutputType>WinExe</OutputType>
 		<TargetFramework>net5.0-windows</TargetFramework>
 		<DefineConstants>DISABLE_XAML_GENERATED_MAIN</DefineConstants>
 		<ApplicationManifest>app.manifest</ApplicationManifest>
-		<UseWindowsForms>true</UseWindowsForms>
+		<UseWindowsForms>false</UseWindowsForms>
 		<!--
     There seems to be a codegen bug when referencing the cswinrt interop assembly of the Win32XamlHost
     project. Since we don't really need those metadata providers yet, this is just an easy workaround
     -->
 		<XamlCodeGenerationControlFlags>DoNotGenerateOtherProviders</XamlCodeGenerationControlFlags>
-		<Platforms>x86;x64</Platforms>
-		
+		<Platforms>AnyCPU;x86;x64;arm64</Platforms>
+    <RuntimeIdentifiers>win-x86;win-x64;win-arm64</RuntimeIdentifiers>
+    <OutputPath>$(SolutionDir)build\$(Platform)\$(Configuration)\UUPMediaCreator.Broker\</OutputPath>
+    <IntermediateOutputPath>$(SolutionDir)intermediate\$(Platform)\$(Configuration)\UUPMediaCreator.Broker\</IntermediateOutputPath>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
 		<TargetPlatformIdentifier>Windows</TargetPlatformIdentifier>
-		<TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
+		<TargetPlatformMinVersion>10.0.16299.0</TargetPlatformMinVersion>
 		<TargetPlatformVersion>10.0.19041.0</TargetPlatformVersion>
 		<WindowsSdkPath Condition="'$(WindowsSdkPath)' == ''">$([Microsoft.Build.Utilities.ToolLocationHelper]::GetPlatformSdkLocation("Windows", "10.0"))</WindowsSdkPath>
 		<PlatformXmlDir>$(WindowsSdkPath)\Platforms\UAP\$(TargetPlatformVersion)\</PlatformXmlDir>
@@ -23,8 +26,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.VCRTForwarders.140" Version="1.0.7" />
-		<PackageReference Include="Microsoft.Windows.CsWinRT" Version="1.2.2" />
-		<FrameworkReference Include="Microsoft.WindowsDesktop.App.Wpf" />
+		<PackageReference Include="Microsoft.Windows.CsWinRT" Version="1.2.6" />
 		<Manifest Include="$(ApplicationManifest)" />
 	</ItemGroup>
 

@@ -58,6 +58,10 @@ namespace UUPMediaCreator
         public InstallationWIMMediumType InstallationWIMMediumType { get; set; }
         //public string[] FODs { get; set; }
         //public bool IntegrateUpdates { get; set; }
+
+        public string TmpOutputFolder { get; set; }
+
+        public string ISOPath { get; set; }
     }
 
     /// <summary>

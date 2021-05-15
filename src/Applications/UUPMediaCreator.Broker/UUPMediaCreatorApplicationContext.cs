@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Forms;
 using UUPMediaCreator.InterCommunication;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.AppService;
@@ -11,7 +9,7 @@ using Windows.Foundation.Collections;
 
 namespace UUPMediaCreator.Broker
 {
-    internal class UUPMediaCreatorApplicationContext : ApplicationContext
+    internal class UUPMediaCreatorApplicationContext
     {
         private AppServiceConnection connection = null;
 
@@ -26,7 +24,7 @@ namespace UUPMediaCreator.Broker
             {
                 if (!await Windows.System.Launcher.LaunchUriAsync(new Uri("uupmediacreator:")))
                 {
-                    Application.Exit();
+                    Environment.Exit(1);
                     return;
                 }
 
@@ -56,7 +54,7 @@ namespace UUPMediaCreator.Broker
                     case Common.InterCommunicationType.Exit:
                         {
                             connection.Dispose();
-                            Application.Exit();
+                            Environment.Exit(2);
                             break;
                         }
                     case Common.InterCommunicationType.StartISOConversionProcess:
