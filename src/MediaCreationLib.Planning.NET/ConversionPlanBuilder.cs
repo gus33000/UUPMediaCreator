@@ -358,10 +358,11 @@ namespace MediaCreationLib.Planning.NET
             HashSet<CompDBXmlClass.CompDB> compDBs,
             string EditionPack,
             string LanguageCode,
+            bool IncludeServicingCapableOnlyTargets,
             out List<EditionTarget> EditionTargets,
             ProgressCallback? progressCallback = null)
         {
-            return GetTargetedPlan("", compDBs, EditionPack, LanguageCode, out EditionTargets, progressCallback);
+            return GetTargetedPlan("", compDBs, EditionPack, LanguageCode, IncludeServicingCapableOnlyTargets, out EditionTargets, progressCallback);
         }
 
         public static List<string> PrintEditionTarget(EditionTarget editionTarget, int padding = 0)
@@ -401,6 +402,7 @@ namespace MediaCreationLib.Planning.NET
             HashSet<CompDBXmlClass.CompDB> compDBs,
             string EditionPack,
             string LanguageCode,
+            bool IncludeServicingCapableOnlyTargets,
             out List<EditionTarget> EditionTargets,
             ProgressCallback? progressCallback = null)
         {
@@ -466,141 +468,153 @@ namespace MediaCreationLib.Planning.NET
                 return edition;
             }).OrderBy(x => x.EditionName);
 
-            progressCallback?.Invoke("Acquiring Edition Upgrades");
-
-            //
-            // This dictionary holds the possible virtual edition upgrades
-            // Example: Professional -> ProfessionalEducation
-            //
-            List<EditionMappingXML.Edition> virtualWindowsEditions = new List<EditionMappingXML.Edition>();
-
-            //
-            // This dictionary holds the possible edition upgrades
-            // Example: Core -> Professional
-            //
-            List<EditionMappingXML.Edition> possibleEditionUpgrades = new List<EditionMappingXML.Edition>();
-
-            if (!string.IsNullOrEmpty(EditionPack) && File.Exists(EditionPack))
+            if (IncludeServicingCapableOnlyTargets)
             {
+                progressCallback?.Invoke("Acquiring Edition Upgrades");
+
                 //
-                // Attempt to get virtual editions from one compdb
+                // This dictionary holds the possible virtual edition upgrades
+                // Example: Professional -> ProfessionalEducation
                 //
-                if (virtualWindowsEditions.Count <= 0)
+                List<EditionMappingXML.Edition> virtualWindowsEditions = new List<EditionMappingXML.Edition>();
+
+                //
+                // This dictionary holds the possible edition upgrades
+                // Example: Core -> Professional
+                //
+                List<EditionMappingXML.Edition> possibleEditionUpgrades = new List<EditionMappingXML.Edition>();
+
+                if (!string.IsNullOrEmpty(EditionPack) && File.Exists(EditionPack))
                 {
-                    try
+                    //
+                    // Attempt to get virtual editions from one compdb
+                    //
+                    if (virtualWindowsEditions.Count <= 0)
                     {
-                        var tempHashMap = Path.GetTempFileName();
-                        File.Delete(tempHashMap);
-
-                        string pathEditionMapping = "";
-                        int index = 0;
-
-                        result = imagingInterface.ExtractFileFromImage(EditionPack, 1, "$filehashes$.dat", tempHashMap);
-                        if (result)
-                        {
-                            string[] hashmapcontent = File.ReadAllLines(tempHashMap);
-                            File.Delete(tempHashMap);
-                            pathEditionMapping = hashmapcontent.First(x => x.ToLower().Contains("editionmappings.xml")).Split('=').First();
-                            index = 1;
-                        }
-                        else
-                        {
-                            result = true;
-                            pathEditionMapping = "Windows\\Servicing\\Editions\\EditionMappings.xml";
-                            index = 3;
-                        }
-
                         try
                         {
-                            result = imagingInterface.ExtractFileFromImage(EditionPack, index, pathEditionMapping, tempHashMap);
-                            if (!result)
-                                goto error;
-
-                            string editionmappingcontent = File.ReadAllText(tempHashMap);
+                            var tempHashMap = Path.GetTempFileName();
                             File.Delete(tempHashMap);
 
-                            var mapping = EditionMappingXML.Deserialize(editionmappingcontent);
-                            var virtualeditions = mapping.Edition.Where(x =>
-                                !string.IsNullOrEmpty(x.Virtual) &&
-                                x.Virtual.Equals("true", StringComparison.InvariantCultureIgnoreCase)).OrderBy(x => x.ParentEdition);
+                            string pathEditionMapping = "";
+                            int index = 0;
 
-                            virtualWindowsEditions = virtualeditions.ToList();
+                            result = imagingInterface.ExtractFileFromImage(EditionPack, 1, "$filehashes$.dat", tempHashMap);
+                            if (result)
+                            {
+                                string[] hashmapcontent = File.ReadAllLines(tempHashMap);
+                                File.Delete(tempHashMap);
+                                pathEditionMapping = hashmapcontent.First(x => x.ToLower().Contains("editionmappings.xml")).Split('=').First();
+                                index = 1;
+                            }
+                            else
+                            {
+                                result = true;
+                                pathEditionMapping = "Windows\\Servicing\\Editions\\EditionMappings.xml";
+                                index = 3;
+                            }
+
+                            try
+                            {
+                                result = imagingInterface.ExtractFileFromImage(EditionPack, index, pathEditionMapping, tempHashMap);
+                                if (!result)
+                                    goto error;
+
+                                string editionmappingcontent = File.ReadAllText(tempHashMap);
+                                File.Delete(tempHashMap);
+
+                                var mapping = EditionMappingXML.Deserialize(editionmappingcontent);
+                                var virtualeditions = mapping.Edition.Where(x =>
+                                    !string.IsNullOrEmpty(x.Virtual) &&
+                                    x.Virtual.Equals("true", StringComparison.InvariantCultureIgnoreCase)).OrderBy(x => x.ParentEdition);
+
+                                virtualWindowsEditions = virtualeditions.ToList();
+                            }
+                            catch { };
                         }
                         catch { };
                     }
-                    catch { };
-                }
 
-                //
-                // Attempt to get upgradable editions from one compdb
-                //
-                if (possibleEditionUpgrades.Count <= 0)
-                {
-                    try
+                    //
+                    // Attempt to get upgradable editions from one compdb
+                    //
+                    if (possibleEditionUpgrades.Count <= 0)
                     {
-                        var tempHashMap = Path.GetTempFileName();
-                        File.Delete(tempHashMap);
-
-                        string pathEditionMatrix = "";
-                        int index = 0;
-
-                        result = imagingInterface.ExtractFileFromImage(EditionPack, 1, "$filehashes$.dat", tempHashMap);
-                        if (result)
-                        {
-                            string[] hashmapcontent = File.ReadAllLines(tempHashMap);
-                            File.Delete(tempHashMap);
-                            pathEditionMatrix = hashmapcontent.First(x => x.ToLower().Contains("editionmatrix.xml")).Split('=').First();
-                            index = 1;
-                        }
-                        else
-                        {
-                            result = true;
-                            pathEditionMatrix = "Windows\\Servicing\\Editions\\EditionMatrix.xml";
-                            index = 3;
-                        }
-
                         try
                         {
-                            result = imagingInterface.ExtractFileFromImage(EditionPack, index, pathEditionMatrix, tempHashMap);
-                            if (!result)
-                                goto error;
-
-                            string editionmatrixcontent = File.ReadAllText(tempHashMap);
+                            var tempHashMap = Path.GetTempFileName();
                             File.Delete(tempHashMap);
 
-                            var mapping = EditionMatrixXML.Deserialize(editionmatrixcontent);
-                            foreach (var edition in mapping.Edition)
+                            string pathEditionMatrix = "";
+                            int index = 0;
+
+                            result = imagingInterface.ExtractFileFromImage(EditionPack, 1, "$filehashes$.dat", tempHashMap);
+                            if (result)
                             {
-                                if (edition.Target != null && edition.Target.Count != 0)
+                                string[] hashmapcontent = File.ReadAllLines(tempHashMap);
+                                File.Delete(tempHashMap);
+                                pathEditionMatrix = hashmapcontent.First(x => x.ToLower().Contains("editionmatrix.xml")).Split('=').First();
+                                index = 1;
+                            }
+                            else
+                            {
+                                result = true;
+                                pathEditionMatrix = "Windows\\Servicing\\Editions\\EditionMatrix.xml";
+                                index = 3;
+                            }
+
+                            try
+                            {
+                                result = imagingInterface.ExtractFileFromImage(EditionPack, index, pathEditionMatrix, tempHashMap);
+                                if (!result)
+                                    goto error;
+
+                                string editionmatrixcontent = File.ReadAllText(tempHashMap);
+                                File.Delete(tempHashMap);
+
+                                var mapping = EditionMatrixXML.Deserialize(editionmatrixcontent);
+                                foreach (var edition in mapping.Edition)
                                 {
-                                    foreach (var target in edition.Target)
+                                    if (edition.Target != null && edition.Target.Count != 0)
                                     {
-                                        if (!availableCanonicalEditions.Any(x => x.EditionName.Equals(target.ID, StringComparison.InvariantCultureIgnoreCase)))
+                                        foreach (var target in edition.Target)
                                         {
-                                            possibleEditionUpgrades.Add(new EditionMappingXML.Edition() { ParentEdition = edition.ID, Name = target.ID, Virtual = "false" });
+                                            if (!availableCanonicalEditions.Any(x => x.EditionName.Equals(target.ID, StringComparison.InvariantCultureIgnoreCase)))
+                                            {
+                                                possibleEditionUpgrades.Add(new EditionMappingXML.Edition() { ParentEdition = edition.ID, Name = target.ID, Virtual = "false" });
+                                            }
                                         }
                                     }
                                 }
                             }
+                            catch { };
                         }
                         catch { };
                     }
-                    catch { };
+                }
+
+                progressCallback?.Invoke("Acquiring Edition Downgrades");
+
+                (List<PlannedEdition> availableEditionsByDowngradingInPriority, List<PlannedEdition> availableEditionsByDowngrading) = GetEditionsThatCanBeTargetedUsingPackageDowngrade(UUPPath, compDBs, availableCanonicalEditions, possibleEditionUpgrades);
+
+                progressCallback?.Invoke("Building Targets");
+
+
+                List<string> editionsAdded = new List<string>();
+
+                foreach (var ed in availableCanonicalEditions)
+                {
+                    EditionTargets.Add(BuildTarget(ed, availableEditionsByDowngrading, virtualWindowsEditions, possibleEditionUpgrades, availableEditionsByDowngradingInPriority, ref editionsAdded));
                 }
             }
-
-            progressCallback?.Invoke("Acquiring Edition Downgrades");
-
-            (List<PlannedEdition> availableEditionsByDowngradingInPriority, List<PlannedEdition> availableEditionsByDowngrading) = GetEditionsThatCanBeTargetedUsingPackageDowngrade(UUPPath, compDBs, availableCanonicalEditions, possibleEditionUpgrades);
-
-            progressCallback?.Invoke("Building Targets");
-
-
-            List<string> editionsAdded = new List<string>();
-
-            foreach (var ed in availableCanonicalEditions)
+            else
             {
-                EditionTargets.Add(BuildTarget(ed, availableEditionsByDowngrading, virtualWindowsEditions, possibleEditionUpgrades, availableEditionsByDowngradingInPriority, ref editionsAdded));
+                progressCallback?.Invoke("Building Targets");
+
+                foreach (var ed in availableCanonicalEditions)
+                {
+                    EditionTargets.Add(new EditionTarget() { PlannedEdition = ed });
+                }
             }
 
         error:

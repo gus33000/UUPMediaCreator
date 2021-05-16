@@ -9,11 +9,27 @@ using System.Linq;
 using UUPMediaCreator.InterCommunication;
 using MediaCreationLib.Planning.NET;
 using CompDB;
+using System.Security.Principal;
 
 namespace MediaCreationLib
 {
     public class MediaCreator
     {
+        private static bool RunsAsAdministrator = IsAdministrator();
+
+        private static bool IsAdministrator()
+        {
+#if WINDOWS
+#pragma warning disable CA1416 // Validate platform compatibility
+            var identity = WindowsIdentity.GetCurrent();
+            var principal = new WindowsPrincipal(identity);
+            return principal.IsInRole(WindowsBuiltInRole.Administrator);
+#pragma warning restore CA1416 // Validate platform compatibility
+#else
+            return false;
+#endif
+        }
+
         private static WIMImaging imagingInterface = new WIMImaging();
 
         public delegate void ProgressCallback(Common.ProcessPhase phase, bool IsIndeterminate, int ProgressInPercentage, string SubOperation);
@@ -268,7 +284,7 @@ namespace MediaCreationLib
                 }
             }
 
-            return ConversionPlanBuilder.GetTargetedPlan(UUPPath, compDBs, EditionPack, LanguageCode, out EditionTargets, (string msg) => progressCallback?.Invoke(Common.ProcessPhase.ReadingMetadata, true, 0, msg));
+            return ConversionPlanBuilder.GetTargetedPlan(UUPPath, compDBs, EditionPack, LanguageCode, RunsAsAdministrator, out EditionTargets, (string msg) => progressCallback?.Invoke(Common.ProcessPhase.ReadingMetadata, true, 0, msg));
         }
 
         public static void CreateISOMediaAdvanced(
