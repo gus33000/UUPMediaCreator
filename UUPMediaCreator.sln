@@ -57,7 +57,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CompDB.NET", "src\CompDB.NE
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CompDB.UWP", "src\CompDB.UWP\CompDB.UWP.csproj", "{8FF9162B-7281-4274-823C-3BB7905508D2}"
 EndProject
-Project("{C7167F0D-BC9F-4E6E-AFE1-012C56B48DB5}") = "UUPMediaCreator.Package", "src\Applications\UUPMediaCreator.Package\UUPMediaCreator.Package.wapproj", "{34CD2A97-E3CE-4606-9B64-E5B3A42E108A}"
+Project("{C7167F0D-BC9F-4E6E-AFE1-012C56B48DB5}") = "UUPMediaCreatorPackage", "src\Applications\UUPMediaCreator.Package\UUPMediaCreatorPackage.wapproj", "{34CD2A97-E3CE-4606-9B64-E5B3A42E108A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UUPMediaCreator", "src\Applications\UUPMediaCreator\UUPMediaCreator.csproj", "{4291EF28-C146-4772-8598-982645C9FF9A}"
 EndProject
