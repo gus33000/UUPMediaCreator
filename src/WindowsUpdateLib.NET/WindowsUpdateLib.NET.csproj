@@ -9,7 +9,7 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\thirdparty\Microsoft.Cabinet.NET\Microsoft.Cabinet.NET.csproj" />
+    <ProjectReference Include="..\Cabinet.NET\Cabinet.NET.csproj" />
     <ProjectReference Include="..\CompDB.NET\CompDB.NET.csproj" />
     <ProjectReference Include="..\MediaCreationLib.Planning.NET\MediaCreationLib.Planning.NET.csproj" />
   </ItemGroup>

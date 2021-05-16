@@ -8,7 +8,7 @@
     <IntermediateOutputPath>$(SolutionDir)intermediate\$(Platform)\$(Configuration)\MediaCreationLib.Planning.NET\</IntermediateOutputPath>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\thirdparty\Microsoft.Cabinet.NET\Microsoft.Cabinet.NET.csproj" />
+    <ProjectReference Include="..\Cabinet.NET\Cabinet.NET.csproj" />
     <ProjectReference Include="..\CompDB.NET\CompDB.NET.csproj" />
     <ProjectReference Include="..\Imaging.NET\Imaging.NET.csproj" />
   </ItemGroup>

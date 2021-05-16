@@ -10,7 +10,7 @@
     <Platforms>AnyCPU;x64;x86;arm64</Platforms>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\thirdparty\Microsoft.Cabinet.NET\Microsoft.Cabinet.NET.csproj" />
+    <ProjectReference Include="..\..\Cabinet.NET\Cabinet.NET.csproj" />
     <ProjectReference Include="..\..\DownloadLib.NET\DownloadLib.NET.csproj" />
     <ProjectReference Include="..\..\CompDB.NET\CompDB.NET.csproj" />
     <ProjectReference Include="..\..\MediaCreationLib.Planning.NET\MediaCreationLib.Planning.NET.csproj" />

@@ -1,6 +1,6 @@
-﻿using Imaging;
+﻿using Cabinet;
+using Imaging;
 using MediaCreationLib.NET;
-using Microsoft.Cabinet;
 using Microsoft.Wim;
 using System;
 using System.Collections.Generic;
@@ -165,7 +165,7 @@ namespace MediaCreationLib.BaseEditions
                 progressCallback?.Invoke(Common.ProcessPhase.PreparingFiles, false, progressoffset + (int)Math.Round((double)percent / 100 * progressScaleHalf), "Unpacking " + file + "...");
             };
 
-            CabinetHandler.ExpandFiles(cabFilePath, tempExtractionPath, ProgressCallback);
+            CabinetExtractor.ExtractCabinet(cabFilePath, tempExtractionPath, ProgressCallback);
 
             void callback(string Operation, int ProgressPercentage, bool IsIndeterminate)
             {

@@ -1,7 +1,6 @@
 ﻿using Imaging;
 using IniParser;
 using IniParser.Model;
-using Microsoft.Cabinet;
 using Microsoft.Wim;
 using System;
 using System.IO;
@@ -9,6 +8,7 @@ using System.Linq;
 using UUPMediaCreator.InterCommunication;
 using static MediaCreationLib.MediaCreator;
 using MediaCreationLib.Dism;
+using Cabinet;
 
 namespace MediaCreationLib.BootlegEditions
 {
@@ -355,7 +355,7 @@ namespace MediaCreationLib.BootlegEditions
                         progressCallback?.Invoke(Common.ProcessPhase.PreparingFiles, false, percent, "Unpacking " + file + "...");
                     };
 
-                    CabinetHandler.ExpandFiles(lppackage, LPFolder, ProgressCallback);
+                    CabinetExtractor.ExtractCabinet(lppackage, LPFolder, ProgressCallback);
                 }
                 else
                 {

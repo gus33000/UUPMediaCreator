@@ -1,4 +1,4 @@
-﻿using Microsoft.Cabinet;
+﻿using Cabinet;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -155,23 +155,22 @@ namespace WindowsUpdateLib
                     UpdateData.CachedMetadata = metadataCabTemp;
                 }
 
-                using (var cabinet = new CabinetHandler(File.OpenRead(UpdateData.CachedMetadata)))
-                {
-                    IEnumerable<string> potentialFiles = cabinet.Files.Where(x =>
+                var cabinetFiles = CabinetExtractor.EnumCabinetFiles(UpdateData.CachedMetadata);
+
+                IEnumerable<string> potentialFiles = cabinetFiles.Where(x =>
                         x.ToLower().Contains($"desktoptargetcompdb_") &&
                         x.ToLower().Contains($"_{languagecode}") &&
                         !x.ToLower().Contains("lxp") &&
                         !x.ToLower().Contains($"desktoptargetcompdb_{languagecode}"));
 
-                    foreach (var file in potentialFiles)
-                    {
-                        var edition = file.Split('_').Reverse().Skip(1).First();
+                foreach (var file in potentialFiles)
+                {
+                    var edition = file.Split('_').Reverse().Skip(1).First();
 
-                        if (availableEditions.Any(x => x.Edition == edition))
-                            continue;
+                    if (availableEditions.Any(x => x.Edition == edition))
+                        continue;
 
-                        availableEditions.Add(new AvailableEdition() { Edition = edition });
-                    }
+                    availableEditions.Add(new AvailableEdition() { Edition = edition });
                 }
             }
             else
@@ -196,7 +195,7 @@ namespace WindowsUpdateLib
 
             availableEditions.Sort((x, y) => x.Edition.CompareTo(y.Edition));
 
-            exit:
+        exit:
             return availableEditions.ToArray();
         }
 

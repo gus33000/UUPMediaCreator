@@ -16,7 +16,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.VCRTForwarders.140" Version="1.0.7" />
     <PackageReference Include="Microsoft.Windows.CsWinRT" Version="1.2.6" />
     <Manifest Include="$(ApplicationManifest)" />
   </ItemGroup>

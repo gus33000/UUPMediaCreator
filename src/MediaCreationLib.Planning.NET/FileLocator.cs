@@ -1,5 +1,5 @@
 ﻿using CompDB;
-using Microsoft.Cabinet;
+using Cabinet;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -19,23 +19,18 @@ namespace MediaCreationLib.Planning.NET
             {
                 if (Directory.EnumerateFiles(UUPPath, "*aggregatedmetadata*").Count() > 0)
                 {
-                    using (CabinetHandler cabinet = new CabinetHandler(File.OpenRead(Directory.EnumerateFiles(UUPPath, "*aggregatedmetadata*").First())))
+                    var cabinetFiles = CabinetExtractor.EnumCabinetFiles(Directory.EnumerateFiles(UUPPath, "*aggregatedmetadata*").First());
+                    foreach (var file in cabinetFiles.Where(x => x.EndsWith(".xml.cab", StringComparison.InvariantCultureIgnoreCase)))
                     {
-                        foreach (var file in cabinet.Files.Where(x => x.EndsWith(".xml.cab", StringComparison.InvariantCultureIgnoreCase)))
+                        try
                         {
-                            try
+                            byte[] xmlfile = CabinetExtractor.ExtractCabinetFile(file, CabinetExtractor.EnumCabinetFiles(file).First());
+                            using (Stream xmlstream = new MemoryStream(xmlfile))
                             {
-                                using (CabinetHandler cabinet2 = new CabinetHandler(cabinet.OpenFile(file)))
-                                {
-                                    string xmlfile = cabinet2.Files.First();
-                                    using (Stream xmlstream = cabinet2.OpenFile(xmlfile))
-                                    {
-                                        compDBs.Add(CompDBXmlClass.DeserializeCompDB(xmlstream));
-                                    }
-                                }
+                                compDBs.Add(CompDBXmlClass.DeserializeCompDB(xmlstream));
                             }
-                            catch { }
                         }
+                        catch { }
                     }
                 }
                 else
@@ -46,13 +41,10 @@ namespace MediaCreationLib.Planning.NET
                     {
                         try
                         {
-                            using (CabinetHandler cabinet2 = new CabinetHandler(File.OpenRead(Path.Combine(UUPPath, file))))
+                            byte[] xmlfile = CabinetExtractor.ExtractCabinetFile(Path.Combine(UUPPath, file), CabinetExtractor.EnumCabinetFiles(Path.Combine(UUPPath, file)).First());
+                            using (Stream xmlstream = new MemoryStream(xmlfile))
                             {
-                                string xmlfile = cabinet2.Files.First();
-                                using (Stream xmlstream = cabinet2.OpenFile(xmlfile))
-                                {
-                                    compDBs.Add(CompDBXmlClass.DeserializeCompDB(xmlstream));
-                                }
+                                compDBs.Add(CompDBXmlClass.DeserializeCompDB(xmlstream));
                             }
                         }
                         catch { }

@@ -1,7 +1,8 @@
 {
   "profiles": {
     "UUPDownload": {
-      "commandName": "Project"
+      "commandName": "Project",
+      "commandLineArgs": "-s Professional -e Professional -t arm64 -r Retail -l en-us -o D:\\Test -c rs_prerelease -v 10.0.19041.0"
     }
   }
 }

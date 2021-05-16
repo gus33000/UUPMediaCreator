@@ -17,7 +17,7 @@ namespace UUPMediaCreator.UWP.Pages
         {
             base.OnNavigatedTo(e);
 
-            BuildStringTextBlock.Text = App.ConversionPlan.BuildString;
+            BuildStringTextBlock.Text = App.ConversionPlan.BuildString ?? App.ConversionPlan.UpdateData.Xml.LocalizedProperties.Title ?? "";
             ArchitectureTextBlock.Text = App.ConversionPlan.MachineType.ToString();
             LanguageTextBlock.Text = App.ConversionPlan.LanguageTitle;
             FlagBitmap.UriSource = App.ConversionPlan.FlagUri;

@@ -1,5 +1,5 @@
-﻿using CompDB;
-using Microsoft.Cabinet;
+﻿using Cabinet;
+using CompDB;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -91,23 +91,8 @@ namespace WindowsUpdateLib
 
                 try
                 {
-                    using (var cabinet = new CabinetHandler(File.OpenRead(deploymentCabTemp)))
-                    {
-                        foreach (var file in cabinet.Files)
-                        {
-                            if (file.Equals("UpdateAgent.dll", StringComparison.InvariantCultureIgnoreCase))
-                            {
-                                byte[] buffer;
-                                using (var dllstream = cabinet.OpenFile(file))
-                                {
-                                    buffer = new byte[dllstream.Length];
-                                    await dllstream.ReadAsync(buffer, 0, (int)dllstream.Length);
-                                }
-                                result = GetBuildStringFromUpdateAgent(buffer);
-                                break;
-                            }
-                        }
-                    }
+                    byte[] buffer = CabinetExtractor.ExtractCabinetFile(deploymentCabTemp, "UpdateAgent.dll");
+                    result = GetBuildStringFromUpdateAgent(buffer);
                 }
                 catch { }
 
@@ -234,19 +219,18 @@ namespace WindowsUpdateLib
 
                 try
                 {
-                    using (CabinetHandler cabinet = new CabinetHandler(File.OpenRead(update.CachedMetadata)))
-                    {
-                        foreach (string file in cabinet.Files)
-                        {
-                            using (CabinetHandler cabinet2 = new CabinetHandler(cabinet.OpenFile(file)))
-                            {
-                                string xmlfile = cabinet2.Files.First();
+                    var tmp = Path.GetTempFileName();
+                    File.Delete(tmp);
+                    Directory.CreateDirectory(tmp);
 
-                                using (Stream xmlstream = cabinet2.OpenFile(xmlfile))
-                                {
-                                    neutralCompDB.Add(CompDBXmlClass.DeserializeCompDB(xmlstream));
-                                }
-                            }
+                    CabinetExtractor.ExtractCabinet(update.CachedMetadata, tmp);
+
+                    foreach (string file in Directory.EnumerateFiles(tmp, "*", SearchOption.AllDirectories))
+                    {
+                        byte[] xmlfile = CabinetExtractor.ExtractCabinetFile(file, CabinetExtractor.EnumCabinetFiles(file).First());
+                        using (Stream xmlstream = new MemoryStream(xmlfile))
+                        {
+                            neutralCompDB.Add(CompDBXmlClass.DeserializeCompDB(xmlstream));
                         }
                     }
                 }
@@ -279,13 +263,10 @@ namespace WindowsUpdateLib
 
                         update.CachedMetadata = metadataCabTemp;
 
-                        using (CabinetHandler cabinet2 = new CabinetHandler(File.OpenRead(update.CachedMetadata)))
+                        byte[] xmlfile = CabinetExtractor.ExtractCabinetFile(update.CachedMetadata, CabinetExtractor.EnumCabinetFiles(update.CachedMetadata).First());
+                        using (Stream xmlstream = new MemoryStream(xmlfile))
                         {
-                            string xmlfile = cabinet2.Files.First();
-                            using (Stream xmlstream = cabinet2.OpenFile(xmlfile))
-                            {
-                                neutralCompDB.Add(CompDBXmlClass.DeserializeCompDB(xmlstream));
-                            }
+                            neutralCompDB.Add(CompDBXmlClass.DeserializeCompDB(xmlstream));
                         }
                     }
                     catch { }

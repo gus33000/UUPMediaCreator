@@ -13,7 +13,7 @@
     <ProjectReference Include="..\Imaging.NET\Imaging.NET.csproj" />
     <ProjectReference Include="..\InterCommunication.NET\InterCommunication.NET.csproj" />
     <ProjectReference Include="..\MediaCreationLib.DismOperations.NET\MediaCreationLib.DismOperations.NET.csproj" />
-    <ProjectReference Include="..\..\thirdparty\Microsoft.Cabinet.NET\Microsoft.Cabinet.NET.csproj" />
+    <ProjectReference Include="..\Cabinet.NET\Cabinet.NET.csproj" />
     <ProjectReference Include="..\..\thirdparty\Microsoft.Wim.NET\Microsoft.Wim.NET.csproj" />
     <ProjectReference Include="..\..\thirdparty\Privileges.NET\Privileges.NET.csproj" />
     <ProjectReference Include="..\MediaCreationLib.Planning.NET\MediaCreationLib.Planning.NET.csproj" />

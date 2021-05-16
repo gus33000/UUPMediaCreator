@@ -13,6 +13,6 @@
   <ItemGroup>
     <ProjectReference Include="..\..\InterCommunication.NET\InterCommunication.NET.csproj" />
     <ProjectReference Include="..\..\MediaCreationLib.NET\MediaCreationLib.NET.csproj" />
-    <ProjectReference Include="..\..\..\thirdparty\Microsoft.Cabinet.NET\Microsoft.Cabinet.NET.csproj" />
+    <ProjectReference Include="..\..\Cabinet.NET\Cabinet.NET.csproj" />
   </ItemGroup>
 </Project>
