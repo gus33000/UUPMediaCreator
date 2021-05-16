@@ -7,9 +7,8 @@ using WindowsUpdateLib;
 using Newtonsoft.Json;
 using System.IO;
 using System.Text.RegularExpressions;
-using Download.Downloading;
 
-namespace UUPMediaCreator
+namespace DownloadLib
 {
     public static class UpdateUtils
     {
@@ -72,7 +71,7 @@ namespace UUPMediaCreator
             return false;
         }
 
-        public static async Task ProcessUpdateAsync(UpdateData update, string OutputFolder, MachineType MachineType, IProgress<GeneralDownloadProgress> generalDownloadProgress, string Language = "", string Edition = "", bool WriteMetadata = true)
+        public static async Task<string> ProcessUpdateAsync(UpdateData update, string pOutputFolder, MachineType MachineType, IProgress<GeneralDownloadProgress> generalDownloadProgress, string Language = "", string Edition = "", bool WriteMetadata = true)
         {
             HashSet<CompDBXmlClass.PayloadItem> payloadItems = new HashSet<CompDBXmlClass.PayloadItem>();
             HashSet<CompDBXmlClass.PayloadItem> bannedPayloadItems = new HashSet<CompDBXmlClass.PayloadItem>();
@@ -109,6 +108,7 @@ namespace UUPMediaCreator
             string name = $"{buildstr.Replace(" ", ".").Replace("(", "").Replace(")", "")}_{MachineType.ToString().ToLower()}fre_{update.Xml.UpdateIdentity.UpdateID.Split("-").Last()}";
             Regex illegalCharacters = new Regex(@"[\\/:*?""<>|]");
             name = illegalCharacters.Replace(name, "");
+            string OutputFolder = Path.Combine(pOutputFolder, name);
 
             if (compDBs != null)
             {
@@ -275,6 +275,8 @@ namespace UUPMediaCreator
                 }
             }
             while (returnCode != 0);
+
+            return OutputFolder;
         }
     }
 }

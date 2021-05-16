@@ -1,4 +1,4 @@
-﻿using Download.Downloading;
+﻿using DownloadLib;
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -20,9 +20,8 @@ namespace UUPMediaCreator.UWP.Pages
         {
             var tmp = await ApplicationData.Current.TemporaryFolder.CreateFolderAsync($"tmpDl_{DateTime.Now.Ticks}");
             ProgressBar.IsIndeterminate = true;
-            App.ConversionPlan.TmpOutputFolder = tmp.Path;
 
-            await UpdateUtils.ProcessUpdateAsync(App.ConversionPlan.UpdateData, App.ConversionPlan.TmpOutputFolder, App.ConversionPlan.MachineType, this, App.ConversionPlan.Language, App.ConversionPlan.Edition);
+            App.ConversionPlan.TmpOutputFolder = await UpdateUtils.ProcessUpdateAsync(App.ConversionPlan.UpdateData, tmp.Path, App.ConversionPlan.MachineType, this, App.ConversionPlan.Language, App.ConversionPlan.Edition);
 
             Frame.Navigate(typeof(BuildingISOPage));
         }

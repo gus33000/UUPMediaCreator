@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading;
-using Download.Downloading;
+using DownloadLib;
 
 namespace UUPDownload.Downloading
 {

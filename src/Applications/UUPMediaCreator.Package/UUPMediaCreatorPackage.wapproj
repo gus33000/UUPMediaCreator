@@ -52,7 +52,7 @@
   <PropertyGroup>
     <ProjectGuid>34cd2a97-e3ce-4606-9b64-e5b3a42e108a</ProjectGuid>
     <TargetPlatformVersion>10.0.19041.0</TargetPlatformVersion>
-    <TargetPlatformMinVersion>10.0.19041.0</TargetPlatformMinVersion>
+    <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
     <DefaultLanguage>en-US</DefaultLanguage>
     <AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
     <EntryPointProjectUniqueName>..\UUPMediaCreator.Broker\UUPMediaCreator.Broker.csproj</EntryPointProjectUniqueName>
@@ -367,12 +367,8 @@
   <ItemGroup>
     <ProjectReference Include="..\UUPDownload\UUPDownload.csproj" />
     <ProjectReference Include="..\UUPMediaConverterCli\UUPMediaConverterCli.csproj" />
-    <ProjectReference Include="..\UUPMediaCreator.Broker\UUPMediaCreator.Broker.csproj">
-      <SkipGetTargetFrameworkProperties>True</SkipGetTargetFrameworkProperties>
-    </ProjectReference>
-    <ProjectReference Include="..\UUPMediaConverterDismBroker\UUPMediaConverterDismBroker.csproj">
-      <SkipGetTargetFrameworkProperties>True</SkipGetTargetFrameworkProperties>
-    </ProjectReference>
+    <ProjectReference Include="..\UUPMediaCreator.Broker\UUPMediaCreator.Broker.csproj" />
+    <ProjectReference Include="..\UUPMediaConverterDismBroker\UUPMediaConverterDismBroker.csproj" />
     <ProjectReference Include="..\UUPMediaCreator\UUPMediaCreator.csproj" />
   </ItemGroup>
   <Import Project="$(WapProjPath)\Microsoft.DesktopBridge.targets" />

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -125,6 +125,10 @@
     <EmbeddedResource Include="Properties\DownloadLib.UWP.rd.xml" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\CompDB.UWP\CompDB.UWP.csproj">
+      <Project>{8ff9162b-7281-4274-823c-3bb7905508d2}</Project>
+      <Name>CompDB.UWP</Name>
+    </ProjectReference>
     <ProjectReference Include="..\WindowsUpdateLib.UWP\WindowsUpdateLib.UWP.csproj">
       <Project>{8ebd2b3f-31c4-493a-8853-fdbe32097b7e}</Project>
       <Name>WindowsUpdateLib.UWP</Name>

@@ -5,6 +5,13 @@
     xmlns:local="using:UUPMediaCreator">
 
     <Application.Resources>
-        <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" Version="Latest" />
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" Version="Latest" />
+                <ResourceDictionary>
+                    <FontFamily x:Key="SymbolThemeFontFamily">ms-appx:///Fonts/SegoeIcons.ttf#Segoe Fluent Icons</FontFamily>
+                </ResourceDictionary>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
     </Application.Resources>
 </Application>

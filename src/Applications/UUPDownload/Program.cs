@@ -19,12 +19,8 @@
 // DEALINGS IN THE SOFTWARE.
 
 using CommandLine;
-using System.IO;
 using System.Net;
 using System.Reflection;
-using System.Xml;
-using System.Xml.Serialization;
-using WindowsUpdateLib;
 
 namespace UUPDownload
 {

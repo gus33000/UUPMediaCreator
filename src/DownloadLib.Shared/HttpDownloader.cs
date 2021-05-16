@@ -31,7 +31,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using WindowsUpdateLib;
 
-namespace Download.Downloading
+namespace DownloadLib
 {
     public class GeneralDownloadProgress
     {

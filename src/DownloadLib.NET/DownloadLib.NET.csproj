@@ -1,7 +1,7 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net5.0-windows</TargetFramework>
+    <TargetFramework>net5.0</TargetFramework>
     <Platforms>AnyCPU;x64;x86;arm64</Platforms>
     <OutputPath>$(SolutionDir)build\$(Platform)\$(Configuration)\DownloadLib.NET\</OutputPath>
     <IntermediateOutputPath>$(SolutionDir)intermediate\$(Platform)\$(Configuration)\DownloadLib.NET\</IntermediateOutputPath>
@@ -10,6 +10,7 @@
   <Import Project="..\DownloadLib.Shared\DownloadLib.Shared.projitems" Label="Shared" />
 
   <ItemGroup>
+    <ProjectReference Include="..\CompDB.NET\CompDB.NET.csproj" />
     <ProjectReference Include="..\WindowsUpdateLib.NET\WindowsUpdateLib.NET.csproj" />
   </ItemGroup>
 

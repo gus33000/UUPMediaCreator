@@ -9,6 +9,7 @@
     <Import_RootNamespace>DownloadLib.Shared</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)DownloadHelpers.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)HttpDownloader.cs" />
   </ItemGroup>
 </Project>

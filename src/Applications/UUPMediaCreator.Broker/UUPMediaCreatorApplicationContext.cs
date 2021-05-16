@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Text.Json;
 using System.Threading;
-using System.Threading.Tasks;
 using UUPMediaCreator.InterCommunication;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.AppService;
@@ -9,7 +8,7 @@ using Windows.Foundation.Collections;
 
 namespace UUPMediaCreator.Broker
 {
-    internal class UUPMediaCreatorApplicationContext
+    internal class UUPMediaCreatorApplicationContext : IDisposable
     {
         private AppServiceConnection connection = null;
 
@@ -24,7 +23,7 @@ namespace UUPMediaCreator.Broker
             {
                 if (!await Windows.System.Launcher.LaunchUriAsync(new Uri("uupmediacreator:")))
                 {
-                    Environment.Exit(1);
+                    Environment.Exit(0);
                     return;
                 }
 
@@ -53,8 +52,17 @@ namespace UUPMediaCreator.Broker
                 {
                     case Common.InterCommunicationType.Exit:
                         {
-                            connection.Dispose();
-                            Environment.Exit(2);
+                            Thread thread = new Thread(async () =>
+                            {
+                                var val = new ValueSet();
+                                val.Add("InterCommunication", "");
+                                await args.Request.SendResponseAsync(val);
+                            });
+
+                            thread.Start();
+                            thread.Join();
+
+                            Environment.Exit(0);
                             break;
                         }
                     case Common.InterCommunicationType.StartISOConversionProcess:
@@ -74,7 +82,7 @@ namespace UUPMediaCreator.Broker
                                 var val = new ValueSet();
                                 val.Add("InterCommunication", JsonSerializer.Serialize(comm));
 
-                                await SendToUWP(val);
+                                await connection.SendMessageAsync(val);
                             }
 
                             Thread thread = new Thread(async () =>
@@ -105,7 +113,7 @@ namespace UUPMediaCreator.Broker
                                     var val = new ValueSet();
                                     val.Add("InterCommunication", JsonSerializer.Serialize(comm));
 
-                                    await SendToUWP(val);
+                                    await connection.SendMessageAsync(val);
                                 }
                             });
 
@@ -116,15 +124,15 @@ namespace UUPMediaCreator.Broker
             }
         }
 
-        private async Task SendToUWP(ValueSet message)
-        {
-            await connection.SendMessageAsync(message);
-        }
-
         private void Connection_ServiceClosed(AppServiceConnection sender, AppServiceClosedEventArgs args)
         {
             connection.ServiceClosed -= Connection_ServiceClosed;
             connection = null;
+        }
+
+        public void Dispose()
+        {
+            connection?.Dispose();
         }
     }
 }

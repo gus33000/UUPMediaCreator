@@ -1,6 +1,6 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net5.0-windows</TargetFramework>
+    <TargetFramework>net5.0</TargetFramework>
     <OutputType>Exe</OutputType>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
@@ -14,13 +14,5 @@
     <ProjectReference Include="..\..\InterCommunication.NET\InterCommunication.NET.csproj" />
     <ProjectReference Include="..\..\MediaCreationLib.NET\MediaCreationLib.NET.csproj" />
     <ProjectReference Include="..\..\..\thirdparty\Microsoft.Cabinet.NET\Microsoft.Cabinet.NET.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Flurl" Version="3.0.2" />
-    <PackageReference Include="Flurl.Http" Version="3.2.0" />
-    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
-    <PackageReference Include="Microsoft.Win32.Registry" Version="6.0.0-preview.3.21201.4" />
-    <PackageReference Include="System.Data.DataSetExtensions" Version="4.6.0-preview3.19128.7" />
-    <PackageReference Include="System.ValueTuple" Version="4.5.0" />
   </ItemGroup>
 </Project>
