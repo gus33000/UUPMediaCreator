@@ -92,6 +92,8 @@ namespace Imaging
 
         public bool AddFileToImage(string wimFile, int imageIndex, string fileToAdd, string destination, IImaging.ProgressCallback progressCallback = null)
         {
+            destination = destination.Replace(Path.DirectorySeparatorChar, '\\');
+
             string title = $"Adding {destination} to {wimFile.Split(Path.DirectorySeparatorChar).Last()}...";
             try
             {
@@ -154,6 +156,8 @@ namespace Imaging
 
         public bool DeleteFileFromImage(string wimFile, int imageIndex, string fileToRemove, IImaging.ProgressCallback progressCallback = null)
         {
+            fileToRemove = fileToRemove.Replace(Path.DirectorySeparatorChar, '\\');
+
             string title = $"Removing {fileToRemove} from {wimFile.Split(Path.DirectorySeparatorChar).Last()}...";
             try
             {
@@ -312,10 +316,12 @@ namespace Imaging
 
         public bool ExtractFileFromImage(string wimFile, int imageIndex, string fileToExtract, string destination)
         {
+            var filename = Path.GetFileName(fileToExtract);
+            var extractDir = Path.GetTempPath();
+            fileToExtract = fileToExtract.Replace(Path.DirectorySeparatorChar, '\\');
+
             try
             {
-                var filename = Path.GetFileName(fileToExtract);
-                var extractDir = Environment.GetEnvironmentVariable("TEMP");
 
                 using (Wim wim = Wim.OpenWim(wimFile, OpenFlags.None))
                 {
@@ -329,6 +335,7 @@ namespace Imaging
             }
             catch (Exception ex)
             {
+                Console.WriteLine(ex.ToString());
                 return false;
             }
             return true;
@@ -336,6 +343,9 @@ namespace Imaging
 
         public bool RenameFileInImage(string wimFile, int imageIndex, string sourceFilePath, string destinationFilePath, IImaging.ProgressCallback progressCallback = null)
         {
+            sourceFilePath = sourceFilePath.Replace(Path.DirectorySeparatorChar, '\\');
+            destinationFilePath = destinationFilePath.Replace(Path.DirectorySeparatorChar, '\\');
+
             string title = $"Renaming {sourceFilePath} to {destinationFilePath} in {wimFile.Split(Path.DirectorySeparatorChar).Last()}...";
             try
             {
@@ -652,7 +662,7 @@ namespace Imaging
                 {
                     // Always set a temporary path
                     //
-                    WimgApi.SetTemporaryPath(wimHandle, Environment.GetEnvironmentVariable("TEMP"));
+                    WimgApi.SetTemporaryPath(wimHandle, Path.GetTempPath());
 
                     try
                     {
@@ -666,6 +676,26 @@ namespace Imaging
                     finally
                     {
                     }
+                }
+            }
+            catch
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public bool GetWIMInformation2(
+            string wimFile,
+            out WIMInformationXML.WIM wim)
+        {
+            wim = null;
+            try
+            {
+                using (Wim wiml = Wim.OpenWim(wimFile, OpenFlags.None))
+                {
+                    string xmldata = string.Join("", wiml.GetXmlData().Skip(1));
+                    wim = WIMInformationXML.DeserializeWIM(xmldata);
                 }
             }
             catch
@@ -692,7 +722,7 @@ namespace Imaging
                 {
                     // Always set a temporary path
                     //
-                    WimgApi.SetTemporaryPath(wimHandle, Environment.GetEnvironmentVariable("TEMP"));
+                    WimgApi.SetTemporaryPath(wimHandle, Path.GetTempPath());
 
                     try
                     {
@@ -705,6 +735,28 @@ namespace Imaging
                     finally
                     {
                     }
+                }
+            }
+            catch
+            {
+                return GetWIMImageInformation2(wimFile, imageIndex, out image);
+            }
+            return true;
+        }
+
+        public bool GetWIMImageInformation2(
+            string wimFile,
+            int imageIndex,
+            out WIMInformationXML.IMAGE image)
+        {
+            image = null;
+            try
+            {
+                using (Wim wim = Wim.OpenWim(wimFile, OpenFlags.None))
+                {
+                    string xmldata = string.Join("", wim.GetXmlData().Skip(1));
+                    var xml = WIMInformationXML.DeserializeWIM(xmldata);
+                    image = xml.IMAGE.First(x => x.INDEX == imageIndex.ToString());
                 }
             }
             catch
@@ -730,7 +782,7 @@ namespace Imaging
                 {
                     // Always set a temporary path
                     //
-                    WimgApi.SetTemporaryPath(wimHandle, Environment.GetEnvironmentVariable("TEMP"));
+                    WimgApi.SetTemporaryPath(wimHandle, Path.GetTempPath());
 
                     try
                     {
@@ -743,6 +795,31 @@ namespace Imaging
                     finally
                     {
                     }
+                }
+            }
+            catch
+            {
+                return SetWIMImageInformation2(wimFile, imageIndex, image);
+            }
+            return true;
+        }
+
+        public bool SetWIMImageInformation2(
+            string wimFile,
+            int imageIndex,
+            WIMInformationXML.IMAGE image)
+        {
+            image = null;
+            try
+            {
+                using (Wim wim = Wim.OpenWim(wimFile, OpenFlags.WriteAccess))
+                {
+                    string xmldata = string.Join("", wim.GetXmlData().Skip(1));
+                    var xml = WIMInformationXML.DeserializeWIM(xmldata);
+                    var index = xml.IMAGE.IndexOf(xml.IMAGE.First(x => x.INDEX == imageIndex.ToString()));
+                    xml.IMAGE[index] = image;
+                    xmldata = WIMInformationXML.SerializeWIM(xml);
+                    // TODO
                 }
             }
             catch
@@ -765,12 +842,31 @@ namespace Imaging
                 {
                     // Always set a temporary path
                     //
-                    WimgApi.SetTemporaryPath(wimHandle, Environment.GetEnvironmentVariable("TEMP"));
+                    WimgApi.SetTemporaryPath(wimHandle, Path.GetTempPath());
 
                     string xmldata = WimgApi.GetImageInformationAsString(wimHandle);
                     var xml = WIMInformationXML.DeserializeWIM(xmldata);
                     xmldata = WIMInformationXML.SerializeWIM(xml);
                     WimgApi.SetImageInformation(wimHandle, xmldata);
+                }
+            }
+            catch
+            {
+                return ReseatWIMXml2(wimFile);
+            }
+            return true;
+        }
+
+        private bool ReseatWIMXml2(string wimFile)
+        {
+            try
+            {
+                using (Wim wim = Wim.OpenWim(wimFile, OpenFlags.WriteAccess))
+                {
+                    string xmldata = string.Join("", wim.GetXmlData().Skip(1));
+                    var xml = WIMInformationXML.DeserializeWIM(xmldata);
+                    xmldata = WIMInformationXML.SerializeWIM(xml);
+                    // TODO
                 }
             }
             catch

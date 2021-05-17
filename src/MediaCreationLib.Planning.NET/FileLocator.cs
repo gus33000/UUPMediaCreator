@@ -17,9 +17,10 @@ namespace MediaCreationLib.Planning.NET
 
             try
             {
-                if (Directory.EnumerateFiles(UUPPath, "*aggregatedmetadata*").Count() > 0)
+                var enumeratedFiles = Directory.EnumerateFiles(UUPPath, "*aggregatedmetadata*", new EnumerationOptions() { MatchCasing = MatchCasing.CaseInsensitive });
+                if (enumeratedFiles.Count() > 0)
                 {
-                    var cabFile = Directory.EnumerateFiles(UUPPath, "*aggregatedmetadata*").First();
+                    var cabFile = enumeratedFiles.First();
 
                     foreach (var file in CabinetExtractor.EnumCabinetFiles(cabFile).Where(x => x.EndsWith(".xml.cab", StringComparison.InvariantCultureIgnoreCase)))
                     {
@@ -35,7 +36,10 @@ namespace MediaCreationLib.Planning.NET
                                 compDBs.Add(CompDBXmlClass.DeserializeCompDB(xmlstream));
                             }
                         }
-                        catch { }
+                        catch
+                        {
+                            
+                        }
                     }
                 }
                 else

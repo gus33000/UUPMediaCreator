@@ -1,5 +1,7 @@
 ﻿using MediaCreationLib.NET;
 using Microsoft.Wim;
+using System;
+using System.Runtime.InteropServices;
 using System.Security.Principal;
 using UUPMediaCreator.InterCommunication;
 using static MediaCreationLib.MediaCreator;
@@ -12,9 +14,43 @@ namespace MediaCreationLib.Installer
 
         private static bool IsAdministrator()
         {
-            var identity = WindowsIdentity.GetCurrent();
-            var principal = new WindowsPrincipal(identity);
-            return principal.IsInRole(WindowsBuiltInRole.Administrator);
+            if (GetOperatingSystem() == OSPlatform.Windows)
+            {
+#pragma warning disable CA1416 // Validate platform compatibility
+                var identity = WindowsIdentity.GetCurrent();
+                var principal = new WindowsPrincipal(identity);
+                return principal.IsInRole(WindowsBuiltInRole.Administrator);
+#pragma warning restore CA1416 // Validate platform compatibility
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public static OSPlatform GetOperatingSystem()
+        {
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            {
+                return OSPlatform.OSX;
+            }
+
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                return OSPlatform.Linux;
+            }
+
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                return OSPlatform.Windows;
+            }
+
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.FreeBSD))
+            {
+                return OSPlatform.FreeBSD;
+            }
+
+            throw new Exception("Cannot determine operating system!");
         }
 
         public static bool CreateSetupMedia(

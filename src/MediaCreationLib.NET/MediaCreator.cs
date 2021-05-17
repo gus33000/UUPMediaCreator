@@ -10,6 +10,7 @@ using UUPMediaCreator.InterCommunication;
 using MediaCreationLib.Planning.NET;
 using CompDB;
 using System.Security.Principal;
+using System.Runtime.InteropServices;
 
 namespace MediaCreationLib
 {
@@ -19,17 +20,44 @@ namespace MediaCreationLib
 
         private static bool IsAdministrator()
         {
-#if WINDOWS
+            if (GetOperatingSystem() == OSPlatform.Windows)
+            {
 #pragma warning disable CA1416 // Validate platform compatibility
-            var identity = WindowsIdentity.GetCurrent();
-            var principal = new WindowsPrincipal(identity);
-            return principal.IsInRole(WindowsBuiltInRole.Administrator);
+                var identity = WindowsIdentity.GetCurrent();
+                var principal = new WindowsPrincipal(identity);
+                return principal.IsInRole(WindowsBuiltInRole.Administrator);
 #pragma warning restore CA1416 // Validate platform compatibility
-#else
-            return false;
-#endif
+            }
+            else
+            {
+                return false;
+            }
         }
 
+        public static OSPlatform GetOperatingSystem()
+        {
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            {
+                return OSPlatform.OSX;
+            }
+
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                return OSPlatform.Linux;
+            }
+
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                return OSPlatform.Windows;
+            }
+
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.FreeBSD))
+            {
+                return OSPlatform.FreeBSD;
+            }
+
+            throw new Exception("Cannot determine operating system!");
+        }
         private static WIMImaging imagingInterface = new WIMImaging();
 
         public delegate void ProgressCallback(Common.ProcessPhase phase, bool IsIndeterminate, int ProgressInPercentage, string SubOperation);

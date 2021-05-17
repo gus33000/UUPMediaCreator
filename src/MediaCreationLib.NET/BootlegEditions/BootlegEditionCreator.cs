@@ -277,8 +277,8 @@ namespace MediaCreationLib.BootlegEditions
             string servicingPath = Path.Combine(MountedImagePath, "Windows", "servicing", "Packages");
             string manifest = $"Microsoft-Windows-{SourceEdition}Edition~31bf3856ad364e35~*~~10.0.*.*.mum";
             string catalog = $"Microsoft-Windows-{SourceEdition}Edition~31bf3856ad364e35~*~~10.0.*.*.cat";
-            string manifestPath = Directory.EnumerateFiles(servicingPath, manifest).First();
-            string catalogPath = Directory.EnumerateFiles(servicingPath, catalog).First();
+            string manifestPath = Directory.EnumerateFiles(servicingPath, manifest, new EnumerationOptions() { MatchCasing = MatchCasing.CaseInsensitive }).First();
+            string catalogPath = Directory.EnumerateFiles(servicingPath, catalog, new EnumerationOptions() { MatchCasing = MatchCasing.CaseInsensitive }).First();
 
             bool LTSB = false;
             if (EditionID.ToLower().StartsWith("enterpriseg")

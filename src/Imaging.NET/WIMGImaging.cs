@@ -83,38 +83,7 @@ namespace Imaging
             int imageIndex,
             out WIMInformationXML.IMAGE image)
         {
-            image = null;
-            try
-            {
-                using (var wimHandle = WimgApi.CreateFile(
-                    wimFile,
-                    WimFileAccess.Read,
-                    WimCreationDisposition.OpenExisting,
-                    WimCreateFileOptions.Chunked,
-                    WimCompressionType.None))
-                {
-                    // Always set a temporary path
-                    //
-                    WimgApi.SetTemporaryPath(wimHandle, Environment.GetEnvironmentVariable("TEMP"));
-
-                    try
-                    {
-                        using (WimHandle imageHandle = WimgApi.LoadImage(wimHandle, imageIndex))
-                        {
-                            var wiminfo = WimgApi.GetImageInformationAsString(imageHandle);
-                            image = WIMInformationXML.DeserializeIMAGE(wiminfo);
-                        }
-                    }
-                    finally
-                    {
-                    }
-                }
-            }
-            catch
-            {
-                return false;
-            }
-            return true;
+            return WIMLibImaging.GetWIMImageInformation(wimFile, imageIndex, out image);
         }
 
         public bool SetWIMImageInformation(
@@ -122,37 +91,7 @@ namespace Imaging
             int imageIndex,
             WIMInformationXML.IMAGE image)
         {
-            try
-            {
-                using (var wimHandle = WimgApi.CreateFile(
-                    wimFile,
-                    WimFileAccess.Write,
-                    WimCreationDisposition.OpenExisting,
-                    WimCreateFileOptions.Chunked,
-                    WimCompressionType.None))
-                {
-                    // Always set a temporary path
-                    //
-                    WimgApi.SetTemporaryPath(wimHandle, Environment.GetEnvironmentVariable("TEMP"));
-
-                    try
-                    {
-                        using (WimHandle imageHandle = WimgApi.LoadImage(wimHandle, imageIndex))
-                        {
-                            string img = WIMInformationXML.SerializeIMAGE(image);
-                            WimgApi.SetImageInformation(imageHandle, img);
-                        }
-                    }
-                    finally
-                    {
-                    }
-                }
-            }
-            catch
-            {
-                return false;
-            }
-            return true;
+            return WIMLibImaging.SetWIMImageInformation(wimFile, imageIndex, image);
         }
 
         public bool MarkImageAsBootable(string wimFile, int imageIndex)
@@ -166,7 +105,7 @@ namespace Imaging
             {
                 // Always set a temporary path
                 //
-                WimgApi.SetTemporaryPath(wimHandle, Environment.GetEnvironmentVariable("TEMP"));
+                WimgApi.SetTemporaryPath(wimHandle, Path.GetTempPath());
 
                 try
                 {
@@ -253,7 +192,7 @@ namespace Imaging
                 {
                     // Always set a temporary path
                     //
-                    WimgApi.SetTemporaryPath(wimHandle, Environment.GetEnvironmentVariable("TEMP"));
+                    WimgApi.SetTemporaryPath(wimHandle, Path.GetTempPath());
 
                     // Register a method to be called while actions are performed by WIMGAPi for this .wim file
                     //
