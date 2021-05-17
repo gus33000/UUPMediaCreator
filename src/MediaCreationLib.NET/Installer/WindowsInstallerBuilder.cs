@@ -267,15 +267,15 @@ namespace MediaCreationLib.Installer
             {
                 dirs = Directory.EnumerateDirectories(Path.Combine(MediaPath, "sources"), "*-*");
             }
-            string langcode = dirs.First().Replace(Path.Combine(MediaPath, "sources") + "\\", "");
+            string langcode = dirs.First().Replace(Path.Combine(MediaPath, "sources") + Path.DirectorySeparatorChar, "");
 
             foreach (string file in Constants.SetupFilesToBackport)
             {
                 string matchingfile = Path.Combine(MediaPath, file).Replace("??-??", langcode);
                 string normalizedPath = file.Replace("??-??", langcode);
-                string normalizedPathWithoutFile = normalizedPath.Contains("\\") ? string.Join("\\", normalizedPath.Split('\\').Reverse().Skip(1).Reverse()) : "";
+                string normalizedPathWithoutFile = normalizedPath.Contains(Path.DirectorySeparatorChar) ? string.Join(Path.DirectorySeparatorChar, normalizedPath.Split(Path.DirectorySeparatorChar).Reverse().Skip(1).Reverse()) : "";
 
-                if (file == "sources\\background.bmp")
+                if (file == $"sources{Path.DirectorySeparatorChar}background.bmp")
                 {
                     if (File.Exists(matchingfile1))
                     {
@@ -304,9 +304,9 @@ namespace MediaCreationLib.Installer
                 {
                     string matchingfile = Path.Combine(MediaPath, file).Replace("??-??", langcode);
                     string normalizedPath = file.Replace("??-??", langcode);
-                    string normalizedPathWithoutFile = normalizedPath.Contains("\\") ? string.Join("\\", normalizedPath.Split('\\').Reverse().Skip(1).Reverse()) : "";
+                    string normalizedPathWithoutFile = normalizedPath.Contains(Path.DirectorySeparatorChar) ? string.Join(Path.DirectorySeparatorChar, normalizedPath.Split(Path.DirectorySeparatorChar).Reverse().Skip(1).Reverse()) : "";
 
-                    if (file == "sources\\background.bmp")
+                    if (file == $"sources{Path.DirectorySeparatorChar}background.bmp")
                     {
                         if (File.Exists(matchingfile1))
                         {

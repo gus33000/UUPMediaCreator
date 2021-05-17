@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace CompDB
@@ -8,7 +9,7 @@ namespace CompDB
     {
         public static string GetCommonlyUsedIncorrectFileName(this CompDBXmlClass.Package pkg)
         {
-            return pkg.Payload.PayloadItem.Path.Split('\\').Last().Replace("~31bf3856ad364e35", "").Replace("~.", ".").Replace("~", "-").Replace("-.", ".");
+            return pkg.Payload.PayloadItem.Path.Replace('\\', Path.DirectorySeparatorChar).Split(Path.DirectorySeparatorChar).Last().Replace("~31bf3856ad364e35", "").Replace("~.", ".").Replace("~", "-").Replace("-.", ".");
         }
 
         public static CompDBXmlClass.CompDB GetNeutralCompDB(this IEnumerable<CompDBXmlClass.CompDB> compDBs)
@@ -151,7 +152,7 @@ namespace CompDB
                     {
                         CompDBXmlClass.Package pkg = filteredCompDBs.First().Packages.Package.First(x => x.ID == feature.ID);
 
-                        string file = pkg.Payload.PayloadItem.Path;
+                        string file = pkg.Payload.PayloadItem.Path.Replace('\\', Path.DirectorySeparatorChar);
 
                         if (!file.EndsWith(".esd", StringComparison.InvariantCultureIgnoreCase) ||
                             !file.Contains("microsoft-windows-editionspecific", StringComparison.InvariantCultureIgnoreCase) ||

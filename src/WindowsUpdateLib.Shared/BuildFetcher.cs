@@ -127,7 +127,7 @@ namespace WindowsUpdateLib
                 goto exit;
             }
 
-            if (metadataCabs.Count == 1 && metadataCabs[0].FileName.Contains("metadata", StringComparison.InvariantCultureIgnoreCase))
+            if (metadataCabs.Count == 1 && metadataCabs[0].FileName.Replace('\\', Path.DirectorySeparatorChar).Contains("metadata", StringComparison.InvariantCultureIgnoreCase))
             {
                 // This is the new metadata format where all metadata is in a single cab
 
@@ -175,7 +175,7 @@ namespace WindowsUpdateLib
             }
             else
             {
-                IEnumerable<string> potentialFiles = metadataCabs.Select(x => x.FileName).Where(x =>
+                IEnumerable<string> potentialFiles = metadataCabs.Select(x => x.FileName.Replace('\\', Path.DirectorySeparatorChar)).Where(x =>
                     x.ToLower().Contains($"desktoptargetcompdb_") &&
                     x.ToLower().Contains($"_{languagecode}") &&
                     !x.ToLower().Contains("lxp") &&
@@ -201,9 +201,9 @@ namespace WindowsUpdateLib
 
         private static UpdateData TrimDeltasFromUpdateData(UpdateData update)
         {
-            update.Xml.Files.File = update.Xml.Files.File.Where(x => !x.FileName.EndsWith(".psf", StringComparison.InvariantCultureIgnoreCase)
-            && !x.FileName.StartsWith("Diff", StringComparison.InvariantCultureIgnoreCase)
-             && !x.FileName.StartsWith("Baseless", StringComparison.InvariantCultureIgnoreCase)).ToArray();
+            update.Xml.Files.File = update.Xml.Files.File.Where(x => !x.FileName.Replace('\\', Path.DirectorySeparatorChar).EndsWith(".psf", StringComparison.InvariantCultureIgnoreCase)
+            && !x.FileName.Replace('\\', Path.DirectorySeparatorChar).StartsWith("Diff", StringComparison.InvariantCultureIgnoreCase)
+             && !x.FileName.Replace('\\', Path.DirectorySeparatorChar).StartsWith("Baseless", StringComparison.InvariantCultureIgnoreCase)).ToArray();
             return update;
         }
 

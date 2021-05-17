@@ -14,13 +14,13 @@ namespace UUPMediaConverterCli
         public static string GetExecutableDirectory()
         {
             var fileName = Process.GetCurrentProcess().MainModule.FileName;
-            return fileName.Contains("\\") ? string.Join("\\", fileName.Split('\\').Reverse().Skip(1).Reverse()) : "";
+            return fileName.Contains(Path.DirectorySeparatorChar) ? string.Join(Path.DirectorySeparatorChar, fileName.Split(Path.DirectorySeparatorChar).Reverse().Skip(1).Reverse()) : "";
         }
 
         public static string GetParentExecutableDirectory()
         {
             var runningDirectory = GetExecutableDirectory();
-            return runningDirectory.Contains("\\") ? string.Join("\\", runningDirectory.Split('\\').Reverse().Skip(1).Reverse()) : "";
+            return runningDirectory.Contains(Path.DirectorySeparatorChar) ? string.Join(Path.DirectorySeparatorChar, runningDirectory.Split(Path.DirectorySeparatorChar).Reverse().Skip(1).Reverse()) : "";
         }
 
         private static void Main(string[] args)

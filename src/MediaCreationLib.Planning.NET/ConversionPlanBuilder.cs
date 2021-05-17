@@ -510,7 +510,7 @@ namespace MediaCreationLib.Planning.NET
                             else
                             {
                                 result = true;
-                                pathEditionMapping = "Windows\\Servicing\\Editions\\EditionMappings.xml";
+                                pathEditionMapping = $"Windows{Path.DirectorySeparatorChar}Servicing{Path.DirectorySeparatorChar}Editions{Path.DirectorySeparatorChar}EditionMappings.xml";
                                 index = 3;
                             }
 
@@ -559,7 +559,7 @@ namespace MediaCreationLib.Planning.NET
                             else
                             {
                                 result = true;
-                                pathEditionMatrix = "Windows\\Servicing\\Editions\\EditionMatrix.xml";
+                                pathEditionMatrix = $"Windows{Path.DirectorySeparatorChar}Servicing{Path.DirectorySeparatorChar}Editions{Path.DirectorySeparatorChar}EditionMatrix.xml";
                                 index = 3;
                             }
 

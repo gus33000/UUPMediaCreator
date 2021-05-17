@@ -135,7 +135,7 @@ namespace VirtualHardDiskLib
             do
             {
                 int backslashPos = volumeName.Length - 1;
-                if (volumeName[backslashPos] == '\\')
+                if (volumeName[backslashPos] == Path.DirectorySeparatorChar)
                 {
                     volumeName.Length--;
                 }
@@ -161,9 +161,9 @@ namespace VirtualHardDiskLib
 
         private static void _mountVhdToDriveLetter(string vhdVolumePath, string mountPoint)
         {
-            if (vhdVolumePath[vhdVolumePath.Length - 1] != '\\')
+            if (vhdVolumePath[vhdVolumePath.Length - 1] != Path.DirectorySeparatorChar)
             {
-                vhdVolumePath += '\\';
+                vhdVolumePath += Path.DirectorySeparatorChar;
             }
 
             if (!NativeMethods.SetVolumeMountPoint(mountPoint, vhdVolumePath))

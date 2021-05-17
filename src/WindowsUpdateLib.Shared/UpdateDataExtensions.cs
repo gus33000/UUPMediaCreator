@@ -60,7 +60,7 @@ namespace WindowsUpdateLib
 
                 foreach (var file in update.Xml.Files.File)
                 {
-                    if (file.FileName.EndsWith("deployment.cab", StringComparison.InvariantCultureIgnoreCase))
+                    if (file.FileName.Replace('\\', Path.DirectorySeparatorChar).EndsWith("deployment.cab", StringComparison.InvariantCultureIgnoreCase))
                     {
                         deploymentCab = file;
                         break;
@@ -211,7 +211,7 @@ namespace WindowsUpdateLib
                 return neutralCompDB;
             }
 
-            if (metadataCabs.Count == 1 && metadataCabs.First().FileName.Contains("metadata", StringComparison.InvariantCultureIgnoreCase))
+            if (metadataCabs.Count == 1 && metadataCabs.First().FileName.Replace('\\', Path.DirectorySeparatorChar).Contains("metadata", StringComparison.InvariantCultureIgnoreCase))
             {
                 // This is the new metadata format where all metadata is in a single cab
 

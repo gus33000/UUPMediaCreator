@@ -10,7 +10,7 @@ namespace MediaCreationLib.CDImage
 
         public static bool GenerateISOImage(string isopath, string cdroot, string volumelabel, ProgressCallback progressCallback)
         {
-            var runningDirectory = Process.GetCurrentProcess().MainModule.FileName.Contains("\\") ? string.Join("\\", Process.GetCurrentProcess().MainModule.FileName.Split('\\').Reverse().Skip(1).Reverse()) : "";
+            var runningDirectory = Process.GetCurrentProcess().MainModule.FileName.Contains(Path.DirectorySeparatorChar) ? string.Join(Path.DirectorySeparatorChar, Process.GetCurrentProcess().MainModule.FileName.Split(Path.DirectorySeparatorChar).Reverse().Skip(1).Reverse()) : "";
 
             string cdimagepath = Path.Combine(runningDirectory, "CDImage", "cdimage.exe");
 

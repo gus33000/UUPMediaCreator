@@ -21,6 +21,7 @@
 using CompDB;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using WindowsUpdateLib;
 
@@ -30,27 +31,27 @@ namespace UUPDownload
     {
         public static string GetFilenameForCEUIFile(CExtendedUpdateInfoXml.File file2, IEnumerable<CompDBXmlClass.PayloadItem> payloadItems)
         {
-            string filename = file2.FileName;
+            string filename = file2.FileName.Replace('\\', Path.DirectorySeparatorChar);
             if (payloadItems.Any(x => x.PayloadHash == file2.AdditionalDigest.Text || x.PayloadHash == file2.Digest))
             {
                 CompDBXmlClass.PayloadItem payload = payloadItems.First(x => x.PayloadHash == file2.AdditionalDigest.Text || x.PayloadHash == file2.Digest);
-                filename = payload.Path;
+                filename = payload.Path.Replace('\\', Path.DirectorySeparatorChar);
             }
             else if (payloadItems.Count() == 0 && filename.Contains("_") && !filename.StartsWith("_") && (filename.IndexOf('-') == -1 || filename.IndexOf('-') > filename.IndexOf('_')))
             {
-                filename = filename.Substring(0, filename.IndexOf('_')) + "\\" + filename.Substring(filename.IndexOf('_') + 1);
-                filename = filename.TrimStart('\\');
+                filename = filename.Substring(0, filename.IndexOf('_')) + Path.DirectorySeparatorChar + filename.Substring(filename.IndexOf('_') + 1);
+                filename = filename.TrimStart(Path.DirectorySeparatorChar);
             }
             return filename;
         }
 
         public static bool ShouldFileGetDownloaded(CExtendedUpdateInfoXml.File file2, IEnumerable<CompDBXmlClass.PayloadItem> payloadItems)
         {
-            string filename = file2.FileName;
+            string filename = file2.FileName.Replace('\\', Path.DirectorySeparatorChar);
             if (payloadItems.Any(x => x.PayloadHash == file2.AdditionalDigest.Text || x.PayloadHash == file2.Digest))
             {
                 CompDBXmlClass.PayloadItem payload = payloadItems.First(x => x.PayloadHash == file2.AdditionalDigest.Text || x.PayloadHash == file2.Digest);
-                filename = payload.Path;
+                filename = payload.Path.Replace('\\', Path.DirectorySeparatorChar);
 
                 if (payload.PayloadType.Equals("ExpressCab", StringComparison.InvariantCultureIgnoreCase))
                 {
@@ -70,9 +71,9 @@ namespace UUPDownload
 
         public static UpdateData TrimDeltasFromUpdateData(UpdateData update)
         {
-            update.Xml.Files.File = update.Xml.Files.File.Where(x => !x.FileName.EndsWith(".psf", StringComparison.InvariantCultureIgnoreCase)
-            && !x.FileName.StartsWith("Diff", StringComparison.InvariantCultureIgnoreCase)
-             && !x.FileName.StartsWith("Baseless", StringComparison.InvariantCultureIgnoreCase)).ToArray();
+            update.Xml.Files.File = update.Xml.Files.File.Where(x => !x.FileName.Replace('\\', Path.DirectorySeparatorChar).EndsWith(".psf", StringComparison.InvariantCultureIgnoreCase)
+            && !x.FileName.Replace('\\', Path.DirectorySeparatorChar).StartsWith("Diff", StringComparison.InvariantCultureIgnoreCase)
+             && !x.FileName.Replace('\\', Path.DirectorySeparatorChar).StartsWith("Baseless", StringComparison.InvariantCultureIgnoreCase)).ToArray();
             return update;
         }
     }

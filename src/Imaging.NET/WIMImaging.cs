@@ -14,7 +14,7 @@ namespace Imaging
         private static string GetExecutableDirectory()
         {
             var fileName = Process.GetCurrentProcess().MainModule.FileName;
-            return fileName.Contains("\\") ? string.Join("\\", fileName.Split('\\').Reverse().Skip(1).Reverse()) : "";
+            return fileName.Contains(Path.DirectorySeparatorChar) ? string.Join(Path.DirectorySeparatorChar, fileName.Split(Path.DirectorySeparatorChar).Reverse().Skip(1).Reverse()) : "";
         }
 
         private static void InitNativeLibrary()
@@ -92,7 +92,7 @@ namespace Imaging
 
         public bool AddFileToImage(string wimFile, int imageIndex, string fileToAdd, string destination, IImaging.ProgressCallback progressCallback = null)
         {
-            string title = $"Adding {destination} to {wimFile.Split('\\').Last()}...";
+            string title = $"Adding {destination} to {wimFile.Split(Path.DirectorySeparatorChar).Last()}...";
             try
             {
                 CallbackStatus ProgressCallback(ProgressMsg msg, object info, object progctx)
@@ -154,7 +154,7 @@ namespace Imaging
 
         public bool DeleteFileFromImage(string wimFile, int imageIndex, string fileToRemove, IImaging.ProgressCallback progressCallback = null)
         {
-            string title = $"Removing {fileToRemove} from {wimFile.Split('\\').Last()}...";
+            string title = $"Removing {fileToRemove} from {wimFile.Split(Path.DirectorySeparatorChar).Last()}...";
             try
             {
                 CallbackStatus ProgressCallback(ProgressMsg msg, object info, object progctx)
@@ -216,7 +216,7 @@ namespace Imaging
 
         public bool ExportImage(string wimFile, string destinationWimFile, int imageIndex, IEnumerable<string> referenceWIMs = null, WimCompressionType compressionType = WimCompressionType.Lzx, IImaging.ProgressCallback progressCallback = null)
         {
-            string title = $"Exporting {wimFile.Split('\\').Last()} - Index {imageIndex}";
+            string title = $"Exporting {wimFile.Split(Path.DirectorySeparatorChar).Last()} - Index {imageIndex}";
             try
             {
                 CallbackStatus ProgressCallback(ProgressMsg msg, object info, object progctx)
@@ -336,7 +336,7 @@ namespace Imaging
 
         public bool RenameFileInImage(string wimFile, int imageIndex, string sourceFilePath, string destinationFilePath, IImaging.ProgressCallback progressCallback = null)
         {
-            string title = $"Renaming {sourceFilePath} to {destinationFilePath} in {wimFile.Split('\\').Last()}...";
+            string title = $"Renaming {sourceFilePath} to {destinationFilePath} in {wimFile.Split(Path.DirectorySeparatorChar).Last()}...";
             try
             {
                 CallbackStatus ProgressCallback(ProgressMsg msg, object info, object progctx)
@@ -398,7 +398,7 @@ namespace Imaging
 
         public bool ApplyImage(string wimFile, int imageIndex, string OutputDirectory, IEnumerable<string> referenceWIMs = null, bool PreserveACL = true, IImaging.ProgressCallback progressCallback = null)
         {
-            string title = $"Applying {wimFile.Split('\\').Last()} - Index {imageIndex}";
+            string title = $"Applying {wimFile.Split(Path.DirectorySeparatorChar).Last()} - Index {imageIndex}";
             try
             {
                 CallbackStatus ProgressCallback(ProgressMsg msg, object info, object progctx)
@@ -469,7 +469,7 @@ namespace Imaging
             int UpdateFrom = -1,
             bool PreserveACL = true)
         {
-            string title = $"Creating {imageName} ({wimFile.Split('\\').Last()})";
+            string title = $"Creating {imageName} ({wimFile.Split(Path.DirectorySeparatorChar).Last()})";
             try
             {
                 CallbackStatus ProgressCallback(ProgressMsg msg, object info, object progctx)

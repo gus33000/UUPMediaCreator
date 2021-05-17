@@ -193,7 +193,7 @@ namespace Imaging
             WimCaptureImageOptions addFlags = WimCaptureImageOptions.None,
             IImaging.ProgressCallback progressCallback = null)
         {
-            string title = $"Creating {imageName} ({wimFile.Split('\\').Last()})";
+            string title = $"Creating {imageName} ({wimFile.Split(Path.DirectorySeparatorChar).Last()})";
             try
             {
                 int directoriesScanned = 0;

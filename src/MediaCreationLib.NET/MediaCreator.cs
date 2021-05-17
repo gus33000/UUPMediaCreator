@@ -257,7 +257,7 @@ namespace MediaCreationLib
                     //
                     // We know already that all files exist, so it's just a matter of knowing which path format is used
                     //
-                    file = !File.Exists(Path.Combine(UUPPath, file)) ? pkg.Payload.PayloadItem.Path : file;
+                    file = !File.Exists(Path.Combine(UUPPath, file)) ? pkg.Payload.PayloadItem.Path.Replace('\\', Path.DirectorySeparatorChar) : file;
 
                     if (!file.EndsWith(".esd", StringComparison.InvariantCultureIgnoreCase) ||
                         !file.Contains("microsoft-windows-editionspecific", StringComparison.InvariantCultureIgnoreCase) ||
