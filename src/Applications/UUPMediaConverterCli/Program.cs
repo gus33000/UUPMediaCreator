@@ -34,7 +34,7 @@ namespace UUPMediaConverterCli
 
             if (args.Length < 3)
             {
-                Log("Usage: MediaConverterCli.exe <UUP File set path> <Destination ISO file> <Language Code> [Edition]");
+                Log("Usage: UUPMediaConverterCli.exe <UUP File set path> <Destination ISO file> <Language Code> [Edition]");
                 return;
             }
 
