@@ -1,5 +1,4 @@
 ﻿using CompDB;
-using Flurl.Http;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -17,7 +16,12 @@ namespace WindowsUpdateLib
     {
         private static CorrelationVector correlationVector = new CorrelationVector();
         private static string MSCV = correlationVector.GetValue();
-        private static IFlurlClient flurlClient = new FlurlClient(new HttpClient(new HttpClientHandler() { AllowAutoRedirect = false, AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate, ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true }));
+        private static HttpClient httpClient = new HttpClient(new HttpClientHandler()
+        { 
+            AllowAutoRedirect = false, 
+            AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate, 
+            ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator // Linux
+        });
 
         #region Data manipulation
 
@@ -29,16 +33,25 @@ namespace WindowsUpdateLib
                 _endpoint += "/secured";
             }
 
-            IFlurlRequest request = _endpoint.WithHeader("MS-CV", MSCV)
-                .WithHeader("SOAPAction", Constants.Action + method)
-                .WithHeader("User-agent", Constants.UserAgent)
-                .WithHeader("Method", "POST");
-
             MSCV = correlationVector.Increment();
 
             StringContent content = new StringContent(message, System.Text.Encoding.UTF8, "application/soap+xml");
-            IFlurlResponse response = await request.WithClient(flurlClient).SendAsync(HttpMethod.Post, content);
-            return await response.ResponseMessage.Content.ReadAsStringAsync();
+
+            var req = new HttpRequestMessage(HttpMethod.Post, _endpoint)
+            {
+                Content = content
+            };
+
+            req.Headers.Add("MS-CV", MSCV);
+            req.Headers.Add("SOAPAction", Constants.Action + method);
+            req.Headers.Add("User-agent", Constants.UserAgent);
+            req.Headers.TryAddWithoutValidation("Cache-Control", "no-cache");
+            req.Headers.Pragma.Add(new System.Net.Http.Headers.NameValueHeaderValue("no-cache"));
+            req.Headers.Connection.Add("keep-alive");
+
+            HttpResponseMessage response = (await httpClient.SendAsync(req)).EnsureSuccessStatusCode();
+            var resultString = await response.Content.ReadAsStringAsync();
+            return resultString;
         }
 
         private static CSOAPCommon.Envelope GetEnveloppe(string method, string authorizationToken, bool secured)
@@ -125,7 +138,7 @@ namespace WindowsUpdateLib
                 using (var xmlWriter = XmlWriter.Create(stringWriter, new XmlWriterSettings { Indent = true }))
                 {
                     xmlSerializer.Serialize(xmlWriter, envelope, ns);
-                    return stringWriter.ToString().Replace("<?xml version=\"1.0\" encoding=\"utf-16\"?>\r\n", "");
+                    return stringWriter.ToString().Replace("<?xml version=\"1.0\" encoding=\"utf-16\"?>\r\n", "").Replace("<?xml version=\"1.0\" encoding=\"utf-16\"?>\n", "");
                 }
             }
         }
