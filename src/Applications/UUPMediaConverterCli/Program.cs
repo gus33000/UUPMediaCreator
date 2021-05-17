@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Security.Principal;
 using UUPMediaCreator.InterCommunication;
 
@@ -131,7 +132,12 @@ namespace UUPMediaConverterCli
             catch (Exception ex)
             {
                 Log("An error occured!", severity: LoggingLevel.Error);
-                Log(ex.ToString(), severity: LoggingLevel.Error);
+                while (ex != null)
+                {
+                    Log(ex.Message, LoggingLevel.Error);
+                    Log(ex.StackTrace, LoggingLevel.Error);
+                    ex = ex.InnerException;
+                }
                 if (Debugger.IsAttached)
                     Console.ReadLine();
             }
@@ -188,9 +194,43 @@ namespace UUPMediaConverterCli
 
         private static bool IsAdministrator()
         {
-            var identity = WindowsIdentity.GetCurrent();
-            var principal = new WindowsPrincipal(identity);
-            return principal.IsInRole(WindowsBuiltInRole.Administrator);
+            if (GetOperatingSystem() == OSPlatform.Windows)
+            {
+#pragma warning disable CA1416 // Validate platform compatibility
+                var identity = WindowsIdentity.GetCurrent();
+                var principal = new WindowsPrincipal(identity);
+                return principal.IsInRole(WindowsBuiltInRole.Administrator);
+#pragma warning restore CA1416 // Validate platform compatibility
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public static OSPlatform GetOperatingSystem()
+        {
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            {
+                return OSPlatform.OSX;
+            }
+
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                return OSPlatform.Linux;
+            }
+
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                return OSPlatform.Windows;
+            }
+
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.FreeBSD))
+            {
+                return OSPlatform.FreeBSD;
+            }
+
+            throw new Exception("Cannot determine operating system!");
         }
     }
 }

@@ -17,7 +17,7 @@ namespace WindowsUpdateLib
     {
         private static CorrelationVector correlationVector = new CorrelationVector();
         private static string MSCV = correlationVector.GetValue();
-        private static IFlurlClient flurlClient = new FlurlClient(new HttpClient(new HttpClientHandler() { AllowAutoRedirect = false, AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate }));
+        private static IFlurlClient flurlClient = new FlurlClient(new HttpClient(new HttpClientHandler() { AllowAutoRedirect = false, AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate, ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true }));
 
         #region Data manipulation
 

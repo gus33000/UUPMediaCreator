@@ -44,8 +44,12 @@ namespace UUPDownload.DownloadRequest
             catch (Exception ex)
             {
                 Logging.Log("Something happened.", Logging.LoggingLevel.Error);
-                Logging.Log(ex.Message, Logging.LoggingLevel.Error);
-                Logging.Log(ex.StackTrace, Logging.LoggingLevel.Error);
+                while (ex != null)
+                {
+                    Logging.Log(ex.Message, Logging.LoggingLevel.Error);
+                    Logging.Log(ex.StackTrace, Logging.LoggingLevel.Error);
+                    ex = ex.InnerException;
+                }
                 if (Debugger.IsAttached)
                     Console.ReadLine();
                 return 1;
@@ -68,13 +72,11 @@ namespace UUPDownload.DownloadRequest
             catch (Exception ex)
             {
                 Logging.Log("Something happened.", Logging.LoggingLevel.Error);
-                Logging.Log(ex.Message, Logging.LoggingLevel.Error);
-                Logging.Log(ex.StackTrace, Logging.LoggingLevel.Error);
-                if (ex.InnerException != null)
+                while (ex != null)
                 {
-                    Logging.Log("\tSomething happened.", Logging.LoggingLevel.Error);
-                    Logging.Log("\t" + ex.InnerException.Message, Logging.LoggingLevel.Error);
-                    Logging.Log("\t" + ex.InnerException.StackTrace, Logging.LoggingLevel.Error);
+                    Logging.Log(ex.Message, Logging.LoggingLevel.Error);
+                    Logging.Log(ex.StackTrace, Logging.LoggingLevel.Error);
+                    ex = ex.InnerException;
                 }
                 if (Debugger.IsAttached)
                     Console.ReadLine();

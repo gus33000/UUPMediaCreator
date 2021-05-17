@@ -1,0 +1,46 @@
+name: UWP
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  build:
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        architecture: [x86, x64, arm64]
+        platform: [win]
+    steps:
+      - name: Configure Pagefile
+        uses: al-cheb/configure-pagefile-action@v1.2
+        with:
+          minimum-size: 32GB
+          maximum-size: 32GB
+          disk-root: "C:"
+
+      - name: Checkout
+        uses: actions/checkout@v2.3.4
+
+      - name: Install .NET SDK
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: "5.0.101"
+
+      - name: Add MSBuild to PATH
+        uses: microsoft/setup-msbuild@v1.0.2
+
+      - name: Build UWP utilities
+        run: msbuild /m /t:UUPMediaCreatorPackage:publish /restore /p:Platform=${{ matrix.architecture }} /p:AppxBundle=$env:AppxBundle /p:AppxBundlePlatforms="${{ matrix.architecture }}" /p:AppxPackageDir=${{ github.workspace }}\artifacts\${{ matrix.platform }}-${{ matrix.architecture }} /p:AppxPackageSigningEnabled=false /p:RuntimeIdentifier=${{ matrix.platform }}-${{ matrix.architecture }} /p:PublishDir=${{ github.workspace }}\artifacts\${{ matrix.platform }}-${{ matrix.architecture }}/UWP /p:PublishSingleFile=true /p:PublishTrimmed=true /p:Configuration=Release UUPMediaCreator.sln
+        env:
+          AppxBundle: Always
+          BuildMode: SideloadOnly
+          Configuration: Release
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ matrix.platform }}-${{ matrix.architecture }}
+          path: ${{ github.workspace }}/artifacts/${{ matrix.platform }}-${{ matrix.architecture }}

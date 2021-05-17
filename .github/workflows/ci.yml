@@ -11,16 +11,15 @@ jobs:
     runs-on: windows-latest
     strategy:
       matrix:
-        architecture: [x86, x64, arm64]
-        platform: [win]
+        architecture: [x86,arm64,x64]
+        include:
+          - architecture: x86
+            platform: [win]
+          - architecture: arm64
+            platform: [win,linux]
+          - architecture: x64
+            platform: [win,linux,osx]
     steps:
-      - name: Configure Pagefile
-        uses: al-cheb/configure-pagefile-action@v1.2
-        with:
-          minimum-size: 32GB
-          maximum-size: 32GB
-          disk-root: "C:"
-
       - name: Checkout
         uses: actions/checkout@v2.3.4
 
@@ -36,13 +35,6 @@ jobs:
         shell: pwsh
         run: |
           msbuild /m /t:restore,cli\uupmediaconvertercli:publish,cli\uupdownload:publish,cli\uupmediaconverterdismbroker:publish /p:Platform=${{ matrix.architecture }} /p:RuntimeIdentifier=${{ matrix.platform }}-${{ matrix.architecture }} /p:PublishDir=${{ github.workspace }}/artifacts/${{ matrix.platform }}-${{ matrix.architecture }}/CLI /p:PublishSingleFile=true /p:PublishTrimmed=false /p:Configuration=Release UUPMediaCreator.sln
-
-      - name: Build UWP utilities
-        run: msbuild /m /t:UUPMediaCreatorPackage:publish /restore /p:Platform=${{ matrix.architecture }} /p:AppxBundle=$env:AppxBundle /p:AppxBundlePlatforms="${{ matrix.architecture }}" /p:AppxPackageDir=${{ github.workspace }}\artifacts\${{ matrix.platform }}-${{ matrix.architecture }} /p:AppxPackageSigningEnabled=false /p:RuntimeIdentifier=${{ matrix.platform }}-${{ matrix.architecture }} /p:PublishDir=${{ github.workspace }}\artifacts\${{ matrix.platform }}-${{ matrix.architecture }}/UWP /p:PublishSingleFile=true /p:PublishTrimmed=true /p:Configuration=Release UUPMediaCreator.sln
-        env:
-          AppxBundle: Always
-          BuildMode: SideloadOnly
-          Configuration: Release
 
       - name: Upload artifact
         uses: actions/upload-artifact@v2
