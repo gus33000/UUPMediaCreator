@@ -10,6 +10,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)CabinetExtractor.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CabinetFile.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)StreamExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Structures.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Xna\LzxDecoder.cs" />

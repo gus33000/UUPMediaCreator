@@ -84,7 +84,7 @@ namespace WindowsUpdateLib
                 string BuildStr = await update.GetBuildStringAsync();
                 if (!string.IsNullOrEmpty(BuildStr))
                 {
-                    availableBuild.Title = BuildStr;
+                    availableBuild.Title += $" ({BuildStr})";
                     availableBuild.BuildString = BuildStr;
                 }
 

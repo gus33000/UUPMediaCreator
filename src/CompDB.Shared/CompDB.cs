@@ -170,6 +170,12 @@ namespace CompDB
             [XmlAttribute(AttributeName = "OSVersion")]
             public string OSVersion { get; set; }
 
+            [XmlAttribute(AttributeName = "TargetBuildInfo")]
+            public string TargetBuildInfo { get; set; }
+
+            [XmlAttribute(AttributeName = "TargetOSVersion")]
+            public string TargetOSVersion { get; set; }
+
             [XmlAttribute(AttributeName = "BuildArch")]
             public string BuildArch { get; set; }
 

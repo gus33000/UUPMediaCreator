@@ -1,5 +1,5 @@
-﻿using CompDB;
-using Cabinet;
+﻿using Cabinet;
+using CompDB;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -19,12 +19,17 @@ namespace MediaCreationLib.Planning.NET
             {
                 if (Directory.EnumerateFiles(UUPPath, "*aggregatedmetadata*").Count() > 0)
                 {
-                    var cabinetFiles = CabinetExtractor.EnumCabinetFiles(Directory.EnumerateFiles(UUPPath, "*aggregatedmetadata*").First());
-                    foreach (var file in cabinetFiles.Where(x => x.EndsWith(".xml.cab", StringComparison.InvariantCultureIgnoreCase)))
+                    var cabFile = Directory.EnumerateFiles(UUPPath, "*aggregatedmetadata*").First();
+
+                    foreach (var file in CabinetExtractor.EnumCabinetFiles(cabFile).Where(x => x.EndsWith(".xml.cab", StringComparison.InvariantCultureIgnoreCase)))
                     {
                         try
                         {
-                            byte[] xmlfile = CabinetExtractor.ExtractCabinetFile(file, CabinetExtractor.EnumCabinetFiles(file).First());
+                            var tmp = Path.GetTempFileName();
+                            File.WriteAllBytes(tmp, CabinetExtractor.ExtractCabinetFile(cabFile, file));
+
+                            byte[] xmlfile = CabinetExtractor.ExtractCabinetFile(tmp, CabinetExtractor.EnumCabinetFiles(tmp).First());
+
                             using (Stream xmlstream = new MemoryStream(xmlfile))
                             {
                                 compDBs.Add(CompDBXmlClass.DeserializeCompDB(xmlstream));
@@ -41,7 +46,10 @@ namespace MediaCreationLib.Planning.NET
                     {
                         try
                         {
-                            byte[] xmlfile = CabinetExtractor.ExtractCabinetFile(Path.Combine(UUPPath, file), CabinetExtractor.EnumCabinetFiles(Path.Combine(UUPPath, file)).First());
+                            var cabFile = Path.Combine(UUPPath, file);
+
+                            byte[] xmlfile = CabinetExtractor.ExtractCabinetFile(cabFile, CabinetExtractor.EnumCabinetFiles(cabFile).First());
+
                             using (Stream xmlstream = new MemoryStream(xmlfile))
                             {
                                 compDBs.Add(CompDBXmlClass.DeserializeCompDB(xmlstream));

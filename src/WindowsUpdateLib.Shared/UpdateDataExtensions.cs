@@ -52,6 +52,8 @@ namespace WindowsUpdateLib
 
         public async static Task<string> GetBuildStringAsync(this UpdateData update)
         {
+            string result = null;
+
             try
             {
                 CExtendedUpdateInfoXml.File deploymentCab = null;
@@ -67,13 +69,13 @@ namespace WindowsUpdateLib
 
                 if (deploymentCab == null)
                 {
-                    return null;
+                    goto exit;
                 }
 
                 var fileDownloadInfo = await FE3Handler.GetFileUrl(update, deploymentCab.Digest);
                 if (fileDownloadInfo == null)
                 {
-                    return null;
+                    goto exit;
                 }
 
                 string deploymentCabTemp = Path.GetTempFileName();
@@ -82,12 +84,10 @@ namespace WindowsUpdateLib
                 if (fileDownloadInfo.IsEncrypted)
                 {
                     if (!await fileDownloadInfo.DecryptAsync(deploymentCabTemp, deploymentCabTemp + ".decrypted"))
-                        return null;
+                        goto exit;
                     File.Delete(deploymentCabTemp);
                     File.Move(deploymentCabTemp + ".decrypted", deploymentCabTemp);
                 }
-
-                string result = null;
 
                 try
                 {
@@ -105,12 +105,37 @@ namespace WindowsUpdateLib
                 }
 
                 File.Delete(deploymentCabTemp);
-                return result;
             }
             catch
             {
-                return null;
+
             }
+
+            exit:
+
+            // For some reason we couldn't get the build string, so attempt to get it from CompDB metadata instead
+            // This is less reliable, but it is the best we can actually do.
+            if (string.IsNullOrEmpty(result))
+            {
+                try
+                {
+                    var compDBs = await update.GetCompDBsAsync();
+                    var firstCompDB = compDBs.First();
+
+                    // example:
+                    // BuildInfo="co_release.21382.1.210511-1416" OSVersion="10.0.21382.1" TargetBuildInfo="co_release.21382.1.210511-1416" TargetOSVersion="10.0.21382.1"
+
+                    var buildInfo = firstCompDB.TargetBuildInfo ?? firstCompDB.BuildInfo;
+                    var osVersion = firstCompDB.TargetOSVersion ?? firstCompDB.OSVersion;
+
+                    var splitBI = buildInfo.Split(".");
+
+                    result = $"{osVersion} ({splitBI[0]}.{splitBI[3]})";
+                }
+                catch { }
+            }
+
+            return result;
         }
 
         private static string GetBuildStringFromUpdateAgent(byte[] updateAgentFile)
