@@ -10,6 +10,10 @@
   <Import Project="..\DownloadLib.Shared\DownloadLib.Shared.projitems" Label="Shared" />
 
   <ItemGroup>
+    <PackageReference Include="System.Text.Json" Version="5.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\CompDB.NET\CompDB.NET.csproj" />
     <ProjectReference Include="..\WindowsUpdateLib.NET\WindowsUpdateLib.NET.csproj" />
   </ItemGroup>

@@ -4,9 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using WindowsUpdateLib;
-using Newtonsoft.Json;
 using System.IO;
 using System.Text.RegularExpressions;
+using System.Text.Json;
 
 namespace DownloadLib
 {
@@ -241,7 +241,7 @@ namespace DownloadLib
                     string filename = Path.Combine(OutputFolder, tmpname);
                     if (WriteMetadata && !File.Exists(filename))
                     {
-                        File.WriteAllText(filename, JsonConvert.SerializeObject(update, Newtonsoft.Json.Formatting.Indented));
+                        File.WriteAllText(filename, JsonSerializer.Serialize(update, new JsonSerializerOptions() { WriteIndented = true }));
                     }
                 }
 
