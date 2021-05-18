@@ -29,6 +29,7 @@ Right now the tooling includes:
 | Verifying downloaded payloads from UUP (UUPDownload)                                     | Yes     | Yes    | Yes    |
 | Sample available builds from UUP (get-builds argument) (UUPDownload)                     | Yes     | Yes    | Yes    |
 | Converting Desktop UUP files to an ISO for one base edition (UUPMediaConverterCli)       | Yes     | Yes    | Yes    |
+| Does not require administrative privileges for base edition ISO images                   | Yes     | Yes    | Yes    |
 | CLI available                                                                            | Yes     | Yes    | Yes    |
 | GUI available                                                                            | Yes     | No     | No     |
 | Converting Desktop UUP files to an ISO for all possible editions (UUPMediaConverterCli)  | Yes     | No     | No     |
