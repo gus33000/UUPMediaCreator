@@ -32,6 +32,10 @@ namespace UUPMediaConverterCli
             Log("This program comes with ABSOLUTELY NO WARRANTY.");
             Log("This is free software, and you are welcome to redistribute it under certain conditions.");
             Log("");
+            Log("This software contains work derived from libmspack licensed under the LGPL-2.1 license.");
+            Log("(C) 2003-2004 Stuart Caie.");
+            Log("(C) 2011 Ali Scissons.");
+            Log("");
 
             if (args.Length < 3)
             {

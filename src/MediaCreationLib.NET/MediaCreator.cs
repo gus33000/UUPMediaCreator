@@ -58,6 +58,7 @@ namespace MediaCreationLib
 
             throw new Exception("Cannot determine operating system!");
         }
+
         private static WIMImaging imagingInterface = new WIMImaging();
 
         public delegate void ProgressCallback(Common.ProcessPhase phase, bool IsIndeterminate, int ProgressInPercentage, string SubOperation);

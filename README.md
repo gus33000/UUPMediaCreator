@@ -18,6 +18,21 @@ Right now the tooling includes:
 - UUPMediaConverterCli: Allows you to convert a downloaded UUP update for Windows Desktop into an usable ISO image to use in last decade DVD reader or simply mounted.
 - An experimental UWP front end is also provided, but is not the main focus for now.
 
+### Supported features by OS
+
+| Feature                                                                                  | Windows | Linux | macOS |
+|------------------------------------------------------------------------------------------|---------|-------|-------|
+| Downloading files from UUP (UUPDownload)                                                 | Yes     | Yes   | Yes   |
+| Converting Desktop UUP files to an ISO for one base edition (UUPMediaConverterCli)       | Yes     | Yes   | Yes   |
+| Converting Desktop UUP files to an ISO for all possible editions (UUPMediaConverterCli)  | Yes     | No    | No    |
+| ISO Preinstallation Environment close to original (UUPMediaConverterCli)                 | Yes     | No    | No    |
+| ISO built by CDImage Mastering Utility with UDF and boot sector (UUPMediaConverterCli)   | Yes     | No    | No    |
+| ISO built by DiscUtils with Joilet and boot sector (untested) (UUPMediaConverterCli)     | No      | Yes   | Yes   |
+| GUI available                                                                            | Yes     | No    | No    |
+| CLI available                                                                            | Yes     | Yes   | Yes   |
+| Update file integration (UUPMediaConverterCli)                                           | No      | No    | No    |
+| Building Hololens, Mobile, 10X, IoT images                                               | No      | No    | No    |
+
 ## Contributing
 
 You are free to contribute to this project, in fact we would welcome any form of help. But please keep in mind the following points if you do:

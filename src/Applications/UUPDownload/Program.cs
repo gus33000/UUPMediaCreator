@@ -35,6 +35,10 @@ namespace UUPDownload
             Logging.Log("This program comes with ABSOLUTELY NO WARRANTY.");
             Logging.Log("This is free software, and you are welcome to redistribute it under certain conditions.");
             Logging.Log("");
+            Logging.Log("This software contains work derived from libmspack licensed under the LGPL-2.1 license.");
+            Logging.Log("(C) 2003-2004 Stuart Caie.");
+            Logging.Log("(C) 2011 Ali Scissons.");
+            Logging.Log("");
         }
 
         private static void Main(string[] args)

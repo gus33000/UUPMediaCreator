@@ -15,15 +15,15 @@
  * may redistribute/modify it under the LGPL 2.1 or MS-PL licenses.
  */
 #region LGPL License
-/* GNU LESSER GENERAL internal LICENSE version 2.1
+/* GNU LESSER GENERAL PUBLIC LICENSE version 2.1
  * LzxDecoder is free software; you can redistribute it and/or modify it under
- * the terms of the GNU Lesser General internal License (LGPL) version 2.1 
+ * the terms of the GNU Lesser General Public License (LGPL) version 2.1 
  */
 #endregion
 #region MS-PL License
 /* 
- * MICROSOFT internal LICENSE
- * This source code is subject to the terms of the Microsoft internal License (Ms-PL). 
+ * MICROSOFT PUBLIC LICENSE
+ * This source code is subject to the terms of the Microsoft Public License (Ms-PL). 
  *  
  * Redistribution and use in source and binary forms, with or without modification, 
  * is permitted provided that redistributions of the source code retain the above 

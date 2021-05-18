@@ -2,6 +2,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 
 namespace MediaCreationLib.Installer
 {
@@ -182,9 +183,8 @@ namespace MediaCreationLib.Installer
                     }
                 }
             }
-            catch (Exception ex)
+            catch
             {
-                Console.WriteLine(ex.ToString());
                 return false;
             }
             return true;
@@ -203,9 +203,12 @@ namespace MediaCreationLib.Installer
                 {
                     var winpekey = hive.Root.OpenSubKey(@"Microsoft\Windows NT\CurrentVersion\WinPE");
                     winpekey.SetValue("CustomBackground", @"%SystemRoot%\system32\setup.bmp", RegistryValueType.ExpandString);
-                    var ockey = winpekey.OpenSubKey("OC");
-                    ockey.CreateSubKey("Microsoft-WinPE-Setup");
-                    ockey.CreateSubKey("Microsoft-WinPE-Setup-Client");
+                    if (GetOperatingSystem() == OSPlatform.Windows)
+                    {
+                        var ockey = winpekey.OpenSubKey("OC");
+                        ockey.CreateSubKey("Microsoft-WinPE-Setup");
+                        ockey.CreateSubKey("Microsoft-WinPE-Setup-Client");
+                    }
                 }
             }
             catch
@@ -213,6 +216,31 @@ namespace MediaCreationLib.Installer
                 return false;
             }
             return true;
+        }
+
+        public static OSPlatform GetOperatingSystem()
+        {
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            {
+                return OSPlatform.OSX;
+            }
+
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                return OSPlatform.Linux;
+            }
+
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                return OSPlatform.Windows;
+            }
+
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.FreeBSD))
+            {
+                return OSPlatform.FreeBSD;
+            }
+
+            throw new Exception("Cannot determine operating system!");
         }
     }
 }

@@ -92,7 +92,9 @@ namespace MediaCreationLib.BaseEditions
                 goto exit;
 
             WIMInformationXML.WIM wim;
-            imagingInterface.GetWIMInformation(OutputInstallImage, out wim);
+            result = imagingInterface.GetWIMInformation(OutputInstallImage, out wim);
+            if (!result)
+                goto exit;
 
             //
             // Set the correct metadata on the image

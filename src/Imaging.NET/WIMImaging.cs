@@ -680,7 +680,7 @@ namespace Imaging
             }
             catch
             {
-                return false;
+                return GetWIMInformation2(wimFile, out wim);
             }
             return true;
         }
