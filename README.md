@@ -23,23 +23,23 @@ Right now the tooling includes:
 
 | Feature                                                                                  | Windows | Linux  | macOS  |
 |------------------------------------------------------------------------------------------|---------|--------|--------|
-| Downloading files from UUP (UUPDownload)                                                 | Yes     | Yes    | Yes    |
-| Replaying past downloads from UUP (UUPDownload)                                          | Yes     | Yes    | Yes    |
-| Decrypting ESRP payloads from UUP (UUPDownload)                                          | Yes     | Yes    | Yes    |
-| Verifying downloaded payloads from UUP (UUPDownload)                                     | Yes     | Yes    | Yes    |
-| Sample available builds from UUP (get-builds argument) (UUPDownload)                     | Yes     | Yes    | Yes    |
-| Converting Desktop UUP files to an ISO for one base edition (UUPMediaConverterCli)       | Yes     | Yes    | Yes    |
-| Does not require administrative privileges for base edition ISO images                   | Yes     | Yes    | Yes    |
-| CLI available                                                                            | Yes     | Yes    | Yes    |
-| GUI available                                                                            | Yes     | No     | No     |
-| Converting Desktop UUP files to an ISO for all possible editions (UUPMediaConverterCli)  | Yes     | No     | No     |
-| ISO Preinstallation Environment close to original (UUPMediaConverterCli)                 | Yes     | No     | No     |
-| ISO built by CDImage Mastering Utility with UDF and boot sector (UUPMediaConverterCli)   | Yes     | No     | No     |
-| ISO built by mkisofs with UDF and boot sector (UUPMediaConverterCli)                     | No      | Yes(2) | Yes(3) |
-| Update file integration (UUPMediaConverterCli)                                           | No      | No     | No     |
-| Building Hololens, Mobile, 10X, IoT images                                               | No      | No     | No     |
-| UUPDownload ease of use (will come soon, we promise)                                     | No      | No     | No     |
-| ARM64 Support (aka works on @sinclairinat0r device (TM))                                 | Yes     | Yes    | No(1)  |
+| Downloading files from UUP (UUPDownload)                                                 | ✅       | ✅       | ✅       |
+| Replaying past downloads from UUP (UUPDownload)                                          | ✅       | ✅       | ✅       |
+| Decrypting ESRP payloads from UUP (UUPDownload)                                          | ✅       | ✅       | ✅       |
+| Verifying downloaded payloads from UUP (UUPDownload)                                     | ✅       | ✅       | ✅       |
+| Sample available builds from UUP (get-builds argument) (UUPDownload)                     | ✅       | ✅       | ✅       |
+| Converting Desktop UUP files to an ISO for one base edition (UUPMediaConverterCli)       | ✅       | ✅       | ✅       |
+| Does not require administrative privileges for base edition ISO images                   | ✅       | ✅       | ✅       |
+| CLI available                                                                            | ✅       | ✅       | ✅       |
+| GUI available                                                                            | ✅       | ❌       | ❌       |
+| Converting Desktop UUP files to an ISO for all possible editions (UUPMediaConverterCli)  | ✅       | ❌       | ❌       |
+| ISO Preinstallation Environment close to original (UUPMediaConverterCli)                 | ✅       | ❌       | ❌       |
+| ISO built by CDImage Mastering Utility with UDF and boot sector (UUPMediaConverterCli)   | ✅       | ❌       | ❌       |
+| ISO built by mkisofs with UDF and boot sector (UUPMediaConverterCli)                     | ❌       | ✅   (2) | ✅   (3) |
+| Update file integration (UUPMediaConverterCli)                                           | ❌       | ❌       | ❌       |
+| Building Hololens, Mobile, 10X, IoT images                                               | ❌       | ❌       | ❌       |
+| UUPDownload ease of use (will come soon, we promise)                                     | ❌       | ❌       | ❌       |
+| ARM64 Support (aka works on @sinclairinat0r device (TM))                                 | ✅       | ✅       | ❌  (1)  |
 
 (1): Can be ran through Rosetta
 
