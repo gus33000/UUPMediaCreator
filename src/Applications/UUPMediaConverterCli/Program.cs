@@ -50,14 +50,23 @@ namespace UUPMediaConverterCli
             if (args.Length > 3)
                 Edition = args[3];
 
+            if (GetOperatingSystem() == OSPlatform.OSX)
+            {
+                Log("WARNING: For successful ISO creation, please install cdrtools via brew", LoggingLevel.Warning);
+            }
+            else if (GetOperatingSystem() == OSPlatform.Linux)
+            {
+                Log("WARNING: For successful ISO creation, please install genisoimage", LoggingLevel.Warning);
+            }
+
             Log("WARNING: This tool does NOT currently integrate updates into the finished media file. Any UUP set with updates (KBXXXXX).MSU/.CAB will not have the update integrated.", severity: LoggingLevel.Warning);
             if (!IsAdministrator())
             {
-                Log("WARNING: This tool is NOT currently running as administrator. The resulting image will be less clean/proper compared to Microsoft original.", severity: LoggingLevel.Warning);
+                Log("WARNING: This tool is NOT currently running under Windows as administrator. The resulting image will be less clean/proper compared to Microsoft original.", severity: LoggingLevel.Warning);
 
                 if (string.IsNullOrEmpty(Edition))
                 {
-                    Log("WARNING: You are attempting to create an ISO media with potentially all editions available. Due to the tool not running as administrator, this request might not be fullfilled.", severity: LoggingLevel.Warning);
+                    Log("WARNING: You are attempting to create an ISO media with potentially all editions available. Due to the tool not running under Windows as administrator, this request might not be fullfilled.", severity: LoggingLevel.Warning);
                 }
             }
             else

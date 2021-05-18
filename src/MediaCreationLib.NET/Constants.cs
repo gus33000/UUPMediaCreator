@@ -41,6 +41,7 @@ namespace MediaCreationLib
             { "CloudN", "Windows 10 S N" },
             { "CloudE", "Windows 10 Lean" },
             { "CloudEN", "Windows 10 Lean N" },
+            { "CloudEdition", "Windows 10 Cloud" },
         };
 
         internal static string[] SetupFilesToBackportStartingWith20231 = new string[]

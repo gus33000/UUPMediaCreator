@@ -1,6 +1,4 @@
-﻿using DiscUtils.Iso9660;
-using DiscUtils.Streams;
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -8,19 +6,6 @@ using System.Runtime.InteropServices;
 
 namespace MediaCreationLib.CDImage
 {
-    public static class ArrayExtensions
-    {
-        public static T[] Concat<T>(this T[] x, T[] y)
-        {
-            if (x == null) throw new ArgumentNullException("x");
-            if (y == null) throw new ArgumentNullException("y");
-            int oldLen = x.Length;
-            Array.Resize<T>(ref x, x.Length + y.Length);
-            Array.Copy(y, 0, x, oldLen, y.Length);
-            return x;
-        }
-    }
-
     public class CDImage
     {
         public delegate void ProgressCallback(string Operation, int ProgressPercentage, bool IsIndeterminate);
@@ -98,51 +83,77 @@ namespace MediaCreationLib.CDImage
             {
                 try
                 {
-                    CDBuilder builder = new CDBuilder();
-                    builder.UseJoliet = true;
-                    builder.VolumeIdentifier = volumelabel;
-
-                    foreach (var directory in Directory.EnumerateDirectories(cdroot, "*", SearchOption.AllDirectories))
+                    foreach (var entry in Directory.EnumerateFileSystemEntries(cdroot, "*", SearchOption.AllDirectories))
                     {
-                        var strippedDirectory = directory.Replace(cdroot + Path.DirectorySeparatorChar, "").Replace(cdroot, "").Replace(Path.DirectorySeparatorChar, '\\');
-                        var addedDirectory = builder.AddDirectory(strippedDirectory);
-                        addedDirectory.CreationTime = creationtime;
-                    }
-
-                    foreach (var file in Directory.EnumerateFiles(cdroot, "*", SearchOption.AllDirectories))
-                    {
-                        var strippedFile = file.Replace(cdroot + Path.DirectorySeparatorChar, "").Replace(cdroot, "").Replace(Path.DirectorySeparatorChar, '\\');
-                        var addedFile = builder.AddFile(strippedFile, file);
-                        addedFile.CreationTime = creationtime;
-                    }
-
-                    using (var bootstrm = new MemoryStream(File.ReadAllBytes(Path.Combine(cdroot, "boot", "etfsboot.com")).Concat(File.ReadAllBytes(Path.Combine(cdroot, "efi", "microsoft", "boot", "efisys.bin")))))
-                    {
-                        builder.SetBootImage(bootstrm, BootDeviceEmulation.NoEmulation, 0);
-
-                        using (var inDisc = builder.Build())
-                        using (var outDisc = File.Open(isopath, FileMode.Create, FileAccess.ReadWrite))
+                        if (Directory.Exists(entry))
                         {
-                            var pump = new StreamPump
+                            try
                             {
-                                InputStream = inDisc,
-                                OutputStream = outDisc,
-                                SparseCopy = true,
-                                SparseChunkSize = 0x200,
-                                BufferSize = 0x200 * 1024
-                            };
-
-                            var totalBytes = inDisc.Length;
-
-                            pump.ProgressEvent += (o, e) =>
+                                Directory.SetCreationTimeUtc(entry, creationtime);
+                            }
+                            catch { }
+                            try
                             {
-                                var percent = (int)Math.Round((double)e.BytesRead * 100d / (double)totalBytes);
-                                progressCallback?.Invoke($"Building {isopath}", percent, false);
-                            };
-
-                            pump.Run();
-                            return true;
+                                Directory.SetLastAccessTimeUtc(entry, creationtime);
+                            }
+                            catch { }
+                            try
+                            {
+                                Directory.SetLastWriteTimeUtc(entry, creationtime);
+                            }
+                            catch { }
                         }
+                        else
+                        {
+                            try
+                            {
+                                File.SetCreationTimeUtc(entry, creationtime);
+                            }
+                            catch { }
+                            try
+                            {
+                                File.SetLastAccessTimeUtc(entry, creationtime);
+                            }
+                            catch { }
+                            try
+                            {
+                                File.SetLastWriteTimeUtc(entry, creationtime);
+                            }
+                            catch { }
+                        }
+                    }
+
+                    var cmdline = $"-b \"boot/etfsboot.com\" --no-emul-boot --eltorito-alt-boot -b \"efi/microsoft/boot/efisys.bin\" --no-emul-boot --udf --hide \"*\" -V \"{volumelabel}\" -o \"{isopath}\" {cdroot}";
+
+                    ProcessStartInfo processStartInfo = new ProcessStartInfo("mkisofs",
+                        cmdline);
+
+                    processStartInfo.UseShellExecute = false;
+                    processStartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+                    processStartInfo.RedirectStandardError = true;
+                    processStartInfo.CreateNoWindow = true;
+
+                    Process process = new Process();
+                    process.StartInfo = processStartInfo;
+
+                    try
+                    {
+                        process.ErrorDataReceived += (object sender, DataReceivedEventArgs e) =>
+                        {
+                            if (e.Data != null && e.Data.Contains("%"))
+                            {
+                                var percent = (int)Math.Round(double.Parse(e.Data.Split(' ').First(x => x.Contains("%")).Replace("%", "")));
+                                progressCallback?.Invoke($"Building {isopath}", percent, false);
+                            }
+                        };
+                        process.Start();
+                        process.BeginErrorReadLine();
+                        process.WaitForExit();
+                        return process.ExitCode == 0;
+                    }
+                    catch
+                    {
+                        return false;
                     }
                 }
                 catch

@@ -205,7 +205,7 @@ namespace Cabinet
                 files.Add(new CabinetVolumeFile()
                 {
                     CabinetFileVolumeFile = file,
-                    FileName = name
+                    FileName = name.Replace('\\', Path.DirectorySeparatorChar)
                 });
             }
 
