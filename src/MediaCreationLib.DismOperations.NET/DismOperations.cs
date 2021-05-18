@@ -47,6 +47,12 @@ namespace MediaCreationLib.Dism
             "WinPE-WiFi-Package~31bf3856ad364e35",
         };
 
+        /// <summary>
+        /// Uninstalls unneeded Windows Components for Windows Setup Preinstallation-Environment
+        /// TODO: Get the list from session files instead 
+        /// </summary>
+        /// <param name="ospath">Path to the operating system</param>
+        /// <param name="progressCallback">Callback to be notified of progress</param>
         public static void UninstallPEComponents(string ospath, ProgressCallback progressCallback)
         {
             //
@@ -116,15 +122,7 @@ namespace MediaCreationLib.Dism
 
             var session = DismApi.OpenOfflineSession(ospath);
 
-            string edition = null;
-
-            try
-            {
-                edition = DismApi.GetCurrentEdition(session);
-            }
-            finally //(Exception ex)
-            {
-            }
+            string edition = DismApi.GetCurrentEdition(session);
 
             //
             // Clean DISM
@@ -159,13 +157,7 @@ namespace MediaCreationLib.Dism
 
             try
             {
-                try
-                {
-                    DismApi.ApplyUnattend(session, unattendpath, true);
-                }
-                finally //(Exception ex)
-                {
-                }
+                DismApi.ApplyUnattend(session, unattendpath, true);
             }
             catch (Exception ex)
             {
@@ -224,13 +216,7 @@ namespace MediaCreationLib.Dism
 
             var session = DismApi.OpenOfflineSession(ospath);
 
-            try
-            {
-                DismApi.SetProductKey(session, productkey);
-            }
-            finally //(Exception ex)
-            {
-            }
+            DismApi.SetProductKey(session, productkey);
 
             //
             // Clean DISM
