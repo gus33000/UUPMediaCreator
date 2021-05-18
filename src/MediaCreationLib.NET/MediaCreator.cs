@@ -396,6 +396,7 @@ namespace MediaCreationLib
             progressCallback?.Invoke(Common.ProcessPhase.Error, true, 0, error);
 
             exit:
+            TempManager.TempManager.Instance.Dispose();
             return;
         }
 
@@ -453,10 +454,11 @@ namespace MediaCreationLib
             progressCallback?.Invoke(Common.ProcessPhase.Done, true, 0, "");
             goto exit;
 
-            error:
+        error:
             progressCallback?.Invoke(Common.ProcessPhase.Error, true, 0, error);
 
-            exit:
+        exit:
+            TempManager.TempManager.Instance.Dispose();
             return;
         }
     }
