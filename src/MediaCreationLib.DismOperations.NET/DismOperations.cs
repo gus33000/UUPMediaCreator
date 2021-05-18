@@ -91,8 +91,18 @@ namespace MediaCreationLib.Dism
             //
             // Clean DISM
             //
-            DismApi.CloseSession(session);
-            DismApi.Shutdown();
+            try
+            {
+                DismApi.CloseSession(session);
+            }
+            catch { }
+
+            try
+            {
+                DismApi.Shutdown();
+            }
+            catch { }
+
             File.Delete(tempLog);
         }
 
@@ -119,8 +129,18 @@ namespace MediaCreationLib.Dism
             //
             // Clean DISM
             //
-            DismApi.CloseSession(session);
-            DismApi.Shutdown();
+            try
+            {
+                DismApi.CloseSession(session);
+            }
+            catch { }
+
+            try
+            {
+                DismApi.Shutdown();
+            }
+            catch { }
+
             File.Delete(tempLog);
 
             return edition;
@@ -152,15 +172,22 @@ namespace MediaCreationLib.Dism
                 Console.WriteLine("Failed applying unattend, retrying in one second...");
                 Console.WriteLine("Failed attempt #" + counter);
                 Console.WriteLine(ex.ToString());
+
                 //
                 // Clean DISM
                 //
-                DismApi.CloseSession(session);
+                try
+                {
+                    DismApi.CloseSession(session);
+                }
+                catch { }
+
                 try
                 {
                     DismApi.Shutdown();
                 }
                 catch { }
+
                 if (counter < 3)
                 {
                     Thread.Sleep(1000);
@@ -177,7 +204,14 @@ namespace MediaCreationLib.Dism
                 DismApi.CloseSession(session);
             }
             catch { }
-            DismApi.Shutdown();
+
+            try
+            {
+                DismApi.Shutdown();
+            }
+            catch { }
+
+            File.Delete(tempLog);
         }
 
         public static void SetProductKey(string ospath, string productkey)
@@ -201,8 +235,18 @@ namespace MediaCreationLib.Dism
             //
             // Clean DISM
             //
-            DismApi.CloseSession(session);
-            DismApi.Shutdown();
+            try
+            {
+                DismApi.CloseSession(session);
+            }
+            catch { }
+
+            try
+            {
+                DismApi.Shutdown();
+            }
+            catch { }
+
             File.Delete(tempLog);
         }
 
@@ -230,15 +274,22 @@ namespace MediaCreationLib.Dism
                 Console.WriteLine("Failed setting edition, retrying in one second...");
                 Console.WriteLine("Failed attempt #" + counter);
                 Console.WriteLine(ex.ToString());
+
                 //
                 // Clean DISM
                 //
-                DismApi.CloseSession(session);
+                try
+                {
+                    DismApi.CloseSession(session);
+                }
+                catch { }
+
                 try
                 {
                     DismApi.Shutdown();
                 }
                 catch { }
+
                 if (counter < 3)
                 {
                     Thread.Sleep(1000);
@@ -255,7 +306,14 @@ namespace MediaCreationLib.Dism
                 DismApi.CloseSession(session);
             }
             catch { }
-            DismApi.Shutdown();
+
+            try
+            {
+                DismApi.Shutdown();
+            }
+            catch { }
+
+            File.Delete(tempLog);
         }
     }
 }
