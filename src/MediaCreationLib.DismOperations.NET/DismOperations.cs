@@ -109,7 +109,11 @@ namespace MediaCreationLib.Dism
             }
             catch { }
 
-            File.Delete(tempLog);
+            try
+            {
+                File.Delete(tempLog);
+            }
+            catch { }
         }
 
         public static string GetCurrentEdition(string ospath)
@@ -139,7 +143,11 @@ namespace MediaCreationLib.Dism
             }
             catch { }
 
-            File.Delete(tempLog);
+            try
+            {
+                File.Delete(tempLog);
+            }
+            catch { }
 
             return edition;
         }
@@ -203,7 +211,11 @@ namespace MediaCreationLib.Dism
             }
             catch { }
 
-            File.Delete(tempLog);
+            try
+            {
+                File.Delete(tempLog);
+            }
+            catch { }
         }
 
         public static void SetProductKey(string ospath, string productkey)
@@ -233,7 +245,11 @@ namespace MediaCreationLib.Dism
             }
             catch { }
 
-            File.Delete(tempLog);
+            try
+            {
+                File.Delete(tempLog);
+            }
+            catch { }
         }
 
         public static void SetTargetEdition(string ospath, string edition, ProgressCallback progressCallback)
@@ -299,7 +315,11 @@ namespace MediaCreationLib.Dism
             }
             catch { }
 
-            File.Delete(tempLog);
+            try
+            {
+                File.Delete(tempLog);
+            }
+            catch { }
         }
     }
 }
