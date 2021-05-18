@@ -316,7 +316,7 @@ namespace Imaging
 
         public bool ExtractFileFromImage(string wimFile, int imageIndex, string fileToExtract, string destination)
         {
-            var filename = Path.GetFileName(fileToExtract);
+            var filename = Path.GetFileName(fileToExtract.Replace('\\', Path.DirectorySeparatorChar));
             var extractDir = Path.GetTempPath();
             fileToExtract = fileToExtract.Replace(Path.DirectorySeparatorChar, '\\');
 
