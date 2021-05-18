@@ -67,7 +67,7 @@ UUPDownload might be a little too complicated to use for some people. For refere
 
 **TIP 1:** You can append ```-e [Edition to download]``` to get the files needed only for a specific edition
 
-**TIP 2:** You can append ```-l [Language to download]]``` to get the files needed only for a specific language
+**TIP 2:** You can append ```-l [Language to download]``` to get the files needed only for a specific language
 
 ## Contributing
 
