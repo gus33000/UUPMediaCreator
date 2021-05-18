@@ -43,7 +43,9 @@ Right now the tooling includes:
 | ARM64 Support (aka works on @sinclairinat0r device (TM))                                 | Yes     | Yes    | No(1)  |
 
 (1): Can be ran through Rosetta
+
 (2): requires ```apt-get install genisoimage```
+
 (3): requires ```brew install cdrtools```
 
 ## Contributing
