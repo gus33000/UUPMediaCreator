@@ -21,19 +21,19 @@
             <RadioButton x:Name="LZXRadioButton" GroupName="MediumGroup" Margin="0,8" IsChecked="True">
                 <StackPanel Margin="0,-8,0,0">
                     <TextBlock Text="LZX" TextWrapping="Wrap" FontSize="24" FontWeight="SemiBold" />
-                    <TextBlock Text="TODO" TextWrapping="Wrap" />
+                    <TextBlock Text="Default option. Provides a good balance between size, performance, and resource utilization." TextWrapping="Wrap" />
                 </StackPanel>
             </RadioButton>
             <RadioButton x:Name="LZMSRadioButton" GroupName="MediumGroup" Margin="0,8">
                 <StackPanel Margin="0,-8,0,0">
                     <TextBlock Text="LZMS" TextWrapping="Wrap" FontSize="24" FontWeight="SemiBold" />
-                    <TextBlock Text="TODO" TextWrapping="Wrap" />
+                    <TextBlock Text="Most compact option. The resulting media size will be the smallest possible, but will use much more resources." TextWrapping="Wrap" />
                 </StackPanel>
             </RadioButton>
             <RadioButton x:Name="XPRESSRadioButton" GroupName="MediumGroup" Margin="0,8">
                 <StackPanel Margin="0,-8,0,0">
                     <TextBlock Text="XPRESS" TextWrapping="Wrap" FontSize="24" FontWeight="SemiBold" />
-                    <TextBlock Text="TODO" TextWrapping="Wrap" />
+                    <TextBlock Text="Quickest option. Lean on resource utilisation, but will not be as compact as LZX or LZMS." TextWrapping="Wrap" />
                 </StackPanel>
             </RadioButton>
         </StackPanel>

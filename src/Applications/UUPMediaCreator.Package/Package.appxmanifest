@@ -12,7 +12,7 @@
   <Identity
     Name="gmonce.uupmediacreator"
     Publisher="CN=gmonce"
-    Version="1.0.17.0" />
+    Version="3.0.6.0" />
 
   <Properties>
     <DisplayName>UUP Media Creator</DisplayName>

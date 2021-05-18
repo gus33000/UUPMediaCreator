@@ -10,7 +10,7 @@
   <Identity
     Name="gmonce.uupmediacreator"
     Publisher="CN=gmonce"
-    Version="1.0.0.0" />
+    Version="3.0.6.0" />
 
   <mp:PhoneIdentity PhoneProductId="1ff16387-df2d-436b-9933-642c650aabb1" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 

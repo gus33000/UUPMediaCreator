@@ -27,7 +27,7 @@ namespace UUPMediaCreator.UWP.Pages
             base.OnNavigatedTo(e);
             WizardPage.Glyph = "\uE128";
             WizardPage.Title = "Loading languages";
-            WizardPage.Subtitle = "🥁 Drumroll...";
+            WizardPage.Subtitle = "This process might take a few minutes to complete.";
             WizardPage.BackEnabled = false;
             WizardPage.NextEnabled = false;
             LoadingRing.Visibility = Visibility.Visible;

@@ -11,8 +11,8 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <uupmediacreator:WizardPageControl x:Name="WizardPage"
-                                       Title="Building ISO"
-                                       Subtitle="The wizard is creating your ISO image. Prepare your snacks and drinks, or maybe watch a movie while the conversion happens."
+                                       Title="Building Media"
+                                       Subtitle="The wizard is creating your ISO image. This process might take a while depending on your computer specifications. It is recommended to not minimize or close this window while the process is ongoing."
                                        Glyph="&#xE822;"
                                        BackEnabled="False"
                                        NextEnabled="False">

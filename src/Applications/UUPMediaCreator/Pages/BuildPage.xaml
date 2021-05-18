@@ -11,7 +11,7 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <uupmediacreator:WizardPageControl x:Name="WizardPage"
-                                       Title="How EOL do you want to be today?"
+                                       Title="What version of windows do you want to build media for?"
                                        Subtitle="The selected build will be used for the final medium"
                                        Glyph="&#xF785;"
                                        BackEnabled="True"

@@ -1,0 +1,20 @@
+﻿<Page
+    x:Class="UUPMediaCreator.UWP.Pages.EndPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:UUPMediaCreator.UWP.Pages"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:uupmediacreator="using:UUPMediaCreator.UWP"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <uupmediacreator:WizardPageControl x:Name="WizardPage"
+                                       Title="All done!"
+                                       Subtitle="This is the end of the wizard, pressing next will go back to the beginning, or you can simply close this window to end the application."
+                                       Glyph="&#xEADF;"
+                                       BackEnabled="False"
+                                       NextEnabled="True"
+                                       NextClicked="WizardPage_NextClicked">
+    </uupmediacreator:WizardPageControl>
+</Page>

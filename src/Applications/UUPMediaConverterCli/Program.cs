@@ -154,7 +154,6 @@ namespace UUPMediaConverterCli
                 if (Debugger.IsAttached)
                     Console.ReadLine();
             }
-            Console.WriteLine("The end");
         }
 
         public enum LoggingLevel

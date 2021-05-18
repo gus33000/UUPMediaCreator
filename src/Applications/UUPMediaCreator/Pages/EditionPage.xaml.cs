@@ -27,7 +27,7 @@ namespace UUPMediaCreator.UWP.Pages
             base.OnNavigatedTo(e);
             WizardPage.Glyph = "\uE128";
             WizardPage.Title = "Loading editions";
-            WizardPage.Subtitle = "🥁 Drumroll...";
+            WizardPage.Subtitle = "This process might take a few minutes to complete.";
             WizardPage.BackEnabled = false;
             WizardPage.NextEnabled = false;
             LoadingRing.Visibility = Visibility.Visible;
@@ -54,7 +54,8 @@ namespace UUPMediaCreator.UWP.Pages
         private void WizardPage_NextClicked(object sender, RoutedEventArgs e)
         {
             App.ConversionPlan.Edition = (dataGrid.SelectedItem as BuildFetcher.AvailableEdition).Edition;
-            Frame.Navigate(typeof(AdditionalUpdatePage));
+            //Frame.Navigate(typeof(AdditionalUpdatePage));
+            Frame.Navigate(typeof(WIMTypePage));
         }
 
         private void WizardPage_BackClicked(object sender, RoutedEventArgs e)

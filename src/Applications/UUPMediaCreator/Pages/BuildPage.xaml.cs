@@ -27,7 +27,7 @@ namespace UUPMediaCreator.UWP.Pages
             base.OnNavigatedTo(e);
             WizardPage.Glyph = "\uE128";
             WizardPage.Title = "Loading builds";
-            WizardPage.Subtitle = "🥁 Drumroll...";
+            WizardPage.Subtitle = "This process might take a few minutes to complete.";
             WizardPage.BackEnabled = false;
             WizardPage.NextEnabled = false;
             _ = ThreadPool.RunAsync(async (IAsyncAction operation) =>
@@ -37,7 +37,7 @@ namespace UUPMediaCreator.UWP.Pages
                 await CoreApplication.MainView.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
                 {
                     WizardPage.Glyph = "\uF785";
-                    WizardPage.Title = "How EOL do you want to be today?";
+                    WizardPage.Title = "What version of windows do you want to build media for?";
                     WizardPage.Subtitle = "The selected build will be used for the final medium";
                     WizardPage.BackEnabled = true;
                     WizardPage.NextEnabled = true;

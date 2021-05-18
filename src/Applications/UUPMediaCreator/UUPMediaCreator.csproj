@@ -136,6 +136,9 @@
     <Compile Include="Pages\DownloadPage.xaml.cs">
       <DependentUpon>DownloadPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Pages\EndPage.xaml.cs">
+      <DependentUpon>EndPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Pages\RecapPage.xaml.cs">
       <DependentUpon>RecapPage.xaml</DependentUpon>
     </Compile>
@@ -475,6 +478,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Pages\DownloadPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\EndPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

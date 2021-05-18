@@ -25,48 +25,8 @@ namespace UUPMediaCreator.UWP.Pages
             Loaded += BuildingVHDPage_Loaded;
         }
 
-        /*private async Task<string> InputTextDialogAsync(string title)
-        {
-            TextBox inputTextBox = new TextBox();
-            inputTextBox.AcceptsReturn = false;
-            inputTextBox.Height = 32;
-            ContentDialog dialog = new ContentDialog();
-            dialog.Content = inputTextBox;
-            dialog.Title = title;
-            dialog.IsSecondaryButtonEnabled = true;
-            dialog.PrimaryButtonText = "Ok";
-            dialog.SecondaryButtonText = "Cancel";
-            if (await dialog.ShowAsync() == ContentDialogResult.Primary)
-                return inputTextBox.Text;
-            else
-                return "";
-        }*/
-
         private async void BuildingVHDPage_Loaded(object sender, RoutedEventArgs e)
         {
-            /*var folderPicker = new Windows.Storage.Pickers.FolderPicker();
-            folderPicker.SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.Desktop;
-            folderPicker.FileTypeFilter.Add("*");
-
-            Windows.Storage.StorageFolder folder = await folderPicker.PickSingleFolderAsync();
-            if (folder == null)
-            {
-                Application.Current.Exit();
-            }
-
-            var sku = await InputTextDialogAsync("Please enter the Sku you would like");
-            var lang = await InputTextDialogAsync("Please enter the Language you would like");
-
-            ISOConversion job = new ISOConversion()
-            {
-                UUPPath = folder.Path,
-                ISOPath = $@"{folder.Path}\uup.iso",
-                Edition = sku,
-                LanguageCode = lang,
-                CompressionType = CompressionType.LZX,
-                IntegrateUpdates = false
-            };*/
-
             ISOConversion job = new ISOConversion()
             {
                 UUPPath = App.ConversionPlan.TmpOutputFolder,
@@ -212,7 +172,7 @@ namespace UUPMediaCreator.UWP.Pages
                                     Directory.Delete(App.ConversionPlan.TmpOutputFolder, true);
 
                                     // Move to finish page when done, for now, welcome page
-                                    Frame.Navigate(typeof(WelcomePage));
+                                    Frame.Navigate(typeof(EndPage));
                                     return;
                                 }
 

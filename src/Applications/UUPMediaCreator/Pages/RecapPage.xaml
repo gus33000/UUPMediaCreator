@@ -11,6 +11,7 @@
 
     <uupmediacreator:WizardPageControl x:Name="WizardPage"
                                        Title="To Recap"
+                                       Subtitle="The tool will proceed to create an ISO media using the details you previously selected. If any information is incorrect, go back, and change it before clicking next. Once you click next, you cannot go back."
                                        Glyph="&#xE762;"
                                        BackEnabled="True"
                                        NextEnabled="False"
