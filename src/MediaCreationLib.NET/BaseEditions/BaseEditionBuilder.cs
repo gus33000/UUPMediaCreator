@@ -60,7 +60,7 @@ namespace MediaCreationLib.BaseEditions
                 string refesd = ConvertCABToESD(Path.Combine(UUPPath, file), progressCallback, progressoffset, progressScale);
                 if (string.IsNullOrEmpty(refesd))
                 {
-                    progressCallback?.Invoke(Common.ProcessPhase.ReadingMetadata, true, 0, "Reference ESD creation from Cabinet files failed");
+                    progressCallback?.Invoke(Common.ProcessPhase.ReadingMetadata, true, 0, "CreateBaseEdition -> Reference ESD creation from Cabinet files failed");
                     goto exit;
                 }
                 ReferencePackages.Add(refesd);
@@ -71,7 +71,12 @@ namespace MediaCreationLib.BaseEditions
             // Gather information to transplant later into DisplayName and DisplayDescription
             //
             WIMInformationXML.IMAGE image;
-            imagingInterface.GetWIMImageInformation(BaseESD, 3, out image);
+            result = imagingInterface.GetWIMImageInformation(BaseESD, 3, out image);
+            if (!result)
+            {
+                progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, "CreateBaseEdition -> GetWIMImageInformation failed");
+                goto exit;
+            }
 
             //
             // Export the install image
@@ -89,12 +94,18 @@ namespace MediaCreationLib.BaseEditions
                 compressionType: compression,
                 progressCallback: callback);
             if (!result)
+            {
+                progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, "CreateBaseEdition -> ExportImage failed");
                 goto exit;
+            }
 
             WIMInformationXML.WIM wim;
             result = imagingInterface.GetWIMInformation(OutputInstallImage, out wim);
             if (!result)
+            {
+                progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, "CreateBaseEdition -> GetWIMInformation failed");
                 goto exit;
+            }
 
             //
             // Set the correct metadata on the image
@@ -124,7 +135,10 @@ namespace MediaCreationLib.BaseEditions
             }
             result = imagingInterface.SetWIMImageInformation(OutputInstallImage, wim.IMAGE.Count, image);
             if (!result)
+            {
+                progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, "CreateBaseEdition -> SetWIMImageInformation failed");
                 goto exit;
+            }
 
             void callback2(string Operation, int ProgressPercentage, bool IsIndeterminate)
             {
@@ -143,9 +157,12 @@ namespace MediaCreationLib.BaseEditions
                 Path.Combine("Windows", "System32", "Recovery", "Winre.wim"),
                 callback2);
             if (!result)
+            {
+                progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, "CreateBaseEdition -> AddFileToImage failed");
                 goto exit;
+            }
 
-            exit:
+        exit:
             return result;
         }
 
