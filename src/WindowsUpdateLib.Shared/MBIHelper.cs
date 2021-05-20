@@ -1,5 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
+﻿/*
+ * Copyright (c) Gustave Monce and Contributors
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+using System;
 using System.IO;
 using System.Net;
 using System.Net.Http;
@@ -35,43 +55,43 @@ namespace WindowsUpdateLib.Shared
                 {
                     if (oCookie.Trim().StartsWith("MSPOK"))
                     {
-                        MSPOK = oCookie.Trim().Substring(6, oCookie.IndexOf(';') - 6);
+                        MSPOK = oCookie.Trim()[6..oCookie.IndexOf(';')];
                         MSPOK = WebUtility.UrlEncode(MSPOK);
                         break;
                     }
                 }
 
                 string responsePlain = string.Empty;
-                using (var reader = new StreamReader(hwresp.GetResponseStream(), Encoding.UTF8))
+                using (StreamReader reader = new(hwresp.GetResponseStream(), Encoding.UTF8))
                 {
                     responsePlain = reader.ReadToEnd();
                 }
-                PPFT = responsePlain.Substring(responsePlain.IndexOf("name=\"PPFT\""));
-                PPFT = PPFT.Substring(PPFT.IndexOf("value=") + 7);
+                PPFT = responsePlain[responsePlain.IndexOf("name=\"PPFT\"")..];
+                PPFT = PPFT[(PPFT.IndexOf("value=") + 7)..];
                 PPFT = PPFT.Substring(0, PPFT.IndexOf('\"'));
-                urlPost = responsePlain.Substring(responsePlain.IndexOf("urlPost:") + 9);
+                urlPost = responsePlain[(responsePlain.IndexOf("urlPost:") + 9)..];
                 urlPost = urlPost.Substring(0, urlPost.IndexOf('\''));
             }
             catch { return string.Empty; }
 
-            HttpClientHandler httpClientHandler = new HttpClientHandler
+            HttpClientHandler httpClientHandler = new()
             {
                 AllowAutoRedirect = false
             };
 
-            CookieContainer hwreqCC = new CookieContainer();
+            CookieContainer hwreqCC = new();
             hwreqCC.Add(new Uri("https://login.live.com"), new Cookie("MSPOK", MSPOK) { Domain = "login.live.com" });
             httpClientHandler.CookieContainer = hwreqCC;
 
-            var client = new HttpClient(httpClientHandler);
+            HttpClient client = new(httpClientHandler);
 
-            StringContent queryString = new StringContent($"login={email}&passwd={password}&PPFT={PPFT}", Encoding.UTF8);
+            StringContent queryString = new($"login={email}&passwd={password}&PPFT={PPFT}", Encoding.UTF8);
 
             queryString.Headers.ContentType = new MediaTypeHeaderValue("application/x-www-form-urlencoded");
             byte[] POSTByteArray = Encoding.UTF8.GetBytes($"login={email}&passwd={password}&PPFT={PPFT}");
             queryString.Headers.ContentLength = POSTByteArray.Length;
 
-            var hwresp2 = await client.PostAsync(new Uri(urlPost), queryString);
+            HttpResponseMessage hwresp2 = await client.PostAsync(new Uri(urlPost), queryString);
 
             try
             {
@@ -79,7 +99,7 @@ namespace WindowsUpdateLib.Shared
                 {
                     if (oLocationBit.Contains("access_token"))
                     {
-                        retVal = oLocationBit.Substring(oLocationBit.IndexOf("access_token") + 13);
+                        retVal = oLocationBit[(oLocationBit.IndexOf("access_token") + 13)..];
                         if (retVal.Contains("&"))
                             retVal = retVal.Substring(0, retVal.IndexOf('&'));
                         break;

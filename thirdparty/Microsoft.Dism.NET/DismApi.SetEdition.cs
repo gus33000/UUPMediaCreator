@@ -36,7 +36,7 @@ namespace Microsoft.Dism
         private static void SetEdition(DismSession session, string editionID, string productKey, Dism.DismProgressCallback progressCallback, object userData)
         {
             // Create a DismProgress object to wrap the callback and allow cancellation
-            DismProgress progress = new DismProgress(progressCallback, userData);
+            DismProgress progress = new(progressCallback, userData);
 
             int hresult = NativeMethods._DismSetEdition(session, editionID, productKey, progress.EventHandle, progress.DismProgressCallbackNative, IntPtr.Zero);
 

@@ -1,4 +1,25 @@
-﻿using Cabinet;
+﻿/*
+ * Copyright (c) Gustave Monce and Contributors
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+using Cabinet;
 using CompDB;
 using System;
 using System.Collections.Generic;
@@ -13,32 +34,30 @@ namespace MediaCreationLib.Planning.NET
     {
         public static HashSet<CompDBXmlClass.CompDB> GetCompDBsFromUUPFiles(string UUPPath)
         {
-            HashSet<CompDBXmlClass.CompDB> compDBs = new HashSet<CompDBXmlClass.CompDB>();
+            HashSet<CompDBXmlClass.CompDB> compDBs = new();
 
             try
             {
-                var enumeratedFiles = Directory.EnumerateFiles(UUPPath, "*aggregatedmetadata*", new EnumerationOptions() { MatchCasing = MatchCasing.CaseInsensitive });
-                if (enumeratedFiles.Count() > 0)
+                IEnumerable<string>? enumeratedFiles = Directory.EnumerateFiles(UUPPath, "*aggregatedmetadata*", new EnumerationOptions() { MatchCasing = MatchCasing.CaseInsensitive });
+                if (enumeratedFiles.Any())
                 {
-                    var cabFile = enumeratedFiles.First();
+                    string? cabFile = enumeratedFiles.First();
 
-                    foreach (var file in CabinetExtractor.EnumCabinetFiles(cabFile).Where(x => x.EndsWith(".xml.cab", StringComparison.InvariantCultureIgnoreCase)))
+                    foreach (string? file in CabinetExtractor.EnumCabinetFiles(cabFile).Where(x => x.EndsWith(".xml.cab", StringComparison.InvariantCultureIgnoreCase)))
                     {
                         try
                         {
-                            var tmp = Path.GetTempFileName();
+                            string? tmp = Path.GetTempFileName();
                             File.WriteAllBytes(tmp, CabinetExtractor.ExtractCabinetFile(cabFile, file));
 
                             byte[] xmlfile = CabinetExtractor.ExtractCabinetFile(tmp, CabinetExtractor.EnumCabinetFiles(tmp).First());
 
-                            using (Stream xmlstream = new MemoryStream(xmlfile))
-                            {
-                                compDBs.Add(CompDBXmlClass.DeserializeCompDB(xmlstream));
-                            }
+                            using Stream xmlstream = new MemoryStream(xmlfile);
+                            compDBs.Add(CompDBXmlClass.DeserializeCompDB(xmlstream));
                         }
                         catch
                         {
-                            
+
                         }
                     }
                 }
@@ -46,18 +65,16 @@ namespace MediaCreationLib.Planning.NET
                 {
                     IEnumerable<string> files = Directory.EnumerateFiles(UUPPath).Select(x => Path.GetFileName(x)).Where(x => x.EndsWith(".xml.cab", StringComparison.InvariantCultureIgnoreCase));
 
-                    foreach (var file in files)
+                    foreach (string? file in files)
                     {
                         try
                         {
-                            var cabFile = Path.Combine(UUPPath, file);
+                            string? cabFile = Path.Combine(UUPPath, file);
 
                             byte[] xmlfile = CabinetExtractor.ExtractCabinetFile(cabFile, CabinetExtractor.EnumCabinetFiles(cabFile).First());
 
-                            using (Stream xmlstream = new MemoryStream(xmlfile))
-                            {
-                                compDBs.Add(CompDBXmlClass.DeserializeCompDB(xmlstream));
-                            }
+                            using Stream xmlstream = new MemoryStream(xmlfile);
+                            compDBs.Add(CompDBXmlClass.DeserializeCompDB(xmlstream));
                         }
                         catch { }
                     }
@@ -70,7 +87,7 @@ namespace MediaCreationLib.Planning.NET
 
         public static (bool, HashSet<string>) VerifyFilesAreAvailableForCompDB(CompDBXmlClass.CompDB compDB, string UUPPath)
         {
-            HashSet<string> missingPackages = new HashSet<string>();
+            HashSet<string> missingPackages = new();
 
             foreach (CompDBXmlClass.Package feature in compDB.Features.Feature[0].Packages.Package)
             {

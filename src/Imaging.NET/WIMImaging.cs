@@ -1,4 +1,25 @@
-﻿using ManagedWimLib;
+﻿/*
+ * Copyright (c) Gustave Monce and Contributors
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+using ManagedWimLib;
 using Microsoft.Wim;
 using System;
 using System.Collections.Generic;
@@ -13,7 +34,7 @@ namespace Imaging
     {
         private static string GetExecutableDirectory()
         {
-            var fileName = Process.GetCurrentProcess().MainModule.FileName;
+            string fileName = Process.GetCurrentProcess().MainModule.FileName;
             return fileName.Contains(Path.DirectorySeparatorChar) ? string.Join(Path.DirectorySeparatorChar, fileName.Split(Path.DirectorySeparatorChar).Reverse().Skip(1).Reverse()) : "";
         }
 
@@ -137,15 +158,13 @@ namespace Imaging
                     return CallbackStatus.Continue;
                 }
 
-                using (Wim wim = Wim.OpenWim(wimFile, OpenFlags.WriteAccess))
-                {
-                    wim.RegisterCallback(ProgressCallback);
-                    wim.UpdateImage(
-                        imageIndex,
-                        UpdateCommand.SetAdd(fileToAdd, destination, null, AddFlags.None),
-                        UpdateFlags.SendProgress);
-                    wim.Overwrite(WriteFlags.None, Wim.DefaultThreads);
-                }
+                using Wim wim = Wim.OpenWim(wimFile, OpenFlags.WriteAccess);
+                wim.RegisterCallback(ProgressCallback);
+                wim.UpdateImage(
+                    imageIndex,
+                    UpdateCommand.SetAdd(fileToAdd, destination, null, AddFlags.None),
+                    UpdateFlags.SendProgress);
+                wim.Overwrite(WriteFlags.None, Wim.DefaultThreads);
             }
             catch
             {
@@ -201,15 +220,13 @@ namespace Imaging
                     return CallbackStatus.Continue;
                 }
 
-                using (Wim wim = Wim.OpenWim(wimFile, OpenFlags.None))
-                {
-                    wim.RegisterCallback(ProgressCallback);
-                    wim.UpdateImage(
-                        imageIndex,
-                        UpdateCommand.SetDelete(fileToRemove, DeleteFlags.None),
-                        UpdateFlags.SendProgress);
-                    wim.Overwrite(WriteFlags.None, Wim.DefaultThreads);
-                }
+                using Wim wim = Wim.OpenWim(wimFile, OpenFlags.None);
+                wim.RegisterCallback(ProgressCallback);
+                wim.UpdateImage(
+                    imageIndex,
+                    UpdateCommand.SetDelete(fileToRemove, DeleteFlags.None),
+                    UpdateFlags.SendProgress);
+                wim.Overwrite(WriteFlags.None, Wim.DefaultThreads);
             }
             catch
             {
@@ -243,68 +260,62 @@ namespace Imaging
                     return CallbackStatus.Continue;
                 }
 
-                using (Wim srcWim = Wim.OpenWim(wimFile, OpenFlags.None))
+                using Wim srcWim = Wim.OpenWim(wimFile, OpenFlags.None);
+                string imageName = srcWim.GetImageName(imageIndex);
+                string imageDescription = srcWim.GetImageDescription(imageIndex);
+
+                CompressionType compression = CompressionType.None;
+                switch (compressionType)
                 {
-                    string imageName = srcWim.GetImageName(imageIndex);
-                    string imageDescription = srcWim.GetImageDescription(imageIndex);
-
-                    var compression = CompressionType.None;
-                    switch (compressionType)
-                    {
-                        case WimCompressionType.Lzms:
-                            {
-                                compression = CompressionType.LZMS;
-                                break;
-                            }
-                        case WimCompressionType.Lzx:
-                            {
-                                compression = CompressionType.LZX;
-                                break;
-                            }
-                        case WimCompressionType.None:
-                            {
-                                compression = CompressionType.None;
-                                break;
-                            }
-                        case WimCompressionType.Xpress:
-                            {
-                                compression = CompressionType.XPRESS;
-                                break;
-                            }
-                    }
-
-                    if (referenceWIMs != null && referenceWIMs.Count() > 0)
-                    {
-                        srcWim.ReferenceResourceFiles(referenceWIMs, RefFlags.None, OpenFlags.None);
-                    }
-
-                    if (File.Exists(destinationWimFile))
-                    {
-                        using (Wim destWim = Wim.OpenWim(destinationWimFile, OpenFlags.WriteAccess))
+                    case WimCompressionType.Lzms:
                         {
-                            destWim.RegisterCallback(ProgressCallback);
-
-                            if (destWim.IsImageNameInUse(imageName))
-                            {
-                                srcWim.ExportImage(imageIndex, destWim, imageName + " " + DateTime.UtcNow.ToString(), imageDescription, ExportFlags.None);
-                            }
-                            else
-                            {
-                                srcWim.ExportImage(imageIndex, destWim, imageName, imageDescription, ExportFlags.None);
-                            }
-
-                            destWim.Overwrite(WriteFlags.None, Wim.DefaultThreads);
+                            compression = CompressionType.LZMS;
+                            break;
                         }
+                    case WimCompressionType.Lzx:
+                        {
+                            compression = CompressionType.LZX;
+                            break;
+                        }
+                    case WimCompressionType.None:
+                        {
+                            compression = CompressionType.None;
+                            break;
+                        }
+                    case WimCompressionType.Xpress:
+                        {
+                            compression = CompressionType.XPRESS;
+                            break;
+                        }
+                }
+
+                if (referenceWIMs != null && referenceWIMs.Any())
+                {
+                    srcWim.ReferenceResourceFiles(referenceWIMs, RefFlags.None, OpenFlags.None);
+                }
+
+                if (File.Exists(destinationWimFile))
+                {
+                    using Wim destWim = Wim.OpenWim(destinationWimFile, OpenFlags.WriteAccess);
+                    destWim.RegisterCallback(ProgressCallback);
+
+                    if (destWim.IsImageNameInUse(imageName))
+                    {
+                        srcWim.ExportImage(imageIndex, destWim, imageName + " " + DateTime.UtcNow.ToString(), imageDescription, ExportFlags.None);
                     }
                     else
                     {
-                        using (Wim destWim = Wim.CreateNewWim(compression))
-                        {
-                            destWim.RegisterCallback(ProgressCallback);
-                            srcWim.ExportImage(imageIndex, destWim, imageName, imageDescription, ExportFlags.None);
-                            destWim.Write(destinationWimFile, Wim.AllImages, compression == CompressionType.LZMS ? WriteFlags.Solid : WriteFlags.None, Wim.DefaultThreads);
-                        }
+                        srcWim.ExportImage(imageIndex, destWim, imageName, imageDescription, ExportFlags.None);
                     }
+
+                    destWim.Overwrite(WriteFlags.None, Wim.DefaultThreads);
+                }
+                else
+                {
+                    using Wim destWim = Wim.CreateNewWim(compression);
+                    destWim.RegisterCallback(ProgressCallback);
+                    srcWim.ExportImage(imageIndex, destWim, imageName, imageDescription, ExportFlags.None);
+                    destWim.Write(destinationWimFile, Wim.AllImages, compression == CompressionType.LZMS ? WriteFlags.Solid : WriteFlags.None, Wim.DefaultThreads);
                 }
             }
             catch (Exception ex)
@@ -314,10 +325,10 @@ namespace Imaging
             return ReseatWIMXml(destinationWimFile);
         }
 
-        public bool ExtractFileFromImage(string wimFile, int imageIndex, string fileToExtract, string destination)
+        public static bool ExtractFileFromImage(string wimFile, int imageIndex, string fileToExtract, string destination)
         {
-            var filename = Path.GetFileName(fileToExtract.Replace('\\', Path.DirectorySeparatorChar));
-            var extractDir = Path.GetTempPath();
+            string filename = Path.GetFileName(fileToExtract.Replace('\\', Path.DirectorySeparatorChar));
+            string extractDir = Path.GetTempPath();
             fileToExtract = fileToExtract.Replace(Path.DirectorySeparatorChar, '\\');
 
             try
@@ -389,15 +400,13 @@ namespace Imaging
                     return CallbackStatus.Continue;
                 }
 
-                using (Wim wim = Wim.OpenWim(wimFile, OpenFlags.None))
-                {
-                    wim.RegisterCallback(ProgressCallback);
-                    wim.UpdateImage(
-                        imageIndex,
-                        UpdateCommand.SetRename(sourceFilePath, destinationFilePath),
-                        UpdateFlags.SendProgress);
-                    wim.Overwrite(WriteFlags.None, Wim.DefaultThreads);
-                }
+                using Wim wim = Wim.OpenWim(wimFile, OpenFlags.None);
+                wim.RegisterCallback(ProgressCallback);
+                wim.UpdateImage(
+                    imageIndex,
+                    UpdateCommand.SetRename(sourceFilePath, destinationFilePath),
+                    UpdateFlags.SendProgress);
+                wim.Overwrite(WriteFlags.None, Wim.DefaultThreads);
             }
             catch
             {
@@ -451,13 +460,11 @@ namespace Imaging
                     return CallbackStatus.Continue;
                 }
 
-                using (Wim wim = Wim.OpenWim(wimFile, OpenFlags.None))
-                {
-                    wim.RegisterCallback(ProgressCallback);
-                    if (referenceWIMs != null && referenceWIMs.Count() > 0)
-                        wim.ReferenceResourceFiles(referenceWIMs, RefFlags.None, OpenFlags.None);
-                    wim.ExtractImage(imageIndex, OutputDirectory, PreserveACL ? ExtractFlags.StrictAcls : ExtractFlags.NoAcls);
-                }
+                using Wim wim = Wim.OpenWim(wimFile, OpenFlags.None);
+                wim.RegisterCallback(ProgressCallback);
+                if (referenceWIMs != null && referenceWIMs.Any())
+                    wim.ReferenceResourceFiles(referenceWIMs, RefFlags.None, OpenFlags.None);
+                wim.ExtractImage(imageIndex, OutputDirectory, PreserveACL ? ExtractFlags.StrictAcls : ExtractFlags.NoAcls);
             }
             catch (Exception ex)
             {
@@ -525,26 +532,24 @@ namespace Imaging
 
                 if (File.Exists(wimFile))
                 {
-                    using (Wim wim = Wim.OpenWim(wimFile, OpenFlags.WriteAccess))
-                    {
-                        wim.RegisterCallback(ProgressCallback);
-                        wim.AddImage(InputDirectory, imageName, null, PreserveACL ? AddFlags.StrictAcls : AddFlags.NoAcls);
-                        if (!string.IsNullOrEmpty(imageDescription))
-                            wim.SetImageDescription((int)wim.GetWimInfo().ImageCount, imageDescription);
-                        if (!string.IsNullOrEmpty(imageDisplayName))
-                            wim.SetImageProperty((int)wim.GetWimInfo().ImageCount, "DISPLAYNAME", imageDisplayName);
-                        if (!string.IsNullOrEmpty(imageDisplayDescription))
-                            wim.SetImageProperty((int)wim.GetWimInfo().ImageCount, "DISPLAYDESCRIPTION", imageDisplayDescription);
-                        if (!string.IsNullOrEmpty(imageFlag))
-                            wim.SetImageFlags((int)wim.GetWimInfo().ImageCount, imageFlag);
-                        if (UpdateFrom != -1)
-                            wim.ReferenceTemplateImage((int)wim.GetWimInfo().ImageCount, UpdateFrom);
-                        wim.Overwrite(WriteFlags.None, Wim.DefaultThreads);
-                    }
+                    using Wim wim = Wim.OpenWim(wimFile, OpenFlags.WriteAccess);
+                    wim.RegisterCallback(ProgressCallback);
+                    wim.AddImage(InputDirectory, imageName, null, PreserveACL ? AddFlags.StrictAcls : AddFlags.NoAcls);
+                    if (!string.IsNullOrEmpty(imageDescription))
+                        wim.SetImageDescription((int)wim.GetWimInfo().ImageCount, imageDescription);
+                    if (!string.IsNullOrEmpty(imageDisplayName))
+                        wim.SetImageProperty((int)wim.GetWimInfo().ImageCount, "DISPLAYNAME", imageDisplayName);
+                    if (!string.IsNullOrEmpty(imageDisplayDescription))
+                        wim.SetImageProperty((int)wim.GetWimInfo().ImageCount, "DISPLAYDESCRIPTION", imageDisplayDescription);
+                    if (!string.IsNullOrEmpty(imageFlag))
+                        wim.SetImageFlags((int)wim.GetWimInfo().ImageCount, imageFlag);
+                    if (UpdateFrom != -1)
+                        wim.ReferenceTemplateImage((int)wim.GetWimInfo().ImageCount, UpdateFrom);
+                    wim.Overwrite(WriteFlags.None, Wim.DefaultThreads);
                 }
                 else
                 {
-                    var compression = CompressionType.None;
+                    CompressionType compression = CompressionType.None;
                     switch (compressionType)
                     {
                         case WimCompressionType.Lzms:
@@ -569,33 +574,31 @@ namespace Imaging
                             }
                     }
 
-                    using (Wim wim = Wim.CreateNewWim(compression))
-                    {
-                        wim.RegisterCallback(ProgressCallback);
+                    using Wim wim = Wim.CreateNewWim(compression);
+                    wim.RegisterCallback(ProgressCallback);
 
-                        string config = @"[ExclusionList]
+                    string config = @"[ExclusionList]
 \$ntfs.log
 \hiberfil.sys
 \pagefile.sys
 \swapfile.sys
 \System Volume Information";
 
-                        var configpath = Path.GetTempFileName();
-                        File.Delete(configpath);
-                        File.WriteAllText(configpath, config);
+                    string configpath = Path.GetTempFileName();
+                    File.Delete(configpath);
+                    File.WriteAllText(configpath, config);
 
-                        wim.AddImage(InputDirectory, imageName, configpath, PreserveACL ? AddFlags.StrictAcls : AddFlags.NoAcls);
-                        if (!string.IsNullOrEmpty(imageDescription))
-                            wim.SetImageDescription((int)wim.GetWimInfo().ImageCount, imageDescription);
-                        if (!string.IsNullOrEmpty(imageDisplayName))
-                            wim.SetImageProperty((int)wim.GetWimInfo().ImageCount, "DISPLAYNAME", imageDisplayName);
-                        if (!string.IsNullOrEmpty(imageDisplayDescription))
-                            wim.SetImageProperty((int)wim.GetWimInfo().ImageCount, "DISPLAYDESCRIPTION", imageDisplayDescription);
-                        if (!string.IsNullOrEmpty(imageFlag))
-                            wim.SetImageFlags((int)wim.GetWimInfo().ImageCount, imageFlag);
-                        wim.Write(wimFile, Wim.AllImages, WriteFlags.None, Wim.DefaultThreads);
-                        File.Delete(configpath);
-                    }
+                    wim.AddImage(InputDirectory, imageName, configpath, PreserveACL ? AddFlags.StrictAcls : AddFlags.NoAcls);
+                    if (!string.IsNullOrEmpty(imageDescription))
+                        wim.SetImageDescription((int)wim.GetWimInfo().ImageCount, imageDescription);
+                    if (!string.IsNullOrEmpty(imageDisplayName))
+                        wim.SetImageProperty((int)wim.GetWimInfo().ImageCount, "DISPLAYNAME", imageDisplayName);
+                    if (!string.IsNullOrEmpty(imageDisplayDescription))
+                        wim.SetImageProperty((int)wim.GetWimInfo().ImageCount, "DISPLAYDESCRIPTION", imageDisplayDescription);
+                    if (!string.IsNullOrEmpty(imageFlag))
+                        wim.SetImageFlags((int)wim.GetWimInfo().ImageCount, imageFlag);
+                    wim.Write(wimFile, Wim.AllImages, WriteFlags.None, Wim.DefaultThreads);
+                    File.Delete(configpath);
                 }
             }
             catch (Exception ex)
@@ -610,15 +613,13 @@ namespace Imaging
             List<string> fsentries = new List<string>();
             try
             {
-                using (Wim wim = Wim.OpenWim(wimFile, OpenFlags.None))
+                using Wim wim = Wim.OpenWim(wimFile, OpenFlags.None);
+                int IterateDirTreeCallback(DirEntry dentry, object userData)
                 {
-                    int IterateDirTreeCallback(DirEntry dentry, object userData)
-                    {
-                        fsentries.Add(dentry.FileName);
-                        return 0;
-                    };
-                    wim.IterateDirTree(imageIndex, path, IterateDirTreeFlags.Children, IterateDirTreeCallback);
-                }
+                    fsentries.Add(dentry.FileName);
+                    return 0;
+                };
+                wim.IterateDirTree(imageIndex, path, IterateDirTreeFlags.Children, IterateDirTreeCallback);
             }
             catch
             {
@@ -629,15 +630,13 @@ namespace Imaging
             return true;
         }
 
-        public bool MarkImageAsBootable(string wimFile, int imageIndex)
+        public static bool MarkImageAsBootable(string wimFile, int imageIndex)
         {
             try
             {
-                using (Wim wim = Wim.OpenWim(wimFile, OpenFlags.None))
-                {
-                    wim.SetWimInfo(new ManagedWimLib.WimInfo() { BootIndex = (uint)imageIndex }, ChangeFlags.BootIndex);
-                    wim.Overwrite(WriteFlags.None, Wim.DefaultThreads);
-                }
+                using Wim wim = Wim.OpenWim(wimFile, OpenFlags.None);
+                wim.SetWimInfo(new ManagedWimLib.WimInfo() { BootIndex = (uint)imageIndex }, ChangeFlags.BootIndex);
+                wim.Overwrite(WriteFlags.None, Wim.DefaultThreads);
             }
             catch
             {
@@ -653,29 +652,27 @@ namespace Imaging
             wim = null;
             try
             {
-                using (var wimHandle = WimgApi.CreateFile(
+                using WimHandle wimHandle = WimgApi.CreateFile(
                     wimFile,
                     WimFileAccess.Read,
                     WimCreationDisposition.OpenExisting,
                     WimCreateFileOptions.Chunked,
-                    WimCompressionType.None))
-                {
-                    // Always set a temporary path
-                    //
-                    WimgApi.SetTemporaryPath(wimHandle, Path.GetTempPath());
+                    WimCompressionType.None);
+                // Always set a temporary path
+                //
+                WimgApi.SetTemporaryPath(wimHandle, Path.GetTempPath());
 
-                    try
-                    {
-                        var wiminfo = WimgApi.GetImageInformationAsString(wimHandle);
-                        wim = WIMInformationXML.DeserializeWIM(wiminfo);
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine(ex.Message + " - " + ex.ToString());
-                    }
-                    finally
-                    {
-                    }
+                try
+                {
+                    string wiminfo = WimgApi.GetImageInformationAsString(wimHandle);
+                    wim = WIMInformationXML.DeserializeWIM(wiminfo);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message + " - " + ex.ToString());
+                }
+                finally
+                {
                 }
             }
             catch
@@ -685,18 +682,16 @@ namespace Imaging
             return true;
         }
 
-        public bool GetWIMInformation2(
+        public static bool GetWIMInformation2(
             string wimFile,
             out WIMInformationXML.WIM wim)
         {
             wim = null;
             try
             {
-                using (Wim wiml = Wim.OpenWim(wimFile, OpenFlags.None))
-                {
-                    string xmldata = string.Join("", wiml.GetXmlData().Skip(1));
-                    wim = WIMInformationXML.DeserializeWIM(xmldata);
-                }
+                using Wim wiml = Wim.OpenWim(wimFile, OpenFlags.None);
+                string xmldata = string.Join("", wiml.GetXmlData().Skip(1));
+                wim = WIMInformationXML.DeserializeWIM(xmldata);
             }
             catch
             {
@@ -713,28 +708,24 @@ namespace Imaging
             image = null;
             try
             {
-                using (var wimHandle = WimgApi.CreateFile(
+                using WimHandle wimHandle = WimgApi.CreateFile(
                     wimFile,
                     WimFileAccess.Read,
                     WimCreationDisposition.OpenExisting,
                     WimCreateFileOptions.Chunked,
-                    WimCompressionType.None))
-                {
-                    // Always set a temporary path
-                    //
-                    WimgApi.SetTemporaryPath(wimHandle, Path.GetTempPath());
+                    WimCompressionType.None);
+                // Always set a temporary path
+                //
+                WimgApi.SetTemporaryPath(wimHandle, Path.GetTempPath());
 
-                    try
-                    {
-                        using (WimHandle imageHandle = WimgApi.LoadImage(wimHandle, imageIndex))
-                        {
-                            var wiminfo = WimgApi.GetImageInformationAsString(imageHandle);
-                            image = WIMInformationXML.DeserializeIMAGE(wiminfo);
-                        }
-                    }
-                    finally
-                    {
-                    }
+                try
+                {
+                    using WimHandle imageHandle = WimgApi.LoadImage(wimHandle, imageIndex);
+                    string wiminfo = WimgApi.GetImageInformationAsString(imageHandle);
+                    image = WIMInformationXML.DeserializeIMAGE(wiminfo);
+                }
+                finally
+                {
                 }
             }
             catch
@@ -744,7 +735,7 @@ namespace Imaging
             return true;
         }
 
-        public bool GetWIMImageInformation2(
+        public static bool GetWIMImageInformation2(
             string wimFile,
             int imageIndex,
             out WIMInformationXML.IMAGE image)
@@ -752,12 +743,10 @@ namespace Imaging
             image = null;
             try
             {
-                using (Wim wim = Wim.OpenWim(wimFile, OpenFlags.None))
-                {
-                    string xmldata = string.Join("", wim.GetXmlData().Skip(1));
-                    var xml = WIMInformationXML.DeserializeWIM(xmldata);
-                    image = xml.IMAGE.First(x => x.INDEX == imageIndex.ToString());
-                }
+                using Wim wim = Wim.OpenWim(wimFile, OpenFlags.None);
+                string xmldata = string.Join("", wim.GetXmlData().Skip(1));
+                WIMInformationXML.WIM xml = WIMInformationXML.DeserializeWIM(xmldata);
+                image = xml.IMAGE.First(x => x.INDEX == imageIndex.ToString());
             }
             catch
             {
@@ -773,28 +762,24 @@ namespace Imaging
         {
             try
             {
-                using (var wimHandle = WimgApi.CreateFile(
+                using WimHandle wimHandle = WimgApi.CreateFile(
                     wimFile,
                     WimFileAccess.Write,
                     WimCreationDisposition.OpenExisting,
                     WimCreateFileOptions.Chunked,
-                    WimCompressionType.None))
-                {
-                    // Always set a temporary path
-                    //
-                    WimgApi.SetTemporaryPath(wimHandle, Path.GetTempPath());
+                    WimCompressionType.None);
+                // Always set a temporary path
+                //
+                WimgApi.SetTemporaryPath(wimHandle, Path.GetTempPath());
 
-                    try
-                    {
-                        using (WimHandle imageHandle = WimgApi.LoadImage(wimHandle, imageIndex))
-                        {
-                            string img = WIMInformationXML.SerializeIMAGE(image);
-                            WimgApi.SetImageInformation(imageHandle, img);
-                        }
-                    }
-                    finally
-                    {
-                    }
+                try
+                {
+                    using WimHandle imageHandle = WimgApi.LoadImage(wimHandle, imageIndex);
+                    string img = WIMInformationXML.SerializeIMAGE(image);
+                    WimgApi.SetImageInformation(imageHandle, img);
+                }
+                finally
+                {
                 }
             }
             catch
@@ -804,7 +789,7 @@ namespace Imaging
             return true;
         }
 
-        public bool SetWIMImageInformation2(
+        public static bool SetWIMImageInformation2(
             string wimFile,
             int imageIndex,
             WIMInformationXML.IMAGE image)
@@ -812,15 +797,13 @@ namespace Imaging
             image = null;
             try
             {
-                using (Wim wim = Wim.OpenWim(wimFile, OpenFlags.WriteAccess))
-                {
-                    string xmldata = string.Join("", wim.GetXmlData().Skip(1));
-                    var xml = WIMInformationXML.DeserializeWIM(xmldata);
-                    var index = xml.IMAGE.IndexOf(xml.IMAGE.First(x => x.INDEX == imageIndex.ToString()));
-                    xml.IMAGE[index] = image;
-                    xmldata = WIMInformationXML.SerializeWIM(xml);
-                    // TODO
-                }
+                using Wim wim = Wim.OpenWim(wimFile, OpenFlags.WriteAccess);
+                string xmldata = string.Join("", wim.GetXmlData().Skip(1));
+                WIMInformationXML.WIM xml = WIMInformationXML.DeserializeWIM(xmldata);
+                int index = xml.IMAGE.IndexOf(xml.IMAGE.First(x => x.INDEX == imageIndex.ToString()));
+                xml.IMAGE[index] = image;
+                xmldata = WIMInformationXML.SerializeWIM(xml);
+                // TODO
             }
             catch
             {
@@ -833,22 +816,20 @@ namespace Imaging
         {
             try
             {
-                using (var wimHandle = WimgApi.CreateFile(
+                using WimHandle wimHandle = WimgApi.CreateFile(
                     wimFile,
                     WimFileAccess.Write,
                     WimCreationDisposition.OpenExisting,
                     WimCreateFileOptions.Chunked,
-                    WimCompressionType.None))
-                {
-                    // Always set a temporary path
-                    //
-                    WimgApi.SetTemporaryPath(wimHandle, Path.GetTempPath());
+                    WimCompressionType.None);
+                // Always set a temporary path
+                //
+                WimgApi.SetTemporaryPath(wimHandle, Path.GetTempPath());
 
-                    string xmldata = WimgApi.GetImageInformationAsString(wimHandle);
-                    var xml = WIMInformationXML.DeserializeWIM(xmldata);
-                    xmldata = WIMInformationXML.SerializeWIM(xml);
-                    WimgApi.SetImageInformation(wimHandle, xmldata);
-                }
+                string xmldata = WimgApi.GetImageInformationAsString(wimHandle);
+                WIMInformationXML.WIM xml = WIMInformationXML.DeserializeWIM(xmldata);
+                xmldata = WIMInformationXML.SerializeWIM(xml);
+                WimgApi.SetImageInformation(wimHandle, xmldata);
             }
             catch
             {
@@ -857,17 +838,15 @@ namespace Imaging
             return true;
         }
 
-        private bool ReseatWIMXml2(string wimFile)
+        private static bool ReseatWIMXml2(string wimFile)
         {
             try
             {
-                using (Wim wim = Wim.OpenWim(wimFile, OpenFlags.WriteAccess))
-                {
-                    string xmldata = string.Join("", wim.GetXmlData().Skip(1));
-                    var xml = WIMInformationXML.DeserializeWIM(xmldata);
-                    xmldata = WIMInformationXML.SerializeWIM(xml);
-                    // TODO
-                }
+                using Wim wim = Wim.OpenWim(wimFile, OpenFlags.WriteAccess);
+                string xmldata = string.Join("", wim.GetXmlData().Skip(1));
+                WIMInformationXML.WIM xml = WIMInformationXML.DeserializeWIM(xmldata);
+                xmldata = WIMInformationXML.SerializeWIM(xml);
+                // TODO
             }
             catch
             {

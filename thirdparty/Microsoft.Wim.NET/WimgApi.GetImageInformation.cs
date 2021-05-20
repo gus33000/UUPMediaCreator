@@ -32,18 +32,14 @@ namespace Microsoft.Wim
                 return null;
             }
 
-            XmlReaderSettings xmlReaderSettings = new XmlReaderSettings
+            XmlReaderSettings xmlReaderSettings = new()
             {
                 DtdProcessing = DtdProcessing.Prohibit,
             };
 
-            using (StringReader stringReader = new StringReader(xml))
-            {
-                using (XmlReader xmlReader = XmlReader.Create(stringReader, xmlReaderSettings))
-                {
-                    return new XPathDocument(xmlReader);
-                }
-            }
+            using StringReader stringReader = new(xml);
+            using XmlReader xmlReader = XmlReader.Create(stringReader, xmlReaderSettings);
+            return new XPathDocument(xmlReader);
         }
 
         /// <summary>
@@ -74,7 +70,7 @@ namespace Microsoft.Wim
                 }
 
                 // Marshal the buffer as a Unicode string and remove the Unicode file marker
-                return Marshal.PtrToStringUni(imageInfoPtr)?.Substring(1);
+                return Marshal.PtrToStringUni(imageInfoPtr)?[1..];
             }
             finally
             {
@@ -113,20 +109,18 @@ namespace Microsoft.Wim
                 return null;
             }
 
-            XmlDocument xmlDocument = new XmlDocument
+            XmlDocument xmlDocument = new()
             {
                 XmlResolver = null,
             };
 
-            using (StringReader stringReader = new StringReader(xml))
+            using (StringReader stringReader = new(xml))
             {
-                using (XmlReader xmlReader = new XmlTextReader(stringReader)
+                using XmlReader xmlReader = new XmlTextReader(stringReader)
                 {
                     DtdProcessing = DtdProcessing.Prohibit,
-                })
-                {
-                    xmlDocument.Load(xmlReader);
-                }
+                };
+                xmlDocument.Load(xmlReader);
             }
 
             return xmlDocument;

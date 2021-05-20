@@ -63,7 +63,7 @@ namespace Microsoft.Wim
             }
 
             // Create a collection of WimMountInfo objects
-            List<WimMountInfo> wimMountInfos = new List<WimMountInfo>();
+            List<WimMountInfo> wimMountInfos = new();
 
             // Allocate enough memory for the return array
             IntPtr mountInfoPtr = Marshal.AllocHGlobal((int)returnLength);
@@ -81,7 +81,7 @@ namespace Microsoft.Wim
                 for (int i = 0; i < imageCount; i++)
                 {
                     // Get the current pointer based on the index
-                    IntPtr currentImageInfoPtr = new IntPtr(mountInfoPtr.ToInt64() + (i * (returnLength / imageCount)));
+                    IntPtr currentImageInfoPtr = new(mountInfoPtr.ToInt64() + (i * (returnLength / imageCount)));
 
                     // Read a pointer and add a new WimMountInfo object to the collection
                     wimMountInfos.Add(new WimMountInfo(currentImageInfoPtr));

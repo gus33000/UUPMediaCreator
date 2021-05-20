@@ -1,4 +1,25 @@
-﻿using System;
+﻿/*
+ * Copyright (c) ADeltaX and Contributors
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+using System;
 using System.IO;
 using System.Security.Cryptography;
 using System.Threading;
@@ -34,18 +55,18 @@ namespace WindowsUpdateLib
         public async Task DecryptBufferToStreamAsync(byte[] buffer, Stream to, int bufferLength, long previousSumBlockLength,
             bool isPadded, CancellationToken cancellationToken = default)
         {
-            var offsetBytes = new byte[16];
+            byte[] offsetBytes = new byte[16];
             Array.Copy(BitConverter.GetBytes(previousSumBlockLength), offsetBytes, 8);
 
-            using var ivCrypter = aes.CreateEncryptor(key, new byte[16]);
-            var newIv = ivCrypter.TransformFinalBlock(offsetBytes, 0, 16);
+            using ICryptoTransform ivCrypter = aes.CreateEncryptor(key, new byte[16]);
+            byte[] newIv = ivCrypter.TransformFinalBlock(offsetBytes, 0, 16);
 
             if (isPadded)
                 aes.Padding = PaddingMode.PKCS7;
 
-            using var dec = aes.CreateDecryptor(key, newIv);
-            using var ms = new MemoryStream(buffer, 0, bufferLength);
-            using var cs = new CryptoStream(ms, dec, CryptoStreamMode.Read);
+            using ICryptoTransform dec = aes.CreateDecryptor(key, newIv);
+            using MemoryStream ms = new(buffer, 0, bufferLength);
+            using CryptoStream cs = new(ms, dec, CryptoStreamMode.Read);
 
 #if NET5_0
             await cs.CopyToAsync(to, cancellationToken).ConfigureAwait(false);
@@ -58,15 +79,15 @@ namespace WindowsUpdateLib
             CancellationToken cancellationToken = default)
         {
             int readBytes;
-            var buffer = new byte[esrp.EncryptionBufferSize];
+            byte[] buffer = new byte[esrp.EncryptionBufferSize];
 #if NET5_0
             while ((readBytes = await encryptedFile.ReadAsync(buffer.AsMemory(0, buffer.Length), cancellationToken).ConfigureAwait(false)) > 0)
 #else
             while ((readBytes = await encryptedFile.ReadAsync(buffer, 0, buffer.Length, cancellationToken).ConfigureAwait(false)) > 0)
 #endif
             {
-                var needsPaddingMode = encryptedSize == (ulong)encryptedFile.Position;
-                var previousSumBlockLength = encryptedFile.Position - readBytes;
+                bool needsPaddingMode = encryptedSize == (ulong)encryptedFile.Position;
+                long previousSumBlockLength = encryptedFile.Position - readBytes;
                 await DecryptBufferToStreamAsync(buffer, decryptedFile, readBytes, previousSumBlockLength, needsPaddingMode, cancellationToken).ConfigureAwait(false);
 
                 cancellationToken.ThrowIfCancellationRequested();
@@ -76,8 +97,8 @@ namespace WindowsUpdateLib
         public async Task DecryptFileAsync(string encryptedFilePath, string decryptedFilePath,
             CancellationToken cancellationToken = default)
         {
-            using var encryptedFile = File.OpenRead(encryptedFilePath);
-            using var decryptedFile = File.OpenWrite(decryptedFilePath);
+            using FileStream encryptedFile = File.OpenRead(encryptedFilePath);
+            using FileStream decryptedFile = File.OpenWrite(decryptedFilePath);
             await DecryptStreamFullAsync(encryptedFile, decryptedFile, (ulong)encryptedFile.Length, cancellationToken).ConfigureAwait(false);
         }
 

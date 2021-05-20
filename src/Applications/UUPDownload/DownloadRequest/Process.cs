@@ -1,23 +1,24 @@
-﻿// Copyright (c) Gustave Monce and Contributors
-//
-// Permission is hereby granted, free of charge, to any person obtaining a
-// copy of this software and associated documentation files (the "Software"),
-// to deal in the Software without restriction, including without limitation
-// the rights to use, copy, modify, merge, publish, distribute, sublicense,
-// and/or sell copies of the Software, and to permit persons to whom the
-// Software is furnished to do so, subject to the following conditions:
-//
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
-// DEALINGS IN THE SOFTWARE.
-
+﻿/*
+ * Copyright (c) Gustave Monce and Contributors
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
 using CompDB;
 using System;
 using System.Collections.Generic;
@@ -97,12 +98,12 @@ namespace UUPDownload.DownloadRequest
 
             IEnumerable<UpdateData> data = await FE3Handler.GetUpdates(null, ctac, token, FileExchangeV3UpdateFilter.ProductRelease);
             data = data.Select(x => UpdateUtils.TrimDeltasFromUpdateData(x));
-            
-            if(data.Count() == 0)
+
+            if (!data.Any())
             {
                 Logging.Log("No updates found that matched the specified criteria.", Logging.LoggingLevel.Error);
             }
-            else 
+            else
             {
                 foreach (UpdateData update in data)
                 {
@@ -124,7 +125,7 @@ namespace UUPDownload.DownloadRequest
 
             Logging.Log("Gathering update metadata...");
 
-            var compDBs = await update.GetCompDBsAsync();
+            HashSet<CompDBXmlClass.CompDB> compDBs = await update.GetCompDBsAsync();
 
             await Task.WhenAll(
                 Task.Run(async () => buildstr = await update.GetBuildStringAsync()),
@@ -153,9 +154,9 @@ namespace UUPDownload.DownloadRequest
                 if (editionPackPkg != null)
                 {
                     string editionPkg = await update.DownloadFileFromDigestAsync(editionPackPkg.Payload.PayloadItem.PayloadHash);
-                    var plans = await Task.WhenAll(languages.Select(x => update.GetTargetedPlanAsync(x, editionPkg)));
+                    BuildTargets.EditionPlanningWithLanguage[] plans = await Task.WhenAll(languages.Select(x => update.GetTargetedPlanAsync(x, editionPkg)));
 
-                    foreach (var plan in plans)
+                    foreach (BuildTargets.EditionPlanningWithLanguage plan in plans)
                     {
                         Logging.Log("");
                         Logging.Log("Editions available for language: " + plan.LanguageCode);
@@ -163,7 +164,7 @@ namespace UUPDownload.DownloadRequest
                     }
                 }
             }
-            
+
             await DownloadLib.UpdateUtils.ProcessUpdateAsync(update, pOutputFolder, MachineType, new ReportProgress(), Language, Edition, WriteMetadata);
         }
 

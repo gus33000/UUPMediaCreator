@@ -1,4 +1,25 @@
-﻿using System.Collections.Generic;
+﻿/*
+ * Copyright (c) Gustave Monce and Contributors
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
@@ -178,74 +199,62 @@ namespace Imaging
         {
             if (wim == null) return string.Empty;
 
-            var xmlSerializer = new XmlSerializer(typeof(WIM));
+            XmlSerializer xmlSerializer = new XmlSerializer(typeof(WIM));
 
-            using (var stringWriter = new StringWriter())
+            using StringWriter stringWriter = new StringWriter();
+            using XmlWriter xmlWriter = XmlWriter.Create(stringWriter, new XmlWriterSettings
             {
-                using (var xmlWriter = XmlWriter.Create(stringWriter, new XmlWriterSettings
-                {
-                    Indent = false,
-                    IndentChars = "",
-                    NewLineChars = "",
-                    NewLineHandling = NewLineHandling.None,
-                    OmitXmlDeclaration = true,
-                    NewLineOnAttributes = false
-                }))
-                {
-                    xmlSerializer.Serialize(xmlWriter, wim);
-                    return stringWriter.ToString().Replace(" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"", "")
-                        .Replace(" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\"", "");
-                }
-            }
+                Indent = false,
+                IndentChars = "",
+                NewLineChars = "",
+                NewLineHandling = NewLineHandling.None,
+                OmitXmlDeclaration = true,
+                NewLineOnAttributes = false
+            });
+            xmlSerializer.Serialize(xmlWriter, wim);
+            return stringWriter.ToString().Replace(" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"", "")
+                .Replace(" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\"", "");
         }
 
         public static WIM DeserializeWIM(string wim)
         {
             if (wim == null) return null;
 
-            var xmlSerializer = new XmlSerializer(typeof(WIM));
+            XmlSerializer xmlSerializer = new XmlSerializer(typeof(WIM));
 
-            using (var stringReader = new StringReader(wim))
-            {
-                return (WIM)xmlSerializer.Deserialize(stringReader);
-            }
+            using StringReader stringReader = new StringReader(wim);
+            return (WIM)xmlSerializer.Deserialize(stringReader);
         }
 
         public static string SerializeIMAGE(IMAGE wim)
         {
             if (wim == null) return string.Empty;
 
-            var xmlSerializer = new XmlSerializer(typeof(IMAGE));
+            XmlSerializer xmlSerializer = new XmlSerializer(typeof(IMAGE));
 
-            using (var stringWriter = new StringWriter())
+            using StringWriter stringWriter = new StringWriter();
+            using XmlWriter xmlWriter = XmlWriter.Create(stringWriter, new XmlWriterSettings
             {
-                using (var xmlWriter = XmlWriter.Create(stringWriter, new XmlWriterSettings
-                {
-                    Indent = false,
-                    IndentChars = "",
-                    NewLineChars = "",
-                    NewLineHandling = NewLineHandling.None,
-                    OmitXmlDeclaration = true,
-                    NewLineOnAttributes = false
-                }))
-                {
-                    xmlSerializer.Serialize(xmlWriter, wim);
-                    return stringWriter.ToString().Replace(" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"", "")
-                        .Replace(" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\"", "");
-                }
-            }
+                Indent = false,
+                IndentChars = "",
+                NewLineChars = "",
+                NewLineHandling = NewLineHandling.None,
+                OmitXmlDeclaration = true,
+                NewLineOnAttributes = false
+            });
+            xmlSerializer.Serialize(xmlWriter, wim);
+            return stringWriter.ToString().Replace(" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"", "")
+                .Replace(" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\"", "");
         }
 
         public static IMAGE DeserializeIMAGE(string wim)
         {
             if (wim == null) return null;
 
-            var xmlSerializer = new XmlSerializer(typeof(IMAGE));
+            XmlSerializer xmlSerializer = new XmlSerializer(typeof(IMAGE));
 
-            using (var stringReader = new StringReader(wim))
-            {
-                return (IMAGE)xmlSerializer.Deserialize(stringReader);
-            }
+            using StringReader stringReader = new StringReader(wim);
+            return (IMAGE)xmlSerializer.Deserialize(stringReader);
         }
     }
 }

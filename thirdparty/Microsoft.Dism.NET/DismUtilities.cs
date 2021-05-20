@@ -119,19 +119,17 @@ namespace Microsoft.Dism
         {
             get
             {
-                using (RegistryKey key = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32).OpenSubKey("SOFTWARE\\Microsoft\\Windows Kits\\Installed Roots"))
+                using RegistryKey key = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32).OpenSubKey("SOFTWARE\\Microsoft\\Windows Kits\\Installed Roots");
+                if (key?.GetValue("KitsRoot10")?.ToString() == null)
                 {
-                    if (key?.GetValue("KitsRoot10")?.ToString() == null)
-                    {
-                        return null;
-                    }
-
-                    string dismPath = Path.Combine(
-                        key.GetValue("KitsRoot10").ToString(),
-                        $"Assessment and Deployment Kit\\Deployment Tools\\{(Environment.Is64BitProcess ? "amd64" : "x86")}\\DISM\\dismapi.dll");
-
-                    return File.Exists(dismPath) ? dismPath : null;
+                    return null;
                 }
+
+                string dismPath = Path.Combine(
+                    key.GetValue("KitsRoot10").ToString(),
+                    $"Assessment and Deployment Kit\\Deployment Tools\\{(Environment.Is64BitProcess ? "amd64" : "x86")}\\DISM\\dismapi.dll");
+
+                return File.Exists(dismPath) ? dismPath : null;
             }
         }
 
@@ -143,19 +141,17 @@ namespace Microsoft.Dism
         {
             get
             {
-                using (RegistryKey key = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32).OpenSubKey("SOFTWARE\\Microsoft\\Windows Kits\\Installed Roots"))
+                using RegistryKey key = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32).OpenSubKey("SOFTWARE\\Microsoft\\Windows Kits\\Installed Roots");
+                if (key?.GetValue("KitsRoot")?.ToString() == null)
                 {
-                    if (key?.GetValue("KitsRoot")?.ToString() == null)
-                    {
-                        return null;
-                    }
-
-                    string dismPath = Path.Combine(
-                        key.GetValue("KitsRoot").ToString(),
-                        $"Assessment and Deployment Kit\\Deployment Tools\\{(Environment.Is64BitProcess ? "amd64" : "x86")}\\DISM\\dismapi.dll");
-
-                    return File.Exists(dismPath) ? dismPath : null;
+                    return null;
                 }
+
+                string dismPath = Path.Combine(
+                    key.GetValue("KitsRoot").ToString(),
+                    $"Assessment and Deployment Kit\\Deployment Tools\\{(Environment.Is64BitProcess ? "amd64" : "x86")}\\DISM\\dismapi.dll");
+
+                return File.Exists(dismPath) ? dismPath : null;
             }
         }
 
@@ -167,19 +163,17 @@ namespace Microsoft.Dism
         {
             get
             {
-                using (RegistryKey key = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32).OpenSubKey("SOFTWARE\\Microsoft\\Windows Kits\\Installed Roots"))
+                using RegistryKey key = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32).OpenSubKey("SOFTWARE\\Microsoft\\Windows Kits\\Installed Roots");
+                if (key?.GetValue("KitsRoot81")?.ToString() == null)
                 {
-                    if (key?.GetValue("KitsRoot81")?.ToString() == null)
-                    {
-                        return null;
-                    }
-
-                    string dismPath = Path.Combine(
-                        key.GetValue("KitsRoot81").ToString(),
-                        $"Assessment and Deployment Kit\\Deployment Tools\\{(Environment.Is64BitProcess ? "amd64" : "x86")}\\DISM\\dismapi.dll");
-
-                    return File.Exists(dismPath) ? dismPath : null;
+                    return null;
                 }
+
+                string dismPath = Path.Combine(
+                    key.GetValue("KitsRoot81").ToString(),
+                    $"Assessment and Deployment Kit\\Deployment Tools\\{(Environment.Is64BitProcess ? "amd64" : "x86")}\\DISM\\dismapi.dll");
+
+                return File.Exists(dismPath) ? dismPath : null;
             }
         }
 
@@ -191,17 +185,15 @@ namespace Microsoft.Dism
         {
             get
             {
-                using (RegistryKey key = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Default).OpenSubKey("SOFTWARE\\Microsoft\\ComponentStudio\\6.1.7600.16385"))
+                using RegistryKey key = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Default).OpenSubKey("SOFTWARE\\Microsoft\\ComponentStudio\\6.1.7600.16385");
+                if (key?.GetValue("ServicingPath")?.ToString() == null)
                 {
-                    if (key?.GetValue("ServicingPath")?.ToString() == null)
-                    {
-                        return null;
-                    }
-
-                    string dismPath = Path.Combine(key.GetValue("ServicingPath").ToString(), "dism.exe");
-
-                    return File.Exists(dismPath) ? dismPath : null;
+                    return null;
                 }
+
+                string dismPath = Path.Combine(key.GetValue("ServicingPath").ToString(), "dism.exe");
+
+                return File.Exists(dismPath) ? dismPath : null;
             }
         }
 

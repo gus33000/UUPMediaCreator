@@ -53,10 +53,10 @@ namespace Microsoft.Dism
         public static void AddCapability(DismSession session, string capabilityName, bool limitAccess, List<string> sourcePaths, Microsoft.Dism.DismProgressCallback progressCallback, object userData)
         {
             // Get the list of source paths as an array
-            string[] sourcePathsArray = sourcePaths?.ToArray() ?? new string[0];
+            string[] sourcePathsArray = sourcePaths?.ToArray() ?? Array.Empty<string>();
 
             // Create a DismProgress object to wrap the callback and allow cancellation
-            DismProgress progress = new DismProgress(progressCallback, userData);
+            DismProgress progress = new(progressCallback, userData);
 
             int hresult = NativeMethods.DismAddCapability(session, capabilityName, limitAccess, sourcePathsArray, (uint)sourcePathsArray.Length, progress.EventHandle, progress.DismProgressCallbackNative, IntPtr.Zero);
 

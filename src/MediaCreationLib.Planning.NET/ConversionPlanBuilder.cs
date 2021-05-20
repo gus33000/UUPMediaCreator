@@ -1,4 +1,25 @@
-﻿using CompDB;
+﻿/*
+ * Copyright (c) Gustave Monce and Contributors
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+using CompDB;
 using Imaging;
 using System;
 using System.Collections.Generic;
@@ -12,8 +33,8 @@ namespace MediaCreationLib.Planning.NET
     public class EditionTarget
     {
         public PlannedEdition PlannedEdition { get; set; } = new PlannedEdition();
-        public List<EditionTarget> NonDestructiveTargets = new List<EditionTarget>();
-        public List<EditionTarget> DestructiveTargets = new List<EditionTarget>();
+        public List<EditionTarget> NonDestructiveTargets = new();
+        public List<EditionTarget> DestructiveTargets = new();
     }
 
     public class PlannedEdition
@@ -34,7 +55,7 @@ namespace MediaCreationLib.Planning.NET
     {
         public delegate void ProgressCallback(string SubOperation);
 
-        private static WIMImaging imagingInterface = new WIMImaging();
+        private static readonly WIMImaging imagingInterface = new();
 
         private static EditionTarget BuildTarget(
             PlannedEdition edition,
@@ -45,7 +66,7 @@ namespace MediaCreationLib.Planning.NET
             ref List<string> editionsAdded
         )
         {
-            EditionTarget target = new EditionTarget() { PlannedEdition = edition };
+            EditionTarget target = new() { PlannedEdition = edition };
             editionsAdded.Add(edition.EditionName);
 
             //
@@ -54,11 +75,11 @@ namespace MediaCreationLib.Planning.NET
             //
             if (availableEditionsByDowngradingInPriority != null)
             {
-                foreach (var element in Constants.EditionDowngradeDict)
+                foreach (KeyValuePair<string, string[]> element in Constants.EditionDowngradeDict)
                 {
                     string editionThatCanBePackageSwapped = element.Key;
 
-                    foreach (var destinationEditionAfterPackageSwap in element.Value)
+                    foreach (string? destinationEditionAfterPackageSwap in element.Value)
                     {
                         //
                         // Is the currently examined edition from the dictionary is possible to get with the current UUP set?
@@ -78,7 +99,7 @@ namespace MediaCreationLib.Planning.NET
                                     //
                                     // Get the edition that can be targeted using package swap
                                     //
-                                    var planedition = availableEditionsByDowngradingInPriority.First(x => x.EditionName.Equals(destinationEditionAfterPackageSwap, StringComparison.InvariantCultureIgnoreCase));
+                                    PlannedEdition? planedition = availableEditionsByDowngradingInPriority.First(x => x.EditionName.Equals(destinationEditionAfterPackageSwap, StringComparison.InvariantCultureIgnoreCase));
 
                                     //
                                     // Remove it from the list of editions that can be targeted, as we are targeting it here so it doesn't get picked up again
@@ -100,7 +121,7 @@ namespace MediaCreationLib.Planning.NET
             // Handle editions that can be obtained by upgrading to a virtual edition
             // Loop through all editions we can upgrade to with the current examined edition
             //
-            foreach (var ed in virtualWindowsEditions.Where(x => x.ParentEdition.Equals(edition.EditionName, StringComparison.InvariantCultureIgnoreCase)))
+            foreach (EditionMappingXML.Edition? ed in virtualWindowsEditions.Where(x => x.ParentEdition.Equals(edition.EditionName, StringComparison.InvariantCultureIgnoreCase)))
             {
                 //
                 // Verify that we have not added this edition already
@@ -112,7 +133,7 @@ namespace MediaCreationLib.Planning.NET
 
                 editionsAdded.Add(ed.Name);
 
-                PlannedEdition plannedEdition = new PlannedEdition()
+                PlannedEdition plannedEdition = new()
                 {
                     AvailabilityType = AvailabilityType.VirtualEdition,
                     EditionName = ed.Name
@@ -129,7 +150,7 @@ namespace MediaCreationLib.Planning.NET
             //
             // Handle editions that we can upgrade to using a full upgrade process
             //
-            foreach (var ed in possibleEditionUpgrades.Where(x => x.ParentEdition.Equals(edition.EditionName, StringComparison.InvariantCultureIgnoreCase)))
+            foreach (EditionMappingXML.Edition? ed in possibleEditionUpgrades.Where(x => x.ParentEdition.Equals(edition.EditionName, StringComparison.InvariantCultureIgnoreCase)))
             {
                 //
                 // Verify that we have not added this edition already
@@ -141,7 +162,7 @@ namespace MediaCreationLib.Planning.NET
 
                 editionsAdded.Add(ed.Name);
 
-                PlannedEdition plannedEdition = new PlannedEdition()
+                PlannedEdition plannedEdition = new()
                 {
                     AvailabilityType = AvailabilityType.EditionUpgrade,
                     EditionName = ed.Name
@@ -153,25 +174,25 @@ namespace MediaCreationLib.Planning.NET
             //
             // Handle editions that can be obtained by doing a package swap
             //
-            var CoreEditionsToBeHacked = availableEditionsByDowngrading.Where(x =>
+            IEnumerable<PlannedEdition>? CoreEditionsToBeHacked = availableEditionsByDowngrading.Where(x =>
             x.EditionName.StartsWith("core", StringComparison.InvariantCultureIgnoreCase) &&
             !(x.EditionName.EndsWith("n", StringComparison.InvariantCultureIgnoreCase) || x.EditionName.EndsWith("neval", StringComparison.InvariantCultureIgnoreCase)));
 
-            var CoreEditionsWithNoMediaTechnologiesToBeHacked = availableEditionsByDowngrading.Where(x =>
+            IEnumerable<PlannedEdition>? CoreEditionsWithNoMediaTechnologiesToBeHacked = availableEditionsByDowngrading.Where(x =>
             x.EditionName.StartsWith("core", StringComparison.InvariantCultureIgnoreCase) &&
             (x.EditionName.EndsWith("n", StringComparison.InvariantCultureIgnoreCase) || x.EditionName.EndsWith("neval", StringComparison.InvariantCultureIgnoreCase)));
 
-            var ProfessionalEditionsToBeHacked = availableEditionsByDowngrading.Where(x =>
+            IEnumerable<PlannedEdition>? ProfessionalEditionsToBeHacked = availableEditionsByDowngrading.Where(x =>
             !x.EditionName.StartsWith("core", StringComparison.InvariantCultureIgnoreCase) &&
             !(x.EditionName.EndsWith("n", StringComparison.InvariantCultureIgnoreCase) || x.EditionName.EndsWith("neval", StringComparison.InvariantCultureIgnoreCase)));
 
-            var ProfessionalEditionsWithNoMediaTechnologiesToBeHacked = availableEditionsByDowngrading.Where(x =>
+            IEnumerable<PlannedEdition>? ProfessionalEditionsWithNoMediaTechnologiesToBeHacked = availableEditionsByDowngrading.Where(x =>
             !x.EditionName.StartsWith("core", StringComparison.InvariantCultureIgnoreCase) &&
             (x.EditionName.EndsWith("n", StringComparison.InvariantCultureIgnoreCase) || x.EditionName.EndsWith("neval", StringComparison.InvariantCultureIgnoreCase)));
 
             if (edition.EditionName.Equals("professional", StringComparison.InvariantCultureIgnoreCase))
             {
-                foreach (var ed in ProfessionalEditionsToBeHacked)
+                foreach (PlannedEdition? ed in ProfessionalEditionsToBeHacked)
                 {
                     //
                     // Verify that we have not added this edition already
@@ -188,7 +209,7 @@ namespace MediaCreationLib.Planning.NET
             }
             else if (edition.EditionName.Equals("professionaln", StringComparison.InvariantCultureIgnoreCase))
             {
-                foreach (var ed in ProfessionalEditionsWithNoMediaTechnologiesToBeHacked)
+                foreach (PlannedEdition? ed in ProfessionalEditionsWithNoMediaTechnologiesToBeHacked)
                 {
                     //
                     // Verify that we have not added this edition already
@@ -205,7 +226,7 @@ namespace MediaCreationLib.Planning.NET
             }
             else if (edition.EditionName.Equals("core", StringComparison.InvariantCultureIgnoreCase))
             {
-                foreach (var ed in CoreEditionsToBeHacked)
+                foreach (PlannedEdition? ed in CoreEditionsToBeHacked)
                 {
                     //
                     // Verify that we have not added this edition already
@@ -222,7 +243,7 @@ namespace MediaCreationLib.Planning.NET
             }
             else if (edition.EditionName.Equals("coren", StringComparison.InvariantCultureIgnoreCase))
             {
-                foreach (var ed in CoreEditionsWithNoMediaTechnologiesToBeHacked)
+                foreach (PlannedEdition? ed in CoreEditionsWithNoMediaTechnologiesToBeHacked)
                 {
                     //
                     // Verify that we have not added this edition already
@@ -250,8 +271,8 @@ namespace MediaCreationLib.Planning.NET
             List<EditionMappingXML.Edition> possibleEditionUpgrades,
             ProgressCallback? progressCallback = null)
         {
-            List<PlannedEdition> availableEditionsByDowngradingInPriority = new List<PlannedEdition>();
-            List<PlannedEdition> availableEditionsByDowngrading = new List<PlannedEdition>();
+            List<PlannedEdition> availableEditionsByDowngradingInPriority = new();
+            List<PlannedEdition> availableEditionsByDowngrading = new();
 
             //
             // Attempt to get the neutral Composition Database listing all available files
@@ -260,15 +281,15 @@ namespace MediaCreationLib.Planning.NET
 
             if (neutralCompDB != null)
             {
-                var packages = neutralCompDB.Features.Feature.First(x => x.FeatureID == "BaseNeutral").Packages.Package;
+                List<CompDBXmlClass.Package>? packages = neutralCompDB.Features.Feature.First(x => x.FeatureID == "BaseNeutral").Packages.Package;
 
-                var editionSpecificPackages = packages.Where(x => x.ID.Count(y => y == '-') == 4).Where(x => x.ID.Contains("microsoft-windows-editionspecific", StringComparison.InvariantCultureIgnoreCase));
-                var highPriorityPackages = editionSpecificPackages.Where(x => x.ID.Contains("starter", StringComparison.InvariantCultureIgnoreCase) ||
+                IEnumerable<CompDBXmlClass.Package>? editionSpecificPackages = packages.Where(x => x.ID.Count(y => y == '-') == 4).Where(x => x.ID.Contains("microsoft-windows-editionspecific", StringComparison.InvariantCultureIgnoreCase));
+                IEnumerable<CompDBXmlClass.Package>? highPriorityPackages = editionSpecificPackages.Where(x => x.ID.Contains("starter", StringComparison.InvariantCultureIgnoreCase) ||
                                                                             x.ID.Contains("professional", StringComparison.InvariantCultureIgnoreCase) ||
                                                                             x.ID.Contains("core", StringComparison.InvariantCultureIgnoreCase));
                 editionSpecificPackages = editionSpecificPackages.Except(highPriorityPackages);
 
-                foreach (var file in highPriorityPackages)
+                foreach (CompDBXmlClass.Package? file in highPriorityPackages)
                 {
                     CompDBXmlClass.Package pkg = neutralCompDB.Packages.Package.First(x => x.ID == file.ID);
 
@@ -286,7 +307,7 @@ namespace MediaCreationLib.Planning.NET
                         }
                     }
 
-                    var sku = file.ID.Split('-')[3];
+                    string? sku = file.ID.Split('-')[3];
 
                     //
                     // If the edition not available as canonical
@@ -298,7 +319,7 @@ namespace MediaCreationLib.Planning.NET
                                         availableEditionsByDowngrading.Any(y => y.EditionName.Equals(x.ParentEdition, StringComparison.InvariantCultureIgnoreCase)))
                             .Any(x => x.Name.Equals(sku, StringComparison.InvariantCultureIgnoreCase)))
                         {
-                            PlannedEdition edition = new PlannedEdition
+                            PlannedEdition edition = new()
                             {
                                 EditionName = sku,
                                 AvailabilityType = AvailabilityType.EditionPackageSwap
@@ -309,7 +330,7 @@ namespace MediaCreationLib.Planning.NET
                     }
                 }
 
-                foreach (var file in editionSpecificPackages)
+                foreach (CompDBXmlClass.Package? file in editionSpecificPackages)
                 {
                     CompDBXmlClass.Package pkg = neutralCompDB.Packages.Package.First(x => x.ID == file.ID);
 
@@ -327,7 +348,7 @@ namespace MediaCreationLib.Planning.NET
                         }
                     }
 
-                    var sku = file.ID.Split('-')[3];
+                    string? sku = file.ID.Split('-')[3];
 
                     //
                     // If the edition not available as canonical
@@ -339,7 +360,7 @@ namespace MediaCreationLib.Planning.NET
                                         availableEditionsByDowngrading.Any(y => y.EditionName.Equals(x.ParentEdition, StringComparison.InvariantCultureIgnoreCase)))
                             .Any(x => x.Name.Equals(sku, StringComparison.InvariantCultureIgnoreCase)))
                         {
-                            PlannedEdition edition = new PlannedEdition
+                            PlannedEdition edition = new()
                             {
                                 EditionName = sku,
                                 AvailabilityType = AvailabilityType.EditionPackageSwap
@@ -367,12 +388,12 @@ namespace MediaCreationLib.Planning.NET
 
         public static List<string> PrintEditionTarget(EditionTarget editionTarget, int padding = 0)
         {
-            List<string> lines = new List<string>();
+            List<string> lines = new();
             lines.Add($"-> Name: {editionTarget.PlannedEdition.EditionName}, Availability: {editionTarget.PlannedEdition.AvailabilityType}");
             if (editionTarget.NonDestructiveTargets.Count > 0)
             {
                 lines.Add("   Non Destructive Edition Upgrade Targets:");
-                foreach (var ed in editionTarget.NonDestructiveTargets)
+                foreach (EditionTarget? ed in editionTarget.NonDestructiveTargets)
                 {
                     lines.AddRange(PrintEditionTarget(ed, padding + 1));
                 }
@@ -380,7 +401,7 @@ namespace MediaCreationLib.Planning.NET
             if (editionTarget.DestructiveTargets.Count > 0)
             {
                 lines.Add("   Destructive Edition Upgrade Targets:");
-                foreach (var ed in editionTarget.DestructiveTargets)
+                foreach (EditionTarget? ed in editionTarget.DestructiveTargets)
                 {
                     lines.AddRange(PrintEditionTarget(ed, padding + 1));
                 }
@@ -428,7 +449,7 @@ namespace MediaCreationLib.Planning.NET
                     if (!success)
                     {
                         progressCallback?.Invoke("One edition Composition Database failed file validation, below is highlighted the files that could not be found in the UUP path. This means that you will not get all possible editions.");
-                        foreach (var file in missingfiles)
+                        foreach (string? file in missingfiles)
                         {
                             progressCallback?.Invoke($"Missing: {file}");
                         }
@@ -438,7 +459,7 @@ namespace MediaCreationLib.Planning.NET
                 return success;
             });
 
-            if (filteredCompDBs.Count() == 0)
+            if (!filteredCompDBs.Any())
             {
                 progressCallback?.Invoke("No edition CompDB validated or were found, this is a fatal error, as one edition CompDB is needed at the very least for creating an ISO.");
                 goto error;
@@ -451,7 +472,7 @@ namespace MediaCreationLib.Planning.NET
             //
             IEnumerable<PlannedEdition> availableCanonicalEditions = filteredCompDBs.Select(compDB =>
             {
-                PlannedEdition edition = new PlannedEdition()
+                PlannedEdition edition = new()
                 {
                     AvailabilityType = AvailabilityType.Canonical
                 };
@@ -476,13 +497,13 @@ namespace MediaCreationLib.Planning.NET
                 // This dictionary holds the possible virtual edition upgrades
                 // Example: Professional -> ProfessionalEducation
                 //
-                List<EditionMappingXML.Edition> virtualWindowsEditions = new List<EditionMappingXML.Edition>();
+                List<EditionMappingXML.Edition> virtualWindowsEditions = new();
 
                 //
                 // This dictionary holds the possible edition upgrades
                 // Example: Core -> Professional
                 //
-                List<EditionMappingXML.Edition> possibleEditionUpgrades = new List<EditionMappingXML.Edition>();
+                List<EditionMappingXML.Edition> possibleEditionUpgrades = new();
 
                 if (!string.IsNullOrEmpty(EditionPack) && File.Exists(EditionPack))
                 {
@@ -493,13 +514,13 @@ namespace MediaCreationLib.Planning.NET
                     {
                         try
                         {
-                            var tempHashMap = Path.GetTempFileName();
+                            string? tempHashMap = Path.GetTempFileName();
                             File.Delete(tempHashMap);
 
                             string pathEditionMapping = "";
                             int index = 0;
 
-                            result = imagingInterface.ExtractFileFromImage(EditionPack, 1, "$filehashes$.dat", tempHashMap);
+                            result = WIMImaging.ExtractFileFromImage(EditionPack, 1, "$filehashes$.dat", tempHashMap);
                             if (result)
                             {
                                 string[] hashmapcontent = File.ReadAllLines(tempHashMap);
@@ -516,15 +537,15 @@ namespace MediaCreationLib.Planning.NET
 
                             try
                             {
-                                result = imagingInterface.ExtractFileFromImage(EditionPack, index, pathEditionMapping, tempHashMap);
+                                result = WIMImaging.ExtractFileFromImage(EditionPack, index, pathEditionMapping, tempHashMap);
                                 if (!result)
                                     goto error;
 
                                 string editionmappingcontent = File.ReadAllText(tempHashMap);
                                 File.Delete(tempHashMap);
 
-                                var mapping = EditionMappingXML.Deserialize(editionmappingcontent);
-                                var virtualeditions = mapping.Edition.Where(x =>
+                                EditionMappingXML.WindowsEditions? mapping = EditionMappingXML.Deserialize(editionmappingcontent);
+                                IOrderedEnumerable<EditionMappingXML.Edition>? virtualeditions = mapping.Edition.Where(x =>
                                     !string.IsNullOrEmpty(x.Virtual) &&
                                     x.Virtual.Equals("true", StringComparison.InvariantCultureIgnoreCase)).OrderBy(x => x.ParentEdition);
 
@@ -542,13 +563,13 @@ namespace MediaCreationLib.Planning.NET
                     {
                         try
                         {
-                            var tempHashMap = Path.GetTempFileName();
+                            string? tempHashMap = Path.GetTempFileName();
                             File.Delete(tempHashMap);
 
                             string pathEditionMatrix = "";
                             int index = 0;
 
-                            result = imagingInterface.ExtractFileFromImage(EditionPack, 1, "$filehashes$.dat", tempHashMap);
+                            result = WIMImaging.ExtractFileFromImage(EditionPack, 1, "$filehashes$.dat", tempHashMap);
                             if (result)
                             {
                                 string[] hashmapcontent = File.ReadAllLines(tempHashMap);
@@ -565,19 +586,19 @@ namespace MediaCreationLib.Planning.NET
 
                             try
                             {
-                                result = imagingInterface.ExtractFileFromImage(EditionPack, index, pathEditionMatrix, tempHashMap);
+                                result = WIMImaging.ExtractFileFromImage(EditionPack, index, pathEditionMatrix, tempHashMap);
                                 if (!result)
                                     goto error;
 
                                 string editionmatrixcontent = File.ReadAllText(tempHashMap);
                                 File.Delete(tempHashMap);
 
-                                var mapping = EditionMatrixXML.Deserialize(editionmatrixcontent);
-                                foreach (var edition in mapping.Edition)
+                                EditionMatrixXML.TmiMatrix? mapping = EditionMatrixXML.Deserialize(editionmatrixcontent);
+                                foreach (EditionMatrixXML.Edition? edition in mapping.Edition)
                                 {
                                     if (edition.Target != null && edition.Target.Count != 0)
                                     {
-                                        foreach (var target in edition.Target)
+                                        foreach (EditionMatrixXML.Target? target in edition.Target)
                                         {
                                             if (!availableCanonicalEditions.Any(x => x.EditionName.Equals(target.ID, StringComparison.InvariantCultureIgnoreCase)))
                                             {
@@ -600,9 +621,9 @@ namespace MediaCreationLib.Planning.NET
                 progressCallback?.Invoke("Building Targets");
 
 
-                List<string> editionsAdded = new List<string>();
+                List<string> editionsAdded = new();
 
-                foreach (var ed in availableCanonicalEditions)
+                foreach (PlannedEdition? ed in availableCanonicalEditions)
                 {
                     EditionTargets.Add(BuildTarget(ed, availableEditionsByDowngrading, virtualWindowsEditions, possibleEditionUpgrades, availableEditionsByDowngradingInPriority, ref editionsAdded));
                 }
@@ -611,7 +632,7 @@ namespace MediaCreationLib.Planning.NET
             {
                 progressCallback?.Invoke("Building Targets");
 
-                foreach (var ed in availableCanonicalEditions)
+                foreach (PlannedEdition? ed in availableCanonicalEditions)
                 {
                     EditionTargets.Add(new EditionTarget() { PlannedEdition = ed });
                 }

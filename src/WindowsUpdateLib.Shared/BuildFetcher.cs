@@ -1,4 +1,25 @@
-﻿using Cabinet;
+﻿/*
+ * Copyright (c) Gustave Monce and Contributors
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+using Cabinet;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -15,13 +36,13 @@ namespace WindowsUpdateLib
                                     StringComparison comp)
         {
             if (substring == null)
-                throw new ArgumentNullException("substring",
+                throw new ArgumentNullException(nameof(substring),
                                              "substring cannot be null.");
             else if (!Enum.IsDefined(typeof(StringComparison), comp))
                 throw new ArgumentException("comp is not a member of StringComparison",
-                                         "comp");
+                                         nameof(comp));
 
-            return str.IndexOf(substring, comp) >= 0;
+            return str.Contains(substring, comp);
         }
 
         public static string Replace(this string originalString, string oldValue, string newValue, StringComparison comparisonType)
@@ -33,7 +54,7 @@ namespace WindowsUpdateLib
                 if (startIndex == -1)
                     break;
 
-                originalString = originalString.Substring(0, startIndex) + newValue + originalString.Substring(startIndex + oldValue.Length);
+                originalString = originalString.Substring(0, startIndex) + newValue + originalString[(startIndex + oldValue.Length)..];
 
                 startIndex += newValue.Length;
             }
@@ -67,13 +88,13 @@ namespace WindowsUpdateLib
 
         public static async Task<AvailableBuild[]> GetAvailableBuildsAsync(MachineType machineType)
         {
-            List<AvailableBuild> availableBuilds = new List<AvailableBuild>();
+            List<AvailableBuild> availableBuilds = new();
 
-            var updates = await GetUpdates(machineType);
+            IEnumerable<UpdateData> updates = await GetUpdates(machineType);
 
-            foreach (var update in updates)
+            foreach (UpdateData update in updates)
             {
-                AvailableBuild availableBuild = new AvailableBuild()
+                AvailableBuild availableBuild = new()
                 {
                     Title = update.Xml.LocalizedProperties.Title,
                     Description = update.Xml.LocalizedProperties.Description,
@@ -98,7 +119,7 @@ namespace WindowsUpdateLib
         {
             List<AvailableBuildLanguages> availableBuildLanguages = (await UpdateData.GetAvailableLanguagesAsync()).Select(lang =>
             {
-                var boundlanguageobject = CultureInfo.GetCultureInfoByIetfLanguageTag(lang);
+                CultureInfo boundlanguageobject = CultureInfo.GetCultureInfoByIetfLanguageTag(lang);
 
                 return new AvailableBuildLanguages() { LanguageCode = lang, Title = boundlanguageobject.DisplayName, FlagUri = new Uri($"ms-appx:///Assets/Flags/{lang.Split('-').Last()}.png") };
             }).ToList();
@@ -110,11 +131,11 @@ namespace WindowsUpdateLib
 
         public static async Task<AvailableEdition[]> GetAvailableEditions(UpdateData UpdateData, string languagecode)
         {
-            List<AvailableEdition> availableEditions = new List<AvailableEdition>();
+            List<AvailableEdition> availableEditions = new();
 
-            List<CExtendedUpdateInfoXml.File> metadataCabs = new List<CExtendedUpdateInfoXml.File>();
+            List<CExtendedUpdateInfoXml.File> metadataCabs = new();
 
-            foreach (var file in UpdateData.Xml.Files.File)
+            foreach (CExtendedUpdateInfoXml.File file in UpdateData.Xml.Files.File)
             {
                 if (file.PatchingType.Equals("metadata", StringComparison.InvariantCultureIgnoreCase))
                 {
@@ -133,7 +154,7 @@ namespace WindowsUpdateLib
 
                 if (string.IsNullOrEmpty(UpdateData.CachedMetadata))
                 {
-                    var fileDownloadInfo = await FE3Handler.GetFileUrl(UpdateData, metadataCabs[0].Digest);
+                    FileExchangeV3FileDownloadInformation fileDownloadInfo = await FE3Handler.GetFileUrl(UpdateData, metadataCabs[0].Digest);
                     if (fileDownloadInfo == null)
                     {
                         goto exit;
@@ -142,7 +163,7 @@ namespace WindowsUpdateLib
                     string metadataCabTemp = Path.GetTempFileName();
 
                     // Download the file
-                    WebClient client = new WebClient();
+                    WebClient client = new();
                     await client.DownloadFileTaskAsync(new Uri(fileDownloadInfo.DownloadUrl), metadataCabTemp);
 
                     if (fileDownloadInfo.IsEncrypted)
@@ -155,7 +176,7 @@ namespace WindowsUpdateLib
                     UpdateData.CachedMetadata = metadataCabTemp;
                 }
 
-                var cabinetFiles = CabinetExtractor.EnumCabinetFiles(UpdateData.CachedMetadata);
+                IReadOnlyCollection<string> cabinetFiles = CabinetExtractor.EnumCabinetFiles(UpdateData.CachedMetadata);
 
                 IEnumerable<string> potentialFiles = cabinetFiles.Where(x =>
                         x.ToLower().Contains($"desktoptargetcompdb_") &&
@@ -163,9 +184,9 @@ namespace WindowsUpdateLib
                         !x.ToLower().Contains("lxp") &&
                         !x.ToLower().Contains($"desktoptargetcompdb_{languagecode}"));
 
-                foreach (var file in potentialFiles)
+                foreach (string file in potentialFiles)
                 {
-                    var edition = file.Split('_').Reverse().Skip(1).First();
+                    string edition = file.Split('_').Reverse().Skip(1).First();
 
                     if (availableEditions.Any(x => x.Edition == edition))
                         continue;
@@ -182,9 +203,9 @@ namespace WindowsUpdateLib
                     !x.ToLower().Contains($"desktoptargetcompdb_{languagecode}"));
 
                 // This is the old format, each cab is a file in WU
-                foreach (var file in potentialFiles)
+                foreach (string file in potentialFiles)
                 {
-                    var edition = file.Split('_').Reverse().Skip(1).First();
+                    string edition = file.Split('_').Reverse().Skip(1).First();
 
                     if (availableEditions.Any(x => x.Edition == edition))
                         continue;
@@ -209,17 +230,17 @@ namespace WindowsUpdateLib
 
         private static void AddUpdatesIfNotPresentAlready(ICollection<UpdateData> updates, IEnumerable<UpdateData> uncleanedData)
         {
-            var data = uncleanedData.Select(x => TrimDeltasFromUpdateData(x)).ToArray();
+            UpdateData[] data = uncleanedData.Select(x => TrimDeltasFromUpdateData(x)).ToArray();
 
-            foreach (var update in data)
+            foreach (UpdateData update in data)
             {
-                if (updates.Any(x => x.Xml.Files.File.Count() == update.Xml.Files.File.Count()))
+                if (updates.Any(x => x.Xml.Files.File.Length == update.Xml.Files.File.Length))
                 {
-                    var potentialDupes = updates.Where(x => x.Xml.Files.File.Count() == update.Xml.Files.File.Count());
+                    IEnumerable<UpdateData> potentialDupes = updates.Where(x => x.Xml.Files.File.Length == update.Xml.Files.File.Length);
 
                     CExtendedUpdateInfoXml.File metadataCab = null;
 
-                    foreach (var file in update.Xml.Files.File)
+                    foreach (CExtendedUpdateInfoXml.File file in update.Xml.Files.File)
                     {
                         if (file.PatchingType.Equals("metadata", StringComparison.InvariantCultureIgnoreCase))
                         {
@@ -235,11 +256,11 @@ namespace WindowsUpdateLib
 
                     bool exists = false;
 
-                    foreach (var potentialDupe in potentialDupes)
+                    foreach (UpdateData potentialDupe in potentialDupes)
                     {
                         CExtendedUpdateInfoXml.File metadataCab2 = null;
 
-                        foreach (var file in potentialDupe.Xml.Files.File)
+                        foreach (CExtendedUpdateInfoXml.File file in potentialDupe.Xml.Files.File)
                         {
                             if (file.PatchingType.Equals("metadata", StringComparison.InvariantCultureIgnoreCase))
                             {
@@ -294,18 +315,18 @@ namespace WindowsUpdateLib
 
         private static async Task<IEnumerable<UpdateData>> GetUpdates(MachineType MachineType)
         {
-            HashSet<UpdateData> updates = new HashSet<UpdateData>();
+            HashSet<UpdateData> updates = new();
 
             CTAC[] ctacs = GetRingCTACs(MachineType, OSSkuId.Professional).Union(GetRingCTACs(MachineType, OSSkuId.PPIPro)).Select(x => x.Key).ToArray();
 
-            List<Task<IEnumerable<UpdateData>>> tasks = new List<Task<IEnumerable<UpdateData>>>();
-            foreach (var ctac in ctacs)
+            List<Task<IEnumerable<UpdateData>>> tasks = new();
+            foreach (CTAC ctac in ctacs)
             {
                 tasks.Add(FE3Handler.GetUpdates(null, ctac, null, FileExchangeV3UpdateFilter.ProductRelease));
             }
 
             IEnumerable<UpdateData>[] datas = await Task.WhenAll(tasks);
-            foreach (var data in datas)
+            foreach (IEnumerable<UpdateData> data in datas)
             {
                 AddUpdatesIfNotPresentAlready(updates, data);
             }

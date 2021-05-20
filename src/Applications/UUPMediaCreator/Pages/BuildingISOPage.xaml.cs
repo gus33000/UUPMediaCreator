@@ -1,9 +1,30 @@
-﻿using System;
+﻿/*
+ * Copyright (c) Gustave Monce and Contributors
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+using System;
 using System.IO;
 using System.Text.Json;
-using System.Threading.Tasks;
 using UUPMediaCreator.InterCommunication;
 using Windows.Foundation.Collections;
+using Windows.Storage;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -13,7 +34,8 @@ namespace UUPMediaCreator.UWP.Pages
 {
     public sealed partial class BuildingISOPage : Page
     {
-        private CoreWindow coreWindow;
+        private BinaryWriter bw;
+        private readonly CoreWindow coreWindow;
 
         public BuildingISOPage()
         {
@@ -23,10 +45,22 @@ namespace UUPMediaCreator.UWP.Pages
             App.Connection.RequestReceived += Connection_RequestReceived;
 
             Loaded += BuildingVHDPage_Loaded;
+            Unloaded += BuildingISOPage_Unloaded;
+        }
+
+        private void BuildingISOPage_Unloaded(object sender, RoutedEventArgs e)
+        {
+            bw.Dispose();
         }
 
         private async void BuildingVHDPage_Loaded(object sender, RoutedEventArgs e)
         {
+            ApplicationData data = ApplicationData.Current;
+            StorageFile file = await data.LocalFolder.CreateFileAsync("log.txt", CreationCollisionOption.OpenIfExists);
+            Windows.Storage.Streams.IRandomAccessStream strm = await file.OpenAsync(FileAccessMode.ReadWrite);
+            bw = new(strm.AsStream());
+            strm.Seek(strm.Size);
+
             ISOConversion job = new ISOConversion()
             {
                 UUPPath = App.ConversionPlan.TmpOutputFolder,
@@ -37,15 +71,45 @@ namespace UUPMediaCreator.UWP.Pages
                 IntegrateUpdates = false
             };
 
-            var comm = new Common.InterCommunication() { InterCommunicationType = Common.InterCommunicationType.StartISOConversionProcess, ISOConversion = job };
+            Common.InterCommunication comm = new() { InterCommunicationType = Common.InterCommunicationType.StartISOConversionProcess, ISOConversion = job };
 
-            var val = new ValueSet();
-            val.Add("InterCommunication", JsonSerializer.Serialize(comm));
+            ValueSet val = new()
+            {
+                { "InterCommunication", JsonSerializer.Serialize(comm) }
+            };
 
             await App.Connection.SendMessageAsync(val);
         }
 
         private ProcessPhase lastPhase;
+
+        int prevperc = -1;
+        Common.ProcessPhase prevphase = Common.ProcessPhase.ReadingMetadata;
+        string prevop = "";
+
+        private void Log(string msg)
+        {
+            bw.Write(System.Text.Encoding.UTF8.GetBytes(msg + "\r\n"));
+        }
+
+        private void LogInterComm(Common.InterCommunication interCommunication)
+        {
+            if (interCommunication.ISOConversionProgress.Phase == prevphase && prevperc == interCommunication.ISOConversionProgress.ProgressInPercentage && interCommunication.ISOConversionProgress.SubOperation == prevop)
+                return;
+
+            prevphase = interCommunication.ISOConversionProgress.Phase;
+            prevop = interCommunication.ISOConversionProgress.SubOperation;
+            prevperc = interCommunication.ISOConversionProgress.ProgressInPercentage;
+
+            if (interCommunication.ISOConversionProgress.Phase == Common.ProcessPhase.Error)
+            {
+                Log("An error occured!");
+                Log(interCommunication.ISOConversionProgress.SubOperation);
+                return;
+            }
+            string progress = interCommunication.ISOConversionProgress.IsIndeterminate ? "" : $" [Progress: {interCommunication.ISOConversionProgress.ProgressInPercentage}%]";
+            Log($"[{interCommunication.ISOConversionProgress.Phase}]{progress} {interCommunication.ISOConversionProgress.SubOperation}");
+        }
 
         private async void Connection_RequestReceived(Windows.ApplicationModel.AppService.AppServiceConnection sender, Windows.ApplicationModel.AppService.AppServiceRequestReceivedEventArgs args)
         {
@@ -58,6 +122,8 @@ namespace UUPMediaCreator.UWP.Pages
                 {
                     case Common.InterCommunicationType.ReportISOConversionProgress:
                         {
+                            LogInterComm(interCommunication);
+
                             await coreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
                             {
                                 switch (interCommunication.ISOConversionProgress.Phase)
@@ -169,7 +235,7 @@ namespace UUPMediaCreator.UWP.Pages
                                 if (interCommunication.ISOConversionProgress.Phase == ProcessPhase.Done)
                                 {
                                     // cleanup
-                                    Directory.Delete(App.ConversionPlan.TmpOutputFolder, true);
+                                    //Directory.Delete(App.ConversionPlan.TmpOutputFolder, true);
 
                                     // Move to finish page when done, for now, welcome page
                                     Frame.Navigate(typeof(EndPage));

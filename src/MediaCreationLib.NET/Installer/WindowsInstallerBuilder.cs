@@ -1,4 +1,25 @@
-﻿using Imaging;
+﻿/*
+ * Copyright (c) Gustave Monce and Contributors
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+using Imaging;
 using Microsoft.Wim;
 using System;
 using System.Collections.Generic;
@@ -13,7 +34,7 @@ namespace MediaCreationLib.Installer
 {
     public class WindowsInstallerBuilder
     {
-        private static WIMImaging imagingInterface = new WIMImaging();
+        private static readonly WIMImaging imagingInterface = new();
 
         // 6 progress bars
         public static bool BuildSetupMedia(
@@ -23,6 +44,7 @@ namespace MediaCreationLib.Installer
             WimCompressionType compressionType,
             bool RunsAsAdministrator,
             string LanguageCode,
+            TempManager.TempManager tempManager,
             ProgressCallback progressCallback = null
             )
         {
@@ -37,8 +59,7 @@ namespace MediaCreationLib.Installer
             // Gather information about the Windows Recovery Environment image so we can transplant it later
             // into our new images
             //
-            WIMInformationXML.IMAGE image;
-            result = imagingInterface.GetWIMImageInformation(BaseESD, 2, out image);
+            result = imagingInterface.GetWIMImageInformation(BaseESD, 2, out WIMInformationXML.IMAGE image);
             if (!result)
             {
                 progressCallback?.Invoke(Common.ProcessPhase.CreatingWindowsInstaller, true, 0, "An error occured while getting WIM image information.");
@@ -70,7 +91,7 @@ namespace MediaCreationLib.Installer
             // Prepare our base PE image which will serve as a basis for all subsequent operations
             // This function also generates WinRE
             //
-            result = PreparePEImage(BaseESD, OutputWinREPath, MediaPath, compressionType, LanguageCode, progressCallback);
+            result = PreparePEImage(BaseESD, OutputWinREPath, MediaPath, compressionType, LanguageCode, tempManager, progressCallback);
             if (!result)
             {
                 progressCallback?.Invoke(Common.ProcessPhase.CreatingWindowsInstaller, true, 0, "An error occured while preparing the PE image.");
@@ -92,7 +113,7 @@ namespace MediaCreationLib.Installer
 
             string bootwim = Path.Combine(MediaPath, "sources", "boot.wim");
 
-            string tmpwimcopy = TempManager.TempManager.Instance.GetTempPath();
+            string tmpwimcopy = tempManager.GetTempPath();
             File.Copy(bootwim, tmpwimcopy);
 
             //
@@ -159,24 +180,24 @@ namespace MediaCreationLib.Installer
             //
             // Mark image as bootable
             //
-            result = imagingInterface.MarkImageAsBootable(bootwim, 2);
+            result = WIMImaging.MarkImageAsBootable(bootwim, 2);
             if (!result)
                 goto exit;
 
             //
             // Modifying registry for each index
             //
-            string tempSoftwareHiveBackup = TempManager.TempManager.Instance.GetTempPath();
-            string tempSystemHiveBackup = TempManager.TempManager.Instance.GetTempPath();
+            string tempSoftwareHiveBackup = tempManager.GetTempPath();
+            string tempSystemHiveBackup = tempManager.GetTempPath();
 
-            result = imagingInterface.ExtractFileFromImage(bootwim, 1, Constants.SYSTEM_Hive_Location, tempSystemHiveBackup);
+            result = WIMImaging.ExtractFileFromImage(bootwim, 1, Constants.SYSTEM_Hive_Location, tempSystemHiveBackup);
             if (!result)
             {
                 progressCallback?.Invoke(Common.ProcessPhase.CreatingWindowsInstaller, true, 0, "An error occured while extracting the SYSTEM hive from index 1.");
                 goto exit;
             }
 
-            result = imagingInterface.ExtractFileFromImage(bootwim, 1, Constants.SOFTWARE_Hive_Location, tempSoftwareHiveBackup);
+            result = WIMImaging.ExtractFileFromImage(bootwim, 1, Constants.SOFTWARE_Hive_Location, tempSoftwareHiveBackup);
             if (!result)
             {
                 progressCallback?.Invoke(Common.ProcessPhase.CreatingWindowsInstaller, true, 0, "An error occured while extracting the SOFTWARE hive from index 1.");
@@ -250,7 +271,7 @@ namespace MediaCreationLib.Installer
             }
 
             progressCallback?.Invoke(Common.ProcessPhase.CreatingWindowsInstaller, true, 0, "Modifying assets for Setup PE (2)");
-            var winpejpgtmp = TempManager.TempManager.Instance.GetTempPath();
+            string winpejpgtmp = tempManager.GetTempPath();
             File.WriteAllBytes(winpejpgtmp, Constants.winpejpg);
             result = imagingInterface.AddFileToImage(bootwim, 2, winpejpgtmp, Path.Combine("Windows", "System32", "winpe.jpg"), progressCallback: callback);
             File.Delete(winpejpgtmp);
@@ -262,8 +283,8 @@ namespace MediaCreationLib.Installer
 
             progressCallback?.Invoke(Common.ProcessPhase.CreatingWindowsInstaller, true, 0, "Backporting missing files");
 
-            var dirs = Directory.EnumerateDirectories(Path.Combine(MediaPath, "sources"), "??-??");
-            if (dirs.Count() == 0)
+            IEnumerable<string> dirs = Directory.EnumerateDirectories(Path.Combine(MediaPath, "sources"), "??-??");
+            if (!dirs.Any())
             {
                 dirs = Directory.EnumerateDirectories(Path.Combine(MediaPath, "sources"), "*-*");
             }
@@ -330,9 +351,9 @@ namespace MediaCreationLib.Installer
                 }
             }
 
-            //
-            // We're done
-            //
+        //
+        // We're done
+        //
 
         exit:
             return result;
@@ -344,6 +365,7 @@ namespace MediaCreationLib.Installer
             string MediaPath,
             WimCompressionType compressionType,
             string LanguageCode,
+            TempManager.TempManager tempManager,
             ProgressCallback progressCallback = null
             )
         {
@@ -359,8 +381,7 @@ namespace MediaCreationLib.Installer
             if (!result)
                 goto exit;
 
-            WIMInformationXML.IMAGE image;
-            result = imagingInterface.GetWIMImageInformation(OutputWinREPath, 1, out image);
+            result = imagingInterface.GetWIMImageInformation(OutputWinREPath, 1, out WIMInformationXML.IMAGE image);
             if (!result)
                 goto exit;
 
@@ -383,7 +404,7 @@ namespace MediaCreationLib.Installer
             }
 
             progressCallback?.Invoke(Common.ProcessPhase.CreatingWindowsInstaller, true, 0, "Marking image as bootable");
-            result = imagingInterface.MarkImageAsBootable(OutputWinREPath, 1);
+            result = WIMImaging.MarkImageAsBootable(OutputWinREPath, 1);
             if (!result)
                 goto exit;
 
@@ -405,17 +426,17 @@ namespace MediaCreationLib.Installer
             try
             {
                 progressCallback?.Invoke(Common.ProcessPhase.CreatingWindowsInstaller, true, 0, "Cleaning log files");
-                string logfile = TempManager.TempManager.Instance.GetTempPath();
+                string logfile = tempManager.GetTempPath();
                 string pathinimage = Path.Combine("Windows", "INF", "setupapi.offline.log");
 
-                bool cresult = imagingInterface.ExtractFileFromImage(bootwim, 1, pathinimage, logfile);
+                bool cresult = WIMImaging.ExtractFileFromImage(bootwim, 1, pathinimage, logfile);
 
                 if (cresult)
                 {
                     string[] lines = File.ReadAllLines(logfile);
 
                     int bootsessioncount = 0;
-                    List<string> finallines = new List<string>();
+                    List<string> finallines = new();
                     foreach (string line in lines)
                     {
                         if (line.StartsWith("[Boot Session: ", StringComparison.InvariantCultureIgnoreCase))
@@ -440,9 +461,9 @@ namespace MediaCreationLib.Installer
             // Disable UMCI
             //
             progressCallback?.Invoke(Common.ProcessPhase.CreatingWindowsInstaller, true, 0, "Disabling UMCI");
-            string tempSystemHiveBackup = TempManager.TempManager.Instance.GetTempPath();
+            string tempSystemHiveBackup = tempManager.GetTempPath();
 
-            result = imagingInterface.ExtractFileFromImage(bootwim, 1, Constants.SYSTEM_Hive_Location, tempSystemHiveBackup);
+            result = WIMImaging.ExtractFileFromImage(bootwim, 1, Constants.SYSTEM_Hive_Location, tempSystemHiveBackup);
             if (!result)
                 goto cleanup;
 
@@ -468,7 +489,7 @@ namespace MediaCreationLib.Installer
             ProgressCallback progressCallback = null
             )
         {
-            using (VirtualDiskSession vhdsession = new VirtualDiskSession())
+            using (VirtualDiskSession vhdsession = new())
             {
                 string ospath = vhdsession.GetMountedPath();
 
@@ -580,19 +601,20 @@ namespace MediaCreationLib.Installer
                 toolpath = Path.Combine(parentDirectory, "UUPMediaConverterDismBroker.exe");
             }
 
-            Process proc = new Process();
-            proc.StartInfo = new ProcessStartInfo("cmd.exe", $"/c \"\"{toolpath}\" /PECompUninst \"{OSPath}\"\"");
-
-            proc.StartInfo.UseShellExecute = false;
-            proc.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-            proc.StartInfo.RedirectStandardOutput = true;
-            proc.StartInfo.CreateNoWindow = true;
+            Process proc = new();
+            proc.StartInfo = new ProcessStartInfo("cmd.exe", $"/c \"\"{toolpath}\" /PECompUninst \"{OSPath}\"\"")
+            {
+                UseShellExecute = false,
+                WindowStyle = ProcessWindowStyle.Hidden,
+                RedirectStandardOutput = true,
+                CreateNoWindow = true
+            };
 
             proc.OutputDataReceived += (object sender, DataReceivedEventArgs e) =>
             {
                 if (e.Data != null && e.Data.Contains(","))
                 {
-                    var percent = int.Parse(e.Data.Split(',')[0]);
+                    int percent = int.Parse(e.Data.Split(',')[0]);
                     progressCallback?.Invoke(Common.ProcessPhase.CreatingWindowsInstaller, false, percent, e.Data.Split(',')[1]);
                 }
             };
@@ -647,7 +669,7 @@ namespace MediaCreationLib.Installer
             // Note: the file in question isn't in a wim that needs to be referenced, so we don't need to mention reference images.
             //
             ProgressCallback?.Invoke(Common.ProcessPhase.CreatingWindowsInstaller, true, 0, "Extracting XML Lite");
-            result = imagingInterface.ExtractFileFromImage(BaseESD, 3, Path.Combine("Windows", "System32", "xmllite.dll"), Path.Combine(OutputPath, "sources", "xmllite.dll"));
+            result = WIMImaging.ExtractFileFromImage(BaseESD, 3, Path.Combine("Windows", "System32", "xmllite.dll"), Path.Combine(OutputPath, "sources", "xmllite.dll"));
             if (!result)
             {
                 ProgressCallback?.Invoke(Common.ProcessPhase.CreatingWindowsInstaller, true, 0, "An error occured while extracting XML Lite.");

@@ -65,9 +65,11 @@ namespace Microsoft.Xna.Framework
             if (window < 15 || window > 21) throw new UnsupportedWindowSizeRange();
 
             // let's initialise our state
-            m_state = new LzxState();
-            m_state.actual_size = 0;
-            m_state.window = new byte[wndsize];
+            m_state = new LzxState
+            {
+                actual_size = 0,
+                window = new byte[wndsize]
+            };
             for (int i = 0; i < wndsize; i++) m_state.window[i] = 0xDC;
             m_state.actual_size = wndsize;
             m_state.window_size = wndsize;
@@ -123,7 +125,7 @@ namespace Microsoft.Xna.Framework
 
         internal int Decompress(Stream inData, int inLen, Stream outData, int outLen)
         {
-            BitBuffer bitbuf = new BitBuffer(inData);
+            BitBuffer bitbuf = new(inData);
             long startpos = inData.Position;
             long endpos = inData.Position + inLen;
 
@@ -513,7 +515,7 @@ namespace Microsoft.Xna.Framework
         // 
 
         // TODO make returns throw exceptions
-        private int MakeDecodeTable(uint nsyms, uint nbits, byte[] length, ushort[] table)
+        private static int MakeDecodeTable(uint nsyms, uint nbits, byte[] length, ushort[] table)
         {
             ushort sym;
             uint leaf;
@@ -639,7 +641,7 @@ namespace Microsoft.Xna.Framework
             }
         }
 
-        private uint ReadHuffSym(ushort[] table, byte[] lengths, uint nsyms, uint nbits, BitBuffer bitbuf)
+        private static uint ReadHuffSym(ushort[] table, byte[] lengths, uint nsyms, uint nbits, BitBuffer bitbuf)
         {
             uint i, j;
             bitbuf.EnsureBits(16);
@@ -663,7 +665,7 @@ namespace Microsoft.Xna.Framework
         {
             uint buffer;
             byte bitsleft;
-            Stream byteStream;
+            readonly Stream byteStream;
 
             internal BitBuffer(Stream stream)
             {

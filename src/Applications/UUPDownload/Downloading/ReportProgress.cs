@@ -1,15 +1,36 @@
-﻿using System;
+﻿/*
+ * Copyright (c) Gustave Monce and Contributors
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+using DownloadLib;
+using System;
 using System.Collections.Generic;
 using System.Threading;
-using DownloadLib;
 
 namespace UUPDownload.Downloading
 {
     public class ReportProgress : IProgress<GeneralDownloadProgress>
     {
-        private Dictionary<string, FileStatus> files = new Dictionary<string, FileStatus>();
+        private readonly Dictionary<string, FileStatus> files = new();
 
-        private Mutex mutex = new Mutex();
+        private readonly Mutex mutex = new();
 
         private static string FormatBytes(double bytes)
         {
@@ -78,7 +99,7 @@ namespace UUPDownload.Downloading
                         break;
                 }
 
-                Console.WriteLine($"{DateTime.Now.ToString("'['HH':'mm':'ss']'")}[{e.NumFilesDownloadedSuccessfully}/{e.NumFiles}][E:{e.NumFilesDownloadedUnsuccessfully}][{msg}] {status.File.FileName} ({FormatBytes(status.File.FileSize)})");
+                Console.WriteLine($"{DateTime.Now:'['HH':'mm':'ss']'}[{e.NumFilesDownloadedSuccessfully}/{e.NumFiles}][E:{e.NumFilesDownloadedUnsuccessfully}][{msg}] {status.File.FileName} ({FormatBytes(status.File.FileSize)})");
             }
 
             mutex.ReleaseMutex();

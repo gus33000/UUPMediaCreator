@@ -1,4 +1,25 @@
-﻿using CompDB;
+﻿/*
+ * Copyright (c) Gustave Monce and Contributors
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+using CompDB;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -14,12 +35,12 @@ namespace WindowsUpdateLib
 {
     public class FE3Handler
     {
-        private static CorrelationVector correlationVector = new CorrelationVector();
+        private static readonly CorrelationVector correlationVector = new();
         private static string MSCV = correlationVector.GetValue();
-        private static HttpClient httpClient = new HttpClient(new HttpClientHandler()
-        { 
-            AllowAutoRedirect = false, 
-            AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate, 
+        private static readonly HttpClient httpClient = new(new HttpClientHandler()
+        {
+            AllowAutoRedirect = false,
+            AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate,
             ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator // Linux
         });
 
@@ -35,9 +56,9 @@ namespace WindowsUpdateLib
 
             MSCV = correlationVector.Increment();
 
-            StringContent content = new StringContent(message, System.Text.Encoding.UTF8, "application/soap+xml");
+            StringContent content = new(message, System.Text.Encoding.UTF8, "application/soap+xml");
 
-            var req = new HttpRequestMessage(HttpMethod.Post, _endpoint)
+            HttpRequestMessage req = new(HttpMethod.Post, _endpoint)
             {
                 Content = content
             };
@@ -50,7 +71,7 @@ namespace WindowsUpdateLib
             req.Headers.Connection.Add("keep-alive");
 
             HttpResponseMessage response = (await httpClient.SendAsync(req)).EnsureSuccessStatusCode();
-            var resultString = await response.Content.ReadAsStringAsync();
+            string resultString = await response.Content.ReadAsStringAsync();
             return resultString;
         }
 
@@ -62,7 +83,7 @@ namespace WindowsUpdateLib
                 _endpoint += "/secured";
             }
 
-            CSOAPCommon.Envelope envelope = new CSOAPCommon.Envelope()
+            CSOAPCommon.Envelope envelope = new()
             {
                 Header = new CSOAPCommon.Header()
                 {
@@ -71,7 +92,7 @@ namespace WindowsUpdateLib
                         MustUnderstand = "1",
                         Text = Constants.Action + method
                     },
-                    MessageID = $"urn:uuid:{Guid.NewGuid().ToString("D")}",
+                    MessageID = $"urn:uuid:{Guid.NewGuid():D}",
                     To = new CSOAPCommon.To()
                     {
                         MustUnderstand = "1",
@@ -127,32 +148,26 @@ namespace WindowsUpdateLib
         {
             if (envelope == null) return string.Empty;
 
-            var xmlSerializer = new XmlSerializer(typeof(CSOAPCommon.Envelope));
+            XmlSerializer xmlSerializer = new(typeof(CSOAPCommon.Envelope));
 
-            XmlSerializerNamespaces ns = new XmlSerializerNamespaces();
+            XmlSerializerNamespaces ns = new();
             ns.Add("s", "http://www.w3.org/2003/05/soap-envelope");
             ns.Add("a", "http://www.w3.org/2005/08/addressing");
 
-            using (var stringWriter = new StringWriter())
-            {
-                using (var xmlWriter = XmlWriter.Create(stringWriter, new XmlWriterSettings { Indent = true }))
-                {
-                    xmlSerializer.Serialize(xmlWriter, envelope, ns);
-                    return stringWriter.ToString().Replace("<?xml version=\"1.0\" encoding=\"utf-16\"?>\r\n", "").Replace("<?xml version=\"1.0\" encoding=\"utf-16\"?>\n", "");
-                }
-            }
+            using StringWriter stringWriter = new();
+            using XmlWriter xmlWriter = XmlWriter.Create(stringWriter, new XmlWriterSettings { Indent = true });
+            xmlSerializer.Serialize(xmlWriter, envelope, ns);
+            return stringWriter.ToString().Replace("<?xml version=\"1.0\" encoding=\"utf-16\"?>\r\n", "").Replace("<?xml version=\"1.0\" encoding=\"utf-16\"?>\n", "");
         }
 
         private static CSOAPCommon.Envelope DeserializeSOAPEnvelope(string message)
         {
             if (message == null) return null;
 
-            var xmlSerializer = new XmlSerializer(typeof(CSOAPCommon.Envelope));
+            XmlSerializer xmlSerializer = new(typeof(CSOAPCommon.Envelope));
 
-            using (var stringReader = new StringReader(message))
-            {
-                return (CSOAPCommon.Envelope)xmlSerializer.Deserialize(stringReader);
-            }
+            using StringReader stringReader = new(message);
+            return (CSOAPCommon.Envelope)xmlSerializer.Deserialize(stringReader);
         }
 
         private static CExtendedUpdateInfoXml.Xml DeserializeInfoXML(string xml)
@@ -161,12 +176,10 @@ namespace WindowsUpdateLib
 
             string message = "<Xml>" + xml + "</Xml>";
 
-            var xmlSerializer = new XmlSerializer(typeof(CExtendedUpdateInfoXml.Xml));
+            XmlSerializer xmlSerializer = new(typeof(CExtendedUpdateInfoXml.Xml));
 
-            using (var stringReader = new StringReader(message))
-            {
-                return (CExtendedUpdateInfoXml.Xml)xmlSerializer.Deserialize(stringReader);
-            }
+            using StringReader stringReader = new(message);
+            return (CExtendedUpdateInfoXml.Xml)xmlSerializer.Deserialize(stringReader);
         }
 
         private static CAppxMetadataJSON.AppxMetadataJson DeserializeAppxJSON(string json)
@@ -302,7 +315,7 @@ namespace WindowsUpdateLib
 
             if (InstalledNonLeafUpdateIDs != null)
             {
-                var tmplist = _InstalledNonLeafUpdateIDs.ToList();
+                List<string> tmplist = _InstalledNonLeafUpdateIDs.ToList();
                 tmplist.AddRange(InstalledNonLeafUpdateIDs);
                 _InstalledNonLeafUpdateIDs = tmplist.ToArray();
             }
@@ -321,7 +334,7 @@ namespace WindowsUpdateLib
                     },
                     OtherCachedUpdateIDs = new CSyncUpdatesRequest.OtherCachedUpdateIDs()
                     {
-                        Int = OtherCachedUpdateIDs != null ? OtherCachedUpdateIDs.ToArray() : new string[0]
+                        Int = OtherCachedUpdateIDs != null ? OtherCachedUpdateIDs.ToArray() : Array.Empty<string>()
                     },
                     SkipSoftwareSync = "false",
                     NeedTwoGroupOutOfScopeUpdates = "true",
@@ -329,7 +342,7 @@ namespace WindowsUpdateLib
                     {
                         CategoryIdentifier = new CSyncUpdatesRequest.CategoryIdentifier()
                         {
-                            Id = CategoryIdentifiers != null ? CategoryIdentifiers : new string[0]
+                            Id = CategoryIdentifiers ?? Array.Empty<string>()
                         }
                     } : null,
                     AlsoPerformRegularSync = "false",
@@ -380,10 +393,10 @@ namespace WindowsUpdateLib
         {
             (CGetCookieResponse.GetCookieResponse cookie, string cookieresp) = await GetCookie();
 
-            HashSet<string> InstalledNonLeafUpdateIDs = new HashSet<string>();
-            HashSet<string> OtherCachedUpdateIDs = new HashSet<string>();
+            HashSet<string> InstalledNonLeafUpdateIDs = new();
+            HashSet<string> OtherCachedUpdateIDs = new();
 
-            HashSet<(CSyncUpdatesResponse.SyncUpdatesResponse, string)> responses = new HashSet<(CSyncUpdatesResponse.SyncUpdatesResponse, string)>();
+            HashSet<(CSyncUpdatesResponse.SyncUpdatesResponse, string)> responses = new();
 
             //
             // Scan all updates
@@ -392,18 +405,18 @@ namespace WindowsUpdateLib
             //
             while (true)
             {
-                var result = await SyncUpdates(cookie.GetCookieResult, token, InstalledNonLeafUpdateIDs, OtherCachedUpdateIDs, string.IsNullOrEmpty(categoryId) ? new string[0] : new string[] { categoryId }, ctac);
+                (CSyncUpdatesResponse.SyncUpdatesResponse, string) result = await SyncUpdates(cookie.GetCookieResult, token, InstalledNonLeafUpdateIDs, OtherCachedUpdateIDs, string.IsNullOrEmpty(categoryId) ? Array.Empty<string>() : new string[] { categoryId }, ctac);
 
                 // Refresh the cookie
                 cookie.GetCookieResult.EncryptedData = result.Item1.SyncUpdatesResult.NewCookie.EncryptedData;
                 cookie.GetCookieResult.Expiration = result.Item1.SyncUpdatesResult.NewCookie.Expiration;
 
-                if (result.Item1.SyncUpdatesResult.ExtendedUpdateInfo == null || result.Item1.SyncUpdatesResult.ExtendedUpdateInfo.Updates.Update == null || result.Item1.SyncUpdatesResult.ExtendedUpdateInfo.Updates.Update.Count() == 0)
+                if (result.Item1.SyncUpdatesResult.ExtendedUpdateInfo == null || result.Item1.SyncUpdatesResult.ExtendedUpdateInfo.Updates.Update == null || result.Item1.SyncUpdatesResult.ExtendedUpdateInfo.Updates.Update.Length == 0)
                 {
                     break;
                 }
 
-                foreach (var update in result.Item1.SyncUpdatesResult.ExtendedUpdateInfo.Updates.Update)
+                foreach (CSOAPCommon.Update update in result.Item1.SyncUpdatesResult.ExtendedUpdateInfo.Updates.Update)
                 {
                     InstalledNonLeafUpdateIDs.Add(update.ID);
                     OtherCachedUpdateIDs.Add(update.ID);
@@ -412,15 +425,15 @@ namespace WindowsUpdateLib
                 responses.Add(result);
             }
 
-            HashSet<UpdateData> updateDatas = new HashSet<UpdateData>();
+            HashSet<UpdateData> updateDatas = new();
 
-            foreach (var response in responses)
+            foreach ((CSyncUpdatesResponse.SyncUpdatesResponse, string) response in responses)
             {
-                foreach (var update in response.Item1.SyncUpdatesResult.ExtendedUpdateInfo.Updates.Update)
+                foreach (CSOAPCommon.Update update in response.Item1.SyncUpdatesResult.ExtendedUpdateInfo.Updates.Update)
                 {
-                    UpdateData data = new UpdateData() { Update = update };
+                    UpdateData data = new() { Update = update };
 
-                    foreach (var updateInfo in response.Item1.SyncUpdatesResult.NewUpdates.UpdateInfo)
+                    foreach (CSyncUpdatesResponse.UpdateInfo updateInfo in response.Item1.SyncUpdatesResult.NewUpdates.UpdateInfo)
                     {
                         if (ulong.Parse(update.ID) == ulong.Parse(updateInfo.ID))
                         {
@@ -440,10 +453,10 @@ namespace WindowsUpdateLib
 
                     if (updateDatas.Any(x => x.Update.ID == update.ID))
                     {
-                        var updateData = updateDatas.First(x => x.Update.ID == update.ID);
+                        UpdateData updateData = updateDatas.First(x => x.Update.ID == update.ID);
                         if (data.Xml.LocalizedProperties == null)
                         {
-                            var backup = updateData.Xml;
+                            CExtendedUpdateInfoXml.Xml backup = updateData.Xml;
                             updateData.Xml = data.Xml;
 
                             updateData.Xml.LocalizedProperties = backup.LocalizedProperties;
@@ -463,9 +476,9 @@ namespace WindowsUpdateLib
                 }
             }
 
-            HashSet<UpdateData> relevantUpdateDatas = new HashSet<UpdateData>();
+            HashSet<UpdateData> relevantUpdateDatas = new();
 
-            foreach (var updateData in updateDatas)
+            foreach (UpdateData updateData in updateDatas)
             {
                 if (updateData.Xml.ExtendedProperties != null)
                 {
@@ -486,7 +499,7 @@ namespace WindowsUpdateLib
 
         public static async Task<FileExchangeV3FileDownloadInformation> GetFileUrl(UpdateData updateData, string fileDigest, string token = null)
         {
-            var result = await GetExtendedUpdateInfo2(token, updateData.Xml.UpdateIdentity.UpdateID, updateData.Xml.UpdateIdentity.RevisionNumber, updateData.CTAC);
+            (CGetExtendedUpdateInfo2Response.GetExtendedUpdateInfo2Response, string) result = await GetExtendedUpdateInfo2(token, updateData.Xml.UpdateIdentity.UpdateID, updateData.Xml.UpdateIdentity.RevisionNumber, updateData.CTAC);
 
             if (updateData.Xml?.Files?.File?.FirstOrDefault(x => x.AdditionalDigest?.Text == fileDigest) is CExtendedUpdateInfoXml.File file)
             {
@@ -495,7 +508,7 @@ namespace WindowsUpdateLib
 
             if (result.Item1.GetExtendedUpdateInfo2Result.FileLocations != null)
             {
-                foreach (var fileLocation in result.Item1.GetExtendedUpdateInfo2Result.FileLocations.FileLocation)
+                foreach (CGetExtendedUpdateInfo2Response.FileLocation fileLocation in result.Item1.GetExtendedUpdateInfo2Result.FileLocations.FileLocation)
                 {
                     if (fileLocation.FileDigest == fileDigest)
                     {
@@ -509,7 +522,7 @@ namespace WindowsUpdateLib
 
         public static async Task<IEnumerable<FileExchangeV3FileDownloadInformation>> GetFileUrls(UpdateData updateData, string token = null)
         {
-            var result = await GetExtendedUpdateInfo2(token, updateData.Xml.UpdateIdentity.UpdateID, updateData.Xml.UpdateIdentity.RevisionNumber, updateData.CTAC);
+            (CGetExtendedUpdateInfo2Response.GetExtendedUpdateInfo2Response, string) result = await GetExtendedUpdateInfo2(token, updateData.Xml.UpdateIdentity.UpdateID, updateData.Xml.UpdateIdentity.RevisionNumber, updateData.CTAC);
 
             updateData.GEI2Response = result.Item2;
 

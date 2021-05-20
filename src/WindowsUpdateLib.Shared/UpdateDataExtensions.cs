@@ -1,4 +1,25 @@
-﻿using Cabinet;
+﻿/*
+ * Copyright (c) Gustave Monce and Contributors
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+using Cabinet;
 using CompDB;
 using System;
 using System.Collections.Generic;
@@ -12,7 +33,7 @@ namespace WindowsUpdateLib
 {
     public static class UpdateDataExtensions
     {
-        private static WebClient client = new WebClient();
+        private static readonly WebClient client = new();
 
         public static async Task<string> DownloadFileFromDigestAsync(this UpdateData update, string Digest)
         {
@@ -58,7 +79,7 @@ namespace WindowsUpdateLib
             {
                 CExtendedUpdateInfoXml.File deploymentCab = null;
 
-                foreach (var file in update.Xml.Files.File)
+                foreach (CExtendedUpdateInfoXml.File file in update.Xml.Files.File)
                 {
                     if (file.FileName.Replace('\\', Path.DirectorySeparatorChar).EndsWith("deployment.cab", StringComparison.InvariantCultureIgnoreCase))
                     {
@@ -72,7 +93,7 @@ namespace WindowsUpdateLib
                     goto exit;
                 }
 
-                var fileDownloadInfo = await FE3Handler.GetFileUrl(update, deploymentCab.Digest);
+                FileExchangeV3FileDownloadInformation fileDownloadInfo = await FE3Handler.GetFileUrl(update, deploymentCab.Digest);
                 if (fileDownloadInfo == null)
                 {
                     goto exit;
@@ -96,10 +117,10 @@ namespace WindowsUpdateLib
                 }
                 catch { }
 
-                var reportedBuildNumberFromService = update.Xml.ExtendedProperties.ReleaseVersion.Split('.')[2];
+                string reportedBuildNumberFromService = update.Xml.ExtendedProperties.ReleaseVersion.Split('.')[2];
                 if (!string.IsNullOrEmpty(result) && result.Count(x => x == '.') >= 2)
                 {
-                    var elements = result.Split('.');
+                    string[] elements = result.Split('.');
                     elements[2] = reportedBuildNumberFromService;
                     result = string.Join(".", elements);
                 }
@@ -111,7 +132,7 @@ namespace WindowsUpdateLib
 
             }
 
-            exit:
+        exit:
 
             // For some reason we couldn't get the build string, so attempt to get it from CompDB metadata instead
             // This is less reliable, but it is the best we can actually do.
@@ -119,16 +140,16 @@ namespace WindowsUpdateLib
             {
                 try
                 {
-                    var compDBs = await update.GetCompDBsAsync();
-                    var firstCompDB = compDBs.First();
+                    HashSet<CompDBXmlClass.CompDB> compDBs = await update.GetCompDBsAsync();
+                    CompDBXmlClass.CompDB firstCompDB = compDBs.First();
 
                     // example:
                     // BuildInfo="co_release.21382.1.210511-1416" OSVersion="10.0.21382.1" TargetBuildInfo="co_release.21382.1.210511-1416" TargetOSVersion="10.0.21382.1"
 
-                    var buildInfo = firstCompDB.TargetBuildInfo ?? firstCompDB.BuildInfo;
-                    var osVersion = firstCompDB.TargetOSVersion ?? firstCompDB.OSVersion;
+                    string buildInfo = firstCompDB.TargetBuildInfo ?? firstCompDB.BuildInfo;
+                    string osVersion = firstCompDB.TargetOSVersion ?? firstCompDB.OSVersion;
 
-                    var splitBI = buildInfo.Split(".");
+                    string[] splitBI = buildInfo.Split(".");
 
                     result = $"{osVersion} ({splitBI[0]}.{splitBI[3]})";
                 }
@@ -145,10 +166,10 @@ namespace WindowsUpdateLib
                 0x00, 0x73, 0x00, 0x69, 0x00, 0x6f, 0x00, 0x6e, 0x00, 0x00, 0x00, 0x00, 0x00
             };
 
-            var fIndex = IndexOf(updateAgentFile, sign) + sign.Length;
-            var lIndex = IndexOf(updateAgentFile, new byte[] { 0x00, 0x00, 0x00 }, fIndex) + 1;
+            int fIndex = IndexOf(updateAgentFile, sign) + sign.Length;
+            int lIndex = IndexOf(updateAgentFile, new byte[] { 0x00, 0x00, 0x00 }, fIndex) + 1;
 
-            var sliced = SliceByteArray(updateAgentFile, lIndex - fIndex, fIndex);
+            byte[] sliced = SliceByteArray(updateAgentFile, lIndex - fIndex, fIndex);
 
             return Encoding.Unicode.GetString(sliced);
         }
@@ -195,8 +216,8 @@ namespace WindowsUpdateLib
 
         private static async Task<HashSet<CompDBXmlClass.CompDB>> GetCompDBs(UpdateData update)
         {
-            HashSet<CompDBXmlClass.CompDB> neutralCompDB = new HashSet<CompDBXmlClass.CompDB>();
-            HashSet<CExtendedUpdateInfoXml.File> metadataCabs = new HashSet<CExtendedUpdateInfoXml.File>();
+            HashSet<CompDBXmlClass.CompDB> neutralCompDB = new();
+            HashSet<CExtendedUpdateInfoXml.File> metadataCabs = new();
 
             foreach (CExtendedUpdateInfoXml.File file in update.Xml.Files.File)
             {
@@ -217,7 +238,7 @@ namespace WindowsUpdateLib
 
                 if (string.IsNullOrEmpty(update.CachedMetadata))
                 {
-                    var fileDownloadInfo = await FE3Handler.GetFileUrl(update, metadataCabs.First().Digest);
+                    FileExchangeV3FileDownloadInformation fileDownloadInfo = await FE3Handler.GetFileUrl(update, metadataCabs.First().Digest);
                     if (fileDownloadInfo == null)
                     {
                         return neutralCompDB;
@@ -244,7 +265,7 @@ namespace WindowsUpdateLib
 
                 try
                 {
-                    var tmp = Path.GetTempFileName();
+                    string tmp = Path.GetTempFileName();
                     File.Delete(tmp);
                     Directory.CreateDirectory(tmp);
 
@@ -253,10 +274,8 @@ namespace WindowsUpdateLib
                     foreach (string file in Directory.EnumerateFiles(tmp, "*", SearchOption.AllDirectories))
                     {
                         byte[] xmlfile = CabinetExtractor.ExtractCabinetFile(file, CabinetExtractor.EnumCabinetFiles(file).First());
-                        using (Stream xmlstream = new MemoryStream(xmlfile))
-                        {
-                            neutralCompDB.Add(CompDBXmlClass.DeserializeCompDB(xmlstream));
-                        }
+                        using Stream xmlstream = new MemoryStream(xmlfile);
+                        neutralCompDB.Add(CompDBXmlClass.DeserializeCompDB(xmlstream));
                     }
                 }
                 catch { }
@@ -266,7 +285,7 @@ namespace WindowsUpdateLib
                 // This is the old format, each cab is a file in WU
                 foreach (CExtendedUpdateInfoXml.File file in metadataCabs)
                 {
-                    var fileDownloadInfo = await FE3Handler.GetFileUrl(update, file.Digest);
+                    FileExchangeV3FileDownloadInformation fileDownloadInfo = await FE3Handler.GetFileUrl(update, file.Digest);
                     if (fileDownloadInfo == null)
                     {
                         continue;
@@ -289,10 +308,8 @@ namespace WindowsUpdateLib
                         update.CachedMetadata = metadataCabTemp;
 
                         byte[] xmlfile = CabinetExtractor.ExtractCabinetFile(update.CachedMetadata, CabinetExtractor.EnumCabinetFiles(update.CachedMetadata).First());
-                        using (Stream xmlstream = new MemoryStream(xmlfile))
-                        {
-                            neutralCompDB.Add(CompDBXmlClass.DeserializeCompDB(xmlstream));
-                        }
+                        using Stream xmlstream = new MemoryStream(xmlfile);
+                        neutralCompDB.Add(CompDBXmlClass.DeserializeCompDB(xmlstream));
                     }
                     catch { }
                 }

@@ -1,4 +1,25 @@
-﻿using DiscUtils.Registry;
+﻿/*
+ * Copyright (c) Gustave Monce and Contributors
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+using DiscUtils.Registry;
 using System;
 using System.IO;
 using System.Linq;
@@ -10,7 +31,7 @@ namespace MediaCreationLib.Installer
     {
         private static void ResetWindowsRootInValue(RegistryHive hive, string key, string value)
         {
-            var key2 = hive.Root.OpenSubKey(key);
+            RegistryKey key2 = hive.Root.OpenSubKey(key);
             ResetWindowsRootInValue(key2, value);
         }
 
@@ -40,7 +61,7 @@ namespace MediaCreationLib.Installer
                         }
                     case RegistryValueType.MultiString:
                         {
-                            var ogvals = (string[])key2.GetValue(value);
+                            string[] ogvals = (string[])key2.GetValue(value);
                             if (!ogvals.Any(x => x.Contains("X:")))
                                 break;
                             ogvals = ogvals.ToList().Select(x => x.Replace(@"X:", @"X:\$windows.~bt")).ToArray();
@@ -53,7 +74,7 @@ namespace MediaCreationLib.Installer
 
         private static void CrawlInRegistryKey(RegistryHive hive, string key)
         {
-            var key2 = hive.Root.OpenSubKey(key);
+            RegistryKey key2 = hive.Root.OpenSubKey(key);
             CrawlInRegistryKey(key2);
         }
 
@@ -61,11 +82,11 @@ namespace MediaCreationLib.Installer
         {
             if (key2 != null)
             {
-                foreach (var subval in key2.GetValueNames())
+                foreach (string subval in key2.GetValueNames())
                 {
                     ResetWindowsRootInValue(key2, subval);
                 }
-                foreach (var subkey in key2.SubKeys)
+                foreach (RegistryKey subkey in key2.SubKeys)
                 {
                     CrawlInRegistryKey(subkey);
                 }
@@ -76,16 +97,14 @@ namespace MediaCreationLib.Installer
         {
             try
             {
-                using (var hive = new RegistryHive(
+                using RegistryHive hive = new(
                 File.Open(
                     systemHivePath,
                     FileMode.Open,
                     FileAccess.ReadWrite
-                ), DiscUtils.Streams.Ownership.Dispose))
-                {
-                    hive.Root.OpenSubKey(@"ControlSet001").CreateSubKey("CI").SetValue("UMCIDisabled", 1, DiscUtils.Registry.RegistryValueType.Dword);
-                    hive.Root.OpenSubKey(@"ControlSet001\Control\CI").SetValue("UMCIAuditMode", 1, DiscUtils.Registry.RegistryValueType.Dword);
-                }
+                ), DiscUtils.Streams.Ownership.Dispose);
+                hive.Root.OpenSubKey(@"ControlSet001").CreateSubKey("CI").SetValue("UMCIDisabled", 1, DiscUtils.Registry.RegistryValueType.Dword);
+                hive.Root.OpenSubKey(@"ControlSet001\Control\CI").SetValue("UMCIAuditMode", 1, DiscUtils.Registry.RegistryValueType.Dword);
             }
             catch
             {
@@ -98,20 +117,20 @@ namespace MediaCreationLib.Installer
         {
             try
             {
-                using (var hive = new RegistryHive(
+                using (RegistryHive hive = new(
                     File.Open(
                         systemHivePath,
                         FileMode.Open,
                         FileAccess.ReadWrite
                     ), DiscUtils.Streams.Ownership.Dispose))
                 {
-                    var key1 = hive.Root.OpenSubKey(@"ControlSet001\Control\NetDiagFx\Microsoft\HostDLLs\NetCoreHelperClass\HelperClasses\Winsock\Repairs");
-                    foreach (var subkey in key1.SubKeys)
+                    RegistryKey key1 = hive.Root.OpenSubKey(@"ControlSet001\Control\NetDiagFx\Microsoft\HostDLLs\NetCoreHelperClass\HelperClasses\Winsock\Repairs");
+                    foreach (RegistryKey subkey in key1.SubKeys)
                     {
                         ResetWindowsRootInValue(subkey, "Description");
                     }
                     key1 = hive.Root.OpenSubKey(@"ControlSet001\Control\NetDiagFx\Microsoft\HostDLLs\NetCoreHelperClass\HelperClasses\Winsock\RootCauses");
-                    foreach (var subkey in key1.SubKeys)
+                    foreach (RegistryKey subkey in key1.SubKeys)
                     {
                         ResetWindowsRootInValue(subkey, "Description");
                     }
@@ -123,7 +142,7 @@ namespace MediaCreationLib.Installer
                     ResetWindowsRootInValue(hive, @"ControlSet001\Services\WinSock2\Parameters", "AutodialDLL");
                 }
 
-                using (var hive = new RegistryHive(
+                using (RegistryHive hive = new(
                     File.Open(
                         softwareHivePath,
                         FileMode.Open,
@@ -145,12 +164,12 @@ namespace MediaCreationLib.Installer
                      * "X:\\Windows\\system32\\jscript9.dll"=-
                      * "X:\\Windows\\system32\\Chakra.dll"=-
                      */
-                    var key1 = hive.Root.OpenSubKey(@"Microsoft\Windows NT\CurrentVersion\MiniDumpAuxiliaryDlls");
-                    foreach (var subval in key1.GetValueNames())
+                    RegistryKey key1 = hive.Root.OpenSubKey(@"Microsoft\Windows NT\CurrentVersion\MiniDumpAuxiliaryDlls");
+                    foreach (string subval in key1.GetValueNames())
                     {
                         ResetWindowsRootInValue(key1, subval);
                     }
-                    foreach (var subval in key1.GetValueNames())
+                    foreach (string subval in key1.GetValueNames())
                     {
                         if (subval != subval.Replace(@"X:", @"X:\$windows.~bt"))
                         {
@@ -165,19 +184,19 @@ namespace MediaCreationLib.Installer
                     ResetWindowsRootInValue(hive, @"Microsoft\Windows\CurrentVersion", "ProgramFilesDir");
 
                     key1 = hive.Root.OpenSubKey(@"Microsoft\Windows\CurrentVersion\Explorer\Shell Folders");
-                    foreach (var subval in key1.GetValueNames())
+                    foreach (string subval in key1.GetValueNames())
                     {
                         ResetWindowsRootInValue(key1, subval);
                     }
 
                     key1 = hive.Root.OpenSubKey(@"Microsoft\Windows\CurrentVersion\Management Infrastructure\ErrorResources");
-                    foreach (var subkey in key1.SubKeys)
+                    foreach (RegistryKey subkey in key1.SubKeys)
                     {
                         ResetWindowsRootInValue(subkey, "Directory");
                     }
 
                     key1 = hive.Root.OpenSubKey(@"Microsoft\Windows\CurrentVersion\ShellCompatibility\InboxApp");
-                    foreach (var subval in key1.GetValueNames())
+                    foreach (string subval in key1.GetValueNames())
                     {
                         ResetWindowsRootInValue(key1, subval);
                     }
@@ -194,21 +213,19 @@ namespace MediaCreationLib.Installer
         {
             try
             {
-                using (var hive = new RegistryHive(
+                using RegistryHive hive = new(
                     File.Open(
                         softwareHivePath,
                         FileMode.Open,
                         FileAccess.ReadWrite
-                    ), DiscUtils.Streams.Ownership.Dispose))
+                    ), DiscUtils.Streams.Ownership.Dispose);
+                RegistryKey winpekey = hive.Root.OpenSubKey(@"Microsoft\Windows NT\CurrentVersion\WinPE");
+                winpekey.SetValue("CustomBackground", @"%SystemRoot%\system32\setup.bmp", RegistryValueType.ExpandString);
+                if (GetOperatingSystem() == OSPlatform.Windows)
                 {
-                    var winpekey = hive.Root.OpenSubKey(@"Microsoft\Windows NT\CurrentVersion\WinPE");
-                    winpekey.SetValue("CustomBackground", @"%SystemRoot%\system32\setup.bmp", RegistryValueType.ExpandString);
-                    if (GetOperatingSystem() == OSPlatform.Windows)
-                    {
-                        var ockey = winpekey.OpenSubKey("OC");
-                        ockey.CreateSubKey("Microsoft-WinPE-Setup");
-                        ockey.CreateSubKey("Microsoft-WinPE-Setup-Client");
-                    }
+                    RegistryKey ockey = winpekey.OpenSubKey("OC");
+                    ockey.CreateSubKey("Microsoft-WinPE-Setup");
+                    ockey.CreateSubKey("Microsoft-WinPE-Setup-Client");
                 }
             }
             catch

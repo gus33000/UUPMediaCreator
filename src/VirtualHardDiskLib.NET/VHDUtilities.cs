@@ -1,4 +1,25 @@
-﻿using DiscUtils;
+﻿/*
+ * Copyright (c) Gustave Monce and Contributors
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+using DiscUtils;
 using DiscUtils.Ntfs;
 using DiscUtils.Partitions;
 using DiscUtils.Vhd;
@@ -44,18 +65,22 @@ namespace VirtualHardDiskLib
 
         internal static int MountVirtualDisk(string vhdfile)
         {
-            var handle = IntPtr.Zero;
+            IntPtr handle = IntPtr.Zero;
 
             // open disk handle
-            var openParameters = new NativeMethods.OPEN_VIRTUAL_DISK_PARAMETERS();
-            openParameters.Version = NativeMethods.OPEN_VIRTUAL_DISK_VERSION.OPEN_VIRTUAL_DISK_VERSION_1;
+            NativeMethods.OPEN_VIRTUAL_DISK_PARAMETERS openParameters = new NativeMethods.OPEN_VIRTUAL_DISK_PARAMETERS
+            {
+                Version = NativeMethods.OPEN_VIRTUAL_DISK_VERSION.OPEN_VIRTUAL_DISK_VERSION_1
+            };
             openParameters.Version1.RWDepth = NativeMethods.OPEN_VIRTUAL_DISK_RW_DEPTH_DEFAULT;
 
-            var openStorageType = new NativeMethods.VIRTUAL_STORAGE_TYPE();
-            openStorageType.DeviceId = NativeMethods.VIRTUAL_STORAGE_TYPE_DEVICE_VHD;
-            openStorageType.VendorId = NativeMethods.VIRTUAL_STORAGE_TYPE_VENDOR_MICROSOFT;
+            NativeMethods.VIRTUAL_STORAGE_TYPE openStorageType = new NativeMethods.VIRTUAL_STORAGE_TYPE
+            {
+                DeviceId = NativeMethods.VIRTUAL_STORAGE_TYPE_DEVICE_VHD,
+                VendorId = NativeMethods.VIRTUAL_STORAGE_TYPE_VENDOR_MICROSOFT
+            };
 
-            var openResult = NativeMethods.OpenVirtualDisk(ref openStorageType, vhdfile,
+            int openResult = NativeMethods.OpenVirtualDisk(ref openStorageType, vhdfile,
                 NativeMethods.VIRTUAL_DISK_ACCESS_MASK.VIRTUAL_DISK_ACCESS_ALL,
                 NativeMethods.OPEN_VIRTUAL_DISK_FLAG.OPEN_VIRTUAL_DISK_FLAG_NONE, ref openParameters, ref handle);
             if (openResult != NativeMethods.ERROR_SUCCESS)
@@ -63,16 +88,18 @@ namespace VirtualHardDiskLib
                     openResult));
 
             // attach disk - permanently
-            var attachParameters = new NativeMethods.ATTACH_VIRTUAL_DISK_PARAMETERS();
-            attachParameters.Version = NativeMethods.ATTACH_VIRTUAL_DISK_VERSION.ATTACH_VIRTUAL_DISK_VERSION_1;
-            var attachResult = NativeMethods.AttachVirtualDisk(handle, IntPtr.Zero,
+            NativeMethods.ATTACH_VIRTUAL_DISK_PARAMETERS attachParameters = new NativeMethods.ATTACH_VIRTUAL_DISK_PARAMETERS
+            {
+                Version = NativeMethods.ATTACH_VIRTUAL_DISK_VERSION.ATTACH_VIRTUAL_DISK_VERSION_1
+            };
+            int attachResult = NativeMethods.AttachVirtualDisk(handle, IntPtr.Zero,
                 NativeMethods.ATTACH_VIRTUAL_DISK_FLAG.ATTACH_VIRTUAL_DISK_FLAG_PERMANENT_LIFETIME | NativeMethods.ATTACH_VIRTUAL_DISK_FLAG.ATTACH_VIRTUAL_DISK_FLAG_NO_DRIVE_LETTER, 0,
                 ref attachParameters, IntPtr.Zero);
             if (attachResult != NativeMethods.ERROR_SUCCESS)
                 throw new InvalidOperationException(string.Format(CultureInfo.InvariantCulture, "Native error {0}.",
                     attachResult));
 
-            var num = _findVhdPhysicalDriveNumber(handle);
+            int num = _findVhdPhysicalDriveNumber(handle);
 
             // close handle to disk
             NativeMethods.CloseHandle(handle);
@@ -82,18 +109,22 @@ namespace VirtualHardDiskLib
 
         internal static void DismountVirtualDisk(string vhdfile)
         {
-            var handle = IntPtr.Zero;
+            IntPtr handle = IntPtr.Zero;
 
             // open disk handle
-            var openParameters = new NativeMethods.OPEN_VIRTUAL_DISK_PARAMETERS();
-            openParameters.Version = NativeMethods.OPEN_VIRTUAL_DISK_VERSION.OPEN_VIRTUAL_DISK_VERSION_1;
+            NativeMethods.OPEN_VIRTUAL_DISK_PARAMETERS openParameters = new NativeMethods.OPEN_VIRTUAL_DISK_PARAMETERS
+            {
+                Version = NativeMethods.OPEN_VIRTUAL_DISK_VERSION.OPEN_VIRTUAL_DISK_VERSION_1
+            };
             openParameters.Version1.RWDepth = NativeMethods.OPEN_VIRTUAL_DISK_RW_DEPTH_DEFAULT;
 
-            var openStorageType = new NativeMethods.VIRTUAL_STORAGE_TYPE();
-            openStorageType.DeviceId = NativeMethods.VIRTUAL_STORAGE_TYPE_DEVICE_VHD;
-            openStorageType.VendorId = NativeMethods.VIRTUAL_STORAGE_TYPE_VENDOR_MICROSOFT;
+            NativeMethods.VIRTUAL_STORAGE_TYPE openStorageType = new NativeMethods.VIRTUAL_STORAGE_TYPE
+            {
+                DeviceId = NativeMethods.VIRTUAL_STORAGE_TYPE_DEVICE_VHD,
+                VendorId = NativeMethods.VIRTUAL_STORAGE_TYPE_VENDOR_MICROSOFT
+            };
 
-            var openResult = NativeMethods.OpenVirtualDisk(ref openStorageType, vhdfile,
+            int openResult = NativeMethods.OpenVirtualDisk(ref openStorageType, vhdfile,
                 NativeMethods.VIRTUAL_DISK_ACCESS_MASK.VIRTUAL_DISK_ACCESS_ALL,
                 NativeMethods.OPEN_VIRTUAL_DISK_FLAG.OPEN_VIRTUAL_DISK_FLAG_NONE, ref openParameters, ref handle);
             if (openResult != NativeMethods.ERROR_SUCCESS)
@@ -101,7 +132,7 @@ namespace VirtualHardDiskLib
                     openResult));
 
             // detach disk
-            var detachResult = NativeMethods.DetachVirtualDisk(handle,
+            int detachResult = NativeMethods.DetachVirtualDisk(handle,
                 NativeMethods.DETACH_VIRTUAL_DISK_FLAG.DETACH_VIRTUAL_DISK_FLAG_NONE, 0);
             if (detachResult != NativeMethods.ERROR_SUCCESS)
                 throw new InvalidOperationException(string.Format(CultureInfo.InvariantCulture, "Native error {0}.",
@@ -113,12 +144,11 @@ namespace VirtualHardDiskLib
 
         private static int _findVhdPhysicalDriveNumber(IntPtr vhdHandle)
         {
-            int driveNumber;
             int bufferSize = 260;
             StringBuilder vhdPhysicalPath = new StringBuilder(bufferSize);
 
             NativeMethods.GetVirtualDiskPhysicalPath(vhdHandle, ref bufferSize, vhdPhysicalPath);
-            Int32.TryParse(Regex.Match(vhdPhysicalPath.ToString(), @"\d+").Value, out driveNumber);
+            Int32.TryParse(Regex.Match(vhdPhysicalPath.ToString(), @"\d+").Value, out int driveNumber);
             return driveNumber;
         }
 
@@ -161,7 +191,7 @@ namespace VirtualHardDiskLib
 
         private static void _mountVhdToDriveLetter(string vhdVolumePath, string mountPoint)
         {
-            if (vhdVolumePath[vhdVolumePath.Length - 1] != Path.DirectorySeparatorChar)
+            if (vhdVolumePath[^1] != Path.DirectorySeparatorChar)
             {
                 vhdVolumePath += Path.DirectorySeparatorChar;
             }
@@ -175,7 +205,7 @@ namespace VirtualHardDiskLib
         internal static void AttachDriveLetterToDiskAndPartitionId(int diskid, int partid, char driveletter)
         {
             RemoveFileExplorerAutoRun(driveletter);
-            var volpath = _findVhdVolumePath(diskid);
+            string volpath = _findVhdVolumePath(diskid);
             _mountVhdToDriveLetter(volpath, driveletter + ":\\");
         }
 
@@ -185,9 +215,9 @@ namespace VirtualHardDiskLib
         /// <param name="DriveLetter"></param>
         private static void RemoveFileExplorerAutoRun(char DriveLetter)
         {
-            var KeyPath = "Software\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer";
+            string KeyPath = "Software\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer";
             RegistryKey AutoRunKey = Registry.CurrentUser.OpenSubKey(KeyPath, true);
-            var DriveLetterValue = DriveLetter - 'A';
+            int DriveLetterValue = DriveLetter - 'A';
 
             if (AutoRunKey != null)
             {

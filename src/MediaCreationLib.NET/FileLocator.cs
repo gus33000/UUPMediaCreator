@@ -1,4 +1,25 @@
-﻿using CompDB;
+﻿/*
+ * Copyright (c) Gustave Monce and Contributors
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+using CompDB;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -14,12 +35,12 @@ namespace MediaCreationLib.NET
     {
         internal static (bool, HashSet<string>) VerifyFilesAreAvailableForCompDBs(HashSet<CompDBXmlClass.CompDB> compDBs, string UUPPath)
         {
-            HashSet<string> missingPackages = new HashSet<string>();
+            HashSet<string> missingPackages = new();
 
             foreach (CompDBXmlClass.CompDB compDB in compDBs)
             {
                 (bool succeeded, HashSet<string> missingFiles) = Planning.NET.FileLocator.VerifyFilesAreAvailableForCompDB(compDB, UUPPath);
-                foreach (var missingFile in missingFiles)
+                foreach (string? missingFile in missingFiles)
                 {
                     if (!missingPackages.Contains(missingFile))
                     {
@@ -36,7 +57,7 @@ namespace MediaCreationLib.NET
             string Edition,
             string LanguageCode)
         {
-            foreach (var compDB in compDBs)
+            foreach (CompDBXmlClass.CompDB? compDB in compDBs)
             {
                 //
                 // Newer style compdbs have a tag attribute, make use of it.
@@ -81,7 +102,7 @@ namespace MediaCreationLib.NET
                 HashSet<CompDBXmlClass.CompDB> filteredCompDBs = compDBs.GetEditionCompDBsForLanguage(LanguageCode);
                 if (filteredCompDBs.Count > 0)
                 {
-                    foreach (var currentCompDB in filteredCompDBs)
+                    foreach (CompDBXmlClass.CompDB? currentCompDB in filteredCompDBs)
                     {
                         foreach (CompDBXmlClass.Package feature in currentCompDB.Features.Feature[0].Packages.Package)
                         {
@@ -124,8 +145,8 @@ namespace MediaCreationLib.NET
         {
             bool success = true;
 
-            HashSet<string> ReferencePackages = new HashSet<string>();
-            HashSet<string> referencePackagesToConvert = new HashSet<string>();
+            HashSet<string> ReferencePackages = new();
+            HashSet<string> referencePackagesToConvert = new();
             string BaseESD = null;
             progressCallback?.Invoke(Common.ProcessPhase.ReadingMetadata, true, 0, "Enumerating files");
 

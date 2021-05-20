@@ -133,11 +133,9 @@ namespace Microsoft.Wim
                 // Get a mounted image handle
                 //
                 // ReSharper disable once UnusedVariable
-                using (WimHandle wimHandle = WimgApi.GetMountedImageHandle(mountPath, true, out imageHandle))
-                {
-                    // Return the mounted image info from the handle
-                    return WimgApi.GetMountedImageInfoFromHandle(imageHandle);
-                }
+                using WimHandle wimHandle = WimgApi.GetMountedImageHandle(mountPath, true, out imageHandle);
+                // Return the mounted image info from the handle
+                return WimgApi.GetMountedImageInfoFromHandle(imageHandle);
             }
             finally
             {

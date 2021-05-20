@@ -14,10 +14,10 @@ namespace PrivilegeClass
     {
         #region Private static members
 
-        private static LocalDataStoreSlot tlsSlot = Thread.AllocateDataSlot();
-        private static HybridDictionary privileges = new HybridDictionary();
-        private static HybridDictionary luids = new HybridDictionary();
-        private static ReaderWriterLock privilegeLock = new ReaderWriterLock();
+        private static readonly LocalDataStoreSlot tlsSlot = Thread.AllocateDataSlot();
+        private static readonly HybridDictionary privileges = new();
+        private static readonly HybridDictionary luids = new();
+        private static readonly ReaderWriterLock privilegeLock = new();
 
         #endregion Private static members
 
@@ -116,7 +116,7 @@ namespace PrivilegeClass
                         {
                             throw new ArgumentException(
                                 string.Format("{0} is not a valid privilege name", privilege),
-                                "privilege");
+                                nameof(privilege));
                         }
                         else
                         {
@@ -158,10 +158,10 @@ namespace PrivilegeClass
             private bool disposed = false;
             private int referenceCount = 1;
             private IntPtr threadHandle = IntPtr.Zero;
-            private bool isImpersonating = false;
+            private readonly bool isImpersonating = false;
 
             private static IntPtr processHandle = IntPtr.Zero;
-            private static readonly object syncRoot = new object();
+            private static readonly object syncRoot = new();
 
             #region Constructor and finalizer
 
@@ -368,7 +368,7 @@ namespace PrivilegeClass
         {
             if (privilegeName == null)
             {
-                throw new ArgumentNullException("privilegeName");
+                throw new ArgumentNullException(nameof(privilegeName));
             }
 
             this.luid = LuidFromPrivilege(privilegeName);
@@ -419,11 +419,11 @@ namespace PrivilegeClass
                     (this.tlsContents.ReferenceCountValue > 1 ||
                     !this.tlsContents.IsImpersonating))
                 {
-                    NativeMethods.TOKEN_PRIVILEGE newState = new NativeMethods.TOKEN_PRIVILEGE();
+                    NativeMethods.TOKEN_PRIVILEGE newState = new();
                     newState.PrivilegeCount = 1;
                     newState.Privilege.Luid = this.luid;
                     newState.Privilege.Attributes = (this.initialState ? NativeMethods.SE_PRIVILEGE_ENABLED : NativeMethods.SE_PRIVILEGE_DISABLED);
-                    NativeMethods.TOKEN_PRIVILEGE previousState = new NativeMethods.TOKEN_PRIVILEGE();
+                    NativeMethods.TOKEN_PRIVILEGE previousState = new();
                     uint previousSize = 0;
 
                     if (false == NativeMethods.AdjustTokenPrivileges(
@@ -470,10 +470,10 @@ namespace PrivilegeClass
         {
             if (callback == null)
             {
-                throw new ArgumentNullException("callback");
+                throw new ArgumentNullException(nameof(callback));
             }
 
-            Privilege p = new Privilege(privilege);
+            Privilege p = new(privilege);
 
             try
             {
@@ -543,12 +543,12 @@ namespace PrivilegeClass
                     this.tlsContents.IncrementReferenceCount();
                 }
 
-                NativeMethods.TOKEN_PRIVILEGE newState = new NativeMethods.TOKEN_PRIVILEGE();
+                NativeMethods.TOKEN_PRIVILEGE newState = new();
                 newState.PrivilegeCount = 1;
                 newState.Privilege.Luid = this.luid;
                 newState.Privilege.Attributes = enable ? NativeMethods.SE_PRIVILEGE_ENABLED : NativeMethods.SE_PRIVILEGE_DISABLED;
 
-                NativeMethods.TOKEN_PRIVILEGE previousState = new NativeMethods.TOKEN_PRIVILEGE();
+                NativeMethods.TOKEN_PRIVILEGE previousState = new();
                 uint previousSize = 0;
 
                 //

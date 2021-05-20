@@ -1,18 +1,39 @@
-﻿namespace WindowsUpdateLib
+﻿/*
+ * Copyright (c) Gustave Monce and Contributors
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+namespace WindowsUpdateLib
 {
     public static class Constants
     {
-        public const string ClientWebServiceServerNamespace     = "http://www.microsoft.com/SoftwareDistribution/Server/ClientWebService";
-        public const string WindowsUpdateAuthorizationSchema    = "http://schemas.microsoft.com/msus/2014/10/WindowsUpdateAuthorization";
-        public const string Endpoint                            = "https://fe3cr.delivery.mp.microsoft.com/ClientWebService/client.asmx";
-        public const string ClientProtocolVersion               = "2.50";
-        public const string OldCookieExpiration                 = "2016-07-27T07:18:09Z";
-        public const string LastChangeDate                      = "2015-10-21T17:01:07.1472913Z";
-        public const string SecurityExpirationTimestamp         = "2044-08-02T20:09:03Z";
+        public const string ClientWebServiceServerNamespace = "http://www.microsoft.com/SoftwareDistribution/Server/ClientWebService";
+        public const string WindowsUpdateAuthorizationSchema = "http://schemas.microsoft.com/msus/2014/10/WindowsUpdateAuthorization";
+        public const string Endpoint = "https://fe3cr.delivery.mp.microsoft.com/ClientWebService/client.asmx";
+        public const string ClientProtocolVersion = "2.50";
+        public const string OldCookieExpiration = "2016-07-27T07:18:09Z";
+        public const string LastChangeDate = "2015-10-21T17:01:07.1472913Z";
+        public const string SecurityExpirationTimestamp = "2044-08-02T20:09:03Z";
 
-        public static readonly string Action                    = $"{ClientWebServiceServerNamespace}/";
-        public static readonly string UserAgent                 = $"Windows-Update-Agent/10.0.10011.16384 Client-Protocol/{ClientProtocolVersion}";
-        public static readonly int[] InstalledNonLeafUpdateIDs  = new int[]
+        public static readonly string Action = $"{ClientWebServiceServerNamespace}/";
+        public static readonly string UserAgent = $"Windows-Update-Agent/10.0.10011.16384 Client-Protocol/{ClientProtocolVersion}";
+        public static readonly int[] InstalledNonLeafUpdateIDs = new int[]
         {
             1,
             2,

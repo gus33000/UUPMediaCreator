@@ -1,4 +1,25 @@
-﻿using Cabinet;
+﻿/*
+ * Copyright (c) Gustave Monce and Contributors
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+using Cabinet;
 using Imaging;
 using MediaCreationLib.NET;
 using Microsoft.Wim;
@@ -12,7 +33,7 @@ namespace MediaCreationLib.BaseEditions
 {
     public class BaseEditionBuilder
     {
-        private static WIMImaging imagingInterface = new WIMImaging();
+        private static readonly WIMImaging imagingInterface = new();
 
         public static bool CreateBaseEdition(
             string UUPPath,
@@ -21,6 +42,7 @@ namespace MediaCreationLib.BaseEditions
             string InputWindowsREPath,
             string OutputInstallImage,
             Common.CompressionType CompressionType,
+            TempManager.TempManager tempManager,
             ProgressCallback progressCallback = null)
         {
             bool result = true;
@@ -52,12 +74,12 @@ namespace MediaCreationLib.BaseEditions
 
             int counter = 0;
             int total = referencePackagesToConvert.Count;
-            foreach (var file in referencePackagesToConvert)
+            foreach (string file in referencePackagesToConvert)
             {
                 int progressoffset = (int)Math.Round((double)counter / total * 100);
                 int progressScale = (int)Math.Round((double)1 / total * 100);
 
-                string refesd = ConvertCABToESD(Path.Combine(UUPPath, file), progressCallback, progressoffset, progressScale);
+                string refesd = ConvertCABToESD(Path.Combine(UUPPath, file), progressCallback, progressoffset, progressScale, tempManager);
                 if (string.IsNullOrEmpty(refesd))
                 {
                     progressCallback?.Invoke(Common.ProcessPhase.ReadingMetadata, true, 0, "CreateBaseEdition -> Reference ESD creation from Cabinet files failed");
@@ -70,8 +92,7 @@ namespace MediaCreationLib.BaseEditions
             //
             // Gather information to transplant later into DisplayName and DisplayDescription
             //
-            WIMInformationXML.IMAGE image;
-            result = imagingInterface.GetWIMImageInformation(BaseESD, 3, out image);
+            result = imagingInterface.GetWIMImageInformation(BaseESD, 3, out WIMInformationXML.IMAGE image);
             if (!result)
             {
                 progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, "CreateBaseEdition -> GetWIMImageInformation failed");
@@ -99,8 +120,7 @@ namespace MediaCreationLib.BaseEditions
                 goto exit;
             }
 
-            WIMInformationXML.WIM wim;
-            result = imagingInterface.GetWIMInformation(OutputInstallImage, out wim);
+            result = imagingInterface.GetWIMInformation(OutputInstallImage, out WIMInformationXML.WIM wim);
             if (!result)
             {
                 progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, "CreateBaseEdition -> GetWIMInformation failed");
@@ -166,7 +186,7 @@ namespace MediaCreationLib.BaseEditions
             return result;
         }
 
-        private static string ConvertCABToESD(string cabFilePath, ProgressCallback progressCallback, int progressoffset, int progressscale)
+        private static string ConvertCABToESD(string cabFilePath, ProgressCallback progressCallback, int progressoffset, int progressscale, TempManager.TempManager tempManager)
         {
             string esdFilePath = Path.ChangeExtension(cabFilePath, "esd");
             if (File.Exists(esdFilePath))
@@ -174,7 +194,7 @@ namespace MediaCreationLib.BaseEditions
 
             progressCallback?.Invoke(Common.ProcessPhase.PreparingFiles, false, progressoffset, "Unpacking...");
 
-            var tmp = TempManager.TempManager.Instance.GetTempPath();
+            string tmp = tempManager.GetTempPath();
 
             string tempExtractionPath = Path.Combine(tmp, "Package");
             int progressScaleHalf = progressscale / 2;

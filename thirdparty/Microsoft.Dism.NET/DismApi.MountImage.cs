@@ -234,7 +234,7 @@ namespace Microsoft.Dism
             uint flags = (readOnly ? DISM_MOUNT_READONLY : DISM_MOUNT_READWRITE) | (uint)options;
 
             // Create a DismProgress object to wrap the callback and allow cancellation
-            DismProgress progress = new DismProgress(progressCallback, userData);
+            DismProgress progress = new(progressCallback, userData);
 
             int hresult = NativeMethods.DismMountImage(imageFilePath, mountPath, (uint)imageIndex, imageName, imageIdentifier, flags, progress.EventHandle, progress.DismProgressCallbackNative, IntPtr.Zero);
 

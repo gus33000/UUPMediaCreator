@@ -19,12 +19,12 @@ namespace Microsoft.Wim
         /// <summary>
         /// Stores a list of registered callbacks by their WimHandle.
         /// </summary>
-        private readonly Dictionary<WimHandle, Dictionary<WimMessageCallback, WimMessageCallbackWrapper>> _registeredCallbacksByHandle = new Dictionary<WimHandle, Dictionary<WimMessageCallback, WimMessageCallbackWrapper>>();
+        private readonly Dictionary<WimHandle, Dictionary<WimMessageCallback, WimMessageCallbackWrapper>> _registeredCallbacksByHandle = new();
 
         /// <summary>
         /// Stores a list of globally registered callbacks.
         /// </summary>
-        private readonly Dictionary<WimMessageCallback, WimMessageCallbackWrapper> _registeredCallbacksGlobal = new Dictionary<WimMessageCallback, WimMessageCallbackWrapper>();
+        private readonly Dictionary<WimMessageCallback, WimMessageCallbackWrapper> _registeredCallbacksGlobal = new();
 
         /// <summary>
         /// Gets a native callback for passing to the WIMGAPI for the specified registered callback associated with the

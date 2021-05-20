@@ -29,11 +29,11 @@ namespace Microsoft.Wim
         /// <summary>
         /// Used as an object for locking.
         /// </summary>
-        private static readonly object LockObject = new object();
+        private static readonly object LockObject = new();
 
         /// <summary>
         /// An instance of the <see cref="WimRegisteredCallbacks"/> class for keeping track of registered callbacks.
         /// </summary>
-        private static readonly WimRegisteredCallbacks RegisteredCallbacks = new WimRegisteredCallbacks();
+        private static readonly WimRegisteredCallbacks RegisteredCallbacks = new();
     }
 }

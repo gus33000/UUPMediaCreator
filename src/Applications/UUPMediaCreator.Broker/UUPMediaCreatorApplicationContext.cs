@@ -1,4 +1,25 @@
-﻿using System;
+﻿/*
+ * Copyright (c) Gustave Monce and Contributors
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+using System;
 using System.Text.Json;
 using System.Threading;
 using UUPMediaCreator.InterCommunication;
@@ -27,9 +48,11 @@ namespace UUPMediaCreator.Broker
                     return;
                 }
 
-                connection = new AppServiceConnection();
-                connection.PackageFamilyName = Package.Current.Id.FamilyName;
-                connection.AppServiceName = "UUPMediaCreatorService";
+                connection = new AppServiceConnection
+                {
+                    PackageFamilyName = Package.Current.Id.FamilyName,
+                    AppServiceName = "UUPMediaCreatorService"
+                };
                 connection.ServiceClosed += Connection_ServiceClosed;
                 AppServiceConnectionStatus connectionStatus = await connection.OpenAsync();
                 if (connectionStatus != AppServiceConnectionStatus.Success)
@@ -52,10 +75,12 @@ namespace UUPMediaCreator.Broker
                 {
                     case Common.InterCommunicationType.Exit:
                         {
-                            Thread thread = new Thread(async () =>
+                            Thread thread = new(async () =>
                             {
-                                var val = new ValueSet();
-                                val.Add("InterCommunication", "");
+                                ValueSet val = new()
+                                {
+                                    { "InterCommunication", "" }
+                                };
                                 await args.Request.SendResponseAsync(val);
                             });
 
@@ -69,7 +94,7 @@ namespace UUPMediaCreator.Broker
                         {
                             async void callback(Common.ProcessPhase phase, bool IsIndeterminate, int ProgressInPercentage, string SubOperation)
                             {
-                                var prog = new Common.ISOConversionProgress()
+                                Common.ISOConversionProgress prog = new()
                                 {
                                     Phase = phase,
                                     IsIndeterminate = IsIndeterminate,
@@ -77,15 +102,17 @@ namespace UUPMediaCreator.Broker
                                     SubOperation = SubOperation
                                 };
 
-                                var comm = new Common.InterCommunication() { InterCommunicationType = Common.InterCommunicationType.ReportISOConversionProgress, ISOConversionProgress = prog };
+                                Common.InterCommunication comm = new() { InterCommunicationType = Common.InterCommunicationType.ReportISOConversionProgress, ISOConversionProgress = prog };
 
-                                var val = new ValueSet();
-                                val.Add("InterCommunication", JsonSerializer.Serialize(comm));
+                                ValueSet val = new()
+                                {
+                                    { "InterCommunication", JsonSerializer.Serialize(comm) }
+                                };
 
                                 await connection.SendMessageAsync(val);
                             }
 
-                            Thread thread = new Thread(async () =>
+                            Thread thread = new(async () =>
                             {
                                 try
                                 {
@@ -100,7 +127,7 @@ namespace UUPMediaCreator.Broker
                                 }
                                 catch (Exception ex)
                                 {
-                                    var prog = new Common.ISOConversionProgress()
+                                    Common.ISOConversionProgress prog = new()
                                     {
                                         Phase = Common.ProcessPhase.Error,
                                         IsIndeterminate = true,
@@ -108,10 +135,12 @@ namespace UUPMediaCreator.Broker
                                         SubOperation = ex.ToString()
                                     };
 
-                                    var comm = new Common.InterCommunication() { InterCommunicationType = Common.InterCommunicationType.ReportISOConversionProgress, ISOConversionProgress = prog };
+                                    Common.InterCommunication comm = new() { InterCommunicationType = Common.InterCommunicationType.ReportISOConversionProgress, ISOConversionProgress = prog };
 
-                                    var val = new ValueSet();
-                                    val.Add("InterCommunication", JsonSerializer.Serialize(comm));
+                                    ValueSet val = new()
+                                    {
+                                        { "InterCommunication", JsonSerializer.Serialize(comm) }
+                                    };
 
                                     await connection.SendMessageAsync(val);
                                 }

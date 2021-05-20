@@ -20,6 +20,8 @@
     <AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
     <PackageCertificateThumbprint>D45AC8306783AE1D0AA2F1E931A8A988BCA34884</PackageCertificateThumbprint>
     <PackageCertificateKeyFile>UUPMediaCreator_TemporaryKey.pfx</PackageCertificateKeyFile>
+    <LangVersion>Preview</LangVersion>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>

@@ -1,4 +1,25 @@
-﻿using PrivilegeClass;
+﻿/*
+ * Copyright (c) Gustave Monce and Contributors
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+using PrivilegeClass;
 using System;
 using System.IO;
 using System.Security.AccessControl;
@@ -10,12 +31,12 @@ namespace MediaCreationLib.Installer
     {
         public static void TakeOwnDirectory(string path)
         {
-            DirectoryInfo directoryInfo = new DirectoryInfo(path);
+            DirectoryInfo directoryInfo = new(path);
             DirectorySecurity directorySecurity = directoryInfo.GetAccessControl();
 
             directorySecurity.SetOwner(WindowsIdentity.GetCurrent().User);
 
-            Privilege p = new Privilege(Privilege.TakeOwnership);
+            Privilege p = new(Privilege.TakeOwnership);
             bool ownershipTaken = false;
             try
             {
@@ -37,14 +58,14 @@ namespace MediaCreationLib.Installer
             {
                 AdjustPermissionsForDirectory(path);
 
-                var subFiles = Directory.EnumerateFiles(path);
-                foreach (var subFile in subFiles)
+                System.Collections.Generic.IEnumerable<string> subFiles = Directory.EnumerateFiles(path);
+                foreach (string subFile in subFiles)
                 {
                     TakeOwnFile(subFile);
                 }
 
-                var subDirectories = Directory.EnumerateDirectories(path);
-                foreach (var subDir in subDirectories)
+                System.Collections.Generic.IEnumerable<string> subDirectories = Directory.EnumerateDirectories(path);
+                foreach (string subDir in subDirectories)
                 {
                     TakeOwnDirectory(subDir);
                 }
@@ -53,12 +74,12 @@ namespace MediaCreationLib.Installer
 
         private static void AdjustPermissionsForDirectory(string path)
         {
-            DirectoryInfo directoryInfo = new DirectoryInfo(path);
+            DirectoryInfo directoryInfo = new(path);
             DirectorySecurity directorySecurity = directoryInfo.GetAccessControl();
 
             directorySecurity.SetAccessRule(new FileSystemAccessRule(WindowsIdentity.GetCurrent().User, FileSystemRights.FullControl, AccessControlType.Allow));
 
-            Privilege p = new Privilege(Privilege.TakeOwnership);
+            Privilege p = new(Privilege.TakeOwnership);
             try
             {
                 p.Enable();
@@ -77,12 +98,12 @@ namespace MediaCreationLib.Installer
 
         public static void TakeOwnFile(string path)
         {
-            FileInfo fileInfo = new FileInfo(path);
+            FileInfo fileInfo = new(path);
             FileSecurity fileSecurity = fileInfo.GetAccessControl();
 
             fileSecurity.SetOwner(WindowsIdentity.GetCurrent().User);
 
-            Privilege p = new Privilege(Privilege.TakeOwnership);
+            Privilege p = new(Privilege.TakeOwnership);
             bool ownershipTaken = false;
             try
             {
@@ -108,12 +129,12 @@ namespace MediaCreationLib.Installer
 
         private static void AdjustPermissionsForFile(string path)
         {
-            FileInfo fileInfo = new FileInfo(path);
+            FileInfo fileInfo = new(path);
             FileSecurity fileSecurity = fileInfo.GetAccessControl();
 
             fileSecurity.SetAccessRule(new FileSystemAccessRule(WindowsIdentity.GetCurrent().User, FileSystemRights.FullControl, AccessControlType.Allow));
 
-            Privilege p = new Privilege(Privilege.TakeOwnership);
+            Privilege p = new(Privilege.TakeOwnership);
             try
             {
                 p.Enable();

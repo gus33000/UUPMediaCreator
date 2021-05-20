@@ -40,7 +40,7 @@ namespace PrivilegeClass
         {
             if (info == null)
             {
-                throw new ArgumentNullException("info");
+                throw new ArgumentNullException(nameof(info));
             }
 
             base.GetObjectData(info, context);

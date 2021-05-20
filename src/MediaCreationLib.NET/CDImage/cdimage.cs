@@ -1,4 +1,25 @@
-﻿using System;
+﻿/*
+ * Copyright (c) Gustave Monce and Contributors
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -37,18 +58,18 @@ namespace MediaCreationLib.CDImage
 
         public static bool GenerateISOImage(string isopath, string cdroot, string volumelabel, ProgressCallback progressCallback)
         {
-            var setupexe = Path.Combine(cdroot, "setup.exe");
-            var creationtime = File.GetCreationTimeUtc(setupexe);
+            string setupexe = Path.Combine(cdroot, "setup.exe");
+            DateTime creationtime = File.GetCreationTimeUtc(setupexe);
 
             if (GetOperatingSystem() == OSPlatform.Windows)
             {
-                var runningDirectory = Process.GetCurrentProcess().MainModule.FileName.Contains(Path.DirectorySeparatorChar) ? string.Join(Path.DirectorySeparatorChar, Process.GetCurrentProcess().MainModule.FileName.Split(Path.DirectorySeparatorChar).Reverse().Skip(1).Reverse()) : "";
+                string runningDirectory = Process.GetCurrentProcess().MainModule.FileName.Contains(Path.DirectorySeparatorChar) ? string.Join(Path.DirectorySeparatorChar, Process.GetCurrentProcess().MainModule.FileName.Split(Path.DirectorySeparatorChar).Reverse().Skip(1).Reverse()) : "";
 
                 string cdimagepath = Path.Combine(runningDirectory, "CDImage", "cdimage.exe");
 
-                var timestamp = creationtime.ToString("MM/dd/yyyy,hh:mm:ss");
+                string timestamp = creationtime.ToString("MM/dd/yyyy,hh:mm:ss");
 
-                ProcessStartInfo processStartInfo = new ProcessStartInfo(cdimagepath,
+                ProcessStartInfo processStartInfo = new(cdimagepath,
                     $"\"-bootdata:2#p0,e,b{cdroot}\\boot\\etfsboot.com#pEF,e,b{cdroot}\\efi\\Microsoft\\boot\\efisys.bin\" -o -h -m -u2 -udfver102 -t{timestamp} -l{volumelabel}  \"{cdroot}\" \"{isopath}\"");
 
                 processStartInfo.UseShellExecute = false;
@@ -56,7 +77,7 @@ namespace MediaCreationLib.CDImage
                 processStartInfo.RedirectStandardError = true;
                 processStartInfo.CreateNoWindow = true;
 
-                Process process = new Process();
+                Process process = new();
                 process.StartInfo = processStartInfo;
 
                 try
@@ -65,7 +86,7 @@ namespace MediaCreationLib.CDImage
                     {
                         if (e.Data != null && e.Data.Contains("%"))
                         {
-                            var percent = int.Parse(e.Data.Split(' ').First(x => x.Contains("%")).Replace("%", ""));
+                            int percent = int.Parse(e.Data.Split(' ').First(x => x.Contains("%")).Replace("%", ""));
                             progressCallback?.Invoke($"Building {isopath}", percent, false);
                         }
                     };
@@ -83,7 +104,7 @@ namespace MediaCreationLib.CDImage
             {
                 try
                 {
-                    foreach (var entry in Directory.EnumerateFileSystemEntries(cdroot, "*", SearchOption.AllDirectories))
+                    foreach (string entry in Directory.EnumerateFileSystemEntries(cdroot, "*", SearchOption.AllDirectories))
                     {
                         if (Directory.Exists(entry))
                         {
@@ -123,9 +144,9 @@ namespace MediaCreationLib.CDImage
                         }
                     }
 
-                    var cmdline = $"-b \"boot/etfsboot.com\" --no-emul-boot --eltorito-alt-boot -b \"efi/microsoft/boot/efisys.bin\" --no-emul-boot --udf --hide \"*\" -V \"{volumelabel}\" -o \"{isopath}\" {cdroot}";
+                    string cmdline = $"-b \"boot/etfsboot.com\" --no-emul-boot --eltorito-alt-boot -b \"efi/microsoft/boot/efisys.bin\" --no-emul-boot --udf --hide \"*\" -V \"{volumelabel}\" -o \"{isopath}\" {cdroot}";
 
-                    ProcessStartInfo processStartInfo = new ProcessStartInfo("mkisofs",
+                    ProcessStartInfo processStartInfo = new("mkisofs",
                         cmdline);
 
                     processStartInfo.UseShellExecute = false;
@@ -133,7 +154,7 @@ namespace MediaCreationLib.CDImage
                     processStartInfo.RedirectStandardError = true;
                     processStartInfo.CreateNoWindow = true;
 
-                    Process process = new Process();
+                    Process process = new();
                     process.StartInfo = processStartInfo;
 
                     try
@@ -142,7 +163,7 @@ namespace MediaCreationLib.CDImage
                         {
                             if (e.Data != null && e.Data.Contains("%"))
                             {
-                                var percent = (int)Math.Round(double.Parse(e.Data.Split(' ').First(x => x.Contains("%")).Replace("%", "")));
+                                int percent = (int)Math.Round(double.Parse(e.Data.Split(' ').First(x => x.Contains("%")).Replace("%", "")));
                                 progressCallback?.Invoke($"Building {isopath}", percent, false);
                             }
                         };

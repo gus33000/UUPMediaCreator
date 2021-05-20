@@ -1,20 +1,41 @@
-﻿using Imaging;
+﻿/*
+ * Copyright (c) Gustave Monce and Contributors
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+using Cabinet;
+using Imaging;
 using IniParser;
 using IniParser.Model;
+using MediaCreationLib.Dism;
 using Microsoft.Wim;
 using System;
 using System.IO;
 using System.Linq;
 using UUPMediaCreator.InterCommunication;
 using static MediaCreationLib.MediaCreator;
-using MediaCreationLib.Dism;
-using Cabinet;
 
 namespace MediaCreationLib.BootlegEditions
 {
     public class BootlegEditionCreator
     {
-        private static WIMImaging imagingInterface = new WIMImaging();
+        private static readonly WIMImaging imagingInterface = new();
 
         private static string LPFolder = null;
 
@@ -218,6 +239,7 @@ namespace MediaCreationLib.BootlegEditions
             string EditionID,
             string OutputInstallImage,
             Common.CompressionType CompressionType,
+            TempManager.TempManager tempManager,
             ProgressCallback progressCallback = null)
         {
             bool result = true;
@@ -226,7 +248,7 @@ namespace MediaCreationLib.BootlegEditions
             progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, "Getting serial for " + EditionID);
             string productinifilepath = Path.Combine(MediaPath, "sources", "product.ini");
 
-            var parser = new FileIniDataParser();
+            FileIniDataParser parser = new();
             IniData data = parser.ReadFile(productinifilepath);
 
             string serial = data["cmi"].First(x => x.KeyName.ToLower() == EditionID.ToLower()).Value;
@@ -237,21 +259,20 @@ namespace MediaCreationLib.BootlegEditions
             progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, "Current edition is: " + SourceEdition);
 
             progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, "Getting wim info for: " + OutputInstallImage);
-            WIMInformationXML.WIM wiminfo;
-            result = imagingInterface.GetWIMInformation(OutputInstallImage, out wiminfo);
+            result = imagingInterface.GetWIMInformation(OutputInstallImage, out WIMInformationXML.WIM wiminfo);
             if (!result)
                 goto exit;
 
             progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, "Searching index for : " + SourceEdition);
-            var srcimage = wiminfo.IMAGE.First(x =>
+            WIMInformationXML.IMAGE srcimage = wiminfo.IMAGE.First(x =>
             {
-                var img = x;
-                var win = img.WINDOWS;
-                var ed = win.EDITIONID;
+                WIMInformationXML.IMAGE img = x;
+                WIMInformationXML.WINDOWS win = img.WINDOWS;
+                string ed = win.EDITIONID;
                 return ed.Equals(SourceEdition, StringComparison.InvariantCultureIgnoreCase);
             });
-            var index = int.Parse(srcimage.INDEX);
-            var languagecode = srcimage.WINDOWS.LANGUAGES.DEFAULT;
+            int index = int.Parse(srcimage.INDEX);
+            string languagecode = srcimage.WINDOWS.LANGUAGES.DEFAULT;
             progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, "Source index: " + index);
             progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, "Source language: " + languagecode);
 
@@ -293,7 +314,7 @@ namespace MediaCreationLib.BootlegEditions
             );
             progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, "Has edition pack: " + HasEditionPack);
 
-            string TemporaryFolder = TempManager.TempManager.Instance.GetTempPath();
+            string TemporaryFolder = tempManager.GetTempPath();
             Directory.CreateDirectory(TemporaryFolder);
 
             string SxSFolder = Path.Combine(TemporaryFolder, "SxS");
@@ -304,7 +325,7 @@ namespace MediaCreationLib.BootlegEditions
             //
             progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, "Generating edition manifest");
             string packageFilter = $"microsoft-windows-edition*{EditionID}-*.esd";
-            var packages = Directory.EnumerateFiles(UUPPath, packageFilter, SearchOption.AllDirectories);
+            System.Collections.Generic.IEnumerable<string> packages = Directory.EnumerateFiles(UUPPath, packageFilter, SearchOption.AllDirectories);
 
             string manifestFileName = Path.GetFileName(manifestPath).Replace(SourceEdition, EditionID);
             string catalogFileName = Path.GetFileName(catalogPath).Replace(SourceEdition, EditionID);
@@ -342,12 +363,12 @@ namespace MediaCreationLib.BootlegEditions
             //
             if (LPFolder == null)
             {
-                LPFolder = TempManager.TempManager.Instance.GetTempPath();
+                LPFolder = tempManager.GetTempPath();
                 Directory.CreateDirectory(LPFolder);
 
                 string lpfilter1 = $"*fre_client_{languagecode}_lp.cab";
-                var paths = Directory.EnumerateFiles(UUPPath, lpfilter1, SearchOption.AllDirectories);
-                if (paths.Count() > 0)
+                System.Collections.Generic.IEnumerable<string> paths = Directory.EnumerateFiles(UUPPath, lpfilter1, SearchOption.AllDirectories);
+                if (paths.Any())
                 {
                     string lppackage = paths.First();
                     void ProgressCallback(int percent, string file)
@@ -362,13 +383,13 @@ namespace MediaCreationLib.BootlegEditions
                     string lppackage = "";
 
                     string lpfilter2 = $"*fre_client_{languagecode}_lp.esd";
-                    if (Directory.EnumerateFiles(UUPPath, lpfilter2, SearchOption.AllDirectories).Count() <= 0)
+                    if (!Directory.EnumerateFiles(UUPPath, lpfilter2, SearchOption.AllDirectories).Any())
                     {
                         lpfilter2 = $"microsoft-windows-client-languagepack-package_{languagecode}-*-{languagecode}.esd";
-                        if (Directory.EnumerateFiles(UUPPath, lpfilter2, SearchOption.AllDirectories).Count() <= 0)
+                        if (!Directory.EnumerateFiles(UUPPath, lpfilter2, SearchOption.AllDirectories).Any())
                         {
                             lpfilter2 = $"microsoft-windows-client-languagepack-package_{languagecode}~*~{languagecode}~.esd";
-                            if (Directory.EnumerateFiles(UUPPath, lpfilter2, SearchOption.AllDirectories).Count() <= 0)
+                            if (!Directory.EnumerateFiles(UUPPath, lpfilter2, SearchOption.AllDirectories).Any())
                             {
                                 progressCallback?.Invoke(Common.ProcessPhase.Error, true, 0, "Unable to find LP package!");
                                 goto exit;
@@ -387,7 +408,7 @@ namespace MediaCreationLib.BootlegEditions
             //
             // Expand Edition related packages to SxS folder
             //
-            foreach (var package in packages)
+            foreach (string package in packages)
             {
                 result = imagingInterface.ApplyImage(package, 1, SxSFolder, PreserveACL: false, progressCallback: callback2);
                 if (!result)
@@ -395,7 +416,7 @@ namespace MediaCreationLib.BootlegEditions
 
                 if (File.Exists(Path.Combine(SxSFolder, "update.mum")))
                 {
-                    var assembly = AssemblyManifestHandler.Deserialize(File.ReadAllText(Path.Combine(SxSFolder, "update.mum")));
+                    AssemblyManifestHandler.Assembly assembly = AssemblyManifestHandler.Deserialize(File.ReadAllText(Path.Combine(SxSFolder, "update.mum")));
                     string cbsKey = assembly.AssemblyIdentity.Name + "~" + assembly.AssemblyIdentity.PublicKeyToken + "~" + assembly.AssemblyIdentity.ProcessorArchitecture + "~" + (assembly.AssemblyIdentity.Language.ToLower() == "neutral" ? "" : assembly.AssemblyIdentity.Language) + "~" + assembly.AssemblyIdentity.Version;
                     if (!File.Exists(Path.Combine(SxSFolder, cbsKey + ".mum")))
                     {
@@ -516,8 +537,8 @@ namespace MediaCreationLib.BootlegEditions
             bool HandleOEMDefaultAssociationsXml = File.Exists(Path.Combine(MountedImagePath, "Windows", "System32", "OEMDefaultAssociations.xml"));
             bool HandleOEMDefaultAssociationsDll = File.Exists(Path.Combine(MountedImagePath, "Windows", "System32", "OEMDefaultAssociations.dll"));
 
-            string OEMDefaultAssociationsXml = TempManager.TempManager.Instance.GetTempPath();
-            string OEMDefaultAssociationsDll = TempManager.TempManager.Instance.GetTempPath();
+            string OEMDefaultAssociationsXml = tempManager.GetTempPath();
+            string OEMDefaultAssociationsDll = tempManager.GetTempPath();
 
             string OEMDefaultAssociationsXmlInImage = Path.Combine(MountedImagePath, "Windows", "System32", "OEMDefaultAssociations.xml");
             string OEMDefaultAssociationsDllInImage = Path.Combine(MountedImagePath, "Windows", "System32", "OEMDefaultAssociations.dll");
@@ -622,12 +643,11 @@ namespace MediaCreationLib.BootlegEditions
             if (!result)
                 goto exit;
 
-            WIMInformationXML.IMAGE tmpImageInfo;
-            result = imagingInterface.GetWIMImageInformation(OutputInstallImage, wiminfo.IMAGE.Count + 1, out tmpImageInfo);
+            result = imagingInterface.GetWIMImageInformation(OutputInstallImage, wiminfo.IMAGE.Count + 1, out WIMInformationXML.IMAGE tmpImageInfo);
             if (!result)
                 goto exit;
 
-            var sku = tmpImageInfo.WINDOWS.EDITIONID;
+            string sku = tmpImageInfo.WINDOWS.EDITIONID;
 
             tmpImageInfo.WINDOWS = srcimage.WINDOWS;
             tmpImageInfo.WINDOWS.EDITIONID = sku;

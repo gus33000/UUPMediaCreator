@@ -1,4 +1,25 @@
-﻿using System;
+﻿/*
+ * Copyright (c) Gustave Monce and Contributors
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+using System;
 using System.Text.Json;
 using UUPMediaCreator.InterCommunication;
 using UUPMediaCreator.UWP.Pages;
@@ -71,7 +92,7 @@ namespace UUPMediaCreator
     {
         public static BackgroundTaskDeferral AppServiceDeferral = null;
         public static AppServiceConnection Connection = null;
-        public static ConversionPlan ConversionPlan = new ConversionPlan();
+        public static ConversionPlan ConversionPlan = new();
 
         protected override void OnActivated(IActivatedEventArgs args)
         {
@@ -168,7 +189,7 @@ namespace UUPMediaCreator
         private async void SystemNavigationManager_CloseRequested(object sender, SystemNavigationCloseRequestedPreviewEventArgs e)
         {
             Deferral deferral = e.GetDeferral();
-            ContentDialog dlg = new ContentDialog() { Title = "Do you really want to exit the application?", PrimaryButtonText = "Yes", SecondaryButtonText = "No" };
+            ContentDialog dlg = new() { Title = "Do you really want to exit the application?", PrimaryButtonText = "Yes", SecondaryButtonText = "No" };
             ContentDialogResult result = await dlg.ShowAsync();
             if (result == ContentDialogResult.Secondary)
             {
@@ -180,7 +201,7 @@ namespace UUPMediaCreator
             {
                 if (Connection != null)
                 {
-                    ValueSet message = new ValueSet();
+                    ValueSet message = new();
                     message.Add("InterCommunication", JsonSerializer.Serialize(new Common.InterCommunication() { InterCommunicationType = InterCommunicationType.Exit }));
                     await Connection.SendMessageAsync(message);
                 }
@@ -218,7 +239,7 @@ namespace UUPMediaCreator
         /// <param name="e">Details about the suspend request.</param>
         private void OnSuspending(object sender, SuspendingEventArgs e)
         {
-            var deferral = e.SuspendingOperation.GetDeferral();
+            SuspendingDeferral deferral = e.SuspendingOperation.GetDeferral();
             //TODO: Save application state and stop any background activity
             deferral.Complete();
         }

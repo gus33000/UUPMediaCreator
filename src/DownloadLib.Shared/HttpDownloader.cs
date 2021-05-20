@@ -1,24 +1,25 @@
-﻿// Copyright (c) Gustave Monce and Contributors
-// Copyright (c) ADeltaX and Contributors
-//
-// Permission is hereby granted, free of charge, to any person obtaining a
-// copy of this software and associated documentation files (the "Software"),
-// to deal in the Software without restriction, including without limitation
-// the rights to use, copy, modify, merge, publish, distribute, sublicense,
-// and/or sell copies of the Software, and to permit persons to whom the
-// Software is furnished to do so, subject to the following conditions:
-//
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
-// DEALINGS IN THE SOFTWARE.
-
+﻿/*
+ * Copyright (c) Gustave Monce and Contributors
+ * Copyright (c) ADeltaX and Contributors
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -94,7 +95,7 @@ namespace DownloadLib
 
         public HttpDownloader(string downloadFolderPath, int downloadThreads = 4, bool verifyFiles = true, IWebProxy proxy = null, bool useSystemProxy = true)
         {
-            var filter = new HttpClientHandler
+            HttpClientHandler filter = new()
             {
 #if NET5_0_OR_GREATER
                 AutomaticDecompression = DecompressionMethods.All,
@@ -141,12 +142,12 @@ namespace DownloadLib
                 NumFiles = items.Count
             };
 
-            var result = true;
+            bool result = true;
             while (pending.Count + workingThreadsCount != 0)
             {
                 if (workingThreadsCount < threads && pending.Count != 0)
                 {
-                    var item = pending.Dequeue();
+                    UUPFile item = pending.Dequeue();
                     FileDownloadStatus fileStatus = new(item);
                     Progress<FileDownloadStatus> progress = new();
 
@@ -204,7 +205,7 @@ namespace DownloadLib
             long chunk = CHUNK_SIZE;
             long totalBytesRead = 0;
             long hashedBytes = 0;
-            var blockBufferSize = bufferSize;
+            int blockBufferSize = bufferSize;
 
             //These variables are used to decrypt files if esrp is available.
             EsrpDecryptor esrpDecrypter = null; //Implements IDisposable
@@ -225,16 +226,16 @@ namespace DownloadLib
             try
             {
                 //This path will be used for downloaded and validated files, moved/renamed
-                var filePath = Path.Combine(basePath, downloadFile.FileName);
+                string filePath = Path.Combine(basePath, downloadFile.FileName);
 
                 //This path will be used for downloading files
-                var tempFilePath = filePath + TEMP_DOWNLOAD_EXTENSION;
+                string tempFilePath = filePath + TEMP_DOWNLOAD_EXTENSION;
 
                 //If we have an already completed file, prefer this under certain conditions.
                 if (File.Exists(tempFilePath) && File.Exists(filePath))
                 {
-                    var tmpFileInfo = new FileInfo(tempFilePath);
-                    var fileInfo = new FileInfo(filePath);
+                    FileInfo tmpFileInfo = new(tempFilePath);
+                    FileInfo fileInfo = new(filePath);
                     if (tmpFileInfo.Length == downloadFile.FileSize)
                         File.Delete(filePath);
                     else if (fileInfo.Length == downloadFile.FileSize)
@@ -245,7 +246,7 @@ namespace DownloadLib
 
                 if (File.Exists(tempFilePath))
                 {
-                    var tmpFileInfo = new FileInfo(tempFilePath);
+                    FileInfo tmpFileInfo = new(tempFilePath);
 
                     if (tmpFileInfo.Length == downloadFile.FileSize)
                     {
@@ -292,9 +293,9 @@ namespace DownloadLib
                     //we just hash to be sure that the file hasn't been tampered
                     if (verifyFiles)
                     {
-                        var fileStreamToHash = File.Open(filePath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite);
+                        FileStream fileStreamToHash = File.Open(filePath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite);
                         totalBytesRead = fileStreamToHash.Length;
-                        var hashResult = await HashWithProgress(fileStreamToHash).ConfigureAwait(false);
+                        bool hashResult = await HashWithProgress(fileStreamToHash).ConfigureAwait(false);
                         fileStreamToHash.Dispose();
 
                         if (hashResult)
@@ -318,7 +319,7 @@ namespace DownloadLib
                     else
                     {
                         //At your own risk lol
-                        var tmpFileInfo = new FileInfo(tempFilePath);
+                        FileInfo tmpFileInfo = new(tempFilePath);
                         downloadProgress?.Report(new FileDownloadStatus(downloadFile)
                         {
                             DownloadedBytes = tmpFileInfo.Length,
@@ -333,17 +334,17 @@ namespace DownloadLib
                 Directory.CreateDirectory(Path.GetDirectoryName(filePath));
 
                 //Open the file as stream.
-                using var streamToWriteTo = File.Open(tempFilePath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.Read);
+                using FileStream streamToWriteTo = File.Open(tempFilePath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.Read);
 
                 //Set the seek position to current range position (via totalBytesRead or currRange). This is needed.
                 streamToWriteTo.Seek(totalBytesRead, SeekOrigin.Begin);
 
-                using var httpRequestMessageHead = new HttpRequestMessage(HttpMethod.Head, new Uri(downloadFile.WUFile.DownloadUrl));
-                using var response = await httpClient.SendAsync(httpRequestMessageHead, HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                using HttpRequestMessage httpRequestMessageHead = new(HttpMethod.Head, new Uri(downloadFile.WUFile.DownloadUrl));
+                using HttpResponseMessage response = await httpClient.SendAsync(httpRequestMessageHead, HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
 
                 //Technically the  server reports both content-length and Accept-Ranges.
-                var contentLength = response.Content.Headers.ContentLength;
-                var hasAcceptRanges = response.Headers.AcceptRanges.Contains("bytes");
+                long? contentLength = response.Content.Headers.ContentLength;
+                bool hasAcceptRanges = response.Headers.AcceptRanges.Contains("bytes");
 
                 //This is just a fallback in case the file delivery server goes nuts.
                 if (!hasAcceptRanges)
@@ -362,8 +363,8 @@ namespace DownloadLib
                     //TODO: add download reporting for this
                     //TODO: may throw an exception if the server suddently closes the connection (e.g. file expired.)
 
-                    using var fullFileResp = await httpClient.GetAsync(downloadFile.WUFile.DownloadUrl, cancellationToken).ConfigureAwait(false);
-                    using var streamToReadFrom = await fullFileResp.Content.ReadAsStreamAsync().ConfigureAwait(false);
+                    using HttpResponseMessage fullFileResp = await httpClient.GetAsync(downloadFile.WUFile.DownloadUrl, cancellationToken).ConfigureAwait(false);
+                    using Stream streamToReadFrom = await fullFileResp.Content.ReadAsStreamAsync().ConfigureAwait(false);
 
                     if (esrpDecrypter != null)
                         await esrpDecrypter.DecryptStreamFullAsync(streamToReadFrom, streamToWriteTo, (ulong)contentLength.Value, cancellationToken).ConfigureAwait(false);
@@ -389,8 +390,8 @@ namespace DownloadLib
                         chunk = contentLength.Value - currRange - 1;
 
                     //Create request for range and send it, return asap (we just need the header to see if the status code is ok)
-                    using var requestMessageRange = CreateRequestHeaderForRange(HttpMethod.Get, downloadFile.WUFile.DownloadUrl, currRange, currRange + chunk);
-                    using var filePartResp = await httpClient.SendAsync(requestMessageRange, HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    using HttpRequestMessage requestMessageRange = CreateRequestHeaderForRange(HttpMethod.Get, downloadFile.WUFile.DownloadUrl, currRange, currRange + chunk);
+                    using HttpResponseMessage filePartResp = await httpClient.SendAsync(requestMessageRange, HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
 
                     //increment to the next range
                     currRange += chunk + 1;
@@ -399,10 +400,10 @@ namespace DownloadLib
                     if (filePartResp.IsSuccessStatusCode)
                     {
                         //get the underlying stream
-                        using var streamToReadFrom = await filePartResp.Content.ReadAsStreamAsync();
+                        using Stream streamToReadFrom = await filePartResp.Content.ReadAsStreamAsync();
 
                         int bytesRead;
-                        var buffer = new byte[blockBufferSize];
+                        byte[] buffer = new byte[blockBufferSize];
 
                         //read the content
                         //TODO: it may throw an exception (stream closed because file expired?)
@@ -492,7 +493,7 @@ namespace DownloadLib
                 if (verifyFiles)
                 {
                     streamToWriteTo.Seek(0, SeekOrigin.Begin);
-                    var hashResult = await HashWithProgress(streamToWriteTo).ConfigureAwait(false);
+                    bool hashResult = await HashWithProgress(streamToWriteTo).ConfigureAwait(false);
 
                     if (hashResult)
                     {
@@ -546,7 +547,7 @@ namespace DownloadLib
                     });
                 };
 
-                var hashMatches = await IsDownloadedFileValidSHA256(strm, downloadFile.SHA256,
+                bool hashMatches = await IsDownloadedFileValidSHA256(strm, downloadFile.SHA256,
                                                         progressHashedBytes, cancellationToken).ConfigureAwait(false);
 
                 if (hashMatches)
@@ -573,12 +574,12 @@ namespace DownloadLib
         }
 
 
-#region Helpers
+        #region Helpers
 
         private static async ValueTask<bool> IsDownloadedFileValidSHA256(Stream fileStream, string base64Hash, IProgress<long> progress = null, CancellationToken cancellationToken = default)
         {
-            using var hashAlgo = SHA256.Create();
-            var hashByte = await ComputeHashAsyncT(hashAlgo, fileStream, progress, cancellationToken: cancellationToken).ConfigureAwait(false);
+            using SHA256 hashAlgo = SHA256.Create();
+            byte[] hashByte = await ComputeHashAsyncT(hashAlgo, fileStream, progress, cancellationToken: cancellationToken).ConfigureAwait(false);
             return ByteArraySpanCompare(Convert.FromBase64String(base64Hash), hashByte);
         }
 
@@ -587,10 +588,10 @@ namespace DownloadLib
         {
             int readBytes;
             long totalBytesRead = 0;
-            var bufSizeEffective = Math.Min(bufferSize, fileStream.Length);
-            var buffer = new byte[bufSizeEffective];
-            using var ms = new MemoryStream(buffer);
-            using var cs = new CryptoStream(ms, hashAlgorithm, CryptoStreamMode.Write);
+            long bufSizeEffective = Math.Min(bufferSize, fileStream.Length);
+            byte[] buffer = new byte[bufSizeEffective];
+            using MemoryStream ms = new(buffer);
+            using CryptoStream cs = new(ms, hashAlgorithm, CryptoStreamMode.Write);
             while ((readBytes = await fileStream.ReadAsync(buffer, 0, buffer.Length, cancellationToken).ConfigureAwait(false)) > 0)
             {
                 await cs.WriteAsync(buffer, 0, readBytes, cancellationToken).ConfigureAwait(false);
@@ -621,12 +622,12 @@ namespace DownloadLib
 
         private static HttpRequestMessage CreateRequestHeaderForRange(HttpMethod method, string url, long from, long to)
         {
-            var request = new HttpRequestMessage(method, new Uri(url));
+            HttpRequestMessage request = new(method, new Uri(url));
             request.Headers.Range = new System.Net.Http.Headers.RangeHeaderValue(from, to);
             return request;
         }
 
-#endregion
+        #endregion
 
         public void Dispose()
         {

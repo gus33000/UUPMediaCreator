@@ -1,4 +1,25 @@
-﻿using Microsoft.Dism;
+﻿/*
+ * Copyright (c) Gustave Monce and Contributors
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+using Microsoft.Dism;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -11,7 +32,7 @@ namespace MediaCreationLib.Dism
     {
         public delegate void ProgressCallback(bool IsIndeterminate, int ProgressInPercentage, string SubOperation);
 
-        private static string[] componentsNotInWinPE = new string[]
+        private static readonly string[] componentsNotInWinPE = new string[]
         {
             "Microsoft-Windows-ImageBasedSetup-Rejuvenation-Package-onecore~31bf3856ad364e35",
             "Microsoft-Windows-ImageBasedSetup-Rejuvenation-Package~31bf3856ad364e35",
@@ -61,14 +82,14 @@ namespace MediaCreationLib.Dism
             string tempLog = Path.GetTempFileName();
             DismApi.Initialize(DismLogLevel.LogErrorsWarningsInfo, tempLog);
 
-            var session = DismApi.OpenOfflineSession(ospath);
-            var packages = DismApi.GetPackages(session);
-            List<DismPackage> componentsToRemove = new List<DismPackage>();
+            DismSession session = DismApi.OpenOfflineSession(ospath);
+            DismPackageCollection packages = DismApi.GetPackages(session);
+            List<DismPackage> componentsToRemove = new();
 
             //
             // Queue components we don't need according to our hardcoded list for removal
             //
-            foreach (var package in packages)
+            foreach (DismPackage package in packages)
             {
                 if (componentsNotInWinPE.Any(x => package.PackageName.StartsWith(x, StringComparison.InvariantCultureIgnoreCase)))
                 {
@@ -79,7 +100,7 @@ namespace MediaCreationLib.Dism
             //
             // Remove components
             //
-            foreach (var pkg in componentsToRemove)
+            foreach (DismPackage pkg in componentsToRemove)
             {
                 try
                 {
@@ -124,7 +145,7 @@ namespace MediaCreationLib.Dism
             string tempLog = Path.GetTempFileName();
             DismApi.Initialize(DismLogLevel.LogErrorsWarningsInfo, tempLog);
 
-            var session = DismApi.OpenOfflineSession(ospath);
+            DismSession session = DismApi.OpenOfflineSession(ospath);
 
             string edition = DismApi.GetCurrentEdition(session);
 
@@ -155,10 +176,10 @@ namespace MediaCreationLib.Dism
         public static void ApplyUnattend(string ospath, string unattendpath)
         {
             int counter = 0;
-            //
-            // Initialize DISM log
-            //
-            tryagain:
+        //
+        // Initialize DISM log
+        //
+        tryagain:
             string tempLog = Path.GetTempFileName();
             DismApi.Initialize(DismLogLevel.LogErrorsWarningsInfo, tempLog);
             DismSession session = DismApi.OpenOfflineSession(ospath);
@@ -226,7 +247,7 @@ namespace MediaCreationLib.Dism
             string tempLog = Path.GetTempFileName();
             DismApi.Initialize(DismLogLevel.LogErrorsWarningsInfo, tempLog);
 
-            var session = DismApi.OpenOfflineSession(ospath);
+            DismSession session = DismApi.OpenOfflineSession(ospath);
 
             DismApi.SetProductKey(session, productkey);
 
@@ -255,10 +276,10 @@ namespace MediaCreationLib.Dism
         public static void SetTargetEdition(string ospath, string edition, ProgressCallback progressCallback)
         {
             int counter = 0;
-            //
-            // Initialize DISM log
-            //
-            tryagain:
+        //
+        // Initialize DISM log
+        //
+        tryagain:
             string tempLog = Path.GetTempFileName();
             DismApi.Initialize(DismLogLevel.LogErrorsWarningsInfo, tempLog);
             DismSession session = DismApi.OpenOfflineSession(ospath);

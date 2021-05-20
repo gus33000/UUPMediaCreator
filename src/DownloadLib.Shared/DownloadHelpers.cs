@@ -1,12 +1,33 @@
-﻿using CompDB;
+﻿/*
+ * Copyright (c) Gustave Monce and Contributors
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+using CompDB;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text.Json;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using WindowsUpdateLib;
-using System.IO;
-using System.Text.RegularExpressions;
-using System.Text.Json;
 
 namespace DownloadLib
 {
@@ -20,9 +41,9 @@ namespace DownloadLib
                 CompDBXmlClass.PayloadItem payload = payloadItems.First(x => x.PayloadHash == file2.AdditionalDigest.Text || x.PayloadHash == file2.Digest);
                 filename = payload.Path.Replace('\\', Path.DirectorySeparatorChar);
             }
-            else if (payloadItems.Count() == 0 && filename.Contains("_") && !filename.StartsWith("_") && (filename.IndexOf('-') == -1 || filename.IndexOf('-') > filename.IndexOf('_')))
+            else if (!payloadItems.Any() && filename.Contains("_") && !filename.StartsWith("_") && (!filename.Contains('-') || filename.IndexOf('-') > filename.IndexOf('_')))
             {
-                filename = filename.Substring(0, filename.IndexOf('_')) + Path.DirectorySeparatorChar + filename.Substring(filename.IndexOf('_') + 1);
+                filename = filename.Substring(0, filename.IndexOf('_')) + Path.DirectorySeparatorChar + filename[(filename.IndexOf('_') + 1)..];
                 filename = filename.TrimStart(Path.DirectorySeparatorChar);
             }
             return filename;
@@ -71,11 +92,11 @@ namespace DownloadLib
             return false;
         }
 
-        public static async Task<string> ProcessUpdateAsync(UpdateData update, string pOutputFolder, MachineType MachineType, IProgress<GeneralDownloadProgress> generalDownloadProgress, string Language = "", string Edition = "", bool WriteMetadata = true)
+        public static async Task<string> ProcessUpdateAsync(UpdateData update, string pOutputFolder, MachineType MachineType, IProgress<GeneralDownloadProgress> generalDownloadProgress, string Language = "", string Edition = "", bool WriteMetadata = true, bool UseAutomaticDownloadFolder = true)
         {
-            HashSet<CompDBXmlClass.PayloadItem> payloadItems = new HashSet<CompDBXmlClass.PayloadItem>();
-            HashSet<CompDBXmlClass.PayloadItem> bannedPayloadItems = new HashSet<CompDBXmlClass.PayloadItem>();
-            HashSet<CompDBXmlClass.CompDB> specificCompDBs = new HashSet<CompDBXmlClass.CompDB>();
+            HashSet<CompDBXmlClass.PayloadItem> payloadItems = new();
+            HashSet<CompDBXmlClass.PayloadItem> bannedPayloadItems = new();
+            HashSet<CompDBXmlClass.CompDB> specificCompDBs = new();
 
             string buildstr = "";
             IEnumerable<string> languages = null;
@@ -86,7 +107,7 @@ namespace DownloadLib
             bool getSpecific = !string.IsNullOrEmpty(Language) && !string.IsNullOrEmpty(Edition);
             bool getSpecificLanguageOnly = !string.IsNullOrEmpty(Language) && string.IsNullOrEmpty(Edition);
 
-            var compDBs = await update.GetCompDBsAsync();
+            HashSet<CompDBXmlClass.CompDB> compDBs = await update.GetCompDBsAsync();
 
             await Task.WhenAll(
                 Task.Run(async () => buildstr = await update.GetBuildStringAsync()),
@@ -106,9 +127,13 @@ namespace DownloadLib
             }
 
             string name = $"{buildstr.Replace(" ", ".").Replace("(", "").Replace(")", "")}_{MachineType.ToString().ToLower()}fre_{update.Xml.UpdateIdentity.UpdateID.Split("-").Last()}";
-            Regex illegalCharacters = new Regex(@"[\\/:*?""<>|]");
+            Regex illegalCharacters = new(@"[\\/:*?""<>|]");
             name = illegalCharacters.Replace(name, "");
-            string OutputFolder = Path.Combine(pOutputFolder, name);
+            string OutputFolder = pOutputFolder;
+            if (UseAutomaticDownloadFolder)
+            {
+                OutputFolder = Path.Combine(pOutputFolder, name);
+            }
 
             if (compDBs != null)
             {
@@ -212,7 +237,7 @@ namespace DownloadLib
                 }
                 else
                 {
-                    foreach (var specificCompDB in specificCompDBs)
+                    foreach (CompDBXmlClass.CompDB specificCompDB in specificCompDBs)
                     {
                         foreach (CompDBXmlClass.Package pkg in specificCompDB.Packages.Package)
                         {
@@ -245,33 +270,31 @@ namespace DownloadLib
                     }
                 }
 
-                using (HttpDownloader helperDl = new HttpDownloader(OutputFolder))
+                using HttpDownloader helperDl = new(OutputFolder);
+                filesToDownload = update.Xml.Files.File.AsParallel().Where(x => !IsFileBanned(x, bannedPayloadItems));
+
+                returnCode = 0;
+
+                IEnumerable<(CExtendedUpdateInfoXml.File, FileExchangeV3FileDownloadInformation)> boundList = filesToDownload
+                    .AsParallel()
+                    .Select(x => (x, fileUrls.First(y => y.Digest == x.Digest)))
+                    .Where(x => UpdateUtils.ShouldFileGetDownloaded(x.x, payloadItems))
+                    .OrderBy(x => x.Item2.ExpirationDate);
+
+                IEnumerable<UUPFile> fileList = boundList.Select(boundFile =>
                 {
-                    filesToDownload = update.Xml.Files.File.AsParallel().Where(x => !IsFileBanned(x, bannedPayloadItems));
+                    return new UUPFile(
+                        boundFile.Item2,
+                        UpdateUtils.GetFilenameForCEUIFile(boundFile.Item1, payloadItems),
+                        long.Parse(boundFile.Item1.Size),
+                        boundFile.Item1.AdditionalDigest.Text);
+                });
 
-                    returnCode = 0;
+                returnCode = await helperDl.DownloadAsync(fileList.ToList(), generalDownloadProgress) ? 0 : -1;
 
-                    IEnumerable<(CExtendedUpdateInfoXml.File, FileExchangeV3FileDownloadInformation)> boundList = filesToDownload
-                        .AsParallel()
-                        .Select(x => (x, fileUrls.First(y => y.Digest == x.Digest)))
-                        .Where(x => UpdateUtils.ShouldFileGetDownloaded(x.x, payloadItems))
-                        .OrderBy(x => x.Item2.ExpirationDate);
-
-                    IEnumerable<UUPFile> fileList = boundList.Select(boundFile =>
-                    {
-                        return new UUPFile(
-                            boundFile.Item2,
-                            UpdateUtils.GetFilenameForCEUIFile(boundFile.Item1, payloadItems),
-                            long.Parse(boundFile.Item1.Size),
-                            boundFile.Item1.AdditionalDigest.Text);
-                    });
-
-                    returnCode = await helperDl.DownloadAsync(fileList.ToList(), generalDownloadProgress) ? 0 : -1;
-
-                    if (returnCode != 0)
-                    {
-                        continue;
-                    }
+                if (returnCode != 0)
+                {
+                    continue;
                 }
             }
             while (returnCode != 0);

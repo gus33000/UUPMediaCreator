@@ -80,7 +80,7 @@ namespace Microsoft.Wim
             if (!WimgApi.NativeMethods.WIMApplyImage(imageHandle, path, (UInt32)options))
             {
                 // Get the last error
-                Win32Exception win32Exception = new Win32Exception();
+                Win32Exception win32Exception = new();
 
                 switch (win32Exception.NativeErrorCode)
                 {

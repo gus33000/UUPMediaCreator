@@ -49,7 +49,7 @@ namespace Microsoft.Dism
             uint flags = commitChanges ? DISM_COMMIT_IMAGE : DISM_DISCARD_IMAGE;
 
             // Create a DismProgress object to wrap the callback and allow cancellation
-            DismProgress progress = new DismProgress(progressCallback, userData);
+            DismProgress progress = new(progressCallback, userData);
 
             int hresult = NativeMethods.DismUnmountImage(mountPath, flags, progress.EventHandle, progress.DismProgressCallbackNative, IntPtr.Zero);
 
