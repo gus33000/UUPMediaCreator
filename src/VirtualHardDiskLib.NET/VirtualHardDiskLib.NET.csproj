@@ -16,9 +16,9 @@
     <PackageReference Include="System.Data.DataSetExtensions" Version="4.6.0-preview3.19128.7" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="DiscUtils.Core" Version="0.15.1-ci0009" />
-    <PackageReference Include="DiscUtils.Ntfs" Version="0.15.1-ci0009" />
-    <PackageReference Include="DiscUtils.Streams" Version="0.15.1-ci0009" />
-    <PackageReference Include="DiscUtils.Vhd" Version="0.15.1-ci0009" />
+    <PackageReference Include="DiscUtils.Core" Version="0.16.4" />
+    <PackageReference Include="DiscUtils.Ntfs" Version="0.16.4" />
+    <PackageReference Include="DiscUtils.Streams" Version="0.16.4" />
+    <PackageReference Include="DiscUtils.Vhd" Version="0.16.4" />
   </ItemGroup>
 </Project>
