@@ -38,8 +38,8 @@ namespace UUPMediaCreator.UWP.Pages
 
         public void WizardPage_NextClicked(object sender, RoutedEventArgs e)
         {
-            Frame.Navigate(typeof(BuildingISOPage));
-            //Frame.Navigate(typeof(ArchitecturePage));
+            //Frame.Navigate(typeof(BuildingISOPage));
+            Frame.Navigate(typeof(ArchitecturePage));
         }
     }
 }

@@ -228,7 +228,8 @@ namespace UUPMediaCreator.UWP.Pages
                                             }
 
                                             // cleanup
-                                            Directory.Delete(App.ConversionPlan.TmpOutputFolder, true);
+                                            if (App.ConversionPlan.TmpOutputFolder != null)
+                                                Directory.Delete(App.ConversionPlan.TmpOutputFolder, true);
 
                                             break;
                                         }
