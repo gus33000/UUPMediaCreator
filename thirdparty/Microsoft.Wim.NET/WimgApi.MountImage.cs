@@ -18,9 +18,14 @@ namespace Microsoft.Wim
     public enum WimMountImageOptions : uint
     {
         /// <summary>
-        /// Mounts the image using a faster operation.
+        /// No options are set.
         /// </summary>
-        Fast = WimgApi.WIM_FLAG_MOUNT_FAST,
+        None = 0,
+
+        /// <summary>
+        /// Verifies that files match original data.
+        /// </summary>
+        Verify = WimgApi.WIM_FLAG_VERIFY,
 
         /// <summary>
         /// Disables capturing security information for directories.
@@ -38,24 +43,19 @@ namespace Microsoft.Wim
         DisableRPFix = WimgApi.WIM_FLAG_NO_RP_FIX,
 
         /// <summary>
-        /// Mounts the image using a legacy operation.
-        /// </summary>
-        Legacy = WimgApi.WIM_FLAG_MOUNT_LEGACY,
-
-        /// <summary>
-        /// No options are set.
-        /// </summary>
-        None = 0,
-
-        /// <summary>
         /// Mounts the image without the ability to save changes, regardless of WIM access level.
         /// </summary>
         ReadOnly = WimgApi.WIM_FLAG_MOUNT_READONLY,
 
         /// <summary>
-        /// Verifies that files match original data.
+        /// Mounts the image using a faster operation.
         /// </summary>
-        Verify = WimgApi.WIM_FLAG_VERIFY,
+        Fast = WimgApi.WIM_FLAG_MOUNT_FAST,
+
+        /// <summary>
+        /// Mounts the image using a legacy operation.
+        /// </summary>
+        Legacy = WimgApi.WIM_FLAG_MOUNT_LEGACY,
     }
 
     public static partial class WimgApi

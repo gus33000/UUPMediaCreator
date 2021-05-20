@@ -38,15 +38,13 @@ namespace WindowsUpdateLib
         public static async Task<string> DownloadFileFromDigestAsync(this UpdateData update, string Digest)
         {
             string metadataCabTemp = Path.GetTempFileName();
-            await DownloadFileFromDigestAsync(update, Digest, metadataCabTemp);
-            if (!File.Exists(metadataCabTemp) || new FileInfo(metadataCabTemp).Length == 0)
-                return null;
-            return metadataCabTemp;
+            await DownloadFileFromDigestAsync(update, Digest, metadataCabTemp).ConfigureAwait(false);
+            return !File.Exists(metadataCabTemp) || new FileInfo(metadataCabTemp).Length == 0 ? null : metadataCabTemp;
         }
 
         public static async Task DownloadFileFromDigestAsync(this UpdateData update, string Digest, string Destination)
         {
-            FileExchangeV3FileDownloadInformation fileDownloadInfo = await update.GetFileUrl(Digest);
+            FileExchangeV3FileDownloadInformation fileDownloadInfo = await update.GetFileUrl(Digest).ConfigureAwait(false);
             if (fileDownloadInfo == null)
             {
                 // TODO: notify of result
@@ -54,12 +52,14 @@ namespace WindowsUpdateLib
             }
 
             // Download the file
-            await client.DownloadFileTaskAsync(new Uri(fileDownloadInfo.DownloadUrl), Destination);
+            await client.DownloadFileTaskAsync(new Uri(fileDownloadInfo.DownloadUrl), Destination).ConfigureAwait(false);
 
             if (fileDownloadInfo.IsEncrypted)
             {
-                if (!await fileDownloadInfo.DecryptAsync(Destination, Destination + ".decrypted"))
+                if (!await fileDownloadInfo.DecryptAsync(Destination, Destination + ".decrypted").ConfigureAwait(false))
+                {
                     return;
+                }
 
                 File.Delete(Destination);
                 File.Move(Destination + ".decrypted", Destination);
@@ -68,7 +68,7 @@ namespace WindowsUpdateLib
 
         public static async Task<FileExchangeV3FileDownloadInformation> GetFileUrl(this UpdateData update, string Digest)
         {
-            return await FE3Handler.GetFileUrl(update, Digest);
+            return await FE3Handler.GetFileUrl(update, Digest).ConfigureAwait(false);
         }
 
         public async static Task<string> GetBuildStringAsync(this UpdateData update)
@@ -93,19 +93,22 @@ namespace WindowsUpdateLib
                     goto exit;
                 }
 
-                FileExchangeV3FileDownloadInformation fileDownloadInfo = await FE3Handler.GetFileUrl(update, deploymentCab.Digest);
+                FileExchangeV3FileDownloadInformation fileDownloadInfo = await FE3Handler.GetFileUrl(update, deploymentCab.Digest).ConfigureAwait(false);
                 if (fileDownloadInfo == null)
                 {
                     goto exit;
                 }
 
                 string deploymentCabTemp = Path.GetTempFileName();
-                await client.DownloadFileTaskAsync(new Uri(fileDownloadInfo.DownloadUrl), deploymentCabTemp);
+                await client.DownloadFileTaskAsync(new Uri(fileDownloadInfo.DownloadUrl), deploymentCabTemp).ConfigureAwait(false);
 
                 if (fileDownloadInfo.IsEncrypted)
                 {
-                    if (!await fileDownloadInfo.DecryptAsync(deploymentCabTemp, deploymentCabTemp + ".decrypted"))
+                    if (!await fileDownloadInfo.DecryptAsync(deploymentCabTemp, deploymentCabTemp + ".decrypted").ConfigureAwait(false))
+                    {
                         goto exit;
+                    }
+
                     File.Delete(deploymentCabTemp);
                     File.Move(deploymentCabTemp + ".decrypted", deploymentCabTemp);
                 }
@@ -129,7 +132,6 @@ namespace WindowsUpdateLib
             }
             catch
             {
-
             }
 
         exit:
@@ -140,7 +142,7 @@ namespace WindowsUpdateLib
             {
                 try
                 {
-                    HashSet<CompDBXmlClass.CompDB> compDBs = await update.GetCompDBsAsync();
+                    HashSet<CompDBXmlClass.CompDB> compDBs = await update.GetCompDBsAsync().ConfigureAwait(false);
                     CompDBXmlClass.CompDB firstCompDB = compDBs.First();
 
                     // example:
@@ -185,7 +187,11 @@ namespace WindowsUpdateLib
         {
             if ((searchIn != null) && (searchIn != null))
             {
-                if (searchFor.Length > searchIn.Length) return 0;
+                if (searchFor.Length > searchIn.Length)
+                {
+                    return 0;
+                }
+
                 for (int i = offset; i < searchIn.Length; i++)
                 {
                     int startIndex = i;
@@ -203,7 +209,9 @@ namespace WindowsUpdateLib
                         }
                     }
                     if (match)
+                    {
                         return startIndex - searchFor.Length;
+                    }
                 }
             }
             return -1;
@@ -211,7 +219,7 @@ namespace WindowsUpdateLib
 
         public static async Task<IEnumerable<string>> GetAvailableLanguagesAsync(this UpdateData update)
         {
-            return (await update.GetCompDBsAsync()).GetAvailableLanguages();
+            return (await update.GetCompDBsAsync().ConfigureAwait(false)).GetAvailableLanguages();
         }
 
         private static async Task<HashSet<CompDBXmlClass.CompDB>> GetCompDBs(UpdateData update)
@@ -238,7 +246,7 @@ namespace WindowsUpdateLib
 
                 if (string.IsNullOrEmpty(update.CachedMetadata))
                 {
-                    FileExchangeV3FileDownloadInformation fileDownloadInfo = await FE3Handler.GetFileUrl(update, metadataCabs.First().Digest);
+                    FileExchangeV3FileDownloadInformation fileDownloadInfo = await FE3Handler.GetFileUrl(update, metadataCabs.First().Digest).ConfigureAwait(false);
                     if (fileDownloadInfo == null)
                     {
                         return neutralCompDB;
@@ -249,12 +257,15 @@ namespace WindowsUpdateLib
                     try
                     {
                         // Download the file
-                        await client.DownloadFileTaskAsync(new Uri(fileDownloadInfo.DownloadUrl), metadataCabTemp);
+                        await client.DownloadFileTaskAsync(new Uri(fileDownloadInfo.DownloadUrl), metadataCabTemp).ConfigureAwait(false);
 
                         if (fileDownloadInfo.IsEncrypted)
                         {
-                            if (!await fileDownloadInfo.DecryptAsync(metadataCabTemp, metadataCabTemp + ".decrypted"))
+                            if (!await fileDownloadInfo.DecryptAsync(metadataCabTemp, metadataCabTemp + ".decrypted").ConfigureAwait(false))
+                            {
                                 return neutralCompDB;
+                            }
+
                             metadataCabTemp += ".decrypted";
                         }
 
@@ -285,7 +296,7 @@ namespace WindowsUpdateLib
                 // This is the old format, each cab is a file in WU
                 foreach (CExtendedUpdateInfoXml.File file in metadataCabs)
                 {
-                    FileExchangeV3FileDownloadInformation fileDownloadInfo = await FE3Handler.GetFileUrl(update, file.Digest);
+                    FileExchangeV3FileDownloadInformation fileDownloadInfo = await FE3Handler.GetFileUrl(update, file.Digest).ConfigureAwait(false);
                     if (fileDownloadInfo == null)
                     {
                         continue;
@@ -296,12 +307,15 @@ namespace WindowsUpdateLib
                     try
                     {
                         // Download the file
-                        await client.DownloadFileTaskAsync(new Uri(fileDownloadInfo.DownloadUrl), metadataCabTemp);
+                        await client.DownloadFileTaskAsync(new Uri(fileDownloadInfo.DownloadUrl), metadataCabTemp).ConfigureAwait(false);
 
                         if (fileDownloadInfo.IsEncrypted)
                         {
-                            if (!await fileDownloadInfo.DecryptAsync(metadataCabTemp, metadataCabTemp + ".decrypted"))
+                            if (!await fileDownloadInfo.DecryptAsync(metadataCabTemp, metadataCabTemp + ".decrypted").ConfigureAwait(false))
+                            {
                                 continue;
+                            }
+
                             metadataCabTemp += ".decrypted";
                         }
 
@@ -320,9 +334,7 @@ namespace WindowsUpdateLib
 
         public static async Task<HashSet<CompDBXmlClass.CompDB>> GetCompDBsAsync(this UpdateData update)
         {
-            if (update.CompDBs == null)
-                update.CompDBs = await GetCompDBs(update);
-            return update.CompDBs;
+            return update.CompDBs ??= await GetCompDBs(update).ConfigureAwait(false);
         }
     }
 }

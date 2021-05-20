@@ -25,7 +25,7 @@ using System.Xml.Serialization;
 
 namespace CompDB
 {
-    public class CompDBXmlClass
+    public static class CompDBXmlClass
     {
         [XmlRoot(ElementName = "Tag", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
         public class Tag

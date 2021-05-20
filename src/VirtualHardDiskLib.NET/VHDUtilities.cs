@@ -33,7 +33,7 @@ using System.Text.RegularExpressions;
 
 namespace VirtualHardDiskLib
 {
-    public class VHDUtilities
+    public static class VHDUtilities
     {
         /// <summary>
         /// Creates a temporary vhd of the given size in GB.
@@ -84,8 +84,10 @@ namespace VirtualHardDiskLib
                 NativeMethods.VIRTUAL_DISK_ACCESS_MASK.VIRTUAL_DISK_ACCESS_ALL,
                 NativeMethods.OPEN_VIRTUAL_DISK_FLAG.OPEN_VIRTUAL_DISK_FLAG_NONE, ref openParameters, ref handle);
             if (openResult != NativeMethods.ERROR_SUCCESS)
+            {
                 throw new InvalidOperationException(string.Format(CultureInfo.InvariantCulture, "Native error {0}.",
                     openResult));
+            }
 
             // attach disk - permanently
             NativeMethods.ATTACH_VIRTUAL_DISK_PARAMETERS attachParameters = new NativeMethods.ATTACH_VIRTUAL_DISK_PARAMETERS
@@ -96,8 +98,10 @@ namespace VirtualHardDiskLib
                 NativeMethods.ATTACH_VIRTUAL_DISK_FLAG.ATTACH_VIRTUAL_DISK_FLAG_PERMANENT_LIFETIME | NativeMethods.ATTACH_VIRTUAL_DISK_FLAG.ATTACH_VIRTUAL_DISK_FLAG_NO_DRIVE_LETTER, 0,
                 ref attachParameters, IntPtr.Zero);
             if (attachResult != NativeMethods.ERROR_SUCCESS)
+            {
                 throw new InvalidOperationException(string.Format(CultureInfo.InvariantCulture, "Native error {0}.",
                     attachResult));
+            }
 
             int num = _findVhdPhysicalDriveNumber(handle);
 
@@ -128,15 +132,19 @@ namespace VirtualHardDiskLib
                 NativeMethods.VIRTUAL_DISK_ACCESS_MASK.VIRTUAL_DISK_ACCESS_ALL,
                 NativeMethods.OPEN_VIRTUAL_DISK_FLAG.OPEN_VIRTUAL_DISK_FLAG_NONE, ref openParameters, ref handle);
             if (openResult != NativeMethods.ERROR_SUCCESS)
+            {
                 throw new InvalidOperationException(string.Format(CultureInfo.InvariantCulture, "Native error {0}.",
                     openResult));
+            }
 
             // detach disk
             int detachResult = NativeMethods.DetachVirtualDisk(handle,
                 NativeMethods.DETACH_VIRTUAL_DISK_FLAG.DETACH_VIRTUAL_DISK_FLAG_NONE, 0);
             if (detachResult != NativeMethods.ERROR_SUCCESS)
+            {
                 throw new InvalidOperationException(string.Format(CultureInfo.InvariantCulture, "Native error {0}.",
                     detachResult));
+            }
 
             // close handle to disk
             NativeMethods.CloseHandle(handle);
@@ -147,8 +155,8 @@ namespace VirtualHardDiskLib
             int bufferSize = 260;
             StringBuilder vhdPhysicalPath = new StringBuilder(bufferSize);
 
-            NativeMethods.GetVirtualDiskPhysicalPath(vhdHandle, ref bufferSize, vhdPhysicalPath);
-            Int32.TryParse(Regex.Match(vhdPhysicalPath.ToString(), @"\d+").Value, out int driveNumber);
+            _ = NativeMethods.GetVirtualDiskPhysicalPath(vhdHandle, ref bufferSize, vhdPhysicalPath);
+            _ = int.TryParse(Regex.Match(vhdPhysicalPath.ToString(), @"\d+").Value, out int driveNumber);
             return driveNumber;
         }
 
@@ -215,7 +223,7 @@ namespace VirtualHardDiskLib
         /// <param name="DriveLetter"></param>
         private static void RemoveFileExplorerAutoRun(char DriveLetter)
         {
-            string KeyPath = "Software\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer";
+            const string KeyPath = "Software\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer";
             RegistryKey AutoRunKey = Registry.CurrentUser.OpenSubKey(KeyPath, true);
             int DriveLetterValue = DriveLetter - 'A';
 

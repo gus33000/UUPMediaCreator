@@ -16,11 +16,6 @@ namespace Microsoft.Wim
     public enum WimMountPointState : uint
     {
         /// <summary>
-        /// The image mount point is no longer valid.
-        /// </summary>
-        Invalid = WimgApi.WIM_MOUNT_FLAG_INVALID,
-
-        /// <summary>
         /// The image is actively mounted.
         /// </summary>
         Mounted = WimgApi.WIM_MOUNT_FLAG_MOUNTED,
@@ -29,6 +24,21 @@ namespace Microsoft.Wim
         /// The image is in the process of mounting.
         /// </summary>
         Mounting = WimgApi.WIM_MOUNT_FLAG_MOUNTING,
+
+        /// <summary>
+        /// The image is not mounted, but is capable of being remounted.
+        /// </summary>
+        Remountable = WimgApi.WIM_MOUNT_FLAG_REMOUNTABLE,
+
+        /// <summary>
+        /// The image mount point is no longer valid.
+        /// </summary>
+        Invalid = WimgApi.WIM_MOUNT_FLAG_INVALID,
+
+        /// <summary>
+        /// The WIM file backing the mount point is missing or inaccessible.
+        /// </summary>
+        NoWim = WimgApi.WIM_MOUNT_FLAG_NO_WIM,
 
         /// <summary>
         /// The image mount point has been removed or replaced.
@@ -41,19 +51,9 @@ namespace Microsoft.Wim
         MountDirReplaced = WimgApi.WIM_MOUNT_FLAG_MOUNTDIR_REPLACED,
 
         /// <summary>
-        /// The WIM file backing the mount point is missing or inaccessible.
-        /// </summary>
-        NoWim = WimgApi.WIM_MOUNT_FLAG_NO_WIM,
-
-        /// <summary>
         /// The image has been mounted with read-write access.
         /// </summary>
         ReadWrite = WimgApi.WIM_MOUNT_FLAG_READWRITE,
-
-        /// <summary>
-        /// The image is not mounted, but is capable of being remounted.
-        /// </summary>
-        Remountable = WimgApi.WIM_MOUNT_FLAG_REMOUNTABLE,
     }
 
     /// <summary>

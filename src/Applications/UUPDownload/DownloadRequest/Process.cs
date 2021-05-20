@@ -52,7 +52,10 @@ namespace UUPDownload.DownloadRequest
                     ex = ex.InnerException;
                 }
                 if (Debugger.IsAttached)
+                {
                     Console.ReadLine();
+                }
+
                 return 1;
             }
 
@@ -80,7 +83,10 @@ namespace UUPDownload.DownloadRequest
                     ex = ex.InnerException;
                 }
                 if (Debugger.IsAttached)
+                {
                     Console.ReadLine();
+                }
+
                 return 1;
             }
 
@@ -94,9 +100,11 @@ namespace UUPDownload.DownloadRequest
             CTAC ctac = new(o.ReportingSku, o.ReportingVersion, o.MachineType, o.FlightRing, o.FlightingBranchName, o.BranchReadinessLevel, o.CurrentBranch, o.ReleaseType, o.SyncCurrentVersionOnly, ContentType: o.ContentType);
             string token = string.Empty;
             if (!string.IsNullOrEmpty(o.Mail) && !string.IsNullOrEmpty(o.Password))
-                token = await MBIHelper.GenerateMicrosoftAccountTokenAsync(o.Mail, o.Password);
+            {
+                token = await MBIHelper.GenerateMicrosoftAccountTokenAsync(o.Mail, o.Password).ConfigureAwait(false);
+            }
 
-            IEnumerable<UpdateData> data = await FE3Handler.GetUpdates(null, ctac, token, FileExchangeV3UpdateFilter.ProductRelease);
+            IEnumerable<UpdateData> data = await FE3Handler.GetUpdates(null, ctac, token, FileExchangeV3UpdateFilter.ProductRelease).ConfigureAwait(false);
             data = data.Select(x => UpdateUtils.TrimDeltasFromUpdateData(x));
 
             if (!data.Any())
@@ -110,12 +118,14 @@ namespace UUPDownload.DownloadRequest
                     Logging.Log("Title: " + update.Xml.LocalizedProperties.Title);
                     Logging.Log("Description: " + update.Xml.LocalizedProperties.Description);
 
-                    await ProcessUpdateAsync(update, o.OutputFolder, o.MachineType, o.Language, o.Edition, true);
+                    await ProcessUpdateAsync(update, o.OutputFolder, o.MachineType, o.Language, o.Edition, true).ConfigureAwait(false);
                 }
             }
             Logging.Log("Completed.");
             if (Debugger.IsAttached)
+            {
                 Console.ReadLine();
+            }
         }
 
         private static async Task ProcessUpdateAsync(UpdateData update, string pOutputFolder, MachineType MachineType, string Language = "", string Edition = "", bool WriteMetadata = true)
@@ -125,11 +135,11 @@ namespace UUPDownload.DownloadRequest
 
             Logging.Log("Gathering update metadata...");
 
-            HashSet<CompDBXmlClass.CompDB> compDBs = await update.GetCompDBsAsync();
+            HashSet<CompDBXmlClass.CompDB> compDBs = await update.GetCompDBsAsync().ConfigureAwait(false);
 
             await Task.WhenAll(
-                Task.Run(async () => buildstr = await update.GetBuildStringAsync()),
-                Task.Run(async () => languages = await update.GetAvailableLanguagesAsync()));
+                Task.Run(async () => buildstr = await update.GetBuildStringAsync().ConfigureAwait(false)),
+                Task.Run(async () => languages = await update.GetAvailableLanguagesAsync().ConfigureAwait(false))).ConfigureAwait(false);
 
             buildstr ??= "";
 
@@ -153,8 +163,8 @@ namespace UUPDownload.DownloadRequest
                 CompDBXmlClass.Package editionPackPkg = compDBs.GetEditionPackFromCompDBs();
                 if (editionPackPkg != null)
                 {
-                    string editionPkg = await update.DownloadFileFromDigestAsync(editionPackPkg.Payload.PayloadItem.PayloadHash);
-                    BuildTargets.EditionPlanningWithLanguage[] plans = await Task.WhenAll(languages.Select(x => update.GetTargetedPlanAsync(x, editionPkg)));
+                    string editionPkg = await update.DownloadFileFromDigestAsync(editionPackPkg.Payload.PayloadItem.PayloadHash).ConfigureAwait(false);
+                    BuildTargets.EditionPlanningWithLanguage[] plans = await Task.WhenAll(languages.Select(x => update.GetTargetedPlanAsync(x, editionPkg))).ConfigureAwait(false);
 
                     foreach (BuildTargets.EditionPlanningWithLanguage plan in plans)
                     {
@@ -165,17 +175,7 @@ namespace UUPDownload.DownloadRequest
                 }
             }
 
-            await DownloadLib.UpdateUtils.ProcessUpdateAsync(update, pOutputFolder, MachineType, new ReportProgress(), Language, Edition, WriteMetadata);
-        }
-
-        private static bool IsFileBanned(CExtendedUpdateInfoXml.File file2, IEnumerable<CompDBXmlClass.PayloadItem> bannedItems)
-        {
-            if (bannedItems.Any(x => x.PayloadHash == file2.AdditionalDigest.Text || x.PayloadHash == file2.Digest))
-            {
-                return true;
-            }
-
-            return false;
+            await DownloadLib.UpdateUtils.ProcessUpdateAsync(update, pOutputFolder, MachineType, new ReportProgress(), Language, Edition, WriteMetadata).ConfigureAwait(false);
         }
     }
 }

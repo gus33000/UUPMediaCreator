@@ -37,16 +37,16 @@ namespace UUPDownload
 
         public static async Task<EditionPlanningWithLanguage> GetTargetedPlanAsync(this UpdateData update, string LanguageCode)
         {
-            HashSet<CompDBXmlClass.CompDB> compDBs = await update.GetCompDBsAsync();
+            HashSet<CompDBXmlClass.CompDB> compDBs = await update.GetCompDBsAsync().ConfigureAwait(false);
             CompDBXmlClass.Package editionPackPkg = compDBs.GetEditionPackFromCompDBs();
 
-            string editionPkg = await update.DownloadFileFromDigestAsync(editionPackPkg.Payload.PayloadItem.PayloadHash);
-            return await update.GetTargetedPlanAsync(LanguageCode, editionPkg);
+            string editionPkg = await update.DownloadFileFromDigestAsync(editionPackPkg.Payload.PayloadItem.PayloadHash).ConfigureAwait(false);
+            return await update.GetTargetedPlanAsync(LanguageCode, editionPkg).ConfigureAwait(false);
         }
 
         public static async Task<EditionPlanningWithLanguage> GetTargetedPlanAsync(this UpdateData update, string LanguageCode, string editionPkg)
         {
-            HashSet<CompDBXmlClass.CompDB> compDBs = await update.GetCompDBsAsync();
+            HashSet<CompDBXmlClass.CompDB> compDBs = await update.GetCompDBsAsync().ConfigureAwait(false);
             if (string.IsNullOrEmpty(editionPkg))
             {
                 return null;
@@ -61,7 +61,9 @@ namespace UUPDownload
             foreach (EditionTarget target in targets)
             {
                 foreach (string str in ConversionPlanBuilder.PrintEditionTarget(target))
+                {
                     Logging.Log(str);
+                }
             }
         }
     }

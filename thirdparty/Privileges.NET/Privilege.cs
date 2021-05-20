@@ -10,7 +10,7 @@ namespace PrivilegeClass
 
     public delegate void PrivilegedCallback(object state);
 
-    public sealed class Privilege
+    public sealed class Privilege : IDisposable
     {
         #region Private static members
 
@@ -100,7 +100,7 @@ namespace PrivilegeClass
                 {
                     privilegeLock.ReleaseReaderLock();
 
-                    if (false == NativeMethods.LookupPrivilegeValue(null, privilege, ref luid))
+                    if (!NativeMethods.LookupPrivilegeValue(null, privilege, ref luid))
                     {
                         int error = Marshal.GetLastWin32Error();
 
@@ -158,7 +158,6 @@ namespace PrivilegeClass
             private bool disposed = false;
             private int referenceCount = 1;
             private IntPtr threadHandle = IntPtr.Zero;
-            private readonly bool isImpersonating = false;
 
             private static IntPtr processHandle = IntPtr.Zero;
             private static readonly object syncRoot = new();
@@ -177,7 +176,7 @@ namespace PrivilegeClass
                     {
                         if (processHandle == IntPtr.Zero)
                         {
-                            if (false == NativeMethods.OpenProcessToken(
+                            if (!NativeMethods.OpenProcessToken(
                                 NativeMethods.GetCurrentProcess(),
                                 TokenAccessLevels.Duplicate,
                                 ref processHandle))
@@ -196,13 +195,13 @@ namespace PrivilegeClass
                     // copy the process token onto the thread
                     //
 
-                    if (false == NativeMethods.OpenThreadToken(
+                    if (!NativeMethods.OpenThreadToken(
                         NativeMethods.GetCurrentThread(),
                         TokenAccessLevels.Query | TokenAccessLevels.AdjustPrivileges,
                         true,
                         ref this.threadHandle))
                     {
-                        if (success == true)
+                        if (success)
                         {
                             error = Marshal.GetLastWin32Error();
 
@@ -211,11 +210,11 @@ namespace PrivilegeClass
                                 success = false;
                             }
 
-                            if (success == true)
+                            if (success)
                             {
                                 error = 0;
 
-                                if (false == NativeMethods.DuplicateTokenEx(
+                                if (!NativeMethods.DuplicateTokenEx(
                                     processHandle,
                                     TokenAccessLevels.Impersonate | TokenAccessLevels.Query | TokenAccessLevels.AdjustPrivileges,
                                     IntPtr.Zero,
@@ -228,9 +227,9 @@ namespace PrivilegeClass
                                 }
                             }
 
-                            if (success == true)
+                            if (success)
                             {
-                                if (false == NativeMethods.SetThreadToken(
+                                if (!NativeMethods.SetThreadToken(
                                     IntPtr.Zero,
                                     this.threadHandle))
                                 {
@@ -239,13 +238,13 @@ namespace PrivilegeClass
                                 }
                             }
 
-                            if (success == true)
+                            if (success)
                             {
                                 //
                                 // This thread is now impersonating; it needs to be reverted to its original state
                                 //
 
-                                this.isImpersonating = true;
+                                this.IsImpersonating = true;
                             }
                         }
                         else
@@ -301,7 +300,10 @@ namespace PrivilegeClass
 
             private void Dispose(bool disposing)
             {
-                if (this.disposed) return;
+                if (this.disposed)
+                {
+                    return;
+                }
 
                 if (this.threadHandle != IntPtr.Zero)
                 {
@@ -309,7 +311,7 @@ namespace PrivilegeClass
                     this.threadHandle = IntPtr.Zero;
                 }
 
-                if (this.isImpersonating)
+                if (this.IsImpersonating)
                 {
                     NativeMethods.RevertToSelf();
                 }
@@ -352,10 +354,7 @@ namespace PrivilegeClass
                 get { return this.threadHandle; }
             }
 
-            public bool IsImpersonating
-            {
-                get { return this.isImpersonating; }
-            }
+            public bool IsImpersonating { get; } = false;
 
             #endregion Properties
         }
@@ -426,7 +425,7 @@ namespace PrivilegeClass
                     NativeMethods.TOKEN_PRIVILEGE previousState = new();
                     uint previousSize = 0;
 
-                    if (false == NativeMethods.AdjustTokenPrivileges(
+                    if (!NativeMethods.AdjustTokenPrivileges(
                         this.tlsContents.ThreadHandle,
                         false,
                         ref newState,
@@ -555,7 +554,7 @@ namespace PrivilegeClass
                 // Place the new privilege on the thread token and remember the previous state.
                 //
 
-                if (false == NativeMethods.AdjustTokenPrivileges(
+                if (!NativeMethods.AdjustTokenPrivileges(
                     this.tlsContents.ThreadHandle,
                     false,
                     ref newState,
@@ -625,12 +624,17 @@ namespace PrivilegeClass
 
             if (this.tlsContents != null)
             {
-                if (0 == this.tlsContents.DecrementReferenceCount())
+                if (this.tlsContents.DecrementReferenceCount() == 0)
                 {
                     this.tlsContents = null;
                     Thread.SetData(tlsSlot, null);
                 }
             }
+        }
+
+        public void Dispose()
+        {
+            tlsContents?.Dispose();
         }
 
         #endregion Private implementation

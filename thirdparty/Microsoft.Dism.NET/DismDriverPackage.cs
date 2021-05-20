@@ -94,22 +94,22 @@ namespace Microsoft.Dism
             /// <summary>
             /// The major version number of the driver.
             /// </summary>
-            public UInt32 MajorVersion;
+            public uint MajorVersion;
 
             /// <summary>
             /// The minor version number of the driver.
             /// </summary>
-            public UInt32 MinorVersion;
+            public uint MinorVersion;
 
             /// <summary>
             /// The build number of the driver.
             /// </summary>
-            public UInt32 Build;
+            public uint Build;
 
             /// <summary>
             /// The revision number of the driver.
             /// </summary>
-            public UInt32 Revision;
+            public uint Revision;
         }
     }
 
@@ -195,7 +195,6 @@ namespace Microsoft.Dism
         public Version Version
         {
             get;
-            private set;
         }
 
         /// <summary>

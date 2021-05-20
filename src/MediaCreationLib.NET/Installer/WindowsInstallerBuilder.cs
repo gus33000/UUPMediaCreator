@@ -32,7 +32,7 @@ using static MediaCreationLib.MediaCreator;
 
 namespace MediaCreationLib.Installer
 {
-    public class WindowsInstallerBuilder
+    public static class WindowsInstallerBuilder
     {
         private static readonly WIMImaging imagingInterface = new();
 
@@ -53,13 +53,15 @@ namespace MediaCreationLib.Installer
             //
             bool result = CreateSetupMediaRoot(BaseESD, MediaPath, progressCallback);
             if (!result)
+            {
                 goto exit;
+            }
 
             //
             // Gather information about the Windows Recovery Environment image so we can transplant it later
             // into our new images
             //
-            result = imagingInterface.GetWIMImageInformation(BaseESD, 2, out WIMInformationXML.IMAGE image);
+            result = WIMImaging.GetWIMImageInformation(BaseESD, 2, out WIMInformationXML.IMAGE image);
             if (!result)
             {
                 progressCallback?.Invoke(Common.ProcessPhase.CreatingWindowsInstaller, true, 0, "An error occured while getting WIM image information.");
@@ -73,14 +75,16 @@ namespace MediaCreationLib.Installer
 
             string BootFirstImageName = $"Microsoft Windows PE ({ArchitectureInNameAndDescription})";
             string BootSecondImageName = $"Microsoft Windows Setup ({ArchitectureInNameAndDescription})";
-            string BootFirstImageFlag = "9";
-            string BootSecondImageFlag = "2";
+            const string BootFirstImageFlag = "9";
+            const string BootSecondImageFlag = "2";
 
             //
             // Bootable wim files must not be lzms
             //
             if (compressionType == WimCompressionType.Lzms)
+            {
                 compressionType = WimCompressionType.Lzx;
+            }
 
             void callback(string Operation, int ProgressPercentage, bool IsIndeterminate)
             {
@@ -147,7 +151,7 @@ namespace MediaCreationLib.Installer
                     DEFAULT = LanguageCode
                 };
             }
-            result = imagingInterface.SetWIMImageInformation(bootwim, 1, image);
+            result = WIMImaging.SetWIMImageInformation(bootwim, 1, image);
             if (!result)
             {
                 progressCallback?.Invoke(Common.ProcessPhase.CreatingWindowsInstaller, true, 0, "An error occured while setting image information for index 1.");
@@ -170,7 +174,7 @@ namespace MediaCreationLib.Installer
                     DEFAULT = LanguageCode
                 };
             }
-            result = imagingInterface.SetWIMImageInformation(bootwim, 2, image);
+            result = WIMImaging.SetWIMImageInformation(bootwim, 2, image);
             if (!result)
             {
                 progressCallback?.Invoke(Common.ProcessPhase.CreatingWindowsInstaller, true, 0, "An error occured while setting image information for index 2.");
@@ -182,7 +186,9 @@ namespace MediaCreationLib.Installer
             //
             result = WIMImaging.MarkImageAsBootable(bootwim, 2);
             if (!result)
+            {
                 goto exit;
+            }
 
             //
             // Modifying registry for each index
@@ -302,20 +308,26 @@ namespace MediaCreationLib.Installer
                     {
                         result = imagingInterface.AddFileToImage(bootwim, 2, matchingfile1, normalizedPath, progressCallback: callback);
                         if (!result)
+                        {
                             goto exit;
+                        }
                     }
                     else if (File.Exists(matchingfile2))
                     {
                         result = imagingInterface.AddFileToImage(bootwim, 2, matchingfile2, normalizedPath, progressCallback: callback);
                         if (!result)
+                        {
                             goto exit;
+                        }
                     }
                 }
                 else if (File.Exists(matchingfile))
                 {
                     result = imagingInterface.AddFileToImage(bootwim, 2, matchingfile, normalizedPath, progressCallback: callback);
                     if (!result)
+                    {
                         goto exit;
+                    }
                 }
             }
 
@@ -333,20 +345,26 @@ namespace MediaCreationLib.Installer
                         {
                             result = imagingInterface.AddFileToImage(bootwim, 2, matchingfile1, normalizedPath, progressCallback: callback);
                             if (!result)
+                            {
                                 goto exit;
+                            }
                         }
                         else if (File.Exists(matchingfile2))
                         {
                             result = imagingInterface.AddFileToImage(bootwim, 2, matchingfile2, normalizedPath, progressCallback: callback);
                             if (!result)
+                            {
                                 goto exit;
+                            }
                         }
                     }
                     else if (File.Exists(matchingfile))
                     {
                         result = imagingInterface.AddFileToImage(bootwim, 2, matchingfile, normalizedPath, progressCallback: callback);
                         if (!result)
+                        {
                             goto exit;
+                        }
                     }
                 }
             }
@@ -379,11 +397,15 @@ namespace MediaCreationLib.Installer
 
             bool result = imagingInterface.ExportImage(BaseESD, OutputWinREPath, 2, compressionType: compressionType, progressCallback: callback);
             if (!result)
+            {
                 goto exit;
+            }
 
-            result = imagingInterface.GetWIMImageInformation(OutputWinREPath, 1, out WIMInformationXML.IMAGE image);
+            result = WIMImaging.GetWIMImageInformation(OutputWinREPath, 1, out WIMInformationXML.IMAGE image);
             if (!result)
+            {
                 goto exit;
+            }
 
             if (image.WINDOWS.LANGUAGES == null)
             {
@@ -398,15 +420,19 @@ namespace MediaCreationLib.Installer
                     DEFAULT = LanguageCode
                 };
 
-                result = imagingInterface.SetWIMImageInformation(OutputWinREPath, 1, image);
+                result = WIMImaging.SetWIMImageInformation(OutputWinREPath, 1, image);
                 if (!result)
+                {
                     goto exit;
+                }
             }
 
             progressCallback?.Invoke(Common.ProcessPhase.CreatingWindowsInstaller, true, 0, "Marking image as bootable");
             result = WIMImaging.MarkImageAsBootable(OutputWinREPath, 1);
             if (!result)
+            {
                 goto exit;
+            }
 
             string bootwim = Path.Combine(MediaPath, "sources", "boot.wim");
             File.Copy(OutputWinREPath, bootwim);
@@ -465,17 +491,23 @@ namespace MediaCreationLib.Installer
 
             result = WIMImaging.ExtractFileFromImage(bootwim, 1, Constants.SYSTEM_Hive_Location, tempSystemHiveBackup);
             if (!result)
+            {
                 goto cleanup;
+            }
 
             result = RegistryOperations.ModifyBootGlobalRegistry(tempSystemHiveBackup);
             if (!result)
+            {
                 goto cleanup;
+            }
 
             result = imagingInterface.AddFileToImage(bootwim, 1, tempSystemHiveBackup, Constants.SYSTEM_Hive_Location, progressCallback: callback);
             if (!result)
+            {
                 goto cleanup;
+            }
 
-            cleanup:
+        cleanup:
             File.Delete(tempSystemHiveBackup);
 
         exit:
@@ -556,11 +588,19 @@ namespace MediaCreationLib.Installer
                 progressCallback?.Invoke(Common.ProcessPhase.CreatingWindowsInstaller, true, 0, "Adding missing files");
 
                 if (!File.Exists(Path.Combine(ospath, "Windows", "System32", "ReAgent.dll")))
+                {
                     File.Copy(Path.Combine(MediaPath, "sources", "ReAgent.dll"), Path.Combine(ospath, "Windows", "System32", "ReAgent.dll"));
+                }
+
                 if (!File.Exists(Path.Combine(ospath, "Windows", "System32", "unattend.dll")))
+                {
                     File.Copy(Path.Combine(MediaPath, "sources", "unattend.dll"), Path.Combine(ospath, "Windows", "System32", "unattend.dll"));
+                }
+
                 if (!File.Exists(Path.Combine(ospath, "Windows", "System32", "wpx.dll")))
+                {
                     File.Copy(Path.Combine(MediaPath, "sources", "wpx.dll"), Path.Combine(ospath, "Windows", "System32", "wpx.dll"));
+                }
 
                 result = imagingInterface.CaptureImage(
                     Path.Combine(MediaPath, "sources", "boot.wim"),
@@ -612,7 +652,7 @@ namespace MediaCreationLib.Installer
 
             proc.OutputDataReceived += (object sender, DataReceivedEventArgs e) =>
             {
-                if (e.Data != null && e.Data.Contains(","))
+                if (e.Data?.Contains(",") == true)
                 {
                     int percent = int.Parse(e.Data.Split(',')[0]);
                     progressCallback?.Invoke(Common.ProcessPhase.CreatingWindowsInstaller, false, percent, e.Data.Split(',')[1]);

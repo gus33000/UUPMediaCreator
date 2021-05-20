@@ -51,11 +51,9 @@ namespace MediaCreationLib.Planning.NET
         EditionPackageSwap
     }
 
-    public class ConversionPlanBuilder
+    public static class ConversionPlanBuilder
     {
         public delegate void ProgressCallback(string SubOperation);
-
-        private static readonly WIMImaging imagingInterface = new();
 
         private static EditionTarget BuildTarget(
             PlannedEdition edition,
@@ -283,7 +281,7 @@ namespace MediaCreationLib.Planning.NET
             {
                 List<CompDBXmlClass.Package>? packages = neutralCompDB.Features.Feature.First(x => x.FeatureID == "BaseNeutral").Packages.Package;
 
-                IEnumerable<CompDBXmlClass.Package>? editionSpecificPackages = packages.Where(x => x.ID.Count(y => y == '-') == 4).Where(x => x.ID.Contains("microsoft-windows-editionspecific", StringComparison.InvariantCultureIgnoreCase));
+                IEnumerable<CompDBXmlClass.Package>? editionSpecificPackages = packages.Where(x => x.ID.Count(y => y == '-') == 4 && x.ID.Contains("microsoft-windows-editionspecific", StringComparison.InvariantCultureIgnoreCase));
                 IEnumerable<CompDBXmlClass.Package>? highPriorityPackages = editionSpecificPackages.Where(x => x.ID.Contains("starter", StringComparison.InvariantCultureIgnoreCase) ||
                                                                             x.ID.Contains("professional", StringComparison.InvariantCultureIgnoreCase) ||
                                                                             x.ID.Contains("core", StringComparison.InvariantCultureIgnoreCase));
@@ -314,10 +312,10 @@ namespace MediaCreationLib.Planning.NET
                     //
                     if (!availableCanonicalEditions.Any(x => x.EditionName.Equals(sku, StringComparison.InvariantCultureIgnoreCase)))
                     {
-                        if (possibleEditionUpgrades != null && !possibleEditionUpgrades
+                        if (possibleEditionUpgrades?
                             .Where(x => availableCanonicalEditions.Any(y => y.EditionName.Equals(x.ParentEdition, StringComparison.InvariantCultureIgnoreCase)) ||
                                         availableEditionsByDowngrading.Any(y => y.EditionName.Equals(x.ParentEdition, StringComparison.InvariantCultureIgnoreCase)))
-                            .Any(x => x.Name.Equals(sku, StringComparison.InvariantCultureIgnoreCase)))
+                            .Any(x => x.Name.Equals(sku, StringComparison.InvariantCultureIgnoreCase)) == false)
                         {
                             PlannedEdition edition = new()
                             {
@@ -355,10 +353,10 @@ namespace MediaCreationLib.Planning.NET
                     //
                     if (!availableCanonicalEditions.Any(x => x.EditionName.Equals(sku, StringComparison.InvariantCultureIgnoreCase)))
                     {
-                        if (possibleEditionUpgrades != null && !possibleEditionUpgrades
+                        if (possibleEditionUpgrades?
                             .Where(x => availableCanonicalEditions.Any(y => y.EditionName.Equals(x.ParentEdition, StringComparison.InvariantCultureIgnoreCase)) ||
                                         availableEditionsByDowngrading.Any(y => y.EditionName.Equals(x.ParentEdition, StringComparison.InvariantCultureIgnoreCase)))
-                            .Any(x => x.Name.Equals(sku, StringComparison.InvariantCultureIgnoreCase)))
+                            .Any(x => x.Name.Equals(sku, StringComparison.InvariantCultureIgnoreCase)) == false)
                         {
                             PlannedEdition edition = new()
                             {
@@ -510,7 +508,7 @@ namespace MediaCreationLib.Planning.NET
                     //
                     // Attempt to get virtual editions from one compdb
                     //
-                    if (virtualWindowsEditions.Count <= 0)
+                    if (virtualWindowsEditions.Count == 0)
                     {
                         try
                         {
@@ -525,7 +523,7 @@ namespace MediaCreationLib.Planning.NET
                             {
                                 string[] hashmapcontent = File.ReadAllLines(tempHashMap);
                                 File.Delete(tempHashMap);
-                                pathEditionMapping = hashmapcontent.First(x => x.ToLower().Contains("editionmappings.xml")).Split('=').First();
+                                pathEditionMapping = hashmapcontent.First(x => x.Contains("editionmappings.xml", StringComparison.CurrentCultureIgnoreCase)).Split('=')[0];
                                 index = 1;
                             }
                             else
@@ -539,7 +537,9 @@ namespace MediaCreationLib.Planning.NET
                             {
                                 result = WIMImaging.ExtractFileFromImage(EditionPack, index, pathEditionMapping, tempHashMap);
                                 if (!result)
+                                {
                                     goto error;
+                                }
 
                                 string editionmappingcontent = File.ReadAllText(tempHashMap);
                                 File.Delete(tempHashMap);
@@ -551,15 +551,15 @@ namespace MediaCreationLib.Planning.NET
 
                                 virtualWindowsEditions = virtualeditions.ToList();
                             }
-                            catch { };
+                            catch { }
                         }
-                        catch { };
+                        catch { }
                     }
 
                     //
                     // Attempt to get upgradable editions from one compdb
                     //
-                    if (possibleEditionUpgrades.Count <= 0)
+                    if (possibleEditionUpgrades.Count == 0)
                     {
                         try
                         {
@@ -574,7 +574,7 @@ namespace MediaCreationLib.Planning.NET
                             {
                                 string[] hashmapcontent = File.ReadAllLines(tempHashMap);
                                 File.Delete(tempHashMap);
-                                pathEditionMatrix = hashmapcontent.First(x => x.ToLower().Contains("editionmatrix.xml")).Split('=').First();
+                                pathEditionMatrix = hashmapcontent.First(x => x.Contains("editionmatrix.xml", StringComparison.CurrentCultureIgnoreCase)).Split('=')[0];
                                 index = 1;
                             }
                             else
@@ -588,7 +588,9 @@ namespace MediaCreationLib.Planning.NET
                             {
                                 result = WIMImaging.ExtractFileFromImage(EditionPack, index, pathEditionMatrix, tempHashMap);
                                 if (!result)
+                                {
                                     goto error;
+                                }
 
                                 string editionmatrixcontent = File.ReadAllText(tempHashMap);
                                 File.Delete(tempHashMap);
@@ -608,9 +610,9 @@ namespace MediaCreationLib.Planning.NET
                                     }
                                 }
                             }
-                            catch { };
+                            catch { }
                         }
-                        catch { };
+                        catch { }
                     }
                 }
 
@@ -619,7 +621,6 @@ namespace MediaCreationLib.Planning.NET
                 (List<PlannedEdition> availableEditionsByDowngradingInPriority, List<PlannedEdition> availableEditionsByDowngrading) = GetEditionsThatCanBeTargetedUsingPackageDowngrade(UUPPath, compDBs, availableCanonicalEditions, possibleEditionUpgrades);
 
                 progressCallback?.Invoke("Building Targets");
-
 
                 List<string> editionsAdded = new();
 

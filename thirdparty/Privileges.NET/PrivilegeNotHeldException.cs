@@ -6,8 +6,6 @@ namespace PrivilegeClass
     [Serializable]
     public sealed class PrivilegeNotHeldException : UnauthorizedAccessException, ISerializable
     {
-        private readonly string privilegeName = null;
-
         public PrivilegeNotHeldException()
             : base("A privilege necessary for this operation to succeed is not held by the caller.")
         {
@@ -16,25 +14,22 @@ namespace PrivilegeClass
         public PrivilegeNotHeldException(string privilege)
             : base(string.Format("The {0} privilege is not held by the caller.", privilege))
         {
-            this.privilegeName = privilege;
+            this.PrivilegeName = privilege;
         }
 
         public PrivilegeNotHeldException(string privilege, Exception inner)
             : base(string.Format("The {0} privilege is not held by the caller.", privilege), inner)
         {
-            this.privilegeName = privilege;
+            this.PrivilegeName = privilege;
         }
 
-        internal PrivilegeNotHeldException(SerializationInfo info, StreamingContext context)
+        private PrivilegeNotHeldException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
-            this.privilegeName = info.GetString("PrivilegeName");
+            this.PrivilegeName = info.GetString("PrivilegeName");
         }
 
-        public string PrivilegeName
-        {
-            get { return this.privilegeName; }
-        }
+        public string PrivilegeName { get; } = null;
 
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
@@ -45,7 +40,7 @@ namespace PrivilegeClass
 
             base.GetObjectData(info, context);
 
-            info.AddValue("PrivilegeName", this.privilegeName, typeof(string));
+            info.AddValue("PrivilegeName", this.PrivilegeName, typeof(string));
         }
     }
 }

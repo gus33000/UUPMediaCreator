@@ -44,8 +44,8 @@ namespace ICSharpCode.SharpZipLib.Checksum
     {
         #region Instance Fields
 
-        private static readonly uint crcInit = 0xFFFFFFFF;
-        private static readonly uint crcXor = 0xFFFFFFFF;
+        private const uint crcInit = 0xFFFFFFFF;
+        private const uint crcXor = 0xFFFFFFFF;
 
         private static readonly uint[] crcTable = CrcUtilities.GenerateSlicingLookupTable(0xEDB88320, isReversed: true);
 

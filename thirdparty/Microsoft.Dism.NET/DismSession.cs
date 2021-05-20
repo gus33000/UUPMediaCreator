@@ -4,7 +4,6 @@
 
 using Microsoft.Win32.SafeHandles;
 using System;
-using System.Runtime.ConstrainedExecution;
 
 namespace Microsoft.Dism
 {
@@ -40,7 +39,7 @@ namespace Microsoft.Dism
         {
             if (!IsInvalid)
             {
-                DismApi.NativeMethods.DismCloseSession(handle);
+                _ = DismApi.NativeMethods.DismCloseSession(handle);
             }
 
             int hresult = DismApi.NativeMethods.DismOpenSession(_imagePath, _windowsDirectory, _systemDrive, out IntPtr sessionPtr);
@@ -54,7 +53,6 @@ namespace Microsoft.Dism
         /// Releases the DismSession handle.
         /// </summary>
         /// <returns>true if the handle is released successfully; otherwise, in the event of a catastrophic failure, false.</returns>
-        [ReliabilityContract(Consistency.WillNotCorruptState, Cer.MayFail)]
         protected override bool ReleaseHandle()
         {
             // See if the handle is valid and hasn't already been closed

@@ -29,9 +29,9 @@ namespace Microsoft.Wim
     public enum WimMessageResult : uint
     {
         /// <summary>
-        /// Cancels an image apply or image capture.
+        /// Indicate success and to enable other subscribers to process the message
         /// </summary>
-        Abort = WimgApi.WIM_MSG_ABORT_IMAGE,
+        Success = WimgApi.WIM_MSG_SUCCESS,
 
         /// <summary>
         /// Indicates success and prevents other subscribers from receiving the message.
@@ -44,9 +44,9 @@ namespace Microsoft.Wim
         SkipError = WimgApi.WIM_MSG_SKIP_ERROR,
 
         /// <summary>
-        /// Indicate success and to enable other subscribers to process the message
+        /// Cancels an image apply or image capture.
         /// </summary>
-        Success = WimgApi.WIM_MSG_SUCCESS,
+        Abort = WimgApi.WIM_MSG_ABORT_IMAGE,
     }
 
     /// <summary>

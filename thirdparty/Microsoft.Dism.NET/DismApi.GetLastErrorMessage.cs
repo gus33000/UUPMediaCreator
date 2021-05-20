@@ -32,7 +32,7 @@ namespace Microsoft.Dism
                 string dismString = errorMessagePtr.ToStructure<DismString>();
 
                 // See if the string has a value
-                if (string.IsNullOrEmpty(dismString) == false)
+                if (!string.IsNullOrEmpty(dismString))
                 {
                     // Return the trimmed value
                     return dismString.Trim();
@@ -55,12 +55,12 @@ namespace Microsoft.Dism
             /// </summary>
             /// <param name="errorMessage">The detailed error message in the current thread.</param>
             /// <returns>Returns OK on success.</returns>
-            /// <remarks>You can retrieve a detailed error message immediately after a DISM API failure. The last error message is maintained on a per-thread basis. An error message on a thread will not overwrite the last error message on another thread.
-            ///
-            /// DismGetLastErrorMessage does not apply to the DismShutdown function, DismDelete function, or the DismGetLastErrorMessage function.
-            ///
+            /// <remarks><para>You can retrieve a detailed error message immediately after a DISM API failure. The last error message is maintained on a per-thread basis. An error message on a thread will not overwrite the last error message on another thread.</para>
+            /// <para>DismGetLastErrorMessage does not apply to the DismShutdown function, DismDelete function, or the DismGetLastErrorMessage function.</para>
+            /// <para>
             /// <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/hh824754.aspx" />
             /// HRESULT WINAPI DismGetLastErrorMessage(_Out_ DismString** ErrorMessage);
+            /// </para>
             /// </remarks>
             [DllImport(DismDllName, CharSet = DismCharacterSet)]
             [return: MarshalAs(UnmanagedType.Error)]

@@ -25,7 +25,7 @@ using System.Xml.Serialization;
 
 namespace MediaCreationLib.Planning.NET
 {
-    public class EditionMatrixXML
+    public static class EditionMatrixXML
     {
         [XmlRoot(ElementName = "Target")]
         public class Target
@@ -71,7 +71,10 @@ namespace MediaCreationLib.Planning.NET
 
         public static TmiMatrix Deserialize(string editionMatrixXml)
         {
-            if (editionMatrixXml == null) return null;
+            if (editionMatrixXml == null)
+            {
+                return null;
+            }
 
             XmlSerializer xmlSerializer = new(typeof(TmiMatrix));
 

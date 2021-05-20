@@ -46,7 +46,7 @@ namespace Microsoft.Wim
         /// Gets information about an image within the .wim (Windows image) file.
         /// </summary>
         /// <param name="wimHandle">Either a <see cref="WimHandle"/> returned from <see cref="CreateFile"/>, <see cref="LoadImage"/>, or <see cref="CaptureImage"/>.</param>
-        /// <returns>A <see cref="String"/> object containing XML information about the volume image.</returns>
+        /// <returns>A <see cref="string"/> object containing XML information about the volume image.</returns>
         /// <exception cref="ArgumentNullException">wimHandle is null.</exception>
         /// <exception cref="Win32Exception">The Windows® Imaging API reported a failure.</exception>
         public static string GetImageInformationAsString(WimHandle wimHandle)

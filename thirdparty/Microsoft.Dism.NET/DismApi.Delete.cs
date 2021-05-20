@@ -16,7 +16,7 @@ namespace Microsoft.Dism
         private static void Delete(IntPtr handle)
         {
             // Call the native function
-            NativeMethods.DismDelete(handle);
+            _ = NativeMethods.DismDelete(handle);
         }
 
         internal static partial class NativeMethods
@@ -26,10 +26,11 @@ namespace Microsoft.Dism
             /// </summary>
             /// <param name="dismStructure">A pointer to the structure, or array of structures, to be deleted. The structure must have been returned by an earlier call to a DISM API function.</param>
             /// <returns>Returns S_OK on success.</returns>
-            /// <remarks>All structures that are returned by DISM API functions are allocated on the heap. The client must not delete or free these structures directly. Instead, the client should call DismDelete and pass in the pointer that was returned by the earlier DISM API call.
-            ///
+            /// <remarks><para>All structures that are returned by DISM API functions are allocated on the heap. The client must not delete or free these structures directly. Instead, the client should call DismDelete and pass in the pointer that was returned by the earlier DISM API call.</para>
+            /// <para>
             /// <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/hh824768.aspx" />
             /// HRESULT WINAPI DismDelete(_In_ VOID* DismStructure);
+            /// </para>
             /// </remarks>
             [DllImport(DismDllName, CharSet = DismCharacterSet)]
             [return: MarshalAs(UnmanagedType.Error)]

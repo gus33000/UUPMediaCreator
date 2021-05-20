@@ -106,10 +106,14 @@ namespace DownloadLib
             };
 
             if (proxy != null || !useSystemProxy)
+            {
                 filter.Proxy = proxy;
+            }
 
             if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
                 filter.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator; //For Linux, MS cert isn't trusted lol ¯\_(ツ)_/¯
+            }
 
             _hc = new HttpClient(filter)
             {
@@ -168,14 +172,16 @@ namespace DownloadLib
                 }
                 else
                 {
-                    await Task.WhenAny(workingSlots.Where(t => t != null));
+                    await Task.WhenAny(workingSlots.Where(t => t != null)).ConfigureAwait(false);
 
                     for (int i = 0; i < workingSlots.Length; i++)
                     {
-                        if (workingSlots[i] != null && workingSlots[i].IsCompleted)
+                        if (workingSlots[i]?.IsCompleted == true)
                         {
                             if (workingSlots[i].Result)
+                            {
                                 generalDownloadProgress.NumFilesDownloadedSuccessfully++;
+                            }
                             else
                             {
                                 generalDownloadProgress.NumFilesDownloadedUnsuccessfully++;
@@ -237,11 +243,17 @@ namespace DownloadLib
                     FileInfo tmpFileInfo = new(tempFilePath);
                     FileInfo fileInfo = new(filePath);
                     if (tmpFileInfo.Length == downloadFile.FileSize)
+                    {
                         File.Delete(filePath);
+                    }
                     else if (fileInfo.Length == downloadFile.FileSize)
+                    {
                         File.Delete(tempFilePath);
+                    }
                     else
+                    {
                         File.Delete(filePath);
+                    }
                 }
 
                 if (File.Exists(tempFilePath))
@@ -329,7 +341,6 @@ namespace DownloadLib
                     }
                 }
 
-
                 //Before we need to create a directory.
                 Directory.CreateDirectory(Path.GetDirectoryName(filePath));
 
@@ -367,9 +378,13 @@ namespace DownloadLib
                     using Stream streamToReadFrom = await fullFileResp.Content.ReadAsStreamAsync().ConfigureAwait(false);
 
                     if (esrpDecrypter != null)
+                    {
                         await esrpDecrypter.DecryptStreamFullAsync(streamToReadFrom, streamToWriteTo, (ulong)contentLength.Value, cancellationToken).ConfigureAwait(false);
+                    }
                     else
+                    {
                         await streamToReadFrom.CopyToAsync(streamToWriteTo).ConfigureAwait(false);
+                    }
 
                     downloadProgress?.Report(new FileDownloadStatus(downloadFile)
                     {
@@ -387,7 +402,9 @@ namespace DownloadLib
                 {
                     //Calculate range values
                     if (currRange + chunk >= contentLength.Value)
+                    {
                         chunk = contentLength.Value - currRange - 1;
+                    }
 
                     //Create request for range and send it, return asap (we just need the header to see if the status code is ok)
                     using HttpRequestMessage requestMessageRange = CreateRequestHeaderForRange(HttpMethod.Get, downloadFile.WUFile.DownloadUrl, currRange, currRange + chunk);
@@ -400,7 +417,7 @@ namespace DownloadLib
                     if (filePartResp.IsSuccessStatusCode)
                     {
                         //get the underlying stream
-                        using Stream streamToReadFrom = await filePartResp.Content.ReadAsStreamAsync();
+                        using Stream streamToReadFrom = await filePartResp.Content.ReadAsStreamAsync().ConfigureAwait(false);
 
                         int bytesRead;
                         byte[] buffer = new byte[blockBufferSize];
@@ -423,7 +440,7 @@ namespace DownloadLib
                                 Array.Copy(buffer, 0, backBuffer, backBufferLength, bytesRead + diff);
                                 backBufferLength += bytesRead + diff;
 
-                                if (!(backBufferLength < blockBufferSize))
+                                if (backBufferLength >= blockBufferSize)
                                 {
                                     //The last block is always padded.
                                     bool needsPadding = totalBytesRead == contentLength.Value;
@@ -487,8 +504,10 @@ namespace DownloadLib
                 //last left block if any
 
                 if (esrpDecrypter != null && backBufferLength > 0)
+                {
                     await esrpDecrypter.DecryptBufferToStreamAsync(backBuffer, streamToWriteTo, backBufferLength,
                                             blockBufferSize * blockCount, true, cancellationToken).ConfigureAwait(false);
+                }
 
                 if (verifyFiles)
                 {
@@ -572,7 +591,6 @@ namespace DownloadLib
                 }
             }
         }
-
 
         #region Helpers
 

@@ -43,8 +43,7 @@ namespace CompDB
                 if (compDB.Tags != null)
                 {
                     if (compDB.Tags.Type.Equals("Neutral", StringComparison.InvariantCultureIgnoreCase) &&
-                        compDB.Tags.Tag != null &&
-                        compDB.Tags.Tag.FirstOrDefault(x => x.Name.Equals("UpdateType", StringComparison.InvariantCultureIgnoreCase))?.Value?.Equals("Canonical", StringComparison.InvariantCultureIgnoreCase) == true)
+                        compDB.Tags.Tag?.Find(x => x.Name.Equals("UpdateType", StringComparison.InvariantCultureIgnoreCase))?.Value?.Equals("Canonical", StringComparison.InvariantCultureIgnoreCase) == true)
                     {
                         return compDB;
                     }
@@ -77,10 +76,9 @@ namespace CompDB
                 if (compDB.Tags != null)
                 {
                     if (compDB.Tags.Type.Equals("Edition", StringComparison.InvariantCultureIgnoreCase) &&
-                        compDB.Tags.Tag != null &&
-                        compDB.Tags.Tag.Count == 3 &&
-                        compDB.Tags.Tag.FirstOrDefault(x => x.Name.Equals("UpdateType", StringComparison.InvariantCultureIgnoreCase))?.Value?.Equals("Canonical", StringComparison.InvariantCultureIgnoreCase) == true &&
-                        compDB.Tags.Tag.FirstOrDefault(x => x.Name.Equals("Language", StringComparison.InvariantCultureIgnoreCase))?.Value?.Equals(LanguageCode, StringComparison.InvariantCultureIgnoreCase) == true &&
+                        compDB.Tags.Tag?.Count == 3 &&
+                        compDB.Tags.Tag.Find(x => x.Name.Equals("UpdateType", StringComparison.InvariantCultureIgnoreCase))?.Value?.Equals("Canonical", StringComparison.InvariantCultureIgnoreCase) == true &&
+                        compDB.Tags.Tag.Find(x => x.Name.Equals("Language", StringComparison.InvariantCultureIgnoreCase))?.Value?.Equals(LanguageCode, StringComparison.InvariantCultureIgnoreCase) == true &&
                         compDB.Tags.Tag.Any(x => x.Name.Equals("Edition", StringComparison.InvariantCultureIgnoreCase)))
                     {
                         filteredCompDBs.Add(compDB);
@@ -113,9 +111,8 @@ namespace CompDB
                 if (compDB.Tags != null)
                 {
                     if (compDB.Tags.Type.Equals("Edition", StringComparison.InvariantCultureIgnoreCase) &&
-                        compDB.Tags.Tag != null &&
-                        compDB.Tags.Tag.Count == 3 &&
-                        compDB.Tags.Tag.FirstOrDefault(x => x.Name.Equals("UpdateType", StringComparison.InvariantCultureIgnoreCase))?.Value?.Equals("Canonical", StringComparison.InvariantCultureIgnoreCase) == true &&
+                        compDB.Tags.Tag?.Count == 3 &&
+                        compDB.Tags.Tag.Find(x => x.Name.Equals("UpdateType", StringComparison.InvariantCultureIgnoreCase))?.Value?.Equals("Canonical", StringComparison.InvariantCultureIgnoreCase) == true &&
                         compDB.Tags.Tag.Any(x => x.Name.Equals("Edition", StringComparison.InvariantCultureIgnoreCase)))
                     {
                         filteredCompDBs.Add(compDB);
@@ -140,17 +137,15 @@ namespace CompDB
             {
                 if (x.Tags != null)
                 {
-                    if (x.Tags.Tag == null || x.Tags.Tag.Count <= 0)
-                    {
-                        return null;
-                    }
-                    return x.Tags.Tag.FirstOrDefault(y => y.Name.Equals("Language", StringComparison.InvariantCultureIgnoreCase)).Value;
+                    return x.Tags.Tag == null || x.Tags.Tag.Count == 0
+                        ? null
+                        : x.Tags.Tag.Find(y => y.Name.Equals("Language", StringComparison.InvariantCultureIgnoreCase)).Value;
                 }
-                else if (x.Features.Feature != null && x.Features.Feature.FirstOrDefault(y =>
-                       y.Type != null && y.Type.Contains("DesktopMedia", StringComparison.InvariantCultureIgnoreCase)) != null)
+                else if (x.Features.Feature != null && Array.Find(x.Features.Feature, y =>
+                       y.Type?.Contains("DesktopMedia", StringComparison.InvariantCultureIgnoreCase) == true) != null)
                 {
-                    return x.Features.Feature.FirstOrDefault(y =>
-                       y.Type != null && y.Type.Contains("DesktopMedia", StringComparison.InvariantCultureIgnoreCase)).FeatureID.Split('_')[1];
+                    return Array.Find(x.Features.Feature, y =>
+                       y.Type?.Contains("DesktopMedia", StringComparison.InvariantCultureIgnoreCase) == true).FeatureID.Split('_')[1];
                 }
                 return null;
             }).Where(x => !string.IsNullOrEmpty(x)).Distinct();

@@ -70,10 +70,11 @@ namespace Microsoft.Dism
             /// <param name="userData">Optional. User defined custom data.</param>
             /// <param name="imageHealth">A pointer to the DismImageHealthState Enumeration. The enumeration value is set during this operation.</param>
             /// <returns>Returns S_OK on success.</returns>
-            /// <remarks>If ScanImage is set to True, this function will take longer to finish.
-            ///
+            /// <remarks><para>If ScanImage is set to True, this function will take longer to finish.</para>
+            /// <para>
             /// <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/hh824769.aspx" />
             /// HRESULT WINAPI DismCheckImageHealth(_In_ DismSession Session, _In_ BOOL ScanImage, _In_opt_ HANDLE CancelEvent, _In_opt_ DISM_PROGRESS_CALLBACK Progress, _In_opt_ PVOID UserData, _Out_ DismImageHealthState* ImageHealth);
+            /// </para>
             /// </remarks>
             [DllImport(DismDllName, CharSet = DismCharacterSet)]
             [return: MarshalAs(UnmanagedType.Error)]

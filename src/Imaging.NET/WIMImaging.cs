@@ -42,11 +42,17 @@ namespace Imaging
         {
             string libDir = Path.Combine(GetExecutableDirectory(), "runtimes");
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
                 libDir = Path.Combine(libDir, "win-");
+            }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
                 libDir = Path.Combine(libDir, "linux-");
+            }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            {
                 libDir = Path.Combine(libDir, "osx-");
+            }
 
             switch (RuntimeInformation.ProcessArchitecture)
             {
@@ -67,27 +73,39 @@ namespace Imaging
 
             string libPath = null;
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
                 libPath = Path.Combine(libDir, "libwim-15.dll");
+            }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
                 libPath = Path.Combine(libDir, "libwim.so");
+            }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            {
                 libPath = Path.Combine(libDir, "libwim.dylib");
+            }
 
             if (libPath == null)
             {
-                Console.WriteLine($"Unable to find native library.");
-                throw new PlatformNotSupportedException($"Unable to find native library.");
+                Console.WriteLine("Unable to find native library.");
+                throw new PlatformNotSupportedException("Unable to find native library.");
             }
 
             if (!File.Exists(libPath))
             {
                 libDir = GetExecutableDirectory();
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                {
                     libPath = Path.Combine(libDir, "libwim-15.dll");
+                }
                 else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                {
                     libPath = Path.Combine(libDir, "libwim.so");
+                }
                 else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+                {
                     libPath = Path.Combine(libDir, "libwim.dylib");
+                }
 
                 if (!File.Exists(libPath))
                 {
@@ -289,7 +307,7 @@ namespace Imaging
                         }
                 }
 
-                if (referenceWIMs != null && referenceWIMs.Any())
+                if (referenceWIMs?.Any() == true)
                 {
                     srcWim.ReferenceResourceFiles(referenceWIMs, RefFlags.None, OpenFlags.None);
                 }
@@ -333,7 +351,6 @@ namespace Imaging
 
             try
             {
-
                 using (Wim wim = Wim.OpenWim(wimFile, OpenFlags.None))
                 {
                     wim.ExtractPath(imageIndex, extractDir, fileToExtract, ExtractFlags.NoPreserveDirStructure);
@@ -462,8 +479,11 @@ namespace Imaging
 
                 using Wim wim = Wim.OpenWim(wimFile, OpenFlags.None);
                 wim.RegisterCallback(ProgressCallback);
-                if (referenceWIMs != null && referenceWIMs.Any())
+                if (referenceWIMs?.Any() == true)
+                {
                     wim.ReferenceResourceFiles(referenceWIMs, RefFlags.None, OpenFlags.None);
+                }
+
                 wim.ExtractImage(imageIndex, OutputDirectory, PreserveACL ? ExtractFlags.StrictAcls : ExtractFlags.NoAcls);
             }
             catch (Exception ex)
@@ -536,15 +556,30 @@ namespace Imaging
                     wim.RegisterCallback(ProgressCallback);
                     wim.AddImage(InputDirectory, imageName, null, PreserveACL ? AddFlags.StrictAcls : AddFlags.NoAcls);
                     if (!string.IsNullOrEmpty(imageDescription))
+                    {
                         wim.SetImageDescription((int)wim.GetWimInfo().ImageCount, imageDescription);
+                    }
+
                     if (!string.IsNullOrEmpty(imageDisplayName))
+                    {
                         wim.SetImageProperty((int)wim.GetWimInfo().ImageCount, "DISPLAYNAME", imageDisplayName);
+                    }
+
                     if (!string.IsNullOrEmpty(imageDisplayDescription))
+                    {
                         wim.SetImageProperty((int)wim.GetWimInfo().ImageCount, "DISPLAYDESCRIPTION", imageDisplayDescription);
+                    }
+
                     if (!string.IsNullOrEmpty(imageFlag))
+                    {
                         wim.SetImageFlags((int)wim.GetWimInfo().ImageCount, imageFlag);
+                    }
+
                     if (UpdateFrom != -1)
+                    {
                         wim.ReferenceTemplateImage((int)wim.GetWimInfo().ImageCount, UpdateFrom);
+                    }
+
                     wim.Overwrite(WriteFlags.None, Wim.DefaultThreads);
                 }
                 else
@@ -577,7 +612,7 @@ namespace Imaging
                     using Wim wim = Wim.CreateNewWim(compression);
                     wim.RegisterCallback(ProgressCallback);
 
-                    string config = @"[ExclusionList]
+                    const string config = @"[ExclusionList]
 \$ntfs.log
 \hiberfil.sys
 \pagefile.sys
@@ -590,13 +625,25 @@ namespace Imaging
 
                     wim.AddImage(InputDirectory, imageName, configpath, PreserveACL ? AddFlags.StrictAcls : AddFlags.NoAcls);
                     if (!string.IsNullOrEmpty(imageDescription))
+                    {
                         wim.SetImageDescription((int)wim.GetWimInfo().ImageCount, imageDescription);
+                    }
+
                     if (!string.IsNullOrEmpty(imageDisplayName))
+                    {
                         wim.SetImageProperty((int)wim.GetWimInfo().ImageCount, "DISPLAYNAME", imageDisplayName);
+                    }
+
                     if (!string.IsNullOrEmpty(imageDisplayDescription))
+                    {
                         wim.SetImageProperty((int)wim.GetWimInfo().ImageCount, "DISPLAYDESCRIPTION", imageDisplayDescription);
+                    }
+
                     if (!string.IsNullOrEmpty(imageFlag))
+                    {
                         wim.SetImageFlags((int)wim.GetWimInfo().ImageCount, imageFlag);
+                    }
+
                     wim.Write(wimFile, Wim.AllImages, WriteFlags.None, Wim.DefaultThreads);
                     File.Delete(configpath);
                 }
@@ -618,7 +665,7 @@ namespace Imaging
                 {
                     fsentries.Add(dentry.FileName);
                     return 0;
-                };
+                }
                 wim.IterateDirTree(imageIndex, path, IterateDirTreeFlags.Children, IterateDirTreeCallback);
             }
             catch
@@ -645,7 +692,7 @@ namespace Imaging
             return true;
         }
 
-        public bool GetWIMInformation(
+        public static bool GetWIMInformation(
             string wimFile,
             out WIMInformationXML.WIM wim)
         {
@@ -700,7 +747,7 @@ namespace Imaging
             return true;
         }
 
-        public bool GetWIMImageInformation(
+        public static bool GetWIMImageInformation(
             string wimFile,
             int imageIndex,
             out WIMInformationXML.IMAGE image)
@@ -755,7 +802,7 @@ namespace Imaging
             return true;
         }
 
-        public bool SetWIMImageInformation(
+        public static bool SetWIMImageInformation(
             string wimFile,
             int imageIndex,
             WIMInformationXML.IMAGE image)
@@ -812,7 +859,7 @@ namespace Imaging
             return true;
         }
 
-        private bool ReseatWIMXml(string wimFile)
+        private static bool ReseatWIMXml(string wimFile)
         {
             try
             {

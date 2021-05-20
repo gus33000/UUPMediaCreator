@@ -31,7 +31,7 @@ using static MediaCreationLib.MediaCreator;
 
 namespace MediaCreationLib.BaseEditions
 {
-    public class BaseEditionBuilder
+    public static class BaseEditionBuilder
     {
         private static readonly WIMImaging imagingInterface = new();
 
@@ -68,7 +68,9 @@ namespace MediaCreationLib.BaseEditions
 
             (result, BaseESD, ReferencePackages, referencePackagesToConvert) = FileLocator.LocateFilesForBaseEditionCreation(UUPPath, LanguageCode, EditionID, progressCallback);
             if (!result)
+            {
                 goto exit;
+            }
 
             progressCallback?.Invoke(Common.ProcessPhase.PreparingFiles, true, 0, "Converting Reference Cabinets");
 
@@ -92,7 +94,7 @@ namespace MediaCreationLib.BaseEditions
             //
             // Gather information to transplant later into DisplayName and DisplayDescription
             //
-            result = imagingInterface.GetWIMImageInformation(BaseESD, 3, out WIMInformationXML.IMAGE image);
+            result = WIMImaging.GetWIMImageInformation(BaseESD, 3, out WIMInformationXML.IMAGE image);
             if (!result)
             {
                 progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, "CreateBaseEdition -> GetWIMImageInformation failed");
@@ -105,7 +107,7 @@ namespace MediaCreationLib.BaseEditions
             void callback(string Operation, int ProgressPercentage, bool IsIndeterminate)
             {
                 progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, IsIndeterminate, ProgressPercentage, Operation);
-            };
+            }
 
             result = imagingInterface.ExportImage(
                 BaseESD,
@@ -120,7 +122,7 @@ namespace MediaCreationLib.BaseEditions
                 goto exit;
             }
 
-            result = imagingInterface.GetWIMInformation(OutputInstallImage, out WIMInformationXML.WIM wim);
+            result = WIMImaging.GetWIMInformation(OutputInstallImage, out WIMInformationXML.WIM wim);
             if (!result)
             {
                 progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, "CreateBaseEdition -> GetWIMInformation failed");
@@ -153,7 +155,7 @@ namespace MediaCreationLib.BaseEditions
                     DEFAULT = LanguageCode
                 };
             }
-            result = imagingInterface.SetWIMImageInformation(OutputInstallImage, wim.IMAGE.Count, image);
+            result = WIMImaging.SetWIMImageInformation(OutputInstallImage, wim.IMAGE.Count, image);
             if (!result)
             {
                 progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, "CreateBaseEdition -> SetWIMImageInformation failed");
@@ -163,7 +165,7 @@ namespace MediaCreationLib.BaseEditions
             void callback2(string Operation, int ProgressPercentage, bool IsIndeterminate)
             {
                 progressCallback?.Invoke(Common.ProcessPhase.IntegratingWinRE, IsIndeterminate, ProgressPercentage, Operation);
-            };
+            }
 
             //
             // Integrate the WinRE image into the installation image
@@ -190,7 +192,9 @@ namespace MediaCreationLib.BaseEditions
         {
             string esdFilePath = Path.ChangeExtension(cabFilePath, "esd");
             if (File.Exists(esdFilePath))
+            {
                 return esdFilePath;
+            }
 
             progressCallback?.Invoke(Common.ProcessPhase.PreparingFiles, false, progressoffset, "Unpacking...");
 
@@ -202,23 +206,20 @@ namespace MediaCreationLib.BaseEditions
             void ProgressCallback(int percent, string file)
             {
                 progressCallback?.Invoke(Common.ProcessPhase.PreparingFiles, false, progressoffset + (int)Math.Round((double)percent / 100 * progressScaleHalf), "Unpacking " + file + "...");
-            };
+            }
 
             CabinetExtractor.ExtractCabinet(cabFilePath, tempExtractionPath, ProgressCallback);
 
             void callback(string Operation, int ProgressPercentage, bool IsIndeterminate)
             {
                 progressCallback?.Invoke(Common.ProcessPhase.PreparingFiles, IsIndeterminate, progressoffset + progressScaleHalf + (int)Math.Round((double)ProgressPercentage / 100 * progressScaleHalf), Operation);
-            };
+            }
 
             bool result = imagingInterface.CaptureImage(esdFilePath, "Metadata ESD", null, null, tempExtractionPath, compressionType: WimCompressionType.None, PreserveACL: false, progressCallback: callback);
 
             Directory.Delete(tmp, true);
 
-            if (!result)
-                return null;
-
-            return esdFilePath;
+            return !result ? null : esdFilePath;
         }
     }
 }

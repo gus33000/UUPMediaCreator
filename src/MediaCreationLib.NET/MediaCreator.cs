@@ -35,7 +35,7 @@ using UUPMediaCreator.InterCommunication;
 
 namespace MediaCreationLib
 {
-    public class MediaCreator
+    public static class MediaCreator
     {
         private static readonly bool RunsAsAdministrator = IsAdministrator();
 
@@ -72,12 +72,9 @@ namespace MediaCreationLib
                 return OSPlatform.Windows;
             }
 
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.FreeBSD))
-            {
-                return OSPlatform.FreeBSD;
-            }
-
-            throw new Exception("Cannot determine operating system!");
+            return RuntimeInformation.IsOSPlatform(OSPlatform.FreeBSD)
+                ? OSPlatform.FreeBSD
+                : throw new Exception("Cannot determine operating system!");
         }
 
         private static readonly WIMImaging imagingInterface = new();
@@ -115,7 +112,9 @@ namespace MediaCreationLib
                                 progressCallback);
 
                         if (!result)
+                        {
                             goto exit;
+                        }
 
                         break;
                     }
@@ -130,7 +129,9 @@ namespace MediaCreationLib
                                     progressCallback);
 
                         if (!result)
+                        {
                             goto exit;
+                        }
 
                         break;
                     }
@@ -138,7 +139,7 @@ namespace MediaCreationLib
                     {
                         string newvhd = VirtualHardDiskLib.VHDUtilities.CreateDiffDisk(CurrentBackupVHD);
 
-                        progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, $"Mounting VHD");
+                        progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, "Mounting VHD");
                         using VirtualHardDiskLib.VirtualDiskSession vhdSession = new(existingVHD: newvhd);
                         VHDMountPath = vhdSession.GetMountedPath();
 
@@ -151,22 +152,25 @@ namespace MediaCreationLib
                             progressCallback);
 
                         if (!result)
+                        {
                             goto exit;
+                        }
+
                         break;
                     }
                 case AvailabilityType.EditionPackageSwap:
                     {
-                        if (targetEdition.PlannedEdition.EditionName.ToLower().StartsWith("starter"))
+                        if (targetEdition.PlannedEdition.EditionName.StartsWith("starter", StringComparison.CurrentCultureIgnoreCase))
                         {
                             // TODO
                             // (Downgrade from core/coren to starter/startern)
                         }
-                        else if (targetEdition.PlannedEdition.EditionName.ToLower().StartsWith("professionaln"))
+                        else if (targetEdition.PlannedEdition.EditionName.StartsWith("professionaln", StringComparison.CurrentCultureIgnoreCase))
                         {
                             // TODO
                             // (Downgrade from ppipro to pron)
                         }
-                        else if (targetEdition.PlannedEdition.EditionName.ToLower().StartsWith("professional"))
+                        else if (targetEdition.PlannedEdition.EditionName.StartsWith("professional", StringComparison.CurrentCultureIgnoreCase))
                         {
                             // TODO
                             // (Downgrade from ppipro to pro)
@@ -175,7 +179,7 @@ namespace MediaCreationLib
                         {
                             string newvhd = VirtualHardDiskLib.VHDUtilities.CreateDiffDisk(CurrentBackupVHD);
 
-                            progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, $"Mounting VHD");
+                            progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, "Mounting VHD");
                             using VirtualHardDiskLib.VirtualDiskSession vhdSession = new(existingVHD: newvhd);
                             VHDMountPath = vhdSession.GetMountedPath();
 
@@ -189,7 +193,9 @@ namespace MediaCreationLib
                                 tempManager,
                                 progressCallback);
                             if (!result)
+                            {
                                 goto exit;
+                            }
                         }
                         break;
                     }
@@ -202,17 +208,19 @@ namespace MediaCreationLib
                 using (VirtualHardDiskLib.VirtualDiskSession vhdSession = new(delete: false))
                 {
                     // Apply WIM
-                    imagingInterface.GetWIMInformation(InstallWIMFilePath, out WIMInformationXML.WIM wiminfo);
+                    WIMImaging.GetWIMInformation(InstallWIMFilePath, out WIMInformationXML.WIM wiminfo);
 
                     int index = int.Parse(wiminfo.IMAGE.First(x => x.WINDOWS.EDITIONID.Equals(targetEdition.PlannedEdition.EditionName, StringComparison.InvariantCultureIgnoreCase)).INDEX);
 
                     void callback(string Operation, int ProgressPercentage, bool IsIndeterminate)
                     {
                         progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, IsIndeterminate, ProgressPercentage, Operation);
-                    };
+                    }
                     result = imagingInterface.ApplyImage(InstallWIMFilePath, index, vhdSession.GetMountedPath(), progressCallback: callback);
                     if (!result)
+                    {
                         goto exit;
+                    }
 
                     vhdpath = vhdSession.VirtualDiskPath;
                 }
@@ -221,7 +229,7 @@ namespace MediaCreationLib
                 {
                     string newvhd = VirtualHardDiskLib.VHDUtilities.CreateDiffDisk(vhdpath);
 
-                    progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, $"Mounting VHD");
+                    progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, "Mounting VHD");
 
                     using VirtualHardDiskLib.VirtualDiskSession vhdSession = new(existingVHD: newvhd);
                     foreach (EditionTarget ed in targetEdition.NonDestructiveTargets)
@@ -240,7 +248,9 @@ namespace MediaCreationLib
                             progressCallback: progressCallback);
 
                         if (!result)
+                        {
                             goto exit;
+                        }
                     }
                 }
 
@@ -261,7 +271,9 @@ namespace MediaCreationLib
                             progressCallback: progressCallback);
 
                         if (!result)
+                        {
                             goto exit;
+                        }
                     }
                 }
 
@@ -271,7 +283,6 @@ namespace MediaCreationLib
         exit:
             return result;
         }
-
 
         public static bool GetTargetedPlan(
             string UUPPath,
@@ -418,7 +429,6 @@ namespace MediaCreationLib
             {
                 error = ex.ToString();
             }
-            
 
         error:
             progressCallback?.Invoke(Common.ProcessPhase.Error, true, 0, error);

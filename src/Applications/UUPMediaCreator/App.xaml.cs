@@ -88,7 +88,7 @@ namespace UUPMediaCreator
     /// <summary>
     /// Provides application-specific behavior to supplement the default Application class.
     /// </summary>
-    sealed partial class App : Application
+    public sealed partial class App : Application
     {
         public static BackgroundTaskDeferral AppServiceDeferral = null;
         public static AppServiceConnection Connection = null;
@@ -122,10 +122,7 @@ namespace UUPMediaCreator
 
         private void OnTaskCanceled(IBackgroundTaskInstance sender, BackgroundTaskCancellationReason reason)
         {
-            if (AppServiceDeferral != null)
-            {
-                AppServiceDeferral.Complete();
-            }
+            AppServiceDeferral?.Complete();
         }
 
         /// <summary>
@@ -142,11 +139,9 @@ namespace UUPMediaCreator
 
         private void ShowMainPage()
         {
-            Frame rootFrame = Window.Current.Content as Frame;
-
             // Do not repeat app initialization when the Window already has content,
             // just ensure that the window is active
-            if (rootFrame == null)
+            if (Window.Current.Content is not Frame rootFrame)
             {
                 // Create a Frame to act as the navigation context and navigate to the first page
                 rootFrame = new Frame();

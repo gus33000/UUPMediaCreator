@@ -48,17 +48,27 @@ namespace UUPDownload.Downloading
         private static string GetProgressBarString(int perc)
         {
             if (perc < 0)
+            {
                 perc = 0;
+            }
+
             if (perc > 100)
+            {
                 perc = 100;
+            }
 
             int eqsLength = (int)((double)perc / 100 * 55);
             string bases = new string('=', eqsLength) + new string(' ', 55 - eqsLength);
             bases = bases.Insert(28, perc + "%");
             if (perc == 100)
+            {
                 bases = bases[1..];
+            }
             else if (perc < 10)
+            {
                 bases = bases.Insert(28, " ");
+            }
+
             return "[" + bases + "]";
         }
 
@@ -69,12 +79,16 @@ namespace UUPDownload.Downloading
             foreach (FileDownloadStatus status in e.DownloadedStatus)
             {
                 if (status == null)
+                {
                     continue;
+                }
 
                 bool shouldReport = !files.ContainsKey(status.File.FileName) || files[status.File.FileName] != status.FileStatus;
 
                 if (!shouldReport)
+                {
                     continue;
+                }
 
                 files[status.File.FileName] = status.FileStatus;
 

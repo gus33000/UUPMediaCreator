@@ -55,7 +55,7 @@ namespace UUPMediaCreator.UWP.Pages
             SelectionGrid.Visibility = Visibility.Collapsed;
             _ = ThreadPool.RunAsync(async (IAsyncAction operation) =>
             {
-                BuildFetcher.AvailableBuildLanguages[] updates = await BuildFetcher.GetAvailableBuildLanguagesAsync(App.ConversionPlan.UpdateData);
+                BuildFetcher.AvailableBuildLanguages[] updates = await BuildFetcher.GetAvailableBuildLanguagesAsync(App.ConversionPlan.UpdateData).ConfigureAwait(false);
 
                 await CoreApplication.MainView.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
                 {
@@ -74,9 +74,9 @@ namespace UUPMediaCreator.UWP.Pages
 
         private void WizardPage_NextClicked(object sender, RoutedEventArgs e)
         {
-            App.ConversionPlan.Language = (dataGrid.SelectedItem as BuildFetcher.AvailableBuildLanguages).LanguageCode;
-            App.ConversionPlan.LanguageTitle = (dataGrid.SelectedItem as BuildFetcher.AvailableBuildLanguages).Title;
-            App.ConversionPlan.FlagUri = (dataGrid.SelectedItem as BuildFetcher.AvailableBuildLanguages).FlagUri;
+            App.ConversionPlan.Language = (dataGrid.SelectedItem as BuildFetcher.AvailableBuildLanguages)?.LanguageCode;
+            App.ConversionPlan.LanguageTitle = (dataGrid.SelectedItem as BuildFetcher.AvailableBuildLanguages)?.Title;
+            App.ConversionPlan.FlagUri = (dataGrid.SelectedItem as BuildFetcher.AvailableBuildLanguages)?.FlagUri;
             Frame.Navigate(typeof(EditionPage));
         }
 

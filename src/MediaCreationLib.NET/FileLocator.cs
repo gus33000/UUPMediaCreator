@@ -49,7 +49,7 @@ namespace MediaCreationLib.NET
                 }
             }
 
-            return (missingPackages.Count <= 0, missingPackages);
+            return (missingPackages.Count == 0, missingPackages);
         }
 
         internal static CompDBXmlClass.CompDB? GetEditionCompDBForLanguage(
@@ -65,11 +65,10 @@ namespace MediaCreationLib.NET
                 if (compDB.Tags != null)
                 {
                     if (compDB.Tags.Type.Equals("Edition", StringComparison.InvariantCultureIgnoreCase) &&
-                       compDB.Tags.Tag != null &&
-                       compDB.Tags.Tag.Count == 3 &&
-                       compDB.Tags.Tag.FirstOrDefault(x => x.Name.Equals("UpdateType", StringComparison.InvariantCultureIgnoreCase))?.Value?.Equals("Canonical", StringComparison.InvariantCultureIgnoreCase) == true &&
-                       compDB.Tags.Tag.FirstOrDefault(x => x.Name.Equals("Language", StringComparison.InvariantCultureIgnoreCase))?.Value?.Equals(LanguageCode, StringComparison.InvariantCultureIgnoreCase) == true &&
-                       compDB.Tags.Tag.FirstOrDefault(x => x.Name.Equals("Edition", StringComparison.InvariantCultureIgnoreCase))?.Value?.Equals(Edition, StringComparison.InvariantCultureIgnoreCase) == true)
+                       compDB.Tags.Tag?.Count == 3 &&
+                       compDB.Tags.Tag.Find(x => x.Name.Equals("UpdateType", StringComparison.InvariantCultureIgnoreCase))?.Value?.Equals("Canonical", StringComparison.InvariantCultureIgnoreCase) == true &&
+                       compDB.Tags.Tag.Find(x => x.Name.Equals("Language", StringComparison.InvariantCultureIgnoreCase))?.Value?.Equals(LanguageCode, StringComparison.InvariantCultureIgnoreCase) == true &&
+                       compDB.Tags.Tag.Find(x => x.Name.Equals("Edition", StringComparison.InvariantCultureIgnoreCase))?.Value?.Equals(Edition, StringComparison.InvariantCultureIgnoreCase) == true)
                     {
                         return compDB;
                     }
@@ -141,13 +140,13 @@ namespace MediaCreationLib.NET
             string UUPPath,
             string LanguageCode,
             string EditionID,
-            ProgressCallback progressCallback = null)
+            ProgressCallback? progressCallback = null)
         {
             bool success = true;
 
             HashSet<string> ReferencePackages = new();
             HashSet<string> referencePackagesToConvert = new();
-            string BaseESD = null;
+            string? BaseESD = null;
             progressCallback?.Invoke(Common.ProcessPhase.ReadingMetadata, true, 0, "Enumerating files");
 
             CompDBXmlClass.CompDB? compDB = GetEditionCompDBForLanguage(Planning.NET.FileLocator.GetCompDBsFromUUPFiles(UUPPath), EditionID, LanguageCode);

@@ -56,7 +56,7 @@ namespace Microsoft.Wim
         }
 
         /// <summary>
-        /// Gets the minimum size needed to to create a split WIM.
+        /// Gets the minimum size needed to create a split WIM.
         /// </summary>
         /// <param name="wimHandle">A <see cref="WimHandle"/> of a .wim file returned by <see cref="CreateFile"/>.</param>
         /// <param name="partPath">The path of the first file piece of the spanned set.</param>

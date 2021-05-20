@@ -46,7 +46,7 @@ namespace Microsoft.Dism
         public static void CommitImage(DismSession session, bool discardChanges, Microsoft.Dism.DismProgressCallback progressCallback, object userData)
         {
             // Create the flags
-            UInt32 flags = discardChanges ? DISM_DISCARD_IMAGE : DISM_COMMIT_IMAGE;
+            uint flags = discardChanges ? DISM_DISCARD_IMAGE : DISM_COMMIT_IMAGE;
 
             // Create a DismProgress object to wrap the callback and allow cancellation
             DismProgress progress = new(progressCallback, userData);
@@ -75,7 +75,7 @@ namespace Microsoft.Dism
             /// </remarks>
             [DllImport(DismDllName, CharSet = DismCharacterSet)]
             [return: MarshalAs(UnmanagedType.Error)]
-            public static extern int DismCommitImage(DismSession session, UInt32 flags, SafeWaitHandle cancelEvent, DismProgressCallback progress, IntPtr userData);
+            public static extern int DismCommitImage(DismSession session, uint flags, SafeWaitHandle cancelEvent, DismProgressCallback progress, IntPtr userData);
         }
     }
 }

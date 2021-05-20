@@ -30,7 +30,7 @@ using UUPMediaCreator.InterCommunication;
 
 namespace UUPMediaConverterCli
 {
-    internal class Program
+    internal static class Program
     {
         public static string GetExecutableDirectory()
         {
@@ -69,7 +69,9 @@ namespace UUPMediaConverterCli
             string LanguageCode = args[2];
             string Edition = "";
             if (args.Length > 3)
+            {
                 Edition = args[3];
+            }
 
             if (GetOperatingSystem() == OSPlatform.OSX)
             {
@@ -121,7 +123,9 @@ namespace UUPMediaConverterCli
             void callback(Common.ProcessPhase phase, bool IsIndeterminate, int ProgressInPercentage, string SubOperation)
             {
                 if (phase == prevphase && prevperc == ProgressInPercentage && SubOperation == prevop)
+                {
                     return;
+                }
 
                 prevphase = phase;
                 prevop = SubOperation;
@@ -132,7 +136,10 @@ namespace UUPMediaConverterCli
                     Log("An error occured!", severity: LoggingLevel.Error);
                     Log(SubOperation, severity: LoggingLevel.Error);
                     if (Debugger.IsAttached)
+                    {
                         Console.ReadLine();
+                    }
+
                     return;
                 }
                 string progress = IsIndeterminate ? "" : $" [Progress: {ProgressInPercentage}%]";
@@ -173,7 +180,9 @@ namespace UUPMediaConverterCli
                     ex = ex.InnerException;
                 }
                 if (Debugger.IsAttached)
+                {
                     Console.ReadLine();
+                }
             }
         }
 
@@ -190,7 +199,7 @@ namespace UUPMediaConverterCli
         {
             lock (lockObj)
             {
-                if (message == "")
+                if (message?.Length == 0)
                 {
                     Console.WriteLine();
                     return;
@@ -217,9 +226,13 @@ namespace UUPMediaConverterCli
                 }
 
                 if (returnline)
+                {
                     Console.WriteLine(DateTime.Now.ToString("'['HH':'mm':'ss']'") + "[" + msg + "] " + message);
+                }
                 else
+                {
                     Console.Write("\r" + DateTime.Now.ToString("'['HH':'mm':'ss']'") + "[" + msg + "] " + message);
+                }
 
                 Console.ForegroundColor = ConsoleColor.White;
             }
@@ -258,12 +271,9 @@ namespace UUPMediaConverterCli
                 return OSPlatform.Windows;
             }
 
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.FreeBSD))
-            {
-                return OSPlatform.FreeBSD;
-            }
-
-            throw new Exception("Cannot determine operating system!");
+            return RuntimeInformation.IsOSPlatform(OSPlatform.FreeBSD)
+                ? OSPlatform.FreeBSD
+                : throw new Exception("Cannot determine operating system!");
         }
     }
 }

@@ -74,16 +74,21 @@ namespace UUPDownload
 
                 string token = string.Empty;
                 if (!string.IsNullOrEmpty(opts.Mail) && !string.IsNullOrEmpty(opts.Password))
-                    token = await MBIHelper.GenerateMicrosoftAccountTokenAsync(opts.Mail, opts.Password);
+                {
+                    token = await MBIHelper.GenerateMicrosoftAccountTokenAsync(opts.Mail, opts.Password).ConfigureAwait(false);
+                }
 
-                IEnumerable<UpdateData> data = await FE3Handler.GetUpdates(null, ctac, token, FileExchangeV3UpdateFilter.ProductRelease);
+                IEnumerable<UpdateData> data = await FE3Handler.GetUpdates(null, ctac, token, FileExchangeV3UpdateFilter.ProductRelease).ConfigureAwait(false);
                 data = data.Select(x => UpdateUtils.TrimDeltasFromUpdateData(x));
 
                 for (int i = 0; i < data.Count(); i++)
                 {
-                    string buildStr = await data.ToList()[i].GetBuildStringAsync();
+                    string buildStr = await data.ToList()[i].GetBuildStringAsync().ConfigureAwait(false);
                     if (string.IsNullOrEmpty(buildStr))
+                    {
                         buildStr = data.ToList()[i].Xml.LocalizedProperties.Title;
+                    }
+
                     Console.WriteLine($"\"{CTAC.Value}\"[{i}]=\"{buildStr}\"");
                 }
             }

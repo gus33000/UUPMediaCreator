@@ -218,12 +218,7 @@ namespace Microsoft.Dism
                 return DismGeneration.Win8;
             }
 
-            if (!string.IsNullOrEmpty(WADK80DISMAPIPath))
-            {
-                return DismGeneration.Win7;
-            }
-
-            return DismGeneration.NotFound;
+            return !string.IsNullOrEmpty(WADK80DISMAPIPath) ? DismGeneration.Win7 : DismGeneration.NotFound;
         }
 
         /// <summary>
@@ -321,9 +316,8 @@ namespace Microsoft.Dism
             /// Frees the loaded dynamic-link library (DLL) module and, if necessary, decrements its reference count. When the reference count reaches zero, the module is unloaded from the address space of the calling process and the handle is no longer valid.
             /// </summary>
             /// <param name="hModule">A handle to the loaded library module.</param>
-            /// <returns>If the function succeeds, the return value is a handle to the module.
-            ///
-            /// If the function fails, the return value is NULL.To get extended error information, call <see cref="Marshal.GetLastWin32Error" />.</returns>
+            /// <returns><para>If the function succeeds, the return value is a handle to the module.</para>
+            /// <para>If the function fails, the return value is NULL.To get extended error information, call <see cref="Marshal.GetLastWin32Error" />.</para></returns>
             [DllImport("kernel32.dll")]
             public static extern bool FreeLibrary(IntPtr hModule);
 
@@ -331,11 +325,10 @@ namespace Microsoft.Dism
             /// Loads the specified module into the address space of the calling process. The specified module may cause other modules to be loaded.
             /// </summary>
             /// <param name="lpFileName">The name of the module. This can be either a library module (a .dll file) or an executable module (an .exe file).</param>
-            /// <returns>If the function succeeds, the return value is a handle to the module.
-            ///
-            /// If the function fails, the return value is NULL.To get extended error information, call <see cref="Marshal.GetLastWin32Error" />.</returns>
+            /// <returns><para>If the function succeeds, the return value is a handle to the module.</para>
+            /// <para>If the function fails, the return value is NULL.To get extended error information, call <see cref="Marshal.GetLastWin32Error" />.</para></returns>
             [DllImport("kernel32.dll")]
-            public static extern IntPtr LoadLibrary([MarshalAs(UnmanagedType.LPStr)] string lpFileName);
+            public static extern IntPtr LoadLibrary([MarshalAs(UnmanagedType.LPWStr)] string lpFileName);
         }
     }
 }

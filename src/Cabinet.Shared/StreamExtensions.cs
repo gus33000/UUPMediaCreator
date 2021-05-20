@@ -47,7 +47,9 @@ namespace Cabinet
             {
                 nameBuffer[j] = (byte)stream.ReadByte();
                 if (nameBuffer[j] == 0)
+                {
                     break;
+                }
             }
 
             return System.Text.Encoding.ASCII.GetString(nameBuffer, 0, j);
@@ -64,7 +66,9 @@ namespace Cabinet
                 nameBuffer[j + 1] = (byte)stream.ReadByte();
                 stream.Seek(-1, SeekOrigin.Current);
                 if (nameBuffer[j] == 0 && nameBuffer[j + 1] == 0)
+                {
                     break;
+                }
             }
 
             return System.Text.Encoding.UTF8.GetString(nameBuffer, 0, j);

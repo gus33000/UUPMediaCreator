@@ -75,7 +75,7 @@ namespace Cabinet
         internal uint cbFile;
 
         /// <summary>
-        /// Specifies the uncompressed offset, in bytes, of the start of this file's data. For the 
+        /// Specifies the uncompressed offset, in bytes, of the start of this file's data. For the
         /// first file in each folder, this value will usually be zero.Subsequent files in the folder will have offsets
         /// that are typically the running sum of the cbFile field values.
         /// </summary>
@@ -107,16 +107,24 @@ namespace Cabinet
             FileAttributes a = 0;
 
             if ((attribs & CFFILEATTRIBUTES.A_ARCH) != 0)
+            {
                 a |= FileAttributes.Archive;
+            }
 
             if ((attribs & CFFILEATTRIBUTES.A_HIDDEN) != 0)
+            {
                 a |= FileAttributes.Hidden;
+            }
 
             if ((attribs & CFFILEATTRIBUTES.A_RDONLY) != 0)
+            {
                 a |= FileAttributes.ReadOnly;
+            }
 
             if ((attribs & CFFILEATTRIBUTES.A_SYSTEM) != 0)
+            {
                 a |= FileAttributes.System;
+            }
 
             return a;
         }

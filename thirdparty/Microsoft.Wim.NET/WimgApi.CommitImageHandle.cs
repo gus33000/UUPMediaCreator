@@ -17,6 +17,16 @@ namespace Microsoft.Wim
     public enum WimCommitImageOptions : uint
     {
         /// <summary>
+        /// No options are set.
+        /// </summary>
+        None = 0,
+
+        /// <summary>
+        /// Capture verifies single-instance files byte by byte.
+        /// </summary>
+        Verify = WimgApi.WIM_FLAG_VERIFY,
+
+        /// <summary>
         /// Disables capturing security information for directories.
         /// </summary>
         DisableDirectoryAcl = WimgApi.WIM_FLAG_NO_DIRACL,
@@ -30,16 +40,6 @@ namespace Microsoft.Wim
         /// Disables automatic path repairs for junctions and symbolic links.
         /// </summary>
         DisableRPFix = WimgApi.WIM_FLAG_NO_RP_FIX,
-
-        /// <summary>
-        /// No options are set.
-        /// </summary>
-        None = 0,
-
-        /// <summary>
-        /// Capture verifies single-instance files byte by byte.
-        /// </summary>
-        Verify = WimgApi.WIM_FLAG_VERIFY,
     }
 
     public static partial class WimgApi

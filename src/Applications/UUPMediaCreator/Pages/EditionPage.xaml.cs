@@ -55,7 +55,7 @@ namespace UUPMediaCreator.UWP.Pages
             SelectionGrid.Visibility = Visibility.Collapsed;
             _ = ThreadPool.RunAsync(async (IAsyncAction operation) =>
             {
-                BuildFetcher.AvailableEdition[] editions = await BuildFetcher.GetAvailableEditions(App.ConversionPlan.UpdateData, App.ConversionPlan.Language);
+                BuildFetcher.AvailableEdition[] editions = await BuildFetcher.GetAvailableEditions(App.ConversionPlan.UpdateData, App.ConversionPlan.Language).ConfigureAwait(false);
 
                 await CoreApplication.MainView.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
                 {
@@ -74,7 +74,7 @@ namespace UUPMediaCreator.UWP.Pages
 
         private void WizardPage_NextClicked(object sender, RoutedEventArgs e)
         {
-            App.ConversionPlan.Edition = (dataGrid.SelectedItem as BuildFetcher.AvailableEdition).Edition;
+            App.ConversionPlan.Edition = (dataGrid.SelectedItem as BuildFetcher.AvailableEdition)?.Edition;
             //Frame.Navigate(typeof(AdditionalUpdatePage));
             Frame.Navigate(typeof(WIMTypePage));
         }

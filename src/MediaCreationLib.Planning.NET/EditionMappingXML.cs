@@ -25,7 +25,7 @@ using System.Xml.Serialization;
 
 namespace MediaCreationLib.Planning.NET
 {
-    public class EditionMappingXML
+    public static class EditionMappingXML
     {
         [XmlRoot(ElementName = "Edition")]
         public class Edition
@@ -52,7 +52,10 @@ namespace MediaCreationLib.Planning.NET
 
         public static WindowsEditions Deserialize(string editionMappingXml)
         {
-            if (editionMappingXml == null) return null;
+            if (editionMappingXml == null)
+            {
+                return null;
+            }
 
             XmlSerializer xmlSerializer = new(typeof(WindowsEditions));
 

@@ -27,7 +27,7 @@ using System.Xml.Serialization;
 
 namespace MediaCreationLib.BootlegEditions
 {
-    public class AssemblyManifestHandler
+    public static class AssemblyManifestHandler
     {
         public static void RemoveNonLTSBPackages(string manifestPath)
         {
@@ -41,13 +41,16 @@ namespace MediaCreationLib.BootlegEditions
         {
             string content = File.ReadAllText(manifestPath);
             Assembly assembly = Deserialize(content);
-            assembly.Package.Update.RemoveAll(x => x.Name.ToLower().Contains(v.ToLower()));
+            assembly.Package.Update.RemoveAll(x => x.Name.Contains(v, System.StringComparison.CurrentCultureIgnoreCase));
             File.WriteAllText(manifestPath, Serialize(assembly));
         }
 
         public static Assembly Deserialize(string Xml)
         {
-            if (Xml == null) return null;
+            if (Xml == null)
+            {
+                return null;
+            }
 
             XmlSerializer xmlSerializer = new(typeof(Assembly));
 
@@ -57,7 +60,10 @@ namespace MediaCreationLib.BootlegEditions
 
         public static string Serialize(Assembly assembly)
         {
-            if (assembly == null) return string.Empty;
+            if (assembly == null)
+            {
+                return string.Empty;
+            }
 
             XmlSerializer xmlSerializer = new(typeof(Assembly));
 

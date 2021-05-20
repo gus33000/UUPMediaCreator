@@ -112,7 +112,7 @@ namespace PrivilegeClass
         [DllImport(
              ADVAPI32,
              EntryPoint = "LookupPrivilegeValueW",
-             CharSet = CharSet.Auto,
+CharSet = CharSet.Unicode,
              SetLastError = true)]
         internal static extern
             bool LookupPrivilegeValue(

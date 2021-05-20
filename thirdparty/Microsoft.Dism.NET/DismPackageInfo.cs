@@ -141,7 +141,7 @@ namespace Microsoft.Dism
             /// <summary>
             /// The number of elements in the CustomProperty array.
             /// </summary>
-            public UInt32 CustomPropertyCount;
+            public uint CustomPropertyCount;
 
             /// <summary>
             /// An array of DismFeature Structure objects representing the features in the package.
@@ -151,7 +151,7 @@ namespace Microsoft.Dism
             /// <summary>
             /// The number of elements in the Feature array.
             /// </summary>
-            public UInt32 FeatureCount;
+            public uint FeatureCount;
         }
     }
 

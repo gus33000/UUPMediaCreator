@@ -28,7 +28,7 @@ using System.Threading;
 
 namespace MediaCreationLib.Dism
 {
-    public class DismOperations
+    public static class DismOperations
     {
         public delegate void ProgressCallback(bool IsIndeterminate, int ProgressInPercentage, string SubOperation);
 

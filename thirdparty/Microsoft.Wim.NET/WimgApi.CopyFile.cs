@@ -18,14 +18,14 @@ namespace Microsoft.Wim
     public enum WimCopyFileOptions : uint
     {
         /// <summary>
-        /// The copy operation fails immediately if the target file already exists.
-        /// </summary>
-        FailIfExists = 0x00000001,
-
-        /// <summary>
         /// No options are set.
         /// </summary>
         None = 0,
+
+        /// <summary>
+        /// The copy operation fails immediately if the target file already exists.
+        /// </summary>
+        FailIfExists = 0x00000001,
 
         /// <summary>
         /// Automatically retries copy operations in event of failures.

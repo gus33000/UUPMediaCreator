@@ -84,10 +84,11 @@ namespace Microsoft.Dism
             /// <param name="packageIdentifier">Optional. A valid DismPackageIdentifier Enumeration value.</param>
             /// <param name="featureInfo">A pointer to the address of an array of DismFeatureInfo Structure objects.</param>
             /// <returns>Returns S_OK on success.</returns>
-            /// <remarks>You can use this function to get the custom properties of a feature. If the feature has custom properties, they will be stored in the CustomProperty field as an array. Not all features have custom properties.
-            ///
+            /// <remarks><para>You can use this function to get the custom properties of a feature. If the feature has custom properties, they will be stored in the CustomProperty field as an array. Not all features have custom properties.</para>
+            /// <para>
             /// <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/hh824735.aspx" />
             /// HRESULT WINAPI DismGetFeatureInfo (_In_ DismSession Session, _In_ PCWSTR FeatureName, _In_opt_ PCWSTR Identifier, _In_opt_ DismPackageIdentifier PackageIdentifier, _Out_ DismFeatureInfo** FeatureInfo);
+            /// </para>
             /// </remarks>
             [DllImport(DismDllName, CharSet = DismCharacterSet)]
             [return: MarshalAs(UnmanagedType.Error)]

@@ -30,13 +30,12 @@ namespace WindowsUpdateLib
 {
     internal class CorrelationVector
     {
-
         private string baseVector;
         private int currentVector;
 
         private readonly string base64CharSet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
         private readonly int id0Length = 16;
-        bool isInitialized = false;
+        private bool isInitialized = false;
 
         internal enum Settings
         {
@@ -81,12 +80,7 @@ namespace WindowsUpdateLib
         {
             int vectorSize = (int)Math.Floor(Math.Log10(currentVector) + 1);
 
-            if (baseVector.Length + 1 + vectorSize + 1 + 1 > getCllSettingsAsInt(Settings.MAXCORRELATIONVECTORLENGTH))
-            {
-                return false;
-            }
-
-            return true;
+            return baseVector.Length + 1 + vectorSize + 1 + 1 <= getCllSettingsAsInt(Settings.MAXCORRELATIONVECTORLENGTH);
         }
 
         private bool CanIncrement(int newVector)
@@ -98,12 +92,7 @@ namespace WindowsUpdateLib
             int vectorSize = (int)Math.Floor(Math.Log10(newVector) + 1);
 
             // Get the length of the existing string + length of the new extension + the length of the dot
-            if (baseVector.Length + vectorSize + 1 > getCllSettingsAsInt(Settings.MAXCORRELATIONVECTORLENGTH))
-            {
-                return false;
-            }
-
-            return true;
+            return baseVector.Length + vectorSize + 1 <= getCllSettingsAsInt(Settings.MAXCORRELATIONVECTORLENGTH);
         }
 
         internal string Extend()
@@ -124,12 +113,7 @@ namespace WindowsUpdateLib
 
         internal string GetValue()
         {
-            if (!isInitialized)
-            {
-                return null;
-            }
-
-            return baseVector + "." + currentVector;
+            return !isInitialized ? null : baseVector + "." + currentVector;
         }
 
         internal string Increment()
@@ -149,7 +133,7 @@ namespace WindowsUpdateLib
             return GetValue();
         }
 
-        bool IsValid(string vector)
+        private bool IsValid(string vector)
         {
             if (vector.Length > getCllSettingsAsInt(Settings.MAXCORRELATIONVECTORLENGTH))
             {
@@ -157,12 +141,7 @@ namespace WindowsUpdateLib
             }
 
             string validationPattern = "^[" + base64CharSet + "]{16}(.[0-9]+)+$";
-            if (vector != validationPattern)
-            {
-                return false;
-            }
-
-            return true;
+            return vector == validationPattern;
         }
 
         private string SeedCorrelationVector()
@@ -171,7 +150,9 @@ namespace WindowsUpdateLib
 
             Random r = new();
             for (int i = 0; i < id0Length; i++)
-                result += base64CharSet[(r.Next(base64CharSet.Length))];
+            {
+                result += base64CharSet[r.Next(base64CharSet.Length)];
+            }
 
             return result;
         }

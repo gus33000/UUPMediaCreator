@@ -12,7 +12,7 @@ namespace ICSharpCode.SharpZipLib.Checksum
         /// <summary>
         /// Generates multiple CRC lookup tables for a given polynomial, stored
         /// in a linear array of uints. The first block (i.e. the first 256
-        /// elements) is the same as the byte-by-byte CRC lookup table. 
+        /// elements) is the same as the byte-by-byte CRC lookup table.
         /// </summary>
         /// <param name="polynomial">The generating CRC polynomial</param>
         /// <param name="isReversed">Whether the polynomial is in reversed bit order</param>

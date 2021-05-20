@@ -23,7 +23,7 @@ using System;
 
 namespace UUPDownload
 {
-    internal class Logging
+    internal static class Logging
     {
         public enum LoggingLevel
         {
@@ -38,7 +38,7 @@ namespace UUPDownload
         {
             lock (lockObj)
             {
-                if (message == "")
+                if (message?.Length == 0)
                 {
                     Console.WriteLine();
                     return;
@@ -65,9 +65,13 @@ namespace UUPDownload
                 }
 
                 if (returnline)
+                {
                     Console.WriteLine(DateTime.Now.ToString("'['HH':'mm':'ss']'") + "[" + msg + "] " + message);
+                }
                 else
+                {
                     Console.Write("\r" + DateTime.Now.ToString("'['HH':'mm':'ss']'") + "[" + msg + "] " + message);
+                }
 
                 Console.ForegroundColor = ConsoleColor.White;
             }

@@ -53,7 +53,7 @@ namespace UUPMediaCreator.UWP.Pages
             WizardPage.NextEnabled = false;
             _ = ThreadPool.RunAsync(async (IAsyncAction operation) =>
             {
-                BuildFetcher.AvailableBuild[] updates = await BuildFetcher.GetAvailableBuildsAsync(App.ConversionPlan.MachineType);
+                BuildFetcher.AvailableBuild[] updates = await BuildFetcher.GetAvailableBuildsAsync(App.ConversionPlan.MachineType).ConfigureAwait(false);
 
                 await CoreApplication.MainView.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
                 {
@@ -72,8 +72,8 @@ namespace UUPMediaCreator.UWP.Pages
 
         private void WizardPage_NextClicked(object sender, RoutedEventArgs e)
         {
-            App.ConversionPlan.UpdateData = (dataGrid.SelectedItem as BuildFetcher.AvailableBuild).UpdateData;
-            App.ConversionPlan.BuildString = (dataGrid.SelectedItem as BuildFetcher.AvailableBuild).BuildString;
+            App.ConversionPlan.UpdateData = (dataGrid.SelectedItem as BuildFetcher.AvailableBuild)?.UpdateData;
+            App.ConversionPlan.BuildString = (dataGrid.SelectedItem as BuildFetcher.AvailableBuild)?.BuildString;
             Frame.Navigate(typeof(LanguagePage));
         }
 
@@ -84,7 +84,7 @@ namespace UUPMediaCreator.UWP.Pages
 
         private void dataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            ItemDescription.Text = (e.AddedItems[0] as BuildFetcher.AvailableBuild).Description;
+            ItemDescription.Text = (e.AddedItems[0] as BuildFetcher.AvailableBuild)?.Description;
         }
     }
 }

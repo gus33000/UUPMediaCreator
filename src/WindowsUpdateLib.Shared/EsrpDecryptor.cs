@@ -62,7 +62,9 @@ namespace WindowsUpdateLib
             byte[] newIv = ivCrypter.TransformFinalBlock(offsetBytes, 0, 16);
 
             if (isPadded)
+            {
                 aes.Padding = PaddingMode.PKCS7;
+            }
 
             using ICryptoTransform dec = aes.CreateDecryptor(key, newIv);
             using MemoryStream ms = new(buffer, 0, bufferLength);

@@ -26,7 +26,7 @@ using System.Xml.Serialization;
 
 namespace Imaging
 {
-    public class WIMInformationXML
+    public static class WIMInformationXML
     {
         [XmlRoot(ElementName = "CREATIONTIME")]
         public class CREATIONTIME
@@ -197,7 +197,10 @@ namespace Imaging
 
         public static string SerializeWIM(WIM wim)
         {
-            if (wim == null) return string.Empty;
+            if (wim == null)
+            {
+                return string.Empty;
+            }
 
             XmlSerializer xmlSerializer = new XmlSerializer(typeof(WIM));
 
@@ -218,7 +221,10 @@ namespace Imaging
 
         public static WIM DeserializeWIM(string wim)
         {
-            if (wim == null) return null;
+            if (wim == null)
+            {
+                return null;
+            }
 
             XmlSerializer xmlSerializer = new XmlSerializer(typeof(WIM));
 
@@ -228,7 +234,10 @@ namespace Imaging
 
         public static string SerializeIMAGE(IMAGE wim)
         {
-            if (wim == null) return string.Empty;
+            if (wim == null)
+            {
+                return string.Empty;
+            }
 
             XmlSerializer xmlSerializer = new XmlSerializer(typeof(IMAGE));
 
@@ -249,7 +258,10 @@ namespace Imaging
 
         public static IMAGE DeserializeIMAGE(string wim)
         {
-            if (wim == null) return null;
+            if (wim == null)
+            {
+                return null;
+            }
 
             XmlSerializer xmlSerializer = new XmlSerializer(typeof(IMAGE));
 

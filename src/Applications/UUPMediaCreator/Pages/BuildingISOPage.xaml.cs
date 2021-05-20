@@ -61,7 +61,7 @@ namespace UUPMediaCreator.UWP.Pages
             bw = new(strm.AsStream());
             strm.Seek(strm.Size);
 
-            ISOConversion job = new ISOConversion()
+            ISOConversion job = new()
             {
                 UUPPath = App.ConversionPlan.TmpOutputFolder,
                 ISOPath = App.ConversionPlan.ISOPath,
@@ -83,9 +83,9 @@ namespace UUPMediaCreator.UWP.Pages
 
         private ProcessPhase lastPhase;
 
-        int prevperc = -1;
-        Common.ProcessPhase prevphase = Common.ProcessPhase.ReadingMetadata;
-        string prevop = "";
+        private int prevperc = -1;
+        private Common.ProcessPhase prevphase = Common.ProcessPhase.ReadingMetadata;
+        private string prevop = "";
 
         private void Log(string msg)
         {
@@ -95,7 +95,9 @@ namespace UUPMediaCreator.UWP.Pages
         private void LogInterComm(Common.InterCommunication interCommunication)
         {
             if (interCommunication.ISOConversionProgress.Phase == prevphase && prevperc == interCommunication.ISOConversionProgress.ProgressInPercentage && interCommunication.ISOConversionProgress.SubOperation == prevop)
+            {
                 return;
+            }
 
             prevphase = interCommunication.ISOConversionProgress.Phase;
             prevop = interCommunication.ISOConversionProgress.SubOperation;

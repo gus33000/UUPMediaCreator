@@ -68,10 +68,11 @@ namespace Microsoft.Dism
             /// <param name="packageIdentifier">A valid DismPackageIdentifier Enumeration value.</param>
             /// <param name="packageInfo">A pointer to the address of an array of DismPackageInfo Structure objects.</param>
             /// <returns>Returns S_OK on success.</returns>
-            /// <remarks>You can use this function to determine whether a package is applicable to the specified image. The DismPackageInfo Structure contains an Applicable field, which is a Boolean that returns TRUE if the package is applicable and FALSE if the package is not applicable to the specified image.
-            ///
+            /// <remarks><para>You can use this function to determine whether a package is applicable to the specified image. The DismPackageInfo Structure contains an Applicable field, which is a Boolean that returns TRUE if the package is applicable and FALSE if the package is not applicable to the specified image.</para>
+            /// <para>
             /// <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/hh824801.aspx" />
             /// HRESULT WINAPI DismGetPackageInfo (_In_ DismSession Session, _In_ PCWSTR Identifier, _In_ DismPackageIdentifier PackageIdentifier, _Out_ DismPackageInfo** PackageInfo);
+            /// </para>
             /// </remarks>
             [DllImport(DismDllName, CharSet = DismCharacterSet)]
             [return: MarshalAs(UnmanagedType.Error)]

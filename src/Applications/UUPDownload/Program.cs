@@ -25,7 +25,7 @@ using System.Reflection;
 
 namespace UUPDownload
 {
-    internal class Program
+    internal static class Program
     {
         private static void PrintLogo()
         {

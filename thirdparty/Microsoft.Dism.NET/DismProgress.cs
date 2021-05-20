@@ -74,7 +74,6 @@ namespace Microsoft.Dism
         public object UserData
         {
             get;
-            private set;
         }
 
         /// <summary>
@@ -97,7 +96,7 @@ namespace Microsoft.Dism
         /// <param name="current">The current progress value.</param>
         /// <param name="total">The total progress.</param>
         /// <param name="userData">Any user data associated with the callback.</param>
-        internal void DismProgressCallbackNative(UInt32 current, UInt32 total, IntPtr userData)
+        internal void DismProgressCallbackNative(uint current, uint total, IntPtr userData)
         {
             // Save the current progress
             Current = (int)current;

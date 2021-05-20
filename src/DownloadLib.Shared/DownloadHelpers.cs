@@ -39,12 +39,12 @@ namespace DownloadLib
             if (payloadItems.Any(x => x.PayloadHash == file2.AdditionalDigest.Text || x.PayloadHash == file2.Digest))
             {
                 CompDBXmlClass.PayloadItem payload = payloadItems.First(x => x.PayloadHash == file2.AdditionalDigest.Text || x.PayloadHash == file2.Digest);
-                filename = payload.Path.Replace('\\', Path.DirectorySeparatorChar);
+                return payload.Path.Replace('\\', Path.DirectorySeparatorChar);
             }
             else if (!payloadItems.Any() && filename.Contains("_") && !filename.StartsWith("_") && (!filename.Contains('-') || filename.IndexOf('-') > filename.IndexOf('_')))
             {
                 filename = filename.Substring(0, filename.IndexOf('_')) + Path.DirectorySeparatorChar + filename[(filename.IndexOf('_') + 1)..];
-                filename = filename.TrimStart(Path.DirectorySeparatorChar);
+                return filename.TrimStart(Path.DirectorySeparatorChar);
             }
             return filename;
         }
@@ -64,13 +64,8 @@ namespace DownloadLib
                 }
             }
 
-            if (filename.Contains("Diff", StringComparison.InvariantCultureIgnoreCase) ||
-                filename.Contains("Baseless", StringComparison.InvariantCultureIgnoreCase))
-            {
-                return false;
-            }
-
-            return true;
+            return !filename.Contains("Diff", StringComparison.InvariantCultureIgnoreCase) &&
+!filename.Contains("Baseless", StringComparison.InvariantCultureIgnoreCase);
         }
 
         public static UpdateData TrimDeltasFromUpdateData(UpdateData update)
@@ -81,15 +76,9 @@ namespace DownloadLib
             return update;
         }
 
-
         private static bool IsFileBanned(CExtendedUpdateInfoXml.File file2, IEnumerable<CompDBXmlClass.PayloadItem> bannedItems)
         {
-            if (bannedItems.Any(x => x.PayloadHash == file2.AdditionalDigest.Text || x.PayloadHash == file2.Digest))
-            {
-                return true;
-            }
-
-            return false;
+            return bannedItems.Any(x => x.PayloadHash == file2.AdditionalDigest.Text || x.PayloadHash == file2.Digest);
         }
 
         public static async Task<string> ProcessUpdateAsync(UpdateData update, string pOutputFolder, MachineType MachineType, IProgress<GeneralDownloadProgress> generalDownloadProgress, string Language = "", string Edition = "", bool WriteMetadata = true, bool UseAutomaticDownloadFolder = true)
@@ -107,14 +96,16 @@ namespace DownloadLib
             bool getSpecific = !string.IsNullOrEmpty(Language) && !string.IsNullOrEmpty(Edition);
             bool getSpecificLanguageOnly = !string.IsNullOrEmpty(Language) && string.IsNullOrEmpty(Edition);
 
-            HashSet<CompDBXmlClass.CompDB> compDBs = await update.GetCompDBsAsync();
+            HashSet<CompDBXmlClass.CompDB> compDBs = await update.GetCompDBsAsync().ConfigureAwait(false);
 
             await Task.WhenAll(
-                Task.Run(async () => buildstr = await update.GetBuildStringAsync()),
-                Task.Run(async () => languages = await update.GetAvailableLanguagesAsync()));
+                Task.Run(async () => buildstr = await update.GetBuildStringAsync().ConfigureAwait(false)),
+                Task.Run(async () => languages = await update.GetAvailableLanguagesAsync().ConfigureAwait(false))).ConfigureAwait(false);
 
             if (buildstr == null)
+            {
                 buildstr = "";
+            }
 
             if (string.IsNullOrEmpty(buildstr) && update.Xml.LocalizedProperties.Title.Contains("(UUP-CTv2)"))
             {
@@ -224,14 +215,18 @@ namespace DownloadLib
                     }
 
                     if (cdb.AppX != null)
+                    {
                         foreach (CompDBXmlClass.Package pkg in cdb.AppX.AppXPackages.Package)
+                        {
                             payloadItems.Add(pkg.Payload.PayloadItem);
+                        }
+                    }
                 }
             }
 
             if (getSpecific || getSpecificLanguageOnly)
             {
-                if (specificCompDBs.Count <= 0)
+                if (specificCompDBs.Count == 0)
                 {
                     throw new Exception("No update metadata matched the specified criteria");
                 }
@@ -249,7 +244,7 @@ namespace DownloadLib
 
             do
             {
-                IEnumerable<FileExchangeV3FileDownloadInformation> fileUrls = await FE3Handler.GetFileUrls(update);
+                IEnumerable<FileExchangeV3FileDownloadInformation> fileUrls = await FE3Handler.GetFileUrls(update).ConfigureAwait(false);
 
                 if (fileUrls == null)
                 {
@@ -290,7 +285,7 @@ namespace DownloadLib
                         boundFile.Item1.AdditionalDigest.Text);
                 });
 
-                returnCode = await helperDl.DownloadAsync(fileList.ToList(), generalDownloadProgress) ? 0 : -1;
+                returnCode = await helperDl.DownloadAsync(fileList.ToList(), generalDownloadProgress).ConfigureAwait(false) ? 0 : -1;
 
                 if (returnCode != 0)
                 {

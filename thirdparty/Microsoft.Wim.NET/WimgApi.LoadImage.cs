@@ -41,7 +41,7 @@ namespace Microsoft.Wim
             // Call the native function
             WimHandle imageHandle = WimgApi.NativeMethods.WIMLoadImage(wimHandle, (DWORD)index);
 
-            if (imageHandle == null || imageHandle.IsInvalid)
+            if (imageHandle?.IsInvalid != false)
             {
                 // Throw a Win32Exception based on the last error code
                 throw new Win32Exception();

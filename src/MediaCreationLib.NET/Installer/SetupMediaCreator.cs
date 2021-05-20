@@ -29,7 +29,7 @@ using static MediaCreationLib.MediaCreator;
 
 namespace MediaCreationLib.Installer
 {
-    public class SetupMediaCreator
+    public static class SetupMediaCreator
     {
         private static readonly bool RunsAsAdministrator = IsAdministrator();
 
@@ -66,12 +66,9 @@ namespace MediaCreationLib.Installer
                 return OSPlatform.Windows;
             }
 
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.FreeBSD))
-            {
-                return OSPlatform.FreeBSD;
-            }
-
-            throw new Exception("Cannot determine operating system!");
+            return RuntimeInformation.IsOSPlatform(OSPlatform.FreeBSD)
+                ? OSPlatform.FreeBSD
+                : throw new Exception("Cannot determine operating system!");
         }
 
         public static bool CreateSetupMedia(
@@ -88,7 +85,9 @@ namespace MediaCreationLib.Installer
 
             (result, BaseESD) = FileLocator.LocateFilesForSetupMediaCreation(UUPPath, LanguageCode, progressCallback);
             if (!result)
+            {
                 goto exit;
+            }
 
             WimCompressionType compression = WimCompressionType.None;
             switch (CompressionType)
@@ -111,9 +110,11 @@ namespace MediaCreationLib.Installer
             //
             result = WindowsInstallerBuilder.BuildSetupMedia(BaseESD, OutputWindowsREPath, OutputMediaPath, compression, RunsAsAdministrator, LanguageCode, tempManager, progressCallback);
             if (!result)
+            {
                 goto exit;
+            }
 
-            exit:
+        exit:
             return result;
         }
     }

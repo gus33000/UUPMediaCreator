@@ -34,7 +34,10 @@ namespace TempManager
         {
             string path = Path.GetTempFileName();
             if (File.Exists(path))
+            {
                 File.Delete(path);
+            }
+
             tempPaths.Add(path);
             return path;
         }
@@ -53,7 +56,6 @@ namespace TempManager
                 // and unmanaged resources.
                 if (disposing)
                 {
-
                 }
 
                 foreach (string path in tempPaths)

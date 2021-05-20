@@ -25,7 +25,7 @@ using System.Linq;
 
 namespace MediaCreationLib
 {
-    public class PathUtils
+    public static class PathUtils
     {
         public static string GetExecutableDirectory()
         {

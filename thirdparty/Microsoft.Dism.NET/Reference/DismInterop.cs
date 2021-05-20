@@ -57,7 +57,7 @@ namespace MediaCreationLib
         NotPresent,
         UninstallPending,
         Staged,
-        Resolved,
+        Resolved = Removed,
         Removed = 3,
         Installed,
         InstallPending,
@@ -368,7 +368,7 @@ namespace MediaCreationLib
         [DllImport("kernel32.dll", CallingConvention = CallingConvention.StdCall)]
         public static extern uint GetLastError();
 
-        [DllImport("kernel32.dll", CallingConvention = CallingConvention.StdCall, SetLastError = true)]
+        [DllImport("kernel32.dll", CallingConvention = CallingConvention.StdCall, SetLastError = true, CharSet = CharSet.Unicode)]
         public static extern bool GetModuleHandleEx(uint Flags, string ModuleName, ref IntPtr ModuleHandle);
 
         [DllImport("Advapi32.dll", CallingConvention = CallingConvention.StdCall, SetLastError = true)]

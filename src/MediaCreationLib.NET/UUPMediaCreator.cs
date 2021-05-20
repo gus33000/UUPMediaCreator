@@ -32,7 +32,7 @@ using static MediaCreationLib.MediaCreator;
 
 namespace MediaCreationLib
 {
-    public class UUPMediaCreator
+    public static class UUPMediaCreator
     {
         private static readonly WIMImaging imagingInterface = new();
 
@@ -58,8 +58,10 @@ namespace MediaCreationLib
         public static int LongestCommonSubstring(string str1, string str2, out string sequence)
         {
             sequence = string.Empty;
-            if (String.IsNullOrEmpty(str1) || String.IsNullOrEmpty(str2))
+            if (string.IsNullOrEmpty(str1) || string.IsNullOrEmpty(str2))
+            {
                 return 0;
+            }
 
             int[,] num = new int[str1.Length, str2.Length];
             int maxlen = 0;
@@ -71,13 +73,19 @@ namespace MediaCreationLib
                 for (int j = 0; j < str2.Length; j++)
                 {
                     if (str1[i] != str2[j])
+                    {
                         num[i, j] = 0;
+                    }
                     else
                     {
                         if ((i == 0) || (j == 0))
+                        {
                             num[i, j] = 1;
+                        }
                         else
+                        {
                             num[i, j] = 1 + num[i - 1, j - 1];
+                        }
 
                         if (num[i, j] > maxlen)
                         {
@@ -113,9 +121,11 @@ namespace MediaCreationLib
 
             string SourceEdition = DismOperations.GetCurrentEdition(MountedImagePath);
 
-            result = imagingInterface.GetWIMInformation(OutputInstallImage, out WIMInformationXML.WIM wiminfo);
+            result = WIMImaging.GetWIMInformation(OutputInstallImage, out WIMInformationXML.WIM wiminfo);
             if (!result)
+            {
                 goto exit;
+            }
 
             WIMInformationXML.IMAGE srcimage = wiminfo.IMAGE.First(x => x.WINDOWS.EDITIONID.Equals(SourceEdition, StringComparison.InvariantCultureIgnoreCase));
             int index = int.Parse(srcimage.INDEX);
@@ -139,22 +149,26 @@ namespace MediaCreationLib
             void callback(bool IsIndeterminate, int ProgressInPercentage, string SubOperation)
             {
                 progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, IsIndeterminate, ProgressInPercentage, SubOperation);
-            };
+            }
 
             DismOperations.SetTargetEdition(MountedImagePath, EditionID, callback);
 
             void callback2(string Operation, int ProgressPercentage, bool IsIndeterminate)
             {
                 progressCallback?.Invoke(Common.ProcessPhase.CapturingImage, IsIndeterminate, ProgressPercentage, Operation);
-            };
+            }
 
             string replaceStr = LongestCommonSubstring(new string[] { srcimage.DISPLAYNAME, SourceEdition });
             string replaceStr2 = LongestCommonSubstring(new string[] { EditionID, SourceEdition });
 
             if (!string.IsNullOrEmpty(replaceStr2))
+            {
                 replaceStr2 = EditionID.Replace(replaceStr2, "");
+            }
             else
+            {
                 replaceStr2 = EditionID;
+            }
 
             string name;
             string description;
@@ -197,11 +211,15 @@ namespace MediaCreationLib
                 UpdateFrom: index);
 
             if (!result)
+            {
                 goto exit;
+            }
 
-            result = imagingInterface.GetWIMImageInformation(OutputInstallImage, wiminfo.IMAGE.Count + 1, out WIMInformationXML.IMAGE tmpImageInfo);
+            result = WIMImaging.GetWIMImageInformation(OutputInstallImage, wiminfo.IMAGE.Count + 1, out WIMInformationXML.IMAGE tmpImageInfo);
             if (!result)
+            {
                 goto exit;
+            }
 
             //
             // Set the correct metadata on the image
@@ -222,9 +240,11 @@ namespace MediaCreationLib
             tmpImageInfo.DISPLAYNAME = displayname;
             tmpImageInfo.DISPLAYDESCRIPTION = displaydescription;
 
-            result = imagingInterface.SetWIMImageInformation(OutputInstallImage, wiminfo.IMAGE.Count + 1, tmpImageInfo);
+            result = WIMImaging.SetWIMImageInformation(OutputInstallImage, wiminfo.IMAGE.Count + 1, tmpImageInfo);
             if (!result)
+            {
                 goto exit;
+            }
 
             if (IsVirtual)
             {
@@ -248,14 +268,18 @@ namespace MediaCreationLib
 
             string installimage = Path.Combine(OutputMediaPath, "sources", "install.wim");
             if (!File.Exists(installimage))
+            {
                 installimage = Path.Combine(OutputMediaPath, "sources", "install.esd");
+            }
 
             //
             // Gather information to transplant later into DisplayName and DisplayDescription
             //
-            result = imagingInterface.GetWIMInformation(installimage, out WIMInformationXML.WIM image);
+            result = WIMImaging.GetWIMInformation(installimage, out WIMInformationXML.WIM image);
             if (!result)
+            {
                 goto exit;
+            }
 
             string skustr = "CCOMA";
 

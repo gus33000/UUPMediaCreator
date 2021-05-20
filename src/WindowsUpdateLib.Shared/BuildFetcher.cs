@@ -32,15 +32,19 @@ namespace WindowsUpdateLib
 {
     public static class StringExtensions
     {
-        public static bool Contains(this String str, String substring,
+        public static bool Contains(this string str, string substring,
                                     StringComparison comp)
         {
             if (substring == null)
+            {
                 throw new ArgumentNullException(nameof(substring),
                                              "substring cannot be null.");
+            }
             else if (!Enum.IsDefined(typeof(StringComparison), comp))
+            {
                 throw new ArgumentException("comp is not a member of StringComparison",
                                          nameof(comp));
+            }
 
             return str.Contains(substring, comp);
         }
@@ -52,7 +56,9 @@ namespace WindowsUpdateLib
             {
                 startIndex = originalString.IndexOf(oldValue, startIndex, comparisonType);
                 if (startIndex == -1)
+                {
                     break;
+                }
 
                 originalString = originalString.Substring(0, startIndex) + newValue + originalString[(startIndex + oldValue.Length)..];
 
@@ -63,7 +69,7 @@ namespace WindowsUpdateLib
         }
     }
 
-    public class BuildFetcher
+    public static class BuildFetcher
     {
         public class AvailableBuild
         {
@@ -90,7 +96,7 @@ namespace WindowsUpdateLib
         {
             List<AvailableBuild> availableBuilds = new();
 
-            IEnumerable<UpdateData> updates = await GetUpdates(machineType);
+            IEnumerable<UpdateData> updates = await GetUpdates(machineType).ConfigureAwait(false);
 
             foreach (UpdateData update in updates)
             {
@@ -102,7 +108,7 @@ namespace WindowsUpdateLib
                     Created = update.UpdateInfo.Deployment.LastChangeTime
                 };
 
-                string BuildStr = await update.GetBuildStringAsync();
+                string BuildStr = await update.GetBuildStringAsync().ConfigureAwait(false);
                 if (!string.IsNullOrEmpty(BuildStr))
                 {
                     availableBuild.Title += $" ({BuildStr})";
@@ -117,7 +123,7 @@ namespace WindowsUpdateLib
 
         public static async Task<AvailableBuildLanguages[]> GetAvailableBuildLanguagesAsync(UpdateData UpdateData)
         {
-            List<AvailableBuildLanguages> availableBuildLanguages = (await UpdateData.GetAvailableLanguagesAsync()).Select(lang =>
+            List<AvailableBuildLanguages> availableBuildLanguages = (await UpdateData.GetAvailableLanguagesAsync().ConfigureAwait(false)).Select(lang =>
             {
                 CultureInfo boundlanguageobject = CultureInfo.GetCultureInfoByIetfLanguageTag(lang);
 
@@ -154,7 +160,7 @@ namespace WindowsUpdateLib
 
                 if (string.IsNullOrEmpty(UpdateData.CachedMetadata))
                 {
-                    FileExchangeV3FileDownloadInformation fileDownloadInfo = await FE3Handler.GetFileUrl(UpdateData, metadataCabs[0].Digest);
+                    FileExchangeV3FileDownloadInformation fileDownloadInfo = await FE3Handler.GetFileUrl(UpdateData, metadataCabs[0].Digest).ConfigureAwait(false);
                     if (fileDownloadInfo == null)
                     {
                         goto exit;
@@ -164,12 +170,15 @@ namespace WindowsUpdateLib
 
                     // Download the file
                     WebClient client = new();
-                    await client.DownloadFileTaskAsync(new Uri(fileDownloadInfo.DownloadUrl), metadataCabTemp);
+                    await client.DownloadFileTaskAsync(new Uri(fileDownloadInfo.DownloadUrl), metadataCabTemp).ConfigureAwait(false);
 
                     if (fileDownloadInfo.IsEncrypted)
                     {
-                        if (!await fileDownloadInfo.DecryptAsync(metadataCabTemp, metadataCabTemp + ".decrypted"))
+                        if (!await fileDownloadInfo.DecryptAsync(metadataCabTemp, metadataCabTemp + ".decrypted").ConfigureAwait(false))
+                        {
                             goto exit;
+                        }
+
                         metadataCabTemp += ".decrypted";
                     }
 
@@ -179,9 +188,9 @@ namespace WindowsUpdateLib
                 IReadOnlyCollection<string> cabinetFiles = CabinetExtractor.EnumCabinetFiles(UpdateData.CachedMetadata);
 
                 IEnumerable<string> potentialFiles = cabinetFiles.Where(x =>
-                        x.ToLower().Contains($"desktoptargetcompdb_") &&
+                        x.Contains("desktoptargetcompdb_", StringComparison.CurrentCultureIgnoreCase) &&
                         x.ToLower().Contains($"_{languagecode}") &&
-                        !x.ToLower().Contains("lxp") &&
+                        !x.Contains("lxp", StringComparison.CurrentCultureIgnoreCase) &&
                         !x.ToLower().Contains($"desktoptargetcompdb_{languagecode}"));
 
                 foreach (string file in potentialFiles)
@@ -189,7 +198,9 @@ namespace WindowsUpdateLib
                     string edition = file.Split('_').Reverse().Skip(1).First();
 
                     if (availableEditions.Any(x => x.Edition == edition))
+                    {
                         continue;
+                    }
 
                     availableEditions.Add(new AvailableEdition() { Edition = edition });
                 }
@@ -197,9 +208,9 @@ namespace WindowsUpdateLib
             else
             {
                 IEnumerable<string> potentialFiles = metadataCabs.Select(x => x.FileName.Replace('\\', Path.DirectorySeparatorChar)).Where(x =>
-                    x.ToLower().Contains($"desktoptargetcompdb_") &&
+                    x.Contains("desktoptargetcompdb_", StringComparison.CurrentCultureIgnoreCase) &&
                     x.ToLower().Contains($"_{languagecode}") &&
-                    !x.ToLower().Contains("lxp") &&
+                    !x.Contains("lxp", StringComparison.CurrentCultureIgnoreCase) &&
                     !x.ToLower().Contains($"desktoptargetcompdb_{languagecode}"));
 
                 // This is the old format, each cab is a file in WU
@@ -208,7 +219,9 @@ namespace WindowsUpdateLib
                     string edition = file.Split('_').Reverse().Skip(1).First();
 
                     if (availableEditions.Any(x => x.Edition == edition))
+                    {
                         continue;
+                    }
 
                     availableEditions.Add(new AvailableEdition() { Edition = edition });
                 }
@@ -282,7 +295,9 @@ namespace WindowsUpdateLib
                     }
 
                     if (!exists)
+                    {
                         updates.Add(update);
+                    }
                 }
                 else
                 {
@@ -325,7 +340,7 @@ namespace WindowsUpdateLib
                 tasks.Add(FE3Handler.GetUpdates(null, ctac, null, FileExchangeV3UpdateFilter.ProductRelease));
             }
 
-            IEnumerable<UpdateData>[] datas = await Task.WhenAll(tasks);
+            IEnumerable<UpdateData>[] datas = await Task.WhenAll(tasks).ConfigureAwait(false);
             foreach (IEnumerable<UpdateData> data in datas)
             {
                 AddUpdatesIfNotPresentAlready(updates, data);

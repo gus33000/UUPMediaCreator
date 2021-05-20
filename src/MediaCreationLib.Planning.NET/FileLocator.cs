@@ -57,7 +57,6 @@ namespace MediaCreationLib.Planning.NET
                         }
                         catch
                         {
-
                         }
                     }
                 }
@@ -95,10 +94,12 @@ namespace MediaCreationLib.Planning.NET
 
                 (bool succeeded, string missingFile) = VerifyFileIsAvailableForPackage(pkg, UUPPath);
                 if (!succeeded)
+                {
                     missingPackages.Add(missingFile);
+                }
             }
 
-            return (missingPackages.Count <= 0, missingPackages);
+            return (missingPackages.Count == 0, missingPackages);
         }
 
         public static (bool, string) VerifyFileIsAvailableForPackage(CompDBXmlClass.Package pkg, string UUPPath)

@@ -24,7 +24,7 @@ using System.IO;
 
 namespace MediaCreationLib
 {
-    public class Constants
+    public static class Constants
     {
         internal static Dictionary<string, string> FriendlyEditionNames = new()
         {

@@ -21,7 +21,7 @@
  */
 namespace UUPMediaCreator.InterCommunication
 {
-    public class Common
+    public static class Common
     {
         public enum ProcessPhase
         {

@@ -111,18 +111,12 @@ namespace UUPMediaCreator.UWP
 
         private void NextButton_Click(object sender, RoutedEventArgs e)
         {
-            if (NextClicked != null)
-            {
-                NextClicked.Invoke(sender, e);
-            }
+            NextClicked?.Invoke(sender, e);
         }
 
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
-            if (BackClicked != null)
-            {
-                BackClicked.Invoke(sender, e);
-            }
+            BackClicked?.Invoke(sender, e);
         }
     }
 }

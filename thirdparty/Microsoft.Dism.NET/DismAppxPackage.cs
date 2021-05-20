@@ -36,27 +36,27 @@ namespace Microsoft.Dism
             /// <summary>
             /// The major version.
             /// </summary>
-            public UInt32 MajorVersion;
+            public uint MajorVersion;
 
             /// <summary>
             /// The minor version.
             /// </summary>
-            public UInt32 MinorVersion;
+            public uint MinorVersion;
 
             /// <summary>
             /// The build version.
             /// </summary>
-            public UInt32 Build;
+            public uint Build;
 
             /// <summary>
             /// The revision version.
             /// </summary>
-            public UInt32 Revision;
+            public uint Revision;
 
             /// <summary>
             /// The architecture of the package.
             /// </summary>
-            public UInt32 Architecture;
+            public uint Architecture;
 
             /// <summary>
             /// The resource ID.

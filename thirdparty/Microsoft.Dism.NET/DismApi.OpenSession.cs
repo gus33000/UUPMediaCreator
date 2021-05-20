@@ -3,7 +3,6 @@
 // Licensed under the MIT license.
 
 using System;
-using System.Runtime.ConstrainedExecution;
 using System.Runtime.InteropServices;
 
 namespace Microsoft.Dism
@@ -75,18 +74,16 @@ namespace Microsoft.Dism
             ///
             /// The SystemDrive parameter cannot be used when the ImagePath parameter is set to DISM_ONLINE_IMAGE.</param>
             /// <param name="session">A pointer to a valid DISMSession. The DISMSession will be associated with the image after this call is successfully completed.</param>
-            /// <returns>Returns S_OK on success.
-            ///
-            /// Returns DISMAPI_E_ALREADY_ASSOCIATED if the DISMSession already has an image associated with it.
-            ///
-            /// Returns a Win32 error code mapped to an HRESULT for other errors.</returns>
-            /// <remarks>The DISMSession can be used to service the image after the DISMOpenSession call is successfully completed. The DISMSession must be shut down by calling the DismCloseSession Function.
-            ///
+            /// <returns><para>Returns S_OK on success.</para>
+            /// <para>Returns DISMAPI_E_ALREADY_ASSOCIATED if the DISMSession already has an image associated with it.</para>
+            /// <para>Returns a Win32 error code mapped to an HRESULT for other errors.</para></returns>
+            /// <remarks><para>The DISMSession can be used to service the image after the DISMOpenSession call is successfully completed. The DISMSession must be shut down by calling the DismCloseSession Function.</para>
+            /// <para>
             /// <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/hh824800.aspx" />
             /// HRESULT WINAPI DismOpenSession(_In_ PCWSTR ImagePath, _In_opt_ PCWSTR WindowsDirectory, _In_opt_ WCHAR* SystemDrive, _Out_ DismSession* Session);
+            /// </para>
             /// </remarks>
             [DllImport(DismDllName, CharSet = DismCharacterSet)]
-            [ReliabilityContract(Consistency.WillNotCorruptState, Cer.MayFail)]
             [return: MarshalAs(UnmanagedType.Error)]
             public static extern int DismOpenSession(string imagePath, string windowsDirectory, string systemDrive, out IntPtr session);
         }

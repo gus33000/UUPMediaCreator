@@ -27,7 +27,7 @@ using System.Security.Principal;
 
 namespace MediaCreationLib.Installer
 {
-    public class TakeOwn
+    public static class TakeOwn
     {
         public static void TakeOwnDirectory(string path)
         {

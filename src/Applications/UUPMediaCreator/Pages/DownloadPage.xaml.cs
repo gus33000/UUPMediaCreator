@@ -42,7 +42,7 @@ namespace UUPMediaCreator.UWP.Pages
             StorageFolder tmp = await ApplicationData.Current.TemporaryFolder.CreateFolderAsync($"tmpDl_{DateTime.Now.Ticks}");
             ProgressBar.IsIndeterminate = true;
 
-            App.ConversionPlan.TmpOutputFolder = await UpdateUtils.ProcessUpdateAsync(App.ConversionPlan.UpdateData, tmp.Path, App.ConversionPlan.MachineType, this, App.ConversionPlan.Language, App.ConversionPlan.Edition, UseAutomaticDownloadFolder: false);
+            App.ConversionPlan.TmpOutputFolder = await UpdateUtils.ProcessUpdateAsync(App.ConversionPlan.UpdateData, tmp.Path, App.ConversionPlan.MachineType, this, App.ConversionPlan.Language, App.ConversionPlan.Edition, UseAutomaticDownloadFolder: false).ConfigureAwait(false);
 
             Frame.Navigate(typeof(BuildingISOPage));
         }
@@ -76,12 +76,16 @@ namespace UUPMediaCreator.UWP.Pages
             foreach (FileDownloadStatus status in e.DownloadedStatus)
             {
                 if (status == null)
+                {
                     continue;
+                }
 
-                bool shouldReport = true;//!files.ContainsKey(status.File.FileName) || files[status.File.FileName] != status.FileStatus;
+                const bool shouldReport = true;//!files.ContainsKey(status.File.FileName) || files[status.File.FileName] != status.FileStatus;
 
                 if (!shouldReport)
+                {
                     continue;
+                }
 
                 files[status.File.FileName] = status.FileStatus;
 

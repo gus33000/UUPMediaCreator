@@ -27,7 +27,7 @@ using System.Runtime.InteropServices;
 
 namespace MediaCreationLib.CDImage
 {
-    public class CDImage
+    public static class CDImage
     {
         public delegate void ProgressCallback(string Operation, int ProgressPercentage, bool IsIndeterminate);
 
@@ -48,12 +48,9 @@ namespace MediaCreationLib.CDImage
                 return OSPlatform.Windows;
             }
 
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.FreeBSD))
-            {
-                return OSPlatform.FreeBSD;
-            }
-
-            throw new Exception("Cannot determine operating system!");
+            return RuntimeInformation.IsOSPlatform(OSPlatform.FreeBSD)
+                ? OSPlatform.FreeBSD
+                : throw new Exception("Cannot determine operating system!");
         }
 
         public static bool GenerateISOImage(string isopath, string cdroot, string volumelabel, ProgressCallback progressCallback)
@@ -84,7 +81,7 @@ namespace MediaCreationLib.CDImage
                 {
                     process.ErrorDataReceived += (object sender, DataReceivedEventArgs e) =>
                     {
-                        if (e.Data != null && e.Data.Contains("%"))
+                        if (e.Data?.Contains("%") == true)
                         {
                             int percent = int.Parse(e.Data.Split(' ').First(x => x.Contains("%")).Replace("%", ""));
                             progressCallback?.Invoke($"Building {isopath}", percent, false);
@@ -161,7 +158,7 @@ namespace MediaCreationLib.CDImage
                     {
                         process.ErrorDataReceived += (object sender, DataReceivedEventArgs e) =>
                         {
-                            if (e.Data != null && e.Data.Contains("%"))
+                            if (e.Data?.Contains("%") == true)
                             {
                                 int percent = (int)Math.Round(double.Parse(e.Data.Split(' ').First(x => x.Contains("%")).Replace("%", "")));
                                 progressCallback?.Invoke($"Building {isopath}", percent, false);

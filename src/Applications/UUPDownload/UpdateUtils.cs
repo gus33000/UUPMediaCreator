@@ -36,12 +36,12 @@ namespace UUPDownload
             if (payloadItems.Any(x => x.PayloadHash == file2.AdditionalDigest.Text || x.PayloadHash == file2.Digest))
             {
                 CompDBXmlClass.PayloadItem payload = payloadItems.First(x => x.PayloadHash == file2.AdditionalDigest.Text || x.PayloadHash == file2.Digest);
-                filename = payload.Path.Replace('\\', Path.DirectorySeparatorChar);
+                return payload.Path.Replace('\\', Path.DirectorySeparatorChar);
             }
             else if (!payloadItems.Any() && filename.Contains("_") && !filename.StartsWith("_") && (!filename.Contains('-') || filename.IndexOf('-') > filename.IndexOf('_')))
             {
                 filename = filename.Substring(0, filename.IndexOf('_')) + Path.DirectorySeparatorChar + filename[(filename.IndexOf('_') + 1)..];
-                filename = filename.TrimStart(Path.DirectorySeparatorChar);
+                return filename.TrimStart(Path.DirectorySeparatorChar);
             }
             return filename;
         }
@@ -61,13 +61,8 @@ namespace UUPDownload
                 }
             }
 
-            if (filename.Contains("Diff", StringComparison.InvariantCultureIgnoreCase) ||
-                filename.Contains("Baseless", StringComparison.InvariantCultureIgnoreCase))
-            {
-                return false;
-            }
-
-            return true;
+            return !filename.Contains("Diff", StringComparison.InvariantCultureIgnoreCase) &&
+!filename.Contains("Baseless", StringComparison.InvariantCultureIgnoreCase);
         }
 
         public static UpdateData TrimDeltasFromUpdateData(UpdateData update)

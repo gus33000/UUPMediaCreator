@@ -26,28 +26,28 @@ namespace WindowsUpdateLib
     public enum MachineType : ushort
     {
         unknown = 0x0,
-        axp = 0x184,
-        am33 = 0x1d3,
-        amd64 = 0x8664,
-        arm = 0x1c0,
-        arm64 = 0xaa64,
-        woa = 0x1c4,
-        ebc = 0xebc,
         x86 = 0x14c,
-        ia64 = 0x200,
-        m32r = 0x9041,
-        mips16 = 0x266,
-        mipsfpu = 0x366,
-        mipsfpu16 = 0x466,
-        powerpc = 0x1f0,
-        powerpcfp = 0x1f1,
         r4000 = 0x166,
+        wcemipsv2 = 0x169,
+        axp = 0x184,
         sh3 = 0x1a2,
         sh3dsp = 0x1a3,
         sh4 = 0x1a6,
         sh5 = 0x1a8,
+        arm = 0x1c0,
         thumb = 0x1c2,
-        wcemipsv2 = 0x169,
+        woa = 0x1c4,
+        am33 = 0x1d3,
+        powerpc = 0x1f0,
+        powerpcfp = 0x1f1,
+        ia64 = 0x200,
+        mips16 = 0x266,
+        mipsfpu = 0x366,
+        mipsfpu16 = 0x466,
+        ebc = 0xebc,
+        amd64 = 0x8664,
+        m32r = 0x9041,
+        arm64 = 0xaa64,
     }
 
     public enum OSSkuId
@@ -356,7 +356,7 @@ namespace WindowsUpdateLib
                                     $"FlightRing={FlightRing}&" +
                                     "TelemetryLevel=3&" +
                                     "HidOverGattReg=C:\\WINDOWS\\System32\\DriverStore\\FileRepository\\hidbthle.inf_amd64_0fc6b7cd4ccbc55c\\Microsoft.Bluetooth.Profiles.HidOverGatt.dll&" +
-                                    $"AppVer=0.0.0.0&" +
+                                    "AppVer=0.0.0.0&" +
                                     "IsAutopilotRegistered=0&" +
                                     "ProcessorIdentifier=GenuineIntel Family 23 Model 1 Stepping 1&" +
                                     "OEMModel=RM-1085_1045&" +
@@ -413,34 +413,34 @@ namespace WindowsUpdateLib
             {
                 DeviceAttributes += $"&OneCoreFwV={ReportingVersion}&" +
                                         $"OneCoreSwV={ReportingVersion}&" +
-                                        $"OneCoreManufacturerModelName=HoloLens&" +
-                                        $"OneCoreManufacturer=Microsoft Corporation&" +
-                                        $"OneCoreOperatorName=000-88";
+                                        "OneCoreManufacturerModelName=HoloLens&" +
+                                        "OneCoreManufacturer=Microsoft Corporation&" +
+                                        "OneCoreOperatorName=000-88";
             }
             else if (ReportingSku == OSSkuId.HubOS)
             {
                 DeviceAttributes += $"&OneCoreFwV={ReportingVersion}&" +
                                         $"OneCoreSwV={ReportingVersion}&" +
-                                        $"OneCoreManufacturerModelName=Surface Hub 2X&" +
-                                        $"OneCoreManufacturer=Microsoft Corporation&" +
-                                        $"OneCoreOperatorName=000-88";
+                                        "OneCoreManufacturerModelName=Surface Hub 2X&" +
+                                        "OneCoreManufacturer=Microsoft Corporation&" +
+                                        "OneCoreOperatorName=000-88";
             }
             else if (ReportingSku == OSSkuId.Andromeda)
             {
                 DeviceAttributes += $"&OneCoreFwV={ReportingVersion}&" +
                                         $"OneCoreSwV={ReportingVersion}&" +
-                                        $"OneCoreManufacturerModelName=Andromeda&" +
-                                        $"OneCoreManufacturer=Microsoft Corporation&" +
-                                        $"OneCoreOperatorName=000-88";
+                                        "OneCoreManufacturerModelName=Andromeda&" +
+                                        "OneCoreManufacturer=Microsoft Corporation&" +
+                                        "OneCoreOperatorName=000-88";
             }
             else if (ReportingSku == OSSkuId.Lite)
             {
                 DeviceAttributes += "&Product=ModernPC";
                 DeviceAttributes += $"&OneCoreFwV={ReportingVersion}&" +
                                         $"OneCoreSwV={ReportingVersion}&" +
-                                        $"OneCoreManufacturerModelName=Santorini&" +
-                                        $"OneCoreManufacturer=Microsoft Corporation&" +
-                                        $"OneCoreOperatorName=000-88";
+                                        "OneCoreManufacturerModelName=Santorini&" +
+                                        "OneCoreManufacturer=Microsoft Corporation&" +
+                                        "OneCoreOperatorName=000-88";
             }
 
             CallerAttributes = "E:Interactive=1&IsSeeker=1&SheddingAware=1&";

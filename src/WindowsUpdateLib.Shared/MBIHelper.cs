@@ -29,11 +29,11 @@ using System.Threading.Tasks;
 
 namespace WindowsUpdateLib.Shared
 {
-    public class MBIHelper
+    public static class MBIHelper
     {
         public async static Task<string> GenerateMicrosoftAccountTokenAsync(string email, string password)
         {
-            return Convert.ToBase64String(Encoding.Unicode.GetBytes("t=" + await GetBearerTokenForScope(email, password, $"service::dcat.update.microsoft.com::MBI_SSL") + "&p="));
+            return Convert.ToBase64String(Encoding.Unicode.GetBytes("t=" + await GetBearerTokenForScope(email, password, "service::dcat.update.microsoft.com::MBI_SSL").ConfigureAwait(false) + "&p="));
         }
 
         private async static Task<string> GetBearerTokenForScope(string email, string password, string targetscope, string clientId = "ms-app://s-1-15-2-1929064262-2866240470-255121345-2806524548-501211612-2892859406-1685495620/")
@@ -49,7 +49,7 @@ namespace WindowsUpdateLib.Shared
             string PPFT;
             try
             {
-                HttpWebResponse hwresp = (HttpWebResponse)(await hwreq.GetResponseAsync());
+                HttpWebResponse hwresp = (HttpWebResponse)(await hwreq.GetResponseAsync().ConfigureAwait(false));
 
                 foreach (string oCookie in hwresp.Headers["Set-Cookie"].Split(','))
                 {
@@ -91,7 +91,7 @@ namespace WindowsUpdateLib.Shared
             byte[] POSTByteArray = Encoding.UTF8.GetBytes($"login={email}&passwd={password}&PPFT={PPFT}");
             queryString.Headers.ContentLength = POSTByteArray.Length;
 
-            HttpResponseMessage hwresp2 = await client.PostAsync(new Uri(urlPost), queryString);
+            HttpResponseMessage hwresp2 = await client.PostAsync(new Uri(urlPost), queryString).ConfigureAwait(false);
 
             try
             {
@@ -101,7 +101,10 @@ namespace WindowsUpdateLib.Shared
                     {
                         retVal = oLocationBit[(oLocationBit.IndexOf("access_token") + 13)..];
                         if (retVal.Contains("&"))
+                        {
                             retVal = retVal.Substring(0, retVal.IndexOf('&'));
+                        }
+
                         break;
                     }
                 }

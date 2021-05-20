@@ -30,7 +30,7 @@ namespace Microsoft.Dism
         /// <param name="session">A valid DISM Session. The DISM Session must be associated with an image. You can associate a session with an image by using the <see cref="OpenOfflineSession(string)" /> method.</param>
         /// <param name="driverDirectory">A relative or absolute path to a directory containing driver .inf files.</param>
         /// <param name="forceUnsigned">Indicates whether to accept unsigned drivers to an x64-based image. Unsigned drivers will automatically be added to an x86-based image.</param>
-        /// <param name="recursive"><code>true</code> to search recursively for driver files, otherwise <code>false</code>.</param>
+        /// <param name="recursive"><c>true</c> to search recursively for driver files, otherwise <c>false</c>.</param>
         /// <exception cref="DirectoryNotFoundException">The directory specified by the <paramref name="driverDirectory" /> parameter does not exist.</exception>
         public static void AddDriversEx(DismSession session, string driverDirectory, bool forceUnsigned, bool recursive)
         {

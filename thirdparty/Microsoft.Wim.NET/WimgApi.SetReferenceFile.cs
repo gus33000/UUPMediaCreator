@@ -38,9 +38,9 @@ namespace Microsoft.Wim
         None = 0,
 
         /// <summary>
-        /// Allow cross-file WIM like ESD.
+        /// Data integrity information is generated for new files, verified, and updated for existing files.
         /// </summary>
-        Chunked = WimgApi.WIM_FLAG_CHUNKED,
+        Verify = WimgApi.WIM_FLAG_VERIFY,
 
         /// <summary>
         /// The .wim file is opened in a mode that enables simultaneous reading and writing.
@@ -48,9 +48,9 @@ namespace Microsoft.Wim
         ShareWrite = WimgApi.WIM_FLAG_SHARE_WRITE,
 
         /// <summary>
-        /// Data integrity information is generated for new files, verified, and updated for existing files.
+        /// Allow cross-file WIM like ESD.
         /// </summary>
-        Verify = WimgApi.WIM_FLAG_VERIFY,
+        Chunked = WimgApi.WIM_FLAG_CHUNKED,
     }
 
     public static partial class WimgApi

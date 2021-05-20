@@ -10,16 +10,6 @@ namespace Microsoft.Wim
     public enum WimCompressionType : uint
     {
         /// <summary>
-        /// Capture uses LZMS file compression.
-        /// </summary>
-        Lzms = 3,
-
-        /// <summary>
-        /// Capture uses LZX file compression.
-        /// </summary>
-        Lzx = 2,
-
-        /// <summary>
         /// Capture does not use file compression.
         /// </summary>
         None = 0,
@@ -28,5 +18,15 @@ namespace Microsoft.Wim
         /// Capture uses XPRESS file compression.
         /// </summary>
         Xpress = 1,
+
+        /// <summary>
+        /// Capture uses LZX file compression.
+        /// </summary>
+        Lzx = 2,
+
+        /// <summary>
+        /// Capture uses LZMS file compression.
+        /// </summary>
+        Lzms = 3,
     }
 }

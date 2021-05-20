@@ -33,7 +33,7 @@ using static MediaCreationLib.MediaCreator;
 
 namespace MediaCreationLib.BootlegEditions
 {
-    public class BootlegEditionCreator
+    public static class BootlegEditionCreator
     {
         private static readonly WIMImaging imagingInterface = new();
 
@@ -251,7 +251,7 @@ namespace MediaCreationLib.BootlegEditions
             FileIniDataParser parser = new();
             IniData data = parser.ReadFile(productinifilepath);
 
-            string serial = data["cmi"].First(x => x.KeyName.ToLower() == EditionID.ToLower()).Value;
+            string serial = data["cmi"].First(x => string.Equals(x.KeyName, EditionID, StringComparison.CurrentCultureIgnoreCase)).Value;
             progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, "Serial: " + serial);
 
             progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, "Getting current edition");
@@ -259,9 +259,11 @@ namespace MediaCreationLib.BootlegEditions
             progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, "Current edition is: " + SourceEdition);
 
             progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, "Getting wim info for: " + OutputInstallImage);
-            result = imagingInterface.GetWIMInformation(OutputInstallImage, out WIMInformationXML.WIM wiminfo);
+            result = WIMImaging.GetWIMInformation(OutputInstallImage, out WIMInformationXML.WIM wiminfo);
             if (!result)
+            {
                 goto exit;
+            }
 
             progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, "Searching index for : " + SourceEdition);
             WIMInformationXML.IMAGE srcimage = wiminfo.IMAGE.First(x =>
@@ -302,9 +304,7 @@ namespace MediaCreationLib.BootlegEditions
             string catalogPath = Directory.EnumerateFiles(servicingPath, catalog, new EnumerationOptions() { MatchCasing = MatchCasing.CaseInsensitive }).First();
 
             bool LTSB = false;
-            if (EditionID.ToLower().StartsWith("enterpriseg")
-                || EditionID.ToLower().StartsWith("enterprises")
-                || EditionID.ToLower().StartsWith("iotenterprises"))
+            if (EditionID.StartsWith("enterpriseg", StringComparison.CurrentCultureIgnoreCase) || EditionID.StartsWith("enterprises", StringComparison.CurrentCultureIgnoreCase) || EditionID.StartsWith("iotenterprises", StringComparison.CurrentCultureIgnoreCase))
             {
                 LTSB = true;
             }
@@ -374,7 +374,7 @@ namespace MediaCreationLib.BootlegEditions
                     void ProgressCallback(int percent, string file)
                     {
                         progressCallback?.Invoke(Common.ProcessPhase.PreparingFiles, false, percent, "Unpacking " + file + "...");
-                    };
+                    }
 
                     CabinetExtractor.ExtractCabinet(lppackage, LPFolder, ProgressCallback);
                 }
@@ -401,7 +401,9 @@ namespace MediaCreationLib.BootlegEditions
 
                     result = imagingInterface.ApplyImage(lppackage, 1, LPFolder, PreserveACL: false, progressCallback: callback2);
                     if (!result)
+                    {
                         goto exit;
+                    }
                 }
             }
 
@@ -412,12 +414,14 @@ namespace MediaCreationLib.BootlegEditions
             {
                 result = imagingInterface.ApplyImage(package, 1, SxSFolder, PreserveACL: false, progressCallback: callback2);
                 if (!result)
+                {
                     goto exit;
+                }
 
                 if (File.Exists(Path.Combine(SxSFolder, "update.mum")))
                 {
                     AssemblyManifestHandler.Assembly assembly = AssemblyManifestHandler.Deserialize(File.ReadAllText(Path.Combine(SxSFolder, "update.mum")));
-                    string cbsKey = assembly.AssemblyIdentity.Name + "~" + assembly.AssemblyIdentity.PublicKeyToken + "~" + assembly.AssemblyIdentity.ProcessorArchitecture + "~" + (assembly.AssemblyIdentity.Language.ToLower() == "neutral" ? "" : assembly.AssemblyIdentity.Language) + "~" + assembly.AssemblyIdentity.Version;
+                    string cbsKey = assembly.AssemblyIdentity.Name + "~" + assembly.AssemblyIdentity.PublicKeyToken + "~" + assembly.AssemblyIdentity.ProcessorArchitecture + "~" + (string.Equals(assembly.AssemblyIdentity.Language, "neutral", StringComparison.CurrentCultureIgnoreCase) ? "" : assembly.AssemblyIdentity.Language) + "~" + assembly.AssemblyIdentity.Version;
                     if (!File.Exists(Path.Combine(SxSFolder, cbsKey + ".mum")))
                     {
                         File.Move(Path.Combine(SxSFolder, "update.mum"), Path.Combine(SxSFolder, cbsKey + ".mum"));
@@ -567,13 +571,17 @@ namespace MediaCreationLib.BootlegEditions
             if (HandleOEMDefaultAssociationsXml)
             {
                 if (!File.Exists(OEMDefaultAssociationsXmlInImage))
+                {
                     File.Move(OEMDefaultAssociationsXml, OEMDefaultAssociationsXmlInImage);
+                }
             }
 
             if (HandleOEMDefaultAssociationsDll)
             {
                 if (!File.Exists(OEMDefaultAssociationsDllInImage))
+                {
                     File.Move(OEMDefaultAssociationsDll, OEMDefaultAssociationsDllInImage);
+                }
             }
 
             //
@@ -620,7 +628,7 @@ namespace MediaCreationLib.BootlegEditions
             void callback2(string Operation, int ProgressPercentage, bool IsIndeterminate)
             {
                 progressCallback?.Invoke(Common.ProcessPhase.CapturingImage, IsIndeterminate, ProgressPercentage, Operation);
-            };
+            }
 
             string name = $"Windows 10 {EditionID}";
             if (Constants.FriendlyEditionNames.Any(x => x.Key.Equals(EditionID, StringComparison.InvariantCultureIgnoreCase)))
@@ -641,11 +649,15 @@ namespace MediaCreationLib.BootlegEditions
                 UpdateFrom: index);
 
             if (!result)
+            {
                 goto exit;
+            }
 
-            result = imagingInterface.GetWIMImageInformation(OutputInstallImage, wiminfo.IMAGE.Count + 1, out WIMInformationXML.IMAGE tmpImageInfo);
+            result = WIMImaging.GetWIMImageInformation(OutputInstallImage, wiminfo.IMAGE.Count + 1, out WIMInformationXML.IMAGE tmpImageInfo);
             if (!result)
+            {
                 goto exit;
+            }
 
             string sku = tmpImageInfo.WINDOWS.EDITIONID;
 
@@ -657,11 +669,13 @@ namespace MediaCreationLib.BootlegEditions
             tmpImageInfo.DISPLAYNAME = name;
             tmpImageInfo.DISPLAYDESCRIPTION = name;
 
-            result = imagingInterface.SetWIMImageInformation(OutputInstallImage, wiminfo.IMAGE.Count + 1, tmpImageInfo);
+            result = WIMImaging.SetWIMImageInformation(OutputInstallImage, wiminfo.IMAGE.Count + 1, tmpImageInfo);
             if (!result)
+            {
                 goto exit;
+            }
 
-            exit:
+        exit:
             return result;
         }
     }

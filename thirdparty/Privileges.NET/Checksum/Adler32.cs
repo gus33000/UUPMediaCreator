@@ -55,7 +55,7 @@ namespace ICSharpCode.SharpZipLib.Checksum
         /// <summary>
         /// largest prime smaller than 65536
         /// </summary>
-        private static readonly uint BASE = 65521;
+        private const uint BASE = 65521;
 
         /// <summary>
         /// The CRC data checksum so far.
@@ -151,8 +151,8 @@ namespace ICSharpCode.SharpZipLib.Checksum
                 count -= n;
                 while (--n >= 0)
                 {
-                    s1 = s1 + (uint)(segment.Array[offset++] & 0xff);
-                    s2 = s2 + s1;
+                    s1 += (uint)(segment.Array[offset++] & 0xff);
+                    s2 += s1;
                 }
                 s1 %= BASE;
                 s2 %= BASE;

@@ -27,7 +27,7 @@ using System.Runtime.InteropServices;
 
 namespace MediaCreationLib.Installer
 {
-    internal class RegistryOperations
+    internal static class RegistryOperations
     {
         private static void ResetWindowsRootInValue(RegistryHive hive, string key, string value)
         {
@@ -37,7 +37,7 @@ namespace MediaCreationLib.Installer
 
         private static void ResetWindowsRootInValue(RegistryKey key2, string value)
         {
-            if (key2 != null && key2.GetValueNames().Any(x => x.Equals(value, StringComparison.InvariantCultureIgnoreCase)))
+            if (key2?.GetValueNames().Any(x => x.Equals(value, StringComparison.InvariantCultureIgnoreCase)) == true)
             {
                 switch (key2.GetValueType(value))
                 {
@@ -45,8 +45,11 @@ namespace MediaCreationLib.Installer
                         {
                             string og = (string)key2.GetValue(value);
                             if (!og.Contains("X:"))
+                            {
                                 break;
-                            og = og.Replace(@"X:", @"X:\$windows.~bt");
+                            }
+
+                            og = og.Replace("X:", @"X:\$windows.~bt");
                             key2.SetValue(value, og, RegistryValueType.String);
                             break;
                         }
@@ -54,8 +57,11 @@ namespace MediaCreationLib.Installer
                         {
                             string og = (string)key2.GetValue(value);
                             if (!og.Contains("X:"))
+                            {
                                 break;
-                            og = og.Replace(@"X:", @"X:\$windows.~bt");
+                            }
+
+                            og = og.Replace("X:", @"X:\$windows.~bt");
                             key2.SetValue(value, og, RegistryValueType.ExpandString);
                             break;
                         }
@@ -63,8 +69,11 @@ namespace MediaCreationLib.Installer
                         {
                             string[] ogvals = (string[])key2.GetValue(value);
                             if (!ogvals.Any(x => x.Contains("X:")))
+                            {
                                 break;
-                            ogvals = ogvals.ToList().Select(x => x.Replace(@"X:", @"X:\$windows.~bt")).ToArray();
+                            }
+
+                            ogvals = ogvals.ToList().Select(x => x.Replace("X:", @"X:\$windows.~bt")).ToArray();
                             key2.SetValue(value, ogvals, RegistryValueType.MultiString);
                             break;
                         }
@@ -103,7 +112,7 @@ namespace MediaCreationLib.Installer
                     FileMode.Open,
                     FileAccess.ReadWrite
                 ), DiscUtils.Streams.Ownership.Dispose);
-                hive.Root.OpenSubKey(@"ControlSet001").CreateSubKey("CI").SetValue("UMCIDisabled", 1, DiscUtils.Registry.RegistryValueType.Dword);
+                hive.Root.OpenSubKey("ControlSet001").CreateSubKey("CI").SetValue("UMCIDisabled", 1, DiscUtils.Registry.RegistryValueType.Dword);
                 hive.Root.OpenSubKey(@"ControlSet001\Control\CI").SetValue("UMCIAuditMode", 1, DiscUtils.Registry.RegistryValueType.Dword);
             }
             catch
@@ -171,9 +180,9 @@ namespace MediaCreationLib.Installer
                     }
                     foreach (string subval in key1.GetValueNames())
                     {
-                        if (subval != subval.Replace(@"X:", @"X:\$windows.~bt"))
+                        if (subval != subval.Replace("X:", @"X:\$windows.~bt"))
                         {
-                            key1.SetValue(subval.Replace(@"X:", @"X:\$windows.~bt"), key1.GetValue(subval));
+                            key1.SetValue(subval.Replace("X:", @"X:\$windows.~bt"), key1.GetValue(subval));
                             key1.DeleteValue(subval);
                         }
                     }
@@ -252,12 +261,9 @@ namespace MediaCreationLib.Installer
                 return OSPlatform.Windows;
             }
 
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.FreeBSD))
-            {
-                return OSPlatform.FreeBSD;
-            }
-
-            throw new Exception("Cannot determine operating system!");
+            return RuntimeInformation.IsOSPlatform(OSPlatform.FreeBSD)
+                ? OSPlatform.FreeBSD
+                : throw new Exception("Cannot determine operating system!");
         }
     }
 }

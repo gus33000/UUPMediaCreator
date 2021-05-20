@@ -62,7 +62,7 @@ namespace Microsoft.Dism
             /// <summary>
             /// The number of elements in the CustomProperty array.
             /// </summary>
-            public UInt32 CustomPropertyCount;
+            public uint CustomPropertyCount;
         }
     }
 

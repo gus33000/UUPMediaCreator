@@ -17,9 +17,14 @@ namespace Microsoft.Wim
     public enum WimApplyImageOptions : uint
     {
         /// <summary>
-        /// Sends a WIM_MSG_FILEINFO message during the apply operation.
+        /// No options are set.
         /// </summary>
-        FileInfo = WimgApi.WIM_FLAG_FILEINFO,
+        None = 0,
+
+        /// <summary>
+        /// Verifies that files match original data.
+        /// </summary>
+        Verify = WimgApi.WIM_FLAG_VERIFY,
 
         /// <summary>
         /// Specifies that the image is to be sequentially read for caching or performance purposes.
@@ -32,11 +37,6 @@ namespace Microsoft.Wim
         NoApply = WimgApi.WIM_FLAG_NO_APPLY,
 
         /// <summary>
-        /// No options are set.
-        /// </summary>
-        None = 0,
-
-        /// <summary>
         /// Disables restoring security information for directories.
         /// </summary>
         DisableDirectoryAcl = WimgApi.WIM_FLAG_NO_DIRACL,
@@ -47,14 +47,14 @@ namespace Microsoft.Wim
         DisableFileAcl = WimgApi.WIM_FLAG_NO_FILEACL,
 
         /// <summary>
+        /// Sends a WIM_MSG_FILEINFO message during the apply operation.
+        /// </summary>
+        FileInfo = WimgApi.WIM_FLAG_FILEINFO,
+
+        /// <summary>
         /// Disables automatic path fixups for junctions and symbolic links.
         /// </summary>
         DisableRPFix = WimgApi.WIM_FLAG_NO_RP_FIX,
-
-        /// <summary>
-        /// Verifies that files match original data.
-        /// </summary>
-        Verify = WimgApi.WIM_FLAG_VERIFY,
     }
 
     public static partial class WimgApi
@@ -82,14 +82,11 @@ namespace Microsoft.Wim
                 // Get the last error
                 Win32Exception win32Exception = new();
 
-                switch (win32Exception.NativeErrorCode)
+                throw win32Exception.NativeErrorCode switch
                 {
-                    case WimgApi.ERROR_REQUEST_ABORTED:
-                        // If the operation was aborted, throw an OperationCanceledException exception
-                        throw new OperationCanceledException(win32Exception.Message, win32Exception);
-                    default:
-                        throw win32Exception;
-                }
+                    WimgApi.ERROR_REQUEST_ABORTED => new OperationCanceledException(win32Exception.Message, win32Exception),// If the operation was aborted, throw an OperationCanceledException exception
+                    _ => win32Exception,
+                };
             }
         }
 

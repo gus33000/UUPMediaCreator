@@ -25,8 +25,9 @@ using System.Text;
 
 namespace VirtualHardDiskLib
 {
-    internal class NativeMethods
+    internal static class NativeMethods
     {
+        [Flags]
         public enum ATTACH_VIRTUAL_DISK_FLAG
         {
             ATTACH_VIRTUAL_DISK_FLAG_NONE = 0x00000000,
@@ -42,11 +43,13 @@ namespace VirtualHardDiskLib
             ATTACH_VIRTUAL_DISK_VERSION_1 = 1
         }
 
+        [Flags]
         public enum DETACH_VIRTUAL_DISK_FLAG
         {
             DETACH_VIRTUAL_DISK_FLAG_NONE = 0x00000000
         }
 
+        [Flags]
         public enum OPEN_VIRTUAL_DISK_FLAG
         {
             OPEN_VIRTUAL_DISK_FLAG_NONE = 0x00000000,
@@ -66,11 +69,11 @@ namespace VirtualHardDiskLib
             VIRTUAL_DISK_ACCESS_ATTACH_RW = 0x00020000,
             VIRTUAL_DISK_ACCESS_DETACH = 0x00040000,
             VIRTUAL_DISK_ACCESS_GET_INFO = 0x00080000,
+            VIRTUAL_DISK_ACCESS_READ = 0x000d0000,
             VIRTUAL_DISK_ACCESS_CREATE = 0x00100000,
             VIRTUAL_DISK_ACCESS_METAOPS = 0x00200000,
-            VIRTUAL_DISK_ACCESS_READ = 0x000d0000,
-            VIRTUAL_DISK_ACCESS_ALL = 0x003f0000,
-            VIRTUAL_DISK_ACCESS_WRITABLE = 0x00320000
+            VIRTUAL_DISK_ACCESS_WRITABLE = 0x00320000,
+            VIRTUAL_DISK_ACCESS_ALL = 0x003f0000
         }
 
         public const int ERROR_SUCCESS = 0;
@@ -132,10 +135,10 @@ namespace VirtualHardDiskLib
         }
 
         [DllImport("virtdisk.dll", CharSet = CharSet.Unicode)]
-        public static extern Int32 GetVirtualDiskPhysicalPath(IntPtr virtualDiskHandle, ref Int32 diskPathSizeInBytes, [MarshalAs(UnmanagedType.LPWStr)] StringBuilder diskPath);
+        public static extern int GetVirtualDiskPhysicalPath(IntPtr virtualDiskHandle, ref int diskPathSizeInBytes, [MarshalAs(UnmanagedType.LPWStr)] StringBuilder diskPath);
 
         [DllImport("kernel32.dll", CharSet = CharSet.Unicode)]
-        public static extern IntPtr FindFirstVolume([MarshalAs(UnmanagedType.LPTStr)] StringBuilder volumeName, Int32 bufferLength);
+        public static extern IntPtr FindFirstVolume([MarshalAs(UnmanagedType.LPWStr)] StringBuilder volumeName, int bufferLength);
 
         [DllImport("kernel32.dll", CharSet = CharSet.Unicode)]
         [return: MarshalAs(UnmanagedType.Bool)]
@@ -143,10 +146,10 @@ namespace VirtualHardDiskLib
 
         [DllImport("kernel32.dll", CharSet = CharSet.Unicode)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool FindNextVolume(IntPtr findVolumeHandle, [MarshalAs(UnmanagedType.LPTStr)] StringBuilder volumeName, Int32 bufferLength);
+        public static extern bool FindNextVolume(IntPtr findVolumeHandle, [MarshalAs(UnmanagedType.LPWStr)] StringBuilder volumeName, int bufferLength);
 
         [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
-        public static extern IntPtr CreateFile([MarshalAs(UnmanagedType.LPTStr)] string fileName, GENERIC_ACCESS_RIGHTS_FLAGS desiredAccess, FILE_SHARE_MODE_FLAGS shareMode, IntPtr securityAttribute, CREATION_DISPOSITION_FLAGS creationDisposition, Int32 flagsAndAttributes, IntPtr templateFile);
+        public static extern IntPtr CreateFile([MarshalAs(UnmanagedType.LPWStr)] string fileName, GENERIC_ACCESS_RIGHTS_FLAGS desiredAccess, FILE_SHARE_MODE_FLAGS shareMode, IntPtr securityAttribute, CREATION_DISPOSITION_FLAGS creationDisposition, int flagsAndAttributes, IntPtr templateFile);
 
         [DllImport("kernel32.dll", CharSet = CharSet.Unicode)]
         [return: MarshalAs(UnmanagedType.Bool)]
@@ -154,16 +157,16 @@ namespace VirtualHardDiskLib
 
         [DllImport("kernel32.dll", CharSet = CharSet.Unicode)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool SetVolumeMountPoint([MarshalAs(UnmanagedType.LPTStr)] string mountPoint, [MarshalAs(UnmanagedType.LPTStr)] string volumeName);
+        public static extern bool SetVolumeMountPoint([MarshalAs(UnmanagedType.LPWStr)] string mountPoint, [MarshalAs(UnmanagedType.LPWStr)] string volumeName);
 
         public static IntPtr INVALID_HANDLE_VALUE = (IntPtr)(-1);
 
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
         public struct STORAGE_DEVICE_NUMBER
         {
-            public Int32 deviceType;
-            public Int32 deviceNumber;
-            public Int32 partitionNumber;
+            public int deviceType;
+            public int deviceNumber;
+            public int partitionNumber;
         }
 
         public enum IO_CONTROL_CODE : uint
@@ -172,20 +175,23 @@ namespace VirtualHardDiskLib
             STORAGE_DEVICE_NUMBER = 2953344
         }
 
+        [Flags]
         public enum GENERIC_ACCESS_RIGHTS_FLAGS : uint
         {
-            GENERIC_READ = 0x80000000,
-            GENERIC_WRITE = 0x40000000,
+            GENERIC_ALL = 0x10000000,
             GENERIC_EXECUTE = 0x20000000,
-            GENERIC_ALL = 0x10000000
+            GENERIC_WRITE = 0x40000000,
+            GENERIC_READ = 0x80000000
         }
 
+        [Flags]
         public enum FILE_SHARE_MODE_FLAGS : int
         {
             FILE_SHARE_READ = 0x00000001,
             FILE_SHARE_WRITE = 0x00000002
         }
 
+        [Flags]
         public enum CREATION_DISPOSITION_FLAGS : int
         {
             CREATE_NEW = 1,

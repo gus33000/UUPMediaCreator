@@ -31,7 +31,7 @@ using System.Xml.Serialization;
 namespace WindowsUpdateLib
 {
     #region XML Objects
-    public class CSOAPCommon
+    public static class CSOAPCommon
     {
         [XmlRoot(ElementName = "Action", Namespace = "http://www.w3.org/2005/08/addressing")]
         public class Action
@@ -265,7 +265,7 @@ namespace WindowsUpdateLib
         }
     }
 
-    public class CGetCookieRequest
+    public static class CGetCookieRequest
     {
         [XmlRoot(ElementName = "oldCookie", Namespace = Constants.ClientWebServiceServerNamespace)]
         public class OldCookie
@@ -294,7 +294,7 @@ namespace WindowsUpdateLib
         }
     }
 
-    public class CGetCookieResponse
+    public static class CGetCookieResponse
     {
         [XmlRoot(ElementName = "GetCookieResponse", Namespace = Constants.ClientWebServiceServerNamespace)]
         public class GetCookieResponse
@@ -307,7 +307,7 @@ namespace WindowsUpdateLib
         }
     }
 
-    public class CSyncUpdatesRequest
+    public static class CSyncUpdatesRequest
     {
         [XmlRoot(ElementName = "InstalledNonLeafUpdateIDs", Namespace = Constants.ClientWebServiceServerNamespace)]
         public class InstalledNonLeafUpdateIDs
@@ -421,7 +421,7 @@ namespace WindowsUpdateLib
         }
     }
 
-    public class CSyncUpdatesResponse
+    public static class CSyncUpdatesResponse
     {
         [XmlRoot(ElementName = "Deployment", Namespace = Constants.ClientWebServiceServerNamespace)]
         public class Deployment
@@ -526,7 +526,7 @@ namespace WindowsUpdateLib
         }
     }
 
-    public class CGetExtendedUpdateInfo2Request
+    public static class CGetExtendedUpdateInfo2Request
     {
         [XmlRoot(ElementName = "UpdateIdentity", Namespace = Constants.ClientWebServiceServerNamespace)]
         public class UpdateIdentity
@@ -562,7 +562,7 @@ namespace WindowsUpdateLib
         }
     }
 
-    public class CGetExtendedUpdateInfo2Response
+    public static class CGetExtendedUpdateInfo2Response
     {
         [XmlRoot(ElementName = "FileLocation", Namespace = Constants.ClientWebServiceServerNamespace)]
         public class FileLocation
@@ -638,7 +638,7 @@ namespace WindowsUpdateLib
         }
     }
 
-    public class CGetExtendedUpdateInfoRequest
+    public static class CGetExtendedUpdateInfoRequest
     {
         [XmlRoot(ElementName = "revisionIDs", Namespace = Constants.ClientWebServiceServerNamespace)]
         public class RevisionIDs
@@ -670,7 +670,7 @@ namespace WindowsUpdateLib
         }
     }
 
-    public class CGetExtendedUpdateInfoResponse
+    public static class CGetExtendedUpdateInfoResponse
     {
         [XmlRoot(ElementName = "GetExtendedUpdateInfoResult", Namespace = Constants.ClientWebServiceServerNamespace)]
         public class GetExtendedUpdateInfoResult
@@ -709,7 +709,7 @@ namespace WindowsUpdateLib
         }
     }
 
-    public class CExtendedUpdateInfoXml
+    public static class CExtendedUpdateInfoXml
     {
         [XmlRoot(ElementName = "LocalizedProperties")]
         public class LocalizedProperties
@@ -1333,7 +1333,7 @@ namespace WindowsUpdateLib
         }
     }
 
-    public class CAppxMetadataJSON
+    public static class CAppxMetadataJSON
     {
         public partial class AppxMetadataJson
         {

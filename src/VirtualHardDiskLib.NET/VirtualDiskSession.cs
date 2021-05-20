@@ -55,7 +55,9 @@ namespace VirtualHardDiskLib
         {
             VHDUtilities.DismountVirtualDisk(VirtualDiskPath);
             if (delete)
+            {
                 File.Delete(VirtualDiskPath);
+            }
 
             GC.SuppressFinalize(this);
         }

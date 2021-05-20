@@ -217,9 +217,13 @@ namespace Cabinet
 
                 string name = "";
                 if (file.IsFileNameUTF8())
+                {
                     name = cabinetBinaryReader.BaseStream.ReadUTF8tring();
+                }
                 else
+                {
                     name = cabinetBinaryReader.BaseStream.ReadString();
+                }
 
                 files.Add(new CabinetVolumeFile()
                 {
@@ -244,7 +248,9 @@ namespace Cabinet
                 }
 
                 if (File.Exists(destination))
+                {
                     File.Delete(destination);
+                }
             }
 
             // Do the extraction
@@ -286,7 +292,9 @@ namespace Cabinet
                 foreach (CabinetVolumeFile file in files)
                 {
                     if (file.CabinetFileVolumeFile.iFolder != volumeIndex)
+                    {
                         continue;
+                    }
 
                     (CFDATA dataStruct, int dataOffsetCabinet, int beginFolderOffset, int endFolderOffset, int index) = datas.First(x => x.beginFolderOffset <= file.CabinetFileVolumeFile.uoffFolderStart &&
                                                         file.CabinetFileVolumeFile.uoffFolderStart <= x.endFolderOffset);
@@ -338,7 +346,9 @@ namespace Cabinet
                     foreach (CabinetVolumeFile file in files)
                     {
                         if (file.CabinetFileVolumeFile.iFolder != volumeIndex)
+                        {
                             continue;
+                        }
 
                         (CabinetVolumeFile file, int startingBlock, int startingBlockOffset, int endingBlock, int endingBlockOffset) mapping = fileBlockMap.First(x => x.file.FileName == file.FileName);
 
@@ -437,7 +447,9 @@ namespace Cabinet
                 foreach (CabinetVolumeFile file in files)
                 {
                     if (file.CabinetFileVolumeFile.iFolder != volumeIndex)
+                    {
                         continue;
+                    }
 
                     (CFDATA dataStruct, int dataOffsetCabinet, int beginFolderOffset, int endFolderOffset, int index) = datas.First(x => x.beginFolderOffset <= file.CabinetFileVolumeFile.uoffFolderStart &&
                                                         file.CabinetFileVolumeFile.uoffFolderStart <= x.endFolderOffset);
@@ -489,10 +501,14 @@ namespace Cabinet
                     foreach (CabinetVolumeFile file in files)
                     {
                         if (file.CabinetFileVolumeFile.iFolder != volumeIndex)
+                        {
                             continue;
+                        }
 
-                        if (file.FileName.ToLower() != FileName.ToLower())
+                        if (!string.Equals(file.FileName, FileName, StringComparison.CurrentCultureIgnoreCase))
+                        {
                             continue;
+                        }
 
                         (CabinetVolumeFile file, int startingBlock, int startingBlockOffset, int endingBlock, int endingBlockOffset) mapping = fileBlockMap.First(x => x.file.FileName == file.FileName);
 
