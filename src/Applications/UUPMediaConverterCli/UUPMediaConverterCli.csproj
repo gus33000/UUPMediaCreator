@@ -14,5 +14,8 @@
     <ProjectReference Include="..\..\InterCommunication.NET\InterCommunication.NET.csproj" />
     <ProjectReference Include="..\..\MediaCreationLib.NET\MediaCreationLib.NET.csproj" />
     <ProjectReference Include="..\..\Cabinet.NET\Cabinet.NET.csproj" />
+    <ProjectReference Include="..\UUPMediaConverterDismBroker\UUPMediaConverterDismBroker.csproj">
+      <Private>True</Private>
+    </ProjectReference>
   </ItemGroup>
 </Project>
