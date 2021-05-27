@@ -26,6 +26,7 @@ using UUPMediaCreator.InterCommunication;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.AppService;
 using Windows.Foundation.Collections;
+using System.Security.Principal;
 
 namespace UUPMediaCreator.Broker
 {
