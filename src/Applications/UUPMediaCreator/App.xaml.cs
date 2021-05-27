@@ -33,6 +33,7 @@ using Windows.UI.Core.Preview;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
 using WindowsUpdateLib;
 using static UUPMediaCreator.InterCommunication.Common;
