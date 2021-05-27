@@ -146,6 +146,8 @@ namespace UUPMediaCreator
                 // Create a Frame to act as the navigation context and navigate to the first page
                 rootFrame = new Frame();
 
+                rootFrame.ContentTransitions = new TransitionCollection { new NavigationThemeTransition() { DefaultNavigationTransitionInfo = new SuppressNavigationTransitionInfo() } };
+
                 rootFrame.NavigationFailed += OnNavigationFailed;
 
                 // Place the frame in the current Window
@@ -159,10 +161,19 @@ namespace UUPMediaCreator
                 // parameter
                 if (Connection != null)
                 {
-                    rootFrame.Navigate(typeof(WelcomePage));
+                    ValueSet request = new()
+                    {
+                        { "InterCommunication", JsonSerializer.Serialize(new Common.InterCommunication { InterCommunicationType = InterCommunicationType.ReportPrivilege }) }
+                    };
 
-                    SystemNavigationManagerPreview mgr = SystemNavigationManagerPreview.GetForCurrentView();
-                    mgr.CloseRequested += SystemNavigationManager_CloseRequested;
+                    bool isBrokerPrivileged = (bool)(await Connection.SendMessageAsync(request)).Message["Privileged"];
+                    rootFrame.Navigate(isBrokerPrivileged ? typeof(WelcomePage) : typeof(AdministratorAccessRequiredPage));
+
+                    if(isBrokerPrivileged) 
+                    {
+                        SystemNavigationManagerPreview mgr = SystemNavigationManagerPreview.GetForCurrentView();
+                        mgr.CloseRequested += SystemNavigationManager_CloseRequested;
+                    }
                 }
                 else
                 {
@@ -171,10 +182,19 @@ namespace UUPMediaCreator
             }
             else if (rootFrame.Content.GetType() == typeof(AdministratorAccessRequiredPage) && Connection != null)
             {
-                rootFrame.Navigate(typeof(WelcomePage));
+                ValueSet request = new()
+                {
+                    { "InterCommunication", JsonSerializer.Serialize(new Common.InterCommunication { InterCommunicationType = InterCommunicationType.ReportPrivilege }) }
+                };
 
-                SystemNavigationManagerPreview mgr = SystemNavigationManagerPreview.GetForCurrentView();
-                mgr.CloseRequested += SystemNavigationManager_CloseRequested;
+                bool isBrokerPrivileged = (bool)(await Connection.SendMessageAsync(request)).Message["Privileged"];
+
+                if(isBrokerPrivileged)
+                {
+                    rootFrame.Navigate(typeof(WelcomePage));
+                    SystemNavigationManagerPreview mgr = SystemNavigationManagerPreview.GetForCurrentView();
+                    mgr.CloseRequested += SystemNavigationManager_CloseRequested;
+                }
             }
 
             // Ensure the current window is active
