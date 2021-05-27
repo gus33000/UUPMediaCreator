@@ -169,11 +169,8 @@ namespace UUPMediaCreator
                     bool isBrokerPrivileged = (bool)(await Connection.SendMessageAsync(request)).Message["Privileged"];
                     rootFrame.Navigate(isBrokerPrivileged ? typeof(WelcomePage) : typeof(AdministratorAccessRequiredPage));
 
-                    if(isBrokerPrivileged) 
-                    {
-                        SystemNavigationManagerPreview mgr = SystemNavigationManagerPreview.GetForCurrentView();
-                        mgr.CloseRequested += SystemNavigationManager_CloseRequested;
-                    }
+                    SystemNavigationManagerPreview mgr = SystemNavigationManagerPreview.GetForCurrentView();
+                    mgr.CloseRequested += SystemNavigationManager_CloseRequested;
                 }
                 else
                 {
@@ -192,9 +189,9 @@ namespace UUPMediaCreator
                 if(isBrokerPrivileged)
                 {
                     rootFrame.Navigate(typeof(WelcomePage));
-                    SystemNavigationManagerPreview mgr = SystemNavigationManagerPreview.GetForCurrentView();
-                    mgr.CloseRequested += SystemNavigationManager_CloseRequested;
                 }
+                SystemNavigationManagerPreview mgr = SystemNavigationManagerPreview.GetForCurrentView();
+                mgr.CloseRequested += SystemNavigationManager_CloseRequested;
             }
 
             // Ensure the current window is active
