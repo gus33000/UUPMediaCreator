@@ -70,7 +70,8 @@ namespace UUPMediaCreator.InterCommunication
         {
             Exit,
             ReportISOConversionProgress,
-            StartISOConversionProcess
+            StartISOConversionProcess,
+            ReportPrivilege
         }
 
         public class InterCommunication
