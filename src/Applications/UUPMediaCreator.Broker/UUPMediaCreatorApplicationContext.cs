@@ -64,7 +64,7 @@ namespace UUPMediaCreator.Broker
             }
         }
 
-        private void Connection_RequestReceived(AppServiceConnection sender, AppServiceRequestReceivedEventArgs args)
+        private async void Connection_RequestReceived(AppServiceConnection sender, AppServiceRequestReceivedEventArgs args)
         {
             ValueSet message = args.Request.Message;
             if (message.ContainsKey("InterCommunication"))
@@ -149,6 +149,13 @@ namespace UUPMediaCreator.Broker
                             thread.Start();
                             break;
                         }
+                    case Common.InterCommunicationType.ReportPrivilege:
+                        ValueSet val = new()
+                        {
+                            { "Privileged", new WindowsPrincipal(WindowsIdentity.GetCurrent()).IsInRole(WindowsBuiltInRole.Administrator) }
+                        };
+                        await args.Request.SendResponseAsync(val);
+                        break;
                 }
             }
         }
