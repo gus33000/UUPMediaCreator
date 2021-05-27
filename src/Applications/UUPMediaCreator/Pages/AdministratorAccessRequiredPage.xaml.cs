@@ -31,7 +31,7 @@ namespace UUPMediaCreator.UWP.Pages
             this.InitializeComponent();
         }
 
-        private void WizardPage_NextClicked(object sender, RoutedEventArgs e)
+        private async void WizardPage_NextClicked(object sender, RoutedEventArgs e)
         {
             if(App.Connection != null)
             {
