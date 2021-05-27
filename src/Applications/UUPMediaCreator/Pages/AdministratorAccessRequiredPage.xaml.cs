@@ -33,6 +33,10 @@ namespace UUPMediaCreator.UWP.Pages
 
         private void WizardPage_NextClicked(object sender, RoutedEventArgs e)
         {
+            if(App.Connection != null)
+            {
+                await App.Connection.SendMessageAsync(new Windows.Foundation.Collections.ValueSet() { { "InterCommunication", JsonSerializer.Serialize(new Common.InterCommunication { InterCommunicationType = Common.InterCommunicationType.Exit }) } });
+            }
             Application.Current.Exit();
         }
     }
