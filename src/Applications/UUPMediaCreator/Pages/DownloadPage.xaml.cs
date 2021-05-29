@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Copyright (c) Gustave Monce and Contributors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -23,6 +23,7 @@ using DownloadLib;
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -44,7 +45,10 @@ namespace UUPMediaCreator.UWP.Pages
 
             App.ConversionPlan.TmpOutputFolder = await UpdateUtils.ProcessUpdateAsync(App.ConversionPlan.UpdateData, tmp.Path, App.ConversionPlan.MachineType, this, App.ConversionPlan.Language, App.ConversionPlan.Edition, UseAutomaticDownloadFolder: false).ConfigureAwait(false);
 
-            Frame.Navigate(typeof(BuildingISOPage));
+            await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () => 
+            {
+                Frame.Navigate(typeof(BuildingISOPage));
+            });
         }
 
         private void WizardPage_NextClicked(object sender, RoutedEventArgs e)
@@ -112,10 +116,16 @@ namespace UUPMediaCreator.UWP.Pages
 
                 uint progress = (uint)Math.Round((double)status.DownloadedBytes / status.File.FileSize * 100);
 
-                ProgressBar.IsIndeterminate = false;
-                StatusText.Text = $"{msg} {status.File.FileName} ({FormatBytes(status.File.FileSize)}) ({progress}%)";
-                ProgressBar.Maximum = e.NumFiles;
-                ProgressBar.Value = e.NumFilesDownloadedSuccessfully;
+                Task.Run(async () =>
+                {
+                    await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+                    {
+                        ProgressBar.IsIndeterminate = false;
+                        StatusText.Text = $"{msg} {status.File.FileName} ({FormatBytes(status.File.FileSize)}) ({progress}%)";
+                        ProgressBar.Maximum = e.NumFiles;
+                        ProgressBar.Value = e.NumFilesDownloadedSuccessfully;
+                    });
+                });
             }
 
             mutex.ReleaseMutex();
