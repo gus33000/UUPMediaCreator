@@ -45,10 +45,7 @@ namespace UUPMediaCreator.UWP.Pages
 
             App.ConversionPlan.TmpOutputFolder = await UpdateUtils.ProcessUpdateAsync(App.ConversionPlan.UpdateData, tmp.Path, App.ConversionPlan.MachineType, this, App.ConversionPlan.Language, App.ConversionPlan.Edition, UseAutomaticDownloadFolder: false).ConfigureAwait(false);
 
-            await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () => 
-            {
-                Frame.Navigate(typeof(BuildingISOPage));
-            });
+            Frame.Navigate(typeof(BuildingISOPage));
         }
 
         private void WizardPage_NextClicked(object sender, RoutedEventArgs e)
