@@ -32,6 +32,13 @@ namespace UUPDownload
             Error
         }
 
+        private static ConsoleColor Foreground;
+
+        static Logging()
+        {
+            Foreground = Console.ForegroundColor;
+        }
+
         private static readonly object lockObj = new();
 
         public static void Log(string message, LoggingLevel severity = LoggingLevel.Information, bool returnline = true)
@@ -60,7 +67,7 @@ namespace UUPDownload
 
                     case LoggingLevel.Information:
                         msg = "Information";
-                        Console.ForegroundColor = ConsoleColor.White;
+                        Console.ForegroundColor = Foreground;
                         break;
                 }
 
@@ -73,7 +80,7 @@ namespace UUPDownload
                     Console.Write("\r" + DateTime.Now.ToString("'['HH':'mm':'ss']'") + "[" + msg + "] " + message);
                 }
 
-                Console.ForegroundColor = ConsoleColor.White;
+                Console.ForegroundColor = Foreground;
             }
         }
     }

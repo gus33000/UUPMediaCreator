@@ -155,6 +155,21 @@ namespace DownloadLib
                             if ((getSpecificLanguageOnly && langMatching) || (getSpecific && editionMatching && langMatching) || (!hasLang && !hasEdition && cdb.Tags?.Type.Equals("Neutral", StringComparison.InvariantCultureIgnoreCase) == false))
                             {
                                 specificCompDBs.Add(cdb);
+
+                                foreach (CompDBXmlClass.Package pkg in cdb.Packages.Package)
+                                {
+                                    foreach (CompDBXmlClass.PayloadItem item in pkg.Payload.PayloadItem)
+                                    {
+                                        if (item.PayloadType.Equals("Diff", StringComparison.InvariantCultureIgnoreCase))
+                                        {
+                                            bannedPayloadItems.Add(item);
+                                        }
+                                        else
+                                        {
+                                            payloadItems.Add(item);
+                                        }
+                                    }
+                                }
                             }
                             else if (cdb.Tags.Type.Equals("Language", StringComparison.InvariantCultureIgnoreCase) ||
                                 cdb.Tags.Type.Equals("Edition", StringComparison.InvariantCultureIgnoreCase) ||
@@ -179,6 +194,10 @@ namespace DownloadLib
                                         {
                                             bannedPayloadItems.Add(item);
                                         }
+                                        else
+                                        {
+                                            payloadItems.Add(item);
+                                        }
                                     }
                                 }
                             }
@@ -192,6 +211,10 @@ namespace DownloadLib
                                     if (item.PayloadType.Equals("Diff", StringComparison.InvariantCultureIgnoreCase))
                                     {
                                         bannedPayloadItems.Add(item);
+                                    }
+                                    else
+                                    {
+                                        payloadItems.Add(item);
                                     }
                                 }
                             }
@@ -252,7 +275,7 @@ namespace DownloadLib
                 IEnumerable<(CExtendedUpdateInfoXml.File, FileExchangeV3FileDownloadInformation)> boundList = filesToDownload
                     .AsParallel()
                     .Select(x => (x, fileUrls.First(y => y.Digest == x.Digest)))
-                    .Where(x => UpdateUtils.ShouldFileGetDownloaded(x.x, payloadItems))
+                    //.Where(x => UpdateUtils.ShouldFileGetDownloaded(x.x, payloadItems))
                     .OrderBy(x => x.Item2.ExpirationDate);
 
                 IEnumerable<UUPFile> fileList = boundList.Select(boundFile =>
