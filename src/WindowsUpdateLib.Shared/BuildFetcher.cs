@@ -241,9 +241,9 @@ namespace WindowsUpdateLib
             return update;
         }
 
-        private static void AddUpdatesIfNotPresentAlready(ICollection<UpdateData> updates, IEnumerable<UpdateData> uncleanedData)
+        private static void AddUpdatesIfNotPresentAlready(ICollection<UpdateData> updates, IEnumerable<UpdateData> data)
         {
-            UpdateData[] data = uncleanedData.Select(x => TrimDeltasFromUpdateData(x)).ToArray();
+            //UpdateData[] data = uncleanedData.Select(x => TrimDeltasFromUpdateData(x)).ToArray();
 
             foreach (UpdateData update in data)
             {

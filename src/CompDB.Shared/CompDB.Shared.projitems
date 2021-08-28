@@ -11,5 +11,6 @@
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)CompDB.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CompDBExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CompDBObjects.cs" />
   </ItemGroup>
 </Project>

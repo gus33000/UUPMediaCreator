@@ -130,20 +130,29 @@ namespace DownloadLib
             {
                 foreach (CompDBXmlClass.CompDB cdb in compDBs)
                 {
-                    if (getSpecific || getSpecificLanguageOnly)
+                    bool IsDiff = cdb.Tags?.Tag?.Any(x => x.Name.Equals("UpdateType", StringComparison.InvariantCultureIgnoreCase) && (x.Value.Equals("Diff", StringComparison.InvariantCultureIgnoreCase) || x.Value.Equals("Baseless", StringComparison.InvariantCultureIgnoreCase))) == true;
+
+                    if (IsDiff)
                     {
-                        bool hasLang = cdb.Tags?.Tag?.Any(x => x.Name.Equals("Language", StringComparison.InvariantCultureIgnoreCase)) == true;
-                        bool hasEdition = cdb.Tags?.Tag?.Any(x => x.Name.Equals("Edition", StringComparison.InvariantCultureIgnoreCase)) == true;
-
-                        bool editionMatching = cdb.Tags?.Tag?.Any(x => x.Name.Equals("Edition", StringComparison.InvariantCultureIgnoreCase) && x.Value.Equals(Edition, StringComparison.InvariantCultureIgnoreCase)) == true;
-                        bool langMatching = cdb.Tags?.Tag?.Any(x => x.Name.Equals("Language", StringComparison.InvariantCultureIgnoreCase) && x.Value.Equals(Language, StringComparison.InvariantCultureIgnoreCase)) == true;
-                        bool typeMatching = cdb.Tags?.Tag?.Any(x => x.Name.Equals("UpdateType", StringComparison.InvariantCultureIgnoreCase) && (x.Value.Equals("Canonical", StringComparison.InvariantCultureIgnoreCase))) == true;
-
-                        bool isDiff = cdb.Tags?.Tag?.Any(x => x.Name.Equals("UpdateType", StringComparison.InvariantCultureIgnoreCase) && (x.Value.Equals("Diff", StringComparison.InvariantCultureIgnoreCase) || x.Value.Equals("Baseless", StringComparison.InvariantCultureIgnoreCase))) == true;
-
-                        if (typeMatching)
+                        foreach (CompDBXmlClass.Package pkg in cdb.Packages.Package)
                         {
-                            if ((getSpecificLanguageOnly && langMatching) || (getSpecific && editionMatching && langMatching))
+                            foreach (CompDBXmlClass.PayloadItem item in pkg.Payload.PayloadItem)
+                            {
+                                bannedPayloadItems.Add(item);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (getSpecific || getSpecificLanguageOnly)
+                        {
+                            bool hasLang = cdb.Tags?.Tag?.Any(x => x.Name.Equals("Language", StringComparison.InvariantCultureIgnoreCase)) == true;
+                            bool hasEdition = cdb.Tags?.Tag?.Any(x => x.Name.Equals("Edition", StringComparison.InvariantCultureIgnoreCase)) == true;
+
+                            bool editionMatching = cdb.Tags?.Tag?.Any(x => x.Name.Equals("Edition", StringComparison.InvariantCultureIgnoreCase) && x.Value.Equals(Edition, StringComparison.InvariantCultureIgnoreCase)) == true;
+                            bool langMatching = cdb.Tags?.Tag?.Any(x => x.Name.Equals("Language", StringComparison.InvariantCultureIgnoreCase) && x.Value.Equals(Language, StringComparison.InvariantCultureIgnoreCase)) == true;
+
+                            if ((getSpecificLanguageOnly && langMatching) || (getSpecific && editionMatching && langMatching) || (!hasLang && !hasEdition && cdb.Tags?.Type.Equals("Neutral", StringComparison.InvariantCultureIgnoreCase) == false))
                             {
                                 specificCompDBs.Add(cdb);
                             }
@@ -154,71 +163,38 @@ namespace DownloadLib
                             {
                                 foreach (CompDBXmlClass.Package pkg in cdb.Packages.Package)
                                 {
-                                    bannedPayloadItems.Add(pkg.Payload.PayloadItem);
+                                    foreach (CompDBXmlClass.PayloadItem item in pkg.Payload.PayloadItem)
+                                    {
+                                        bannedPayloadItems.Add(item);
+                                    }
                                 }
                             }
                             else
                             {
                                 foreach (CompDBXmlClass.Package pkg in cdb.Packages.Package)
                                 {
-                                    if (pkg.Payload.PayloadItem.PayloadType.Equals("Diff", StringComparison.InvariantCultureIgnoreCase))
+                                    foreach (CompDBXmlClass.PayloadItem item in pkg.Payload.PayloadItem)
                                     {
-                                        bannedPayloadItems.Add(pkg.Payload.PayloadItem);
+                                        if (item.PayloadType.Equals("Diff", StringComparison.InvariantCultureIgnoreCase))
+                                        {
+                                            bannedPayloadItems.Add(item);
+                                        }
                                     }
                                 }
                             }
                         }
-                        else if (isDiff)
-                        {
-                            foreach (CompDBXmlClass.Package pkg in cdb.Packages.Package)
-                            {
-                                bannedPayloadItems.Add(pkg.Payload.PayloadItem);
-                            }
-                        }
                         else
                         {
                             foreach (CompDBXmlClass.Package pkg in cdb.Packages.Package)
                             {
-                                if (pkg.Payload.PayloadItem.PayloadType.Equals("Diff", StringComparison.InvariantCultureIgnoreCase))
+                                foreach (CompDBXmlClass.PayloadItem item in pkg.Payload.PayloadItem)
                                 {
-                                    bannedPayloadItems.Add(pkg.Payload.PayloadItem);
+                                    if (item.PayloadType.Equals("Diff", StringComparison.InvariantCultureIgnoreCase))
+                                    {
+                                        bannedPayloadItems.Add(item);
+                                    }
                                 }
                             }
-                        }
-                    }
-                    else
-                    {
-                        bool isDiff = cdb.Tags?.Tag?.Any(x => x.Name.Equals("UpdateType", StringComparison.InvariantCultureIgnoreCase) && (x.Value.Equals("Diff", StringComparison.InvariantCultureIgnoreCase) || x.Value.Equals("Baseless", StringComparison.InvariantCultureIgnoreCase))) == true;
-
-                        if (isDiff)
-                        {
-                            foreach (CompDBXmlClass.Package pkg in cdb.Packages.Package)
-                            {
-                                bannedPayloadItems.Add(pkg.Payload.PayloadItem);
-                            }
-                        }
-                        else
-                        {
-                            foreach (CompDBXmlClass.Package pkg in cdb.Packages.Package)
-                            {
-                                if (pkg.Payload.PayloadItem.PayloadType.Equals("Diff", StringComparison.InvariantCultureIgnoreCase))
-                                {
-                                    bannedPayloadItems.Add(pkg.Payload.PayloadItem);
-                                }
-                            }
-                        }
-                    }
-
-                    foreach (CompDBXmlClass.Package pkg in cdb.Packages.Package)
-                    {
-                        payloadItems.Add(pkg.Payload.PayloadItem);
-                    }
-
-                    if (cdb.AppX != null)
-                    {
-                        foreach (CompDBXmlClass.Package pkg in cdb.AppX.AppXPackages.Package)
-                        {
-                            payloadItems.Add(pkg.Payload.PayloadItem);
                         }
                     }
                 }
@@ -236,7 +212,10 @@ namespace DownloadLib
                     {
                         foreach (CompDBXmlClass.Package pkg in specificCompDB.Packages.Package)
                         {
-                            bannedPayloadItems.RemoveWhere(x => x.PayloadHash == pkg.Payload.PayloadItem.PayloadHash);
+                            foreach (CompDBXmlClass.PayloadItem item in pkg.Payload.PayloadItem)
+                            {
+                                bannedPayloadItems.RemoveWhere(x => x.PayloadHash == item.PayloadHash);
+                            }
                         }
                     }
                 }

@@ -79,7 +79,7 @@ namespace UUPDownload
                 }
 
                 IEnumerable<UpdateData> data = await FE3Handler.GetUpdates(null, ctac, token, FileExchangeV3UpdateFilter.ProductRelease).ConfigureAwait(false);
-                data = data.Select(x => UpdateUtils.TrimDeltasFromUpdateData(x));
+                //data = data.Select(x => UpdateUtils.TrimDeltasFromUpdateData(x));
 
                 for (int i = 0; i < data.Count(); i++)
                 {

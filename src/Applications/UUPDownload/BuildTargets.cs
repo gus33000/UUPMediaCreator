@@ -22,6 +22,7 @@
 using CompDB;
 using MediaCreationLib.Planning.NET;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using WindowsUpdateLib;
 
@@ -40,7 +41,7 @@ namespace UUPDownload
             HashSet<CompDBXmlClass.CompDB> compDBs = await update.GetCompDBsAsync().ConfigureAwait(false);
             CompDBXmlClass.Package editionPackPkg = compDBs.GetEditionPackFromCompDBs();
 
-            string editionPkg = await update.DownloadFileFromDigestAsync(editionPackPkg.Payload.PayloadItem.PayloadHash).ConfigureAwait(false);
+            string editionPkg = await update.DownloadFileFromDigestAsync(editionPackPkg.Payload.PayloadItem.First(x => !x.Path.EndsWith(".psf")).PayloadHash).ConfigureAwait(false);
             return await update.GetTargetedPlanAsync(LanguageCode, editionPkg).ConfigureAwait(false);
         }
 

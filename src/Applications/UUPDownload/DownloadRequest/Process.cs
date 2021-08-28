@@ -105,7 +105,7 @@ namespace UUPDownload.DownloadRequest
             }
 
             IEnumerable<UpdateData> data = await FE3Handler.GetUpdates(null, ctac, token, FileExchangeV3UpdateFilter.ProductRelease).ConfigureAwait(false);
-            data = data.Select(x => UpdateUtils.TrimDeltasFromUpdateData(x));
+            //data = data.Select(x => UpdateUtils.TrimDeltasFromUpdateData(x));
 
             if (!data.Any())
             {
@@ -163,7 +163,7 @@ namespace UUPDownload.DownloadRequest
                 CompDBXmlClass.Package editionPackPkg = compDBs.GetEditionPackFromCompDBs();
                 if (editionPackPkg != null)
                 {
-                    string editionPkg = await update.DownloadFileFromDigestAsync(editionPackPkg.Payload.PayloadItem.PayloadHash).ConfigureAwait(false);
+                    string editionPkg = await update.DownloadFileFromDigestAsync(editionPackPkg.Payload.PayloadItem.First(x => !x.Path.EndsWith(".psf")).PayloadHash).ConfigureAwait(false);
                     BuildTargets.EditionPlanningWithLanguage[] plans = await Task.WhenAll(languages.Select(x => update.GetTargetedPlanAsync(x, editionPkg))).ConfigureAwait(false);
 
                     foreach (BuildTargets.EditionPlanningWithLanguage plan in plans)

@@ -30,7 +30,7 @@ namespace CompDB
     {
         public static string GetCommonlyUsedIncorrectFileName(this CompDBXmlClass.Package pkg)
         {
-            return pkg.Payload.PayloadItem.Path.Replace('\\', Path.DirectorySeparatorChar).Split(Path.DirectorySeparatorChar).Last().Replace("~31bf3856ad364e35", "").Replace("~.", ".").Replace("~", "-").Replace("-.", ".");
+            return pkg.Payload.PayloadItem.First(x => !x.Path.EndsWith(".psf")).Path.Replace('\\', Path.DirectorySeparatorChar).Split(Path.DirectorySeparatorChar).Last().Replace("~31bf3856ad364e35", "").Replace("~.", ".").Replace("~", "-").Replace("-.", ".");
         }
 
         public static CompDBXmlClass.CompDB GetNeutralCompDB(this IEnumerable<CompDBXmlClass.CompDB> compDBs)
@@ -43,7 +43,8 @@ namespace CompDB
                 if (compDB.Tags != null)
                 {
                     if (compDB.Tags.Type.Equals("Neutral", StringComparison.InvariantCultureIgnoreCase) &&
-                        compDB.Tags.Tag?.Find(x => x.Name.Equals("UpdateType", StringComparison.InvariantCultureIgnoreCase))?.Value?.Equals("Canonical", StringComparison.InvariantCultureIgnoreCase) == true)
+                        compDB.Tags.Tag?.Find(x => x.Name.Equals("UpdateType", StringComparison.InvariantCultureIgnoreCase))?.Value?.Equals("Canonical", StringComparison.InvariantCultureIgnoreCase) == true && 
+                        compDB.Features.Feature != null)
                     {
                         return compDB;
                     }
@@ -168,12 +169,12 @@ namespace CompDB
                     {
                         CompDBXmlClass.Package pkg = filteredCompDBs.First().Packages.Package.First(x => x.ID == feature.ID);
 
-                        string file = pkg.Payload.PayloadItem.Path.Replace('\\', Path.DirectorySeparatorChar);
+                        var files = pkg.Payload.PayloadItem.Select(x => x.Path.Replace('\\', Path.DirectorySeparatorChar));
 
-                        if (!file.EndsWith(".esd", StringComparison.InvariantCultureIgnoreCase) ||
+                        if (files.Any(file => !file.EndsWith(".esd", StringComparison.InvariantCultureIgnoreCase) ||
                             !file.Contains("microsoft-windows-editionspecific", StringComparison.InvariantCultureIgnoreCase) ||
                             file.Contains("WOW64", StringComparison.InvariantCultureIgnoreCase) ||
-                            file.Contains("arm64.arm", StringComparison.InvariantCultureIgnoreCase))
+                            file.Contains("arm64.arm", StringComparison.InvariantCultureIgnoreCase)))
                         {
                             // We do not care about this file
                             continue;
@@ -193,9 +194,18 @@ namespace CompDB
                     {
                         minpkg = pkg;
                     }
-                    else if (ulong.Parse(minpkg.Payload.PayloadItem.PayloadSize) > ulong.Parse(pkg.Payload.PayloadItem.PayloadSize))
+                    else
                     {
-                        minpkg = pkg;
+                        foreach (var minitem in minpkg.Payload.PayloadItem)
+                        {
+                            foreach (var item in minpkg.Payload.PayloadItem)
+                            {
+                                if (ulong.Parse(minitem.PayloadSize) > ulong.Parse(item.PayloadSize))
+                                {
+                                    minpkg = pkg;
+                                }
+                            }
+                        }
                     }
                 }
             }

@@ -117,7 +117,7 @@ namespace MediaCreationLib.Planning.NET
                 //
                 // Wow, someone actually downloaded UUP files using a tool that respects Microsoft paths, that's exceptional
                 //
-                file = pkg.Payload.PayloadItem.Path.Replace('\\', Path.DirectorySeparatorChar);
+                file = pkg.Payload.PayloadItem.First(x => !x.Path.EndsWith(".psf")).Path.Replace('\\', Path.DirectorySeparatorChar);
                 if (!File.Exists(Path.Combine(UUPPath, file)))
                 {
                     //

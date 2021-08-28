@@ -124,7 +124,7 @@ namespace Imaging
             }
         }
 
-        public WIMImaging()
+        static WIMImaging()
         {
             InitNativeLibrary();
         }
