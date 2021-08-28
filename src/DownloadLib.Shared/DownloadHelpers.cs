@@ -282,7 +282,8 @@ namespace DownloadLib
                         boundFile.Item2,
                         UpdateUtils.GetFilenameForCEUIFile(boundFile.Item1, payloadItems),
                         long.Parse(boundFile.Item1.Size),
-                        boundFile.Item1.AdditionalDigest.Text);
+                        boundFile.Item1.AdditionalDigest.Text,
+                        boundFile.Item1.AdditionalDigest.Algorithm);
                 });
 
                 returnCode = await helperDl.DownloadAsync(fileList.ToList(), generalDownloadProgress).ConfigureAwait(false) ? 0 : -1;

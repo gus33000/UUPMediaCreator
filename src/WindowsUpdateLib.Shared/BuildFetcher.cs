@@ -185,7 +185,7 @@ namespace WindowsUpdateLib
                     UpdateData.CachedMetadata = metadataCabTemp;
                 }
 
-                IReadOnlyCollection<string> cabinetFiles = CabinetExtractor.EnumCabinetFiles(UpdateData.CachedMetadata);
+                IEnumerable<string> cabinetFiles = CabinetExtractor.EnumCabinetFiles(UpdateData.CachedMetadata).Select(x => x.FileName);
 
                 IEnumerable<string> potentialFiles = cabinetFiles.Where(x =>
                         x.Contains("desktoptargetcompdb_", StringComparison.CurrentCultureIgnoreCase) &&

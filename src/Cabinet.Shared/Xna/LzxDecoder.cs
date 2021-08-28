@@ -202,7 +202,7 @@ namespace Microsoft.Xna.Framework
                     m_state.block_type = (LzxConstants.BLOCKTYPE)bitbuf.ReadBits(3);
                     i = bitbuf.ReadBits(16);
                     j = bitbuf.ReadBits(8);
-                    m_state.block_remaining = m_state.block_length = (uint)((i << 8) | j);
+                    m_state.block_remaining = m_state.block_length = (i << 8) | j;
 
                     switch (m_state.block_type)
                     {

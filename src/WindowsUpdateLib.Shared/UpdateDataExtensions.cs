@@ -284,7 +284,7 @@ namespace WindowsUpdateLib
 
                     foreach (string file in Directory.EnumerateFiles(tmp, "*", SearchOption.AllDirectories))
                     {
-                        byte[] xmlfile = CabinetExtractor.ExtractCabinetFile(file, CabinetExtractor.EnumCabinetFiles(file).First());
+                        byte[] xmlfile = CabinetExtractor.ExtractCabinetFile(file, CabinetExtractor.EnumCabinetFiles(file).First().FileName);
                         using Stream xmlstream = new MemoryStream(xmlfile);
                         neutralCompDB.Add(CompDBXmlClass.DeserializeCompDB(xmlstream));
                     }
@@ -321,7 +321,7 @@ namespace WindowsUpdateLib
 
                         update.CachedMetadata = metadataCabTemp;
 
-                        byte[] xmlfile = CabinetExtractor.ExtractCabinetFile(update.CachedMetadata, CabinetExtractor.EnumCabinetFiles(update.CachedMetadata).First());
+                        byte[] xmlfile = CabinetExtractor.ExtractCabinetFile(update.CachedMetadata, CabinetExtractor.EnumCabinetFiles(update.CachedMetadata).First().FileName);
                         using Stream xmlstream = new MemoryStream(xmlfile);
                         neutralCompDB.Add(CompDBXmlClass.DeserializeCompDB(xmlstream));
                     }

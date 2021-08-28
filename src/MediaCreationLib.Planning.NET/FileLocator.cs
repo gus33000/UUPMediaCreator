@@ -43,14 +43,14 @@ namespace MediaCreationLib.Planning.NET
                 {
                     string? cabFile = enumeratedFiles.First();
 
-                    foreach (string? file in CabinetExtractor.EnumCabinetFiles(cabFile).Where(x => x.EndsWith(".xml.cab", StringComparison.InvariantCultureIgnoreCase)))
+                    foreach (string? file in CabinetExtractor.EnumCabinetFiles(cabFile).Where(x => x.FileName.EndsWith(".xml.cab", StringComparison.InvariantCultureIgnoreCase)).Select(x => x.FileName))
                     {
                         try
                         {
                             string? tmp = Path.GetTempFileName();
                             File.WriteAllBytes(tmp, CabinetExtractor.ExtractCabinetFile(cabFile, file));
 
-                            byte[] xmlfile = CabinetExtractor.ExtractCabinetFile(tmp, CabinetExtractor.EnumCabinetFiles(tmp).First());
+                            byte[] xmlfile = CabinetExtractor.ExtractCabinetFile(tmp, CabinetExtractor.EnumCabinetFiles(tmp).First().FileName);
 
                             using Stream xmlstream = new MemoryStream(xmlfile);
                             compDBs.Add(CompDBXmlClass.DeserializeCompDB(xmlstream));
@@ -70,7 +70,7 @@ namespace MediaCreationLib.Planning.NET
                         {
                             string? cabFile = Path.Combine(UUPPath, file);
 
-                            byte[] xmlfile = CabinetExtractor.ExtractCabinetFile(cabFile, CabinetExtractor.EnumCabinetFiles(cabFile).First());
+                            byte[] xmlfile = CabinetExtractor.ExtractCabinetFile(cabFile, CabinetExtractor.EnumCabinetFiles(cabFile).First().FileName);
 
                             using Stream xmlstream = new MemoryStream(xmlfile);
                             compDBs.Add(CompDBXmlClass.DeserializeCompDB(xmlstream));

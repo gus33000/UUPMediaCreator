@@ -396,7 +396,7 @@ namespace WindowsUpdateLib
 
         #region Application specific functions
 
-        public static async Task<IEnumerable<UpdateData>> GetUpdates(string categoryId, CTAC ctac, string token, FileExchangeV3UpdateFilter filter = FileExchangeV3UpdateFilter.Application) // Or ProductRelease
+        public static async Task<IEnumerable<UpdateData>> GetUpdates(string[] categoryIds, CTAC ctac, string token, FileExchangeV3UpdateFilter filter = FileExchangeV3UpdateFilter.Application) // Or ProductRelease
         {
             (CGetCookieResponse.GetCookieResponse cookie, string cookieresp) = await GetCookie().ConfigureAwait(false);
 
@@ -412,7 +412,7 @@ namespace WindowsUpdateLib
             //
             while (true)
             {
-                (CSyncUpdatesResponse.SyncUpdatesResponse, string) result = await SyncUpdates(cookie.GetCookieResult, token, InstalledNonLeafUpdateIDs, OtherCachedUpdateIDs, string.IsNullOrEmpty(categoryId) ? Array.Empty<string>() : new string[] { categoryId }, ctac).ConfigureAwait(false);
+                (CSyncUpdatesResponse.SyncUpdatesResponse, string) result = await SyncUpdates(cookie.GetCookieResult, token, InstalledNonLeafUpdateIDs, OtherCachedUpdateIDs, categoryIds == null ? Array.Empty<string>() : categoryIds, ctac).ConfigureAwait(false);
 
                 // Refresh the cookie
                 cookie.GetCookieResult.EncryptedData = result.Item1.SyncUpdatesResult.NewCookie.EncryptedData;
@@ -541,7 +541,8 @@ namespace WindowsUpdateLib
     public enum FileExchangeV3UpdateFilter
     {
         ProductRelease,
-        Application
+        Application,
+        OSFlight
     }
 
     public class FileExchangeV3FileDownloadInformation

@@ -71,14 +71,16 @@ namespace DownloadLib
         public FileExchangeV3FileDownloadInformation WUFile { get; set; }
         public string FileName { get; set; }
         public long FileSize { get; set; }
-        public string SHA256 { get; set; }
+        public string Hash { get; set; }
+        public string HashAlgorithm { get; set; }
 
-        public UUPFile(FileExchangeV3FileDownloadInformation WUFile, string FileName, long FileSize, string SHA256)
+        public UUPFile(FileExchangeV3FileDownloadInformation WUFile, string FileName, long FileSize, string Hash, string HashAlgorithm)
         {
             this.WUFile = WUFile;
             this.FileName = FileName;
             this.FileSize = FileSize;
-            this.SHA256 = SHA256;
+            this.Hash = Hash;
+            this.HashAlgorithm = HashAlgorithm;
         }
     }
 
@@ -566,8 +568,18 @@ namespace DownloadLib
                     });
                 };
 
-                bool hashMatches = await IsDownloadedFileValidSHA256(strm, downloadFile.SHA256,
+                bool hashMatches = true;
+                switch (downloadFile.HashAlgorithm.ToLower())
+                {
+                    case "sha1":
+                        hashMatches = await IsDownloadedFileValidSHA1(strm, downloadFile.Hash,
                                                         progressHashedBytes, cancellationToken).ConfigureAwait(false);
+                        break;
+                    case "sha256":
+                        hashMatches = await IsDownloadedFileValidSHA256(strm, downloadFile.Hash,
+                                                        progressHashedBytes, cancellationToken).ConfigureAwait(false);
+                        break;
+                }
 
                 if (hashMatches)
                 {
@@ -597,6 +609,13 @@ namespace DownloadLib
         private static async ValueTask<bool> IsDownloadedFileValidSHA256(Stream fileStream, string base64Hash, IProgress<long> progress = null, CancellationToken cancellationToken = default)
         {
             using SHA256 hashAlgo = SHA256.Create();
+            byte[] hashByte = await ComputeHashAsyncT(hashAlgo, fileStream, progress, cancellationToken: cancellationToken).ConfigureAwait(false);
+            return ByteArraySpanCompare(Convert.FromBase64String(base64Hash), hashByte);
+        }
+
+        private static async ValueTask<bool> IsDownloadedFileValidSHA1(Stream fileStream, string base64Hash, IProgress<long> progress = null, CancellationToken cancellationToken = default)
+        {
+            using SHA1 hashAlgo = SHA1.Create();
             byte[] hashByte = await ComputeHashAsyncT(hashAlgo, fileStream, progress, cancellationToken: cancellationToken).ConfigureAwait(false);
             return ByteArraySpanCompare(Convert.FromBase64String(base64Hash), hashByte);
         }
