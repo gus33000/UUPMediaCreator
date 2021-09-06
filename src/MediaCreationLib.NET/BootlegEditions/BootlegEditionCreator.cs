@@ -333,8 +333,8 @@ namespace MediaCreationLib.BootlegEditions
             string newManifestPath = Path.Combine(SxSFolder, manifestFileName);
             string newCatalogPath = Path.Combine(SxSFolder, catalogFileName);
 
-            File.Copy(manifestPath, newManifestPath);
-            File.Copy(catalogPath, newCatalogPath);
+            File.Copy(manifestPath, newManifestPath, true);
+            File.Copy(catalogPath, newCatalogPath, true);
 
             string ManifestContent = File.ReadAllText(newManifestPath);
             ManifestContent = ManifestContent.Replace($"EditionSpecific-{SourceEdition}", $"EditionSpecific-{EditionID}").Replace($"Windows {SourceEdition} Edition", $"Windows {EditionID} Edition").Replace($"Microsoft-Windows-{SourceEdition}Edition", $"Microsoft-Windows-{EditionID}Edition");
@@ -549,12 +549,12 @@ namespace MediaCreationLib.BootlegEditions
 
             if (HandleOEMDefaultAssociationsXml)
             {
-                File.Copy(OEMDefaultAssociationsXmlInImage, OEMDefaultAssociationsXml);
+                File.Copy(OEMDefaultAssociationsXmlInImage, OEMDefaultAssociationsXml, true);
             }
 
             if (HandleOEMDefaultAssociationsDll)
             {
-                File.Copy(OEMDefaultAssociationsDllInImage, OEMDefaultAssociationsDll);
+                File.Copy(OEMDefaultAssociationsDllInImage, OEMDefaultAssociationsDll, true);
             }
 
             //
@@ -591,7 +591,7 @@ namespace MediaCreationLib.BootlegEditions
             string editionXml = Path.Combine(MountedImagePath, "Windows", "servicing", "Editions", $"{EditionID}Edition.xml");
             string desintationEditionXml = Path.Combine(MountedImagePath, "Windows", $"{EditionID}.xml");
 
-            File.Copy(editionXml, desintationEditionXml);
+            File.Copy(editionXml, desintationEditionXml, true);
 
             //
             // Delete old edition xml
