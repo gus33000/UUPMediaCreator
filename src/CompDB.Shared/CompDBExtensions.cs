@@ -44,7 +44,8 @@ namespace CompDB
                 {
                     if (compDB.Tags.Type.Equals("Neutral", StringComparison.InvariantCultureIgnoreCase) &&
                         compDB.Tags.Tag?.Find(x => x.Name.Equals("UpdateType", StringComparison.InvariantCultureIgnoreCase))?.Value?.Equals("Canonical", StringComparison.InvariantCultureIgnoreCase) == true && 
-                        compDB.Features.Feature != null)
+                        compDB.Features?.Feature != null &&
+                        compDB.Packages?.Package != null)
                     {
                         return compDB;
                     }
