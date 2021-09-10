@@ -152,7 +152,7 @@ namespace DownloadLib
                             bool editionMatching = cdb.Tags?.Tag?.Any(x => x.Name.Equals("Edition", StringComparison.InvariantCultureIgnoreCase) && x.Value.Equals(Edition, StringComparison.InvariantCultureIgnoreCase)) == true;
                             bool langMatching = cdb.Tags?.Tag?.Any(x => x.Name.Equals("Language", StringComparison.InvariantCultureIgnoreCase) && x.Value.Equals(Language, StringComparison.InvariantCultureIgnoreCase)) == true;
 
-                            if ((getSpecificLanguageOnly && langMatching) || (getSpecific && editionMatching && langMatching) || (!hasLang && !hasEdition && cdb.Tags?.Type.Equals("Neutral", StringComparison.InvariantCultureIgnoreCase) == false))
+                            if (cdb.Tags != null && ((getSpecificLanguageOnly && langMatching) || (getSpecific && editionMatching && langMatching) || (!hasLang && !hasEdition && cdb.Tags?.Type.Equals("Neutral", StringComparison.InvariantCultureIgnoreCase) == false)))
                             {
                                 specificCompDBs.Add(cdb);
 
@@ -171,10 +171,11 @@ namespace DownloadLib
                                     }
                                 }
                             }
-                            else if (cdb.Tags.Type.Equals("Language", StringComparison.InvariantCultureIgnoreCase) ||
+                            else if (cdb.Tags != null && 
+                                (cdb.Tags.Type.Equals("Language", StringComparison.InvariantCultureIgnoreCase) ||
                                 cdb.Tags.Type.Equals("Edition", StringComparison.InvariantCultureIgnoreCase) ||
                                 (!getSpecificLanguageOnly && cdb.Tags.Type.Equals("Neutral", StringComparison.InvariantCultureIgnoreCase)) ||
-                                (!getSpecificLanguageOnly && hasLang) || (getSpecific && hasLang && hasEdition))
+                                (!getSpecificLanguageOnly && hasLang) || (getSpecific && hasLang && hasEdition)))
                             {
                                 foreach (CompDBXmlClass.Package pkg in cdb.Packages.Package)
                                 {
