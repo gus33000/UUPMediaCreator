@@ -37,6 +37,9 @@ namespace CompDB
         {
             foreach (CompDBXmlClass.CompDB compDB in compDBs)
             {
+                if (compDB.Type != "Build")
+                    continue;
+
                 //
                 // Newer style compdbs have a tag attribute, make use of it.
                 //
