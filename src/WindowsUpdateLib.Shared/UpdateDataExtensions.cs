@@ -284,9 +284,13 @@ namespace WindowsUpdateLib
 
                     foreach (string file in Directory.EnumerateFiles(tmp, "*", SearchOption.AllDirectories))
                     {
-                        byte[] xmlfile = CabinetExtractor.ExtractCabinetFile(file, CabinetExtractor.EnumCabinetFiles(file).First().FileName);
-                        using Stream xmlstream = new MemoryStream(xmlfile);
-                        neutralCompDB.Add(CompDBXmlClass.DeserializeCompDB(xmlstream));
+                        try
+                        {
+                            byte[] xmlfile = CabinetExtractor.ExtractCabinetFile(file, CabinetExtractor.EnumCabinetFiles(file).First().FileName);
+                            using Stream xmlstream = new MemoryStream(xmlfile);
+                            neutralCompDB.Add(CompDBXmlClass.DeserializeCompDB(xmlstream));
+                        }
+                        catch { }
                     }
                 }
                 catch { }

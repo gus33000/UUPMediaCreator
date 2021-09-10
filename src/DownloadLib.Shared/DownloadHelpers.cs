@@ -189,6 +189,9 @@ namespace DownloadLib
                             {
                                 foreach (CompDBXmlClass.Package pkg in cdb.Packages.Package)
                                 {
+                                    if (pkg.Payload == null)
+                                        continue;
+
                                     foreach (CompDBXmlClass.PayloadItem item in pkg.Payload.PayloadItem)
                                     {
                                         if (item.PayloadType.Equals("Diff", StringComparison.InvariantCultureIgnoreCase))
@@ -207,6 +210,9 @@ namespace DownloadLib
                         {
                             foreach (CompDBXmlClass.Package pkg in cdb.Packages.Package)
                             {
+                                if (pkg.Payload == null)
+                                    continue;
+
                                 foreach (CompDBXmlClass.PayloadItem item in pkg.Payload.PayloadItem)
                                 {
                                     if (item.PayloadType.Equals("Diff", StringComparison.InvariantCultureIgnoreCase))
