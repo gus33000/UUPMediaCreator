@@ -32,7 +32,7 @@ namespace UUPDownload
             Error
         }
 
-        private static ConsoleColor Foreground;
+        private static readonly ConsoleColor Foreground;
 
         static Logging()
         {

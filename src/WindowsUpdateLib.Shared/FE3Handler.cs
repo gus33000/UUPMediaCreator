@@ -412,7 +412,7 @@ namespace WindowsUpdateLib
             //
             while (true)
             {
-                (CSyncUpdatesResponse.SyncUpdatesResponse, string) result = await SyncUpdates(cookie.GetCookieResult, token, InstalledNonLeafUpdateIDs, OtherCachedUpdateIDs, categoryIds == null ? Array.Empty<string>() : categoryIds, ctac).ConfigureAwait(false);
+                (CSyncUpdatesResponse.SyncUpdatesResponse, string) result = await SyncUpdates(cookie.GetCookieResult, token, InstalledNonLeafUpdateIDs, OtherCachedUpdateIDs, categoryIds ?? Array.Empty<string>(), ctac).ConfigureAwait(false);
 
                 // Refresh the cookie
                 cookie.GetCookieResult.EncryptedData = result.Item1.SyncUpdatesResult.NewCookie.EncryptedData;

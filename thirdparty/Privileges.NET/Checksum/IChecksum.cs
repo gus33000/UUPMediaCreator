@@ -6,7 +6,7 @@ namespace ICSharpCode.SharpZipLib.Checksum
     /// Interface to compute a data checksum used by checked input/output streams.
     /// A data checksum can be updated by one byte or with a byte array. After each
     /// update the value of the current checksum can be returned by calling
-    /// <code>getValue</code>. The complete checksum object can also be reset
+    /// <c>getValue</c>. The complete checksum object can also be reset
     /// so it can be used again with new data.
     /// </summary>
     public interface IChecksum

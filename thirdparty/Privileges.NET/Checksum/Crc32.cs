@@ -7,9 +7,11 @@ namespace ICSharpCode.SharpZipLib.Checksum
     /// CRC-32 with reversed data and unreversed output
     /// </summary>
     /// <remarks>
+    /// <para>
     /// Generate a table for a byte-wise 32-bit CRC calculation on the polynomial:
     /// x^32+x^26+x^23+x^22+x^16+x^12+x^11+x^10+x^8+x^7+x^5+x^4+x^2+x^1+x^0.
-    ///
+    /// </para>
+    /// <para>
     /// Polynomials over GF(2) are represented in binary, one bit per coefficient,
     /// with the lowest powers in the most significant bit.  Then adding polynomials
     /// is just exclusive-or, and multiplying a polynomial by x is a right shift by
@@ -17,7 +19,8 @@ namespace ICSharpCode.SharpZipLib.Checksum
     /// polynomial q, also with the lowest power in the most significant bit (so the
     /// byte 0xb1 is the polynomial x^7+x^3+x+1), then the CRC is (q*x^32) mod p,
     /// where a mod b means the remainder after dividing a by b.
-    ///
+    /// </para>
+    /// <para>
     /// This calculation is done using the shift-register method of multiplying and
     /// taking the remainder.  The register is initialized to zero, and for each
     /// incoming bit, x^32 is added mod p to the register if the bit is a one (where
@@ -25,13 +28,14 @@ namespace ICSharpCode.SharpZipLib.Checksum
     /// x (which is shifting right by one and adding x^32 mod p if the bit shifted
     /// out is a one).  We start with the highest power (least significant bit) of
     /// q and repeat for all eight bits of q.
-    ///
+    /// </para>
+    /// <para>
     /// This implementation uses sixteen lookup tables stored in one linear array
     /// to implement the slicing-by-16 algorithm, a variant of the slicing-by-8
     /// algorithm described in this Intel white paper:
-    ///
-    /// https://web.archive.org/web/20120722193753/http://download.intel.com/technology/comms/perfnet/download/slicing-by-8.pdf
-    ///
+    /// </para>
+    /// <para>https://web.archive.org/web/20120722193753/http://download.intel.com/technology/comms/perfnet/download/slicing-by-8.pdf</para>
+    /// <para>
     /// The first lookup table is simply the CRC of all possible eight bit values.
     /// Each successive lookup table is derived from the original table generated
     /// by Sarwate's algorithm. Slicing a 16-bit input and XORing the outputs
@@ -39,6 +43,7 @@ namespace ICSharpCode.SharpZipLib.Checksum
     /// fewer arithmetic and bit manipulation operations, at the cost of increased
     /// memory consumed by the lookup tables. (Slicing-by-16 requires a 16KB table,
     /// which is still small enough to fit in most processors' L1 cache.)
+    /// </para>
     /// </remarks>
     public sealed class Crc32 : IChecksum
     {

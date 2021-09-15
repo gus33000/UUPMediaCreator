@@ -52,10 +52,12 @@ namespace Microsoft.Marketplace.StoreEdgeFd
                 try
                 {
                     if (!string.IsNullOrEmpty(Sku.FulfillmentData))
+                    {
                         products.Payload.Skus[counter].FulfillmentDataDeserialized =
                             JsonSerializer.Deserialize<FulfillmentData>(Sku.FulfillmentData);
+                    }
                 }
-                catch { };
+                catch { }
                 counter++;
             }
 
@@ -71,11 +73,11 @@ namespace Microsoft.Marketplace.StoreEdgeFd
             return products;
         }
 
-        private static CorrelationVector CV = new();
+        private static readonly CorrelationVector CV = new();
 
         public static async Task<string> GetProductsStr(string CatalogId, AlternateIdTypes AlternateIdType)
         {
-            HttpClient client = new HttpClient();
+            HttpClient client = new();
 
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("*/*"));

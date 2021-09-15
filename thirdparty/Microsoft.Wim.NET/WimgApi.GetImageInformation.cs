@@ -141,7 +141,7 @@ namespace Microsoft.Wim
             /// A pointer to a variable that specifies the size, in bytes, of the buffer pointed to by the
             /// value of the ppvImageInfo parameter.
             /// </param>
-            /// <returns><code>true</code> if the function succeeded, otherwise <code>false</code>.</returns>
+            /// <returns><c>true</c> if the function succeeded, otherwise <c>false</c>.</returns>
             /// <remarks>
             /// When the function succeeds, then the data describing the image is in Unicode XML format. Use the LocalFree
             /// function to free the memory pointed to by the ppvImageInfo parameter when no longer needed.

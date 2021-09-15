@@ -171,7 +171,7 @@ namespace DownloadLib
                                     }
                                 }
                             }
-                            else if (cdb.Tags != null && 
+                            else if (cdb.Tags != null &&
                                 (cdb.Tags.Type.Equals("Language", StringComparison.InvariantCultureIgnoreCase) ||
                                 cdb.Tags.Type.Equals("Edition", StringComparison.InvariantCultureIgnoreCase) ||
                                 (!getSpecificLanguageOnly && cdb.Tags.Type.Equals("Neutral", StringComparison.InvariantCultureIgnoreCase)) ||

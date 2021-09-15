@@ -70,7 +70,7 @@ namespace MediaCreationLib.Dism
 
         /// <summary>
         /// Uninstalls unneeded Windows Components for Windows Setup Preinstallation-Environment
-        /// TODO: Get the list from session files instead 
+        /// TODO: Get the list from session files instead
         /// </summary>
         /// <param name="ospath">Path to the operating system</param>
         /// <param name="progressCallback">Callback to be notified of progress</param>

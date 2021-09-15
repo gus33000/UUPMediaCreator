@@ -113,7 +113,7 @@ namespace MediaCreationLib.NET
                             {
                                 if (!File.Exists(Path.Combine(UUPPath, file)))
                                 {
-                                    file = pkg.Payload.PayloadItem.First().Path.Replace('\\', Path.DirectorySeparatorChar);
+                                    file = pkg.Payload.PayloadItem[0].Path.Replace('\\', Path.DirectorySeparatorChar);
                                     if (!File.Exists(Path.Combine(UUPPath, file)))
                                     {
                                         break;
@@ -165,7 +165,7 @@ namespace MediaCreationLib.NET
 
                 if (!File.Exists(Path.Combine(UUPPath, file)))
                 {
-                    file = pkg.Payload.PayloadItem.First().Path.Replace('\\', Path.DirectorySeparatorChar);
+                    file = pkg.Payload.PayloadItem[0].Path.Replace('\\', Path.DirectorySeparatorChar);
                     if (!File.Exists(Path.Combine(UUPPath, file)))
                     {
                         progressCallback?.Invoke(Common.ProcessPhase.ReadingMetadata, true, 0, $"File {file} is missing");

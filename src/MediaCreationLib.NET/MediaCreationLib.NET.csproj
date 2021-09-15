@@ -25,9 +25,9 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="DiscUtils.Core" Version="0.16.4" />
-    <PackageReference Include="DiscUtils.Registry" Version="0.16.4" />
-    <PackageReference Include="DiscUtils.Streams" Version="0.16.4" />
+    <PackageReference Include="DiscUtils.Core" Version="0.16.13" />
+    <PackageReference Include="DiscUtils.Registry" Version="0.16.13" />
+    <PackageReference Include="DiscUtils.Streams" Version="0.16.13" />
     <PackageReference Include="ini-parser" Version="2.5.2" />
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageReference Include="System.Data.DataSetExtensions" Version="4.6.0-preview3.19128.7" />
