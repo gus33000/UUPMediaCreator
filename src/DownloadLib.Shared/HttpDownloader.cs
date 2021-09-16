@@ -264,11 +264,12 @@ namespace DownloadLib
 
                     if (tmpFileInfo.Length == downloadFile.FileSize)
                     {
-                        //Decrypted file should match estimated bytes.
+                        /*//Decrypted file should match estimated bytes.
                         //Imagine if it crashed during hashing, the file may be valid.
                         //So... lets rename this file so it can be verified.
                         File.Move(tempFilePath, filePath);
-                        totalBytesRead = tmpFileInfo.Length;
+                        totalBytesRead = tmpFileInfo.Length;*/
+                        File.Delete(tempFilePath);
                     }
                     else if (downloadFile.WUFile.EsrpDecryptionInformation != null)
                     {
@@ -305,7 +306,7 @@ namespace DownloadLib
                 {
                     //If the filename was renamed then the download must have been completed successfully,
                     //we just hash to be sure that the file hasn't been tampered
-                    if (verifyFiles)
+                    /*if (verifyFiles)
                     {
                         FileStream fileStreamToHash = File.Open(filePath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite);
                         totalBytesRead = fileStreamToHash.Length;
@@ -331,7 +332,7 @@ namespace DownloadLib
                         }
                     }
                     else
-                    {
+                    {*/
                         //At your own risk lol
                         FileInfo tmpFileInfo = new(tempFilePath);
                         downloadProgress?.Report(new FileDownloadStatus(downloadFile)
@@ -340,7 +341,7 @@ namespace DownloadLib
                             FileStatus = FileStatus.Completed
                         });
                         return true;
-                    }
+                    //}
                 }
 
                 //Before we need to create a directory.

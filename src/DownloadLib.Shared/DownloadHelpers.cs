@@ -270,7 +270,7 @@ namespace DownloadLib
                     string filename = Path.Combine(OutputFolder, tmpname);
                     if (WriteMetadata && !File.Exists(filename))
                     {
-                        File.WriteAllText(filename, JsonSerializer.Serialize(update, new JsonSerializerOptions() { WriteIndented = true }));
+                        File.WriteAllText(filename, JsonSerializer.Serialize(update, new JsonSerializerOptions() { WriteIndented = true, IncludeFields = true }));
                     }
                 }
 
