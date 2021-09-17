@@ -334,10 +334,10 @@ namespace DownloadLib
                     else
                     {*/
                         //At your own risk lol
-                        FileInfo tmpFileInfo = new(tempFilePath);
+                        FileInfo fileInfo = new(filePath);
                         downloadProgress?.Report(new FileDownloadStatus(downloadFile)
                         {
-                            DownloadedBytes = tmpFileInfo.Length,
+                            DownloadedBytes = fileInfo.Length,
                             FileStatus = FileStatus.Completed
                         });
                         return true;
