@@ -67,7 +67,7 @@ namespace UUPMediaConverterCli
             string UUPPath = Path.GetFullPath(args[0]);
             string DestinationISO = args[1];
             string LanguageCode = args[2];
-            string Edition = "";
+            string Edition = null;
             if (args.Length > 3)
             {
                 Edition = args[3];
@@ -148,27 +148,14 @@ namespace UUPMediaConverterCli
 
             try
             {
-                if (args.Length > 3)
-                {
-                    MediaCreationLib.MediaCreator.CreateISOMedia(
-                        DestinationISO,
-                        UUPPath,
-                        Edition,
-                        LanguageCode,
-                        false,
-                        Common.CompressionType.LZX,
-                        callback);
-                }
-                else
-                {
-                    MediaCreationLib.MediaCreator.CreateISOMediaAdvanced(
-                           DestinationISO,
-                           UUPPath,
-                           LanguageCode,
-                           false,
-                           Common.CompressionType.LZX,
-                           callback);
-                }
+                MediaCreationLib.MediaCreator.CreateISOMedia(
+                    DestinationISO,
+                    UUPPath,
+                    Edition,
+                    LanguageCode,
+                    false,
+                    Common.CompressionType.LZX,
+                    callback);
             }
             catch (Exception ex)
             {

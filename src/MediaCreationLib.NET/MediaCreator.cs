@@ -92,7 +92,8 @@ namespace MediaCreationLib
             TempManager.TempManager tempManager,
             string VHDMountPath = null,
             string CurrentBackupVHD = null,
-            ProgressCallback progressCallback = null)
+            ProgressCallback progressCallback = null,
+            string edition = null)
         {
             progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, $"Applying {targetEdition.PlannedEdition.EditionName} - {targetEdition.PlannedEdition.AvailabilityType}");
 
@@ -225,7 +226,7 @@ namespace MediaCreationLib
                     vhdpath = vhdSession.VirtualDiskPath;
                 }
 
-                if (targetEdition.NonDestructiveTargets.Count > 0)
+                if (targetEdition.NonDestructiveTargets.Count > 0 && (edition == null || (edition != null && targetEdition.NonDestructiveTargets.Any(x => IsRightPath(x, edition)))))
                 {
                     string newvhd = VirtualHardDiskLib.VHDUtilities.CreateDiffDisk(vhdpath);
 
@@ -234,6 +235,9 @@ namespace MediaCreationLib
                     using VirtualHardDiskLib.VirtualDiskSession vhdSession = new(existingVHD: newvhd);
                     foreach (EditionTarget ed in targetEdition.NonDestructiveTargets)
                     {
+                        if (edition != null && !IsRightPath(ed, edition))
+                            continue;
+
                         result = HandleEditionPlan(
                             ed,
                             UUPPath,
@@ -254,10 +258,13 @@ namespace MediaCreationLib
                     }
                 }
 
-                if (targetEdition.DestructiveTargets.Count > 0)
+                if (targetEdition.DestructiveTargets.Count > 0 && (edition == null || (edition != null && targetEdition.DestructiveTargets.Any(x => IsRightPath(x, edition)))))
                 {
                     foreach (EditionTarget ed in targetEdition.DestructiveTargets)
                     {
+                        if (edition != null && !IsRightPath(ed, edition))
+                            continue;
+
                         result = HandleEditionPlan(
                             ed,
                             UUPPath,
@@ -346,9 +353,32 @@ namespace MediaCreationLib
             return ConversionPlanBuilder.GetTargetedPlan(UUPPath, compDBs, EditionPack, LanguageCode, RunsAsAdministrator, out EditionTargets, (string msg) => progressCallback?.Invoke(Common.ProcessPhase.ReadingMetadata, true, 0, msg));
         }
 
-        public static void CreateISOMediaAdvanced(
+        public static bool IsRightPath(EditionTarget editionTarget, string edition)
+        {
+            if (editionTarget.PlannedEdition.EditionName.Equals(edition, StringComparison.InvariantCultureIgnoreCase))
+            {
+                return true;
+            }
+
+            foreach (var ed in editionTarget.DestructiveTargets)
+            {
+                if (IsRightPath(ed, edition))
+                    return true;
+            }
+
+            foreach (var ed in editionTarget.NonDestructiveTargets)
+            {
+                if (IsRightPath(ed, edition))
+                    return true;
+            }
+
+            return false;
+        }
+
+        public static void CreateISOMedia(
             string ISOPath,
             string UUPPath,
+            string Edition,
             string LanguageCode,
             bool IntegrateUpdates,
             Common.CompressionType CompressionType,
@@ -402,7 +432,10 @@ namespace MediaCreationLib
                 //
                 foreach (EditionTarget ed in editionTargets)
                 {
-                    result = HandleEditionPlan(ed, UUPPath, MediaRootPath, LanguageCode, InstallWIMFilePath, WinREWIMFilePath, CompressionType, tempManager, progressCallback: progressCallback);
+                    if (Edition != null && !IsRightPath(ed, Edition))
+                        continue;
+
+                    result = HandleEditionPlan(ed, UUPPath, MediaRootPath, LanguageCode, InstallWIMFilePath, WinREWIMFilePath, CompressionType, tempManager, progressCallback: progressCallback, edition: Edition);
                     if (!result)
                     {
                         error = "An error occurred while handling edition plan for the following edition: " + ed.PlannedEdition.EditionName + " available as: " + ed.PlannedEdition.AvailabilityType;
@@ -411,78 +444,6 @@ namespace MediaCreationLib
                 }
 
                 BootlegEditionCreator.CleanupLanguagePackFolderIfRequired();
-
-                //
-                // Build ISO
-                //
-                result = UUPMediaCreator.CreateISO(MediaRootPath, ISOPath, progressCallback);
-                if (!result)
-                {
-                    error = "An error occurred while creating the ISO.";
-                    goto error;
-                }
-
-                progressCallback?.Invoke(Common.ProcessPhase.Done, true, 0, "");
-                goto exit;
-            }
-            catch (Exception ex)
-            {
-                error = ex.ToString();
-            }
-
-        error:
-            progressCallback?.Invoke(Common.ProcessPhase.Error, true, 0, error);
-
-        exit:
-            tempManager.Dispose();
-            return;
-        }
-
-        public static void CreateISOMedia(
-            string ISOPath,
-            string UUPPath,
-            string Edition,
-            string LanguageCode,
-            bool IntegrateUpdates,
-            Common.CompressionType CompressionType,
-            ProgressCallback progressCallback = null)
-        {
-            string error = "";
-
-            TempManager.TempManager tempManager = new();
-
-            try
-            {
-                progressCallback?.Invoke(Common.ProcessPhase.ReadingMetadata, true, 0, "Enumerating files");
-
-                string temp = tempManager.GetTempPath();
-                Directory.CreateDirectory(temp);
-
-                string WinREWIMFilePath = Path.Combine(temp, "Winre.wim");
-                string MediaRootPath = Path.Combine(temp, "MediaRoot");
-                string InstallWIMFilePath = CompressionType == Common.CompressionType.LZMS ?
-                    Path.Combine(MediaRootPath, "sources", "install.esd") :
-                    Path.Combine(MediaRootPath, "sources", "install.wim");
-
-                //
-                // Build installer
-                //
-                bool result = SetupMediaCreator.CreateSetupMedia(UUPPath, LanguageCode, MediaRootPath, WinREWIMFilePath, CompressionType, tempManager, progressCallback);
-                if (!result)
-                {
-                    error = "An error occurred while creating setup media.";
-                    goto error;
-                }
-
-                //
-                // Build Install.WIM/ESD
-                //
-                result = BaseEditionBuilder.CreateBaseEdition(UUPPath, LanguageCode, Edition, WinREWIMFilePath, InstallWIMFilePath, CompressionType, tempManager, progressCallback);
-                if (!result)
-                {
-                    error = "An error occurred while handling edition plan for the following edition: " + Edition;
-                    goto error;
-                }
 
                 //
                 // Build ISO
