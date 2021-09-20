@@ -13,7 +13,7 @@
   <Import Project="..\Cabinet.Shared\Cabinet.Shared.projitems" Label="Shared" />
 
   <ItemGroup>
-    <PackageReference Include="SharpZipLib" Version="1.3.2" />
+    <PackageReference Include="SharpZipLib" Version="1.3.3" />
   </ItemGroup>
 
 </Project>
