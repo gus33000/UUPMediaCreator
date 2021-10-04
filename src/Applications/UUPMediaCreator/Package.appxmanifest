@@ -5,23 +5,24 @@
   xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest"
   xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
   xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
-  IgnorableNamespaces="uap rescap mp">
+  xmlns:desktop="http://schemas.microsoft.com/appx/manifest/desktop/windows10"
+  IgnorableNamespaces="uap rescap desktop mp">
 
   <Identity
-    Name="gmonce.uupmediacreator"
-    Publisher="CN=gmonce"
-    Version="3.0.6.0" />
-
+    Name="52346ITDevTeam.UUPMediaCreator"
+    Publisher="CN=EDCB61F7-02FF-43C6-8E0B-FDE1D2E3E137"
+    Version="3.0.9.0" />
+  
   <mp:PhoneIdentity PhoneProductId="1ff16387-df2d-436b-9933-642c650aabb1" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
   <Properties>
-    <DisplayName>Unified Update Platform Media Creator</DisplayName>
-    <PublisherDisplayName>Gustave Monce</PublisherDisplayName>
+    <DisplayName>UUP Media Creator</DisplayName>
+    <PublisherDisplayName>IT Dev Team</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
 
   <Dependencies>
-    <TargetDeviceFamily Name="Windows.Universal" MinVersion="10.0.0.0" MaxVersionTested="10.0.0.0" />
+    <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.16299.0" MaxVersionTested="10.0.19041.0" />
   </Dependencies>
 
   <Resources>
@@ -46,12 +47,14 @@
         <uap:Extension Category="windows.appService">
           <uap:AppService Name="UUPMediaCreatorService" />
         </uap:Extension>
+        <desktop:Extension Category="windows.fullTrustProcess" Executable="UUPMediaCreator.Broker.exe" />
       </Extensions>
     </Application>
   </Applications>
 
   <Capabilities>
     <Capability Name="internetClient" />
+    <rescap:Capability Name="runFullTrust" />
     <rescap:Capability Name="confirmAppClose" />
   </Capabilities>
 </Package>
