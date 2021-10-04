@@ -8,7 +8,8 @@
     xmlns:uupmediacreator="using:UUPMediaCreator.UWP"
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     mc:Ignorable="d"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+    Loaded="DownloadPage_Loaded">
 
     <uupmediacreator:WizardPageControl x:Name="WizardPage"
                                        Title="Downloading..."

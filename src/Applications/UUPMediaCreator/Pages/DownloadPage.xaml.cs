@@ -35,7 +35,6 @@ namespace UUPMediaCreator.UWP.Pages
         public DownloadPage()
         {
             this.InitializeComponent();
-            Loaded += DownloadPage_Loaded;
         }
 
         private async void DownloadPage_Loaded(object sender, RoutedEventArgs e)
@@ -45,12 +44,7 @@ namespace UUPMediaCreator.UWP.Pages
 
             App.ConversionPlan.TmpOutputFolder = await UpdateUtils.ProcessUpdateAsync(App.ConversionPlan.UpdateData, tmp.Path, App.ConversionPlan.MachineType, this, App.ConversionPlan.Language, App.ConversionPlan.Edition, UseAutomaticDownloadFolder: false).ConfigureAwait(false);
 
-            Frame.Navigate(typeof(BuildingISOPage));
-        }
-
-        private void WizardPage_NextClicked(object sender, RoutedEventArgs e)
-        {
-            Frame.Navigate(typeof(BuildingISOPage));
+            await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () => Frame.Navigate(typeof(BuildingISOPage)));
         }
 
         private readonly Dictionary<string, FileStatus> files = new();
@@ -81,12 +75,12 @@ namespace UUPMediaCreator.UWP.Pages
                     continue;
                 }
 
-                const bool shouldReport = true;//!files.ContainsKey(status.File.FileName) || files[status.File.FileName] != status.FileStatus;
+                /*const bool shouldReport = true;//!files.ContainsKey(status.File.FileName) || files[status.File.FileName] != status.FileStatus;
 
                 if (!shouldReport)
                 {
                     continue;
-                }
+                }*/
 
                 files[status.File.FileName] = status.FileStatus;
 

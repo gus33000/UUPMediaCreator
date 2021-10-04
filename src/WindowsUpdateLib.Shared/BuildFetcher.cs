@@ -337,7 +337,7 @@ namespace WindowsUpdateLib
             List<Task<IEnumerable<UpdateData>>> tasks = new();
             foreach (CTAC ctac in ctacs)
             {
-                tasks.Add(FE3Handler.GetUpdates(null, ctac, null, FileExchangeV3UpdateFilter.ProductRelease));
+                tasks.Add(GetUpdatesFor(ctac));
             }
 
             IEnumerable<UpdateData>[] datas = await Task.WhenAll(tasks).ConfigureAwait(false);
@@ -347,6 +347,18 @@ namespace WindowsUpdateLib
             }
 
             return updates;
+        }
+
+        private static async Task<IEnumerable<UpdateData>> GetUpdatesFor(CTAC ctac)
+        {
+            try
+            {
+                return await FE3Handler.GetUpdates(null, ctac, null, FileExchangeV3UpdateFilter.ProductRelease);
+            }
+            catch
+            {
+                return Array.Empty<UpdateData>();
+            }
         }
     }
 }
