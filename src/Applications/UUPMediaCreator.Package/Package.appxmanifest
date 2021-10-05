@@ -13,7 +13,7 @@
   <Identity
     Name="52346ITDevTeam.UUPMediaCreator"
     Publisher="CN=EDCB61F7-02FF-43C6-8E0B-FDE1D2E3E137"
-    Version="3.0.9.0" />
+    Version="3.0.14.0" />
 
   <Properties>
     <DisplayName>UUP Media Creator</DisplayName>
@@ -50,12 +50,12 @@
         </uap:Extension>
         <uap:Extension Category="windows.appService">
           <uap:AppService Name="UUPMediaCreatorService" />
-          <desktop:Extension Category="windows.fullTrustProcess" Executable="UUPMediaCreator.Broker.exe" />
         </uap:Extension>
+        <desktop:Extension Category="windows.fullTrustProcess" Executable="UUPMediaCreator.Broker\UUPMediaCreator.Broker.exe" />
       </Extensions>
     </Application>
 
-    <Application Id="UUPDownload"
+    <!--<Application Id="UUPDownload"
                  Executable="UUPDownload\UUPDownload.exe"
                  EntryPoint="Windows.FullTrustApplication"
                  desktop4:Subsystem="console"
@@ -112,7 +112,7 @@
           </uap5:AppExecutionAlias>
         </uap5:Extension>
       </Extensions>
-    </Application>
+    </Application>-->
   </Applications>
 
   <Capabilities>
