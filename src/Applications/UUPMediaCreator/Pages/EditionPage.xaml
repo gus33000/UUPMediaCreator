@@ -7,8 +7,9 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
     xmlns:uupmediacreator="using:UUPMediaCreator.UWP"
+    xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     mc:Ignorable="d"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    muxc:BackdropMaterial.ApplyToRootOrPageBackground="True">
 
     <uupmediacreator:WizardPageControl x:Name="WizardPage"
                                        Title="Select the Windows edition"
@@ -18,7 +19,7 @@
                                        BackClicked="WizardPage_BackClicked"
                                        NextClicked="WizardPage_NextClicked">
         <Grid>
-            <ProgressRing x:Name="LoadingRing" Width="256" Height="256" IsActive="True" />
+            <muxc:ProgressRing x:Name="LoadingRing" Width="256" Height="256" IsActive="True" />
 
             <Grid x:Name="SelectionGrid" Visibility="Collapsed">
                 <Grid.RowDefinitions>

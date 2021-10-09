@@ -8,7 +8,7 @@
     xmlns:uupmediacreator="using:UUPMediaCreator.UWP"
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     mc:Ignorable="d"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    muxc:BackdropMaterial.ApplyToRootOrPageBackground="True">
 
     <uupmediacreator:WizardPageControl x:Name="WizardPage"
                                        Title="Building Media"

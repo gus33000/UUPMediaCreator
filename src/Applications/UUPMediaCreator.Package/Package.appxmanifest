@@ -13,7 +13,7 @@
   <Identity
     Name="52346ITDevTeam.UUPMediaCreator"
     Publisher="CN=EDCB61F7-02FF-43C6-8E0B-FDE1D2E3E137"
-    Version="3.0.14.0" />
+    Version="3.0.25.0" />
 
   <Properties>
     <DisplayName>UUP Media Creator</DisplayName>
@@ -37,10 +37,16 @@
         DisplayName="UUP Media Creator"
         Square150x150Logo="Assets\Square150x150Logo.png"
         Square44x44Logo="Assets\Square44x44Logo.png"
-        Description="UUP Media Creator"
+        Description="Unified Update Platform Media Creator"
         BackgroundColor="transparent">
-        <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png"/>
-        <uap:SplashScreen Image="Assets\SplashScreen.png" />
+        <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png" ShortName="UUP Media Creator" Square71x71Logo="Assets\SmallTile.png" Square310x310Logo="Assets\LargeTile.png">
+          <uap:ShowNameOnTiles>
+            <uap:ShowOn Tile="square150x150Logo"/>
+            <uap:ShowOn Tile="wide310x150Logo"/>
+            <uap:ShowOn Tile="square310x310Logo"/>
+          </uap:ShowNameOnTiles>
+        </uap:DefaultTile >
+        <uap:SplashScreen Image="Assets\SplashScreen.png" uap5:Optional="true" />
       </uap:VisualElements>
       <Extensions>
         <uap:Extension Category="windows.protocol">
