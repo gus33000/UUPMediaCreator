@@ -129,7 +129,7 @@
     <Compile Include="Controls\WizardPageControl.xaml.cs">
       <DependentUpon>WizardPageControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Pages\AdditionalUpdatePage.xaml.cs">
+    <Compile Include="Pages\Unused\AdditionalUpdatePage.xaml.cs">
       <DependentUpon>AdditionalUpdatePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Pages\AdministratorAccessRequiredPage.xaml.cs">
@@ -513,7 +513,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Pages\AdditionalUpdatePage.xaml">
+    <Page Include="Pages\Unused\AdditionalUpdatePage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -596,6 +596,7 @@
     <Content Include="Fonts\SegoeIcons.ttf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <PRIResource Include="Resources\en\Resources.resw" />
     <None Include="UUPMediaCreator_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
