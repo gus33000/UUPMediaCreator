@@ -12,7 +12,7 @@
     muxc:BackdropMaterial.ApplyToRootOrPageBackground="True">
 
     <uupmediacreator:WizardPageControl x:Name="WizardPage"
-                                       Title="What version of windows do you want to build media for?"
+                                       Title="What version of Windows do you want to build media for?"
                                        Subtitle="The selected build will be used for the final medium"
                                        Glyph="&#xF785;"
                                        BackEnabled="True"
