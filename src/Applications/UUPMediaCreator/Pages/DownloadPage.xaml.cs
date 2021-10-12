@@ -37,14 +37,17 @@ namespace UUPMediaCreator.UWP.Pages
             this.InitializeComponent();
         }
 
-        private async void DownloadPage_Loaded(object sender, RoutedEventArgs e)
+        private void DownloadPage_Loaded(object sender, RoutedEventArgs e)
         {
-            StorageFolder tmp = await ApplicationData.Current.TemporaryFolder.CreateFolderAsync($"tmpDl_{DateTime.Now.Ticks}");
             ProgressBar.IsIndeterminate = true;
+            _ = Windows.System.Threading.ThreadPool.RunAsync(async (o) =>
+            {
+                StorageFolder tmp = await ApplicationData.Current.TemporaryFolder.CreateFolderAsync($"{DateTime.Now.Ticks}");
 
-            App.ConversionPlan.TmpOutputFolder = await UpdateUtils.ProcessUpdateAsync(App.ConversionPlan.UpdateData, tmp.Path, App.ConversionPlan.MachineType, this, App.ConversionPlan.Language, App.ConversionPlan.Edition, UseAutomaticDownloadFolder: false).ConfigureAwait(false);
+                App.ConversionPlan.TmpOutputFolder = await UpdateUtils.ProcessUpdateAsync(App.ConversionPlan.UpdateData, tmp.Path, App.ConversionPlan.MachineType, this, App.ConversionPlan.Language, App.ConversionPlan.Edition, UseAutomaticDownloadFolder: false).ConfigureAwait(false);
 
-            await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () => Frame.Navigate(typeof(BuildingISOPage)));
+                await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () => Frame.Navigate(typeof(BuildingISOPage)));
+            });
         }
 
         private readonly Dictionary<string, FileStatus> files = new();
