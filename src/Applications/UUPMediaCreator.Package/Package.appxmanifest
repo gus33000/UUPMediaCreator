@@ -13,7 +13,7 @@
   <Identity
     Name="52346ITDevTeam.UUPMediaCreator"
     Publisher="CN=EDCB61F7-02FF-43C6-8E0B-FDE1D2E3E137"
-    Version="3.0.25.0" />
+    Version="3.0.26.0" />
 
   <Properties>
     <DisplayName>UUP Media Creator</DisplayName>
