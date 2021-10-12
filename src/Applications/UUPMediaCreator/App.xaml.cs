@@ -166,18 +166,18 @@ namespace UUPMediaCreator
                     SystemNavigationManagerPreview mgr = SystemNavigationManagerPreview.GetForCurrentView();
                     mgr.CloseRequested += SystemNavigationManager_CloseRequested;
                 }
-                else
+                /*else
                 {
                     rootFrame.Navigate(typeof(AdministratorAccessRequiredPage));
-                }
+                }*/
             }
-            else if (rootFrame.Content.GetType() == typeof(AdministratorAccessRequiredPage) && Connection != null)
+            /*else if (rootFrame.Content.GetType() == typeof(AdministratorAccessRequiredPage) && Connection != null)
             {
                 rootFrame.Navigate(typeof(WelcomePage));
 
                 SystemNavigationManagerPreview mgr = SystemNavigationManagerPreview.GetForCurrentView();
                 mgr.CloseRequested += SystemNavigationManager_CloseRequested;
-            }
+            }*/
 
             // Ensure the current window is active
             Window.Current.Activate();
