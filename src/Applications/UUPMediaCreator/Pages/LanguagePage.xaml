@@ -44,7 +44,6 @@
                     CanUserReorderColumns="True"
                     CanUserResizeColumns="True"
                     ColumnHeaderHeight="32"
-                    MaxColumnWidth="600"
                     FrozenColumnCount="0"
                     GridLinesVisibility="None"
                     HeadersVisibility="Column"
