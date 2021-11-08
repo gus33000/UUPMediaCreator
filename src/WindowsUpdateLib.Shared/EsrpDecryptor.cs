@@ -70,7 +70,7 @@ namespace WindowsUpdateLib
             using MemoryStream ms = new(buffer, 0, bufferLength);
             using CryptoStream cs = new(ms, dec, CryptoStreamMode.Read);
 
-#if NET5_0
+#if NET5_0_OR_GREATER
             await cs.CopyToAsync(to, cancellationToken).ConfigureAwait(false);
 #else
             await cs.CopyToAsync(to).ConfigureAwait(false);
@@ -82,7 +82,7 @@ namespace WindowsUpdateLib
         {
             int readBytes;
             byte[] buffer = new byte[esrp.EncryptionBufferSize];
-#if NET5_0
+#if NET5_0_OR_GREATER
             while ((readBytes = await encryptedFile.ReadAsync(buffer.AsMemory(0, buffer.Length), cancellationToken).ConfigureAwait(false)) > 0)
 #else
             while ((readBytes = await encryptedFile.ReadAsync(buffer, 0, buffer.Length, cancellationToken).ConfigureAwait(false)) > 0)
