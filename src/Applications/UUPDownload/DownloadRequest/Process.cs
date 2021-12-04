@@ -143,6 +143,49 @@ namespace UUPDownload.DownloadRequest
 
             buildstr ??= "";
 
+            //
+            // Windows Phone Build Lab says hi
+            //
+            // Quirk with Nickel+ Windows NT builds where specific binaries
+            // exempted from neutral build info gets the wrong build tags
+            //
+            if (buildstr.Contains("GitEnlistment(winpbld)"))
+            {
+                // We need to fallback to CompDB (less accurate but we have no choice, due to CUs etc...
+
+                // Loop through all CompDBs to find the highest version reported
+                CompDBXmlClass.CompDB selectedCompDB = null;
+                Version currentHighest = null;
+                foreach (CompDBXmlClass.CompDB compDB in compDBs)
+                {
+                    if (compDB.TargetOSVersion != null)
+                    {
+                        Version currentVer = null;
+                        if (Version.TryParse(compDB.TargetOSVersion, out currentVer))
+                        {
+                            if (currentHighest == null || (currentVer != null && currentVer.GreaterThan(currentHighest)))
+                            {
+                                if (!string.IsNullOrEmpty(compDB.TargetBuildInfo) && !string.IsNullOrEmpty(compDB.TargetOSVersion))
+                                {
+                                    currentHighest = currentVer;
+                                    selectedCompDB = compDB;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // We found a suitable CompDB is it is not null
+                if (selectedCompDB != null)
+                {
+                    // Example format:
+                    // TargetBuildInfo="rs_prerelease_flt.22509.1011.211120-1700"
+                    // TargetOSVersion="10.0.22509.1011"
+
+                    buildstr = $"{selectedCompDB.TargetOSVersion} ({selectedCompDB.TargetBuildInfo.Split(".")[0]}.{selectedCompDB.TargetBuildInfo.Split(".")[3]})";
+                }
+            }
+
             if (string.IsNullOrEmpty(buildstr) && update.Xml.LocalizedProperties.Title.Contains("(UUP-CTv2)"))
             {
                 string unformattedBase = update.Xml.LocalizedProperties.Title.Split(" ")[0];
