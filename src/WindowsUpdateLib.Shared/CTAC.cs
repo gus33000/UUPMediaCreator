@@ -397,8 +397,8 @@ namespace WindowsUpdateLib
                                     "DchuAmdGrfxExists=1&" +
                                     "SdbVer_20H1=2340&" +
                                     "UpgEx_CO21H2=Green&" +
-                                    //$"OSArchitecture={MachineType.ToString().ToUpper()}&" +
-                                    $"OSArchitecture=AMD64&" +
+                                    $"OSArchitecture={MachineType.ToString().ToUpper()}&" +
+                                    //$"OSArchitecture=AMD64&" +
                                     "DefaultUserRegion=244&" +
                                     $"ReleaseType={ReleaseType}&" +
                                     "UpdateManagementGroup=2&" +
