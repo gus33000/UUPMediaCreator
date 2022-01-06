@@ -277,10 +277,11 @@ namespace MediaCreationLib.Planning.NET
             //
             CompDBXmlClass.CompDB? neutralCompDB = compDBs.GetNeutralCompDB();
 
-            if (neutralCompDB != null)
+            if (neutralCompDB != null && 
+                neutralCompDB.Features.Feature.FirstOrDefault(x => x.FeatureID == "BaseNeutral")?
+                .Packages.Package 
+                is List<CompDBXmlClass.Package> packages)
             {
-                List<CompDBXmlClass.Package>? packages = neutralCompDB.Features.Feature.First(x => x.FeatureID == "BaseNeutral").Packages.Package;
-
                 IEnumerable<CompDBXmlClass.Package>? editionSpecificPackages = packages.Where(x => x.ID.Count(y => y == '-') == 4 && x.ID.Contains("microsoft-windows-editionspecific", StringComparison.InvariantCultureIgnoreCase));
                 IEnumerable<CompDBXmlClass.Package>? highPriorityPackages = editionSpecificPackages.Where(x => x.ID.Contains("starter", StringComparison.InvariantCultureIgnoreCase) ||
                                                                             x.ID.Contains("professional", StringComparison.InvariantCultureIgnoreCase) ||

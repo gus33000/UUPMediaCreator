@@ -9,6 +9,7 @@
     <IntermediateOutputPath>$(SolutionDir)intermediate\$(Platform)\$(Configuration)\Imaging.NET\</IntermediateOutputPath>
     <LangVersion>8.0</LangVersion>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+	<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System.Runtime.InteropServices.RuntimeInformation, Version=4.0.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
