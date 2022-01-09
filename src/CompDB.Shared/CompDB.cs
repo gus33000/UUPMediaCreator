@@ -87,13 +87,6 @@ namespace CompDB
             public List<Package> Package { get; set; }
         }
 
-        [XmlRoot(ElementName = "AppX", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
-        public class AppX
-        {
-            [XmlElement(ElementName = "AppXPackages", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
-            public Packages AppXPackages { get; set; }
-        }
-
         [XmlRoot(ElementName = "Features", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
         public class Features
         {
@@ -275,6 +268,41 @@ namespace CompDB
         {
             [XmlElement(ElementName = "ConditionalFeature")]
             public List<ConditionalFeature> ConditionalFeature { get; set; }
+        }
+
+        [XmlRoot(ElementName = "AppX", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+        public class Appx
+        {
+            [XmlElement(ElementName = "AppXPackages", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+            public AppxPackages AppXPackages { get; set; }
+        }
+
+        [XmlRoot(ElementName = "AppXPackages", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+        public class AppxPackages
+        {
+            [XmlElement(ElementName = "Package", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+            public List<AppxPackage> Package { get; set; }
+        }
+
+        [XmlRoot(ElementName = "Package", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+        public class AppxPackage
+        {
+            [XmlAttribute(AttributeName = "AppXPackageType")]
+            public string AppXPackageType { get; set; }
+
+            [XmlAttribute(AttributeName = "FullName")]
+            public string FullName { get; set; }
+
+            [XmlAttribute(AttributeName = "FamilyName")]
+            public string FamilyName { get; set; }
+
+            [XmlElement(ElementName = "Payload", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+            public Payload Payload { get; set; }
+
+            [XmlElement(ElementName = "LicenseData", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+            public string LicenseData { get; set; }
+
+            // ...
         }
 
         public static CompDB DeserializeCompDB(Stream stringReader)
