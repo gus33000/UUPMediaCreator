@@ -152,7 +152,7 @@ namespace CompDB
             public Packages Packages { get; set; }
 
             [XmlElement(ElementName = "AppX", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
-            public AppX AppX { get; set; }
+            public Appx AppX { get; set; }
 
             [XmlElement(ElementName = "AppXPackages", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
             public Packages AppXPackages { get; set; }
@@ -269,7 +269,7 @@ namespace CompDB
             [XmlElement(ElementName = "ConditionalFeature")]
             public List<ConditionalFeature> ConditionalFeature { get; set; }
         }
-
+        
         [XmlRoot(ElementName = "AppX", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
         public class Appx
         {

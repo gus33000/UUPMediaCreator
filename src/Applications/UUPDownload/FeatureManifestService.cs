@@ -18,7 +18,7 @@
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-using Microsoft.Cabinet;
+using Cabinet;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -33,29 +33,29 @@ namespace UUPDownload
 
         public static IDictionary<string, string> GetAppxPackageLicenseFileMapFromCabs(IList<string> cabPaths)
         {
-            var licenseMap = new Dictionary<string, string>();
-            foreach(var cabPath in cabPaths)
+            Dictionary<string, string> licenseMap = new();
+            foreach (string cabPath in cabPaths)
             {
                 if (new FileInfo(cabPath).Length > MAXIMUM_CANDIDATE_CAB_SIZE)
                     continue;
 
-                using CabinetHandler cab = new CabinetHandler(File.OpenRead(cabPath));
-                foreach (var file in cab.Files)
+                foreach (CabinetFile file in CabinetExtractor.EnumCabinetFiles(cabPath))
                 {
-                    if (!Path.GetExtension(file).Equals(".xml", StringComparison.OrdinalIgnoreCase))
+                    if (!Path.GetExtension(file.FileName).Equals(".xml", StringComparison.OrdinalIgnoreCase))
                         continue;
 
                     try
                     {
-                        var xdoc = XDocument.Load(cab.OpenFile(file), LoadOptions.None);
-                        var ns = xdoc.Root.GetDefaultNamespace();
-                        var packages = xdoc.Descendants(ns + "AppXPackages");
+                        using MemoryStream strm = new(CabinetExtractor.ExtractCabinetFile(cabPath, file.FileName));
+                        XDocument xdoc = XDocument.Load(strm, LoadOptions.None);
+                        XNamespace ns = xdoc.Root.GetDefaultNamespace();
+                        IEnumerable<XElement> packages = xdoc.Descendants(ns + "AppXPackages");
                         if (packages != null)
                         {
-                            foreach (var package in packages.Elements())
+                            foreach (XElement package in packages.Elements())
                             {
-                                var name = package.Attribute("Name")?.Value;
-                                var license = package.Attribute("LicenseFile")?.Value;
+                                string name = package.Attribute("Name")?.Value;
+                                string license = package.Attribute("LicenseFile")?.Value;
                                 if (name != null && license != null)
                                 {
                                     if (licenseMap.ContainsKey(name) && licenseMap[name] != license)
@@ -72,7 +72,7 @@ namespace UUPDownload
 
                         xdoc = null;
                     }
-                    catch(XmlException)
+                    catch (XmlException)
                     {
                         // Skip all unreadable xml
                     }

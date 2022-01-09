@@ -26,6 +26,7 @@ using System.Data;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text.Json;
 using System.Threading.Tasks;
 using UUPDownload.Downloading;
@@ -71,7 +72,14 @@ namespace UUPDownload.DownloadRequest
                 Logging.Log("Title: " + update.Xml.LocalizedProperties.Title);
                 Logging.Log("Description: " + update.Xml.LocalizedProperties.Description);
 
-                ProcessUpdateAsync(update, opts.OutputFolder, opts.MachineType, opts.Language, opts.Edition, true).Wait();
+                if (opts.Fixup.HasValue)
+                {
+                    ApplyFixUpAsync(update, opts.Fixup.Value, opts.AppxRoot, opts.CabsRoot).Wait();
+                }
+                else
+                {
+                    ProcessUpdateAsync(update, opts.OutputFolder, opts.MachineType, opts.Language, opts.Edition, true).Wait();
+                }
             }
             catch (Exception ex)
             {
@@ -91,6 +99,81 @@ namespace UUPDownload.DownloadRequest
             }
 
             return 0;
+        }
+
+        private static async Task ApplyFixUpAsync(UpdateData update, Fixup specifiedFixup, string appxRoot, string cabsRoot)
+        {
+            switch (specifiedFixup)
+            {
+                case Fixup.Appx:
+                    await ApplyAppxFixUpAsync(update, appxRoot, cabsRoot);
+                    break;
+            }
+        }
+
+        private static async Task ApplyAppxFixUpAsync(UpdateData update, string appxRoot, string cabsRoot)
+        {
+            if (string.IsNullOrWhiteSpace(cabsRoot))
+            {
+                cabsRoot = appxRoot;
+            }
+
+            Logging.Log($"Building appx license map from cabs...");
+            var appxLicenseFileMap = FeatureManifestService.GetAppxPackageLicenseFileMapFromCabs(Directory.GetFiles(cabsRoot, "*.cab", SearchOption.AllDirectories));
+            var appxFiles = Directory.GetFiles(Path.GetFullPath(appxRoot), "appx_*", SearchOption.TopDirectoryOnly);
+
+            // AppxPackage metadata was not deserialized from compdbs in the past, so
+            // this may trigger a retrieval of new compdbs from Microsoft
+            if (!update.CompDBs.Any(db => db.AppX != null))
+            {
+                update.CompDBs = null;
+                Logging.Log($"Current replay is missing some appx package metadata. Re-downloading compdbs...");
+                var compdbs = await update.GetCompDBsAsync();
+
+                var canonicalCompdb = compdbs.Where(c => c.Tags.Tag.Where(t => t.Name == "UpdateType" && t.Value == "Canonical").Any()).FirstOrDefault();
+                if (canonicalCompdb != null)
+                {
+                    foreach (var appxFile in appxFiles)
+                    {
+                        string payloadHash;
+                        using (var fileStream = File.OpenRead(appxFile))
+                        {
+                            using (var sha = SHA256.Create())
+                            {
+                                payloadHash = Convert.ToBase64String(sha.ComputeHash(fileStream));
+                            }
+                        }
+
+                        var package = canonicalCompdb.AppX.AppXPackages.Package.Where(p => p.Payload.PayloadItem.FirstOrDefault().PayloadHash == payloadHash).FirstOrDefault();
+                        if (package == null)
+                        {
+                            Logging.Log($"Could not locate package with payload hash {payloadHash}. Skipping.");
+                        }
+                        else
+                        {
+                            var appxFolder = Path.Combine(appxRoot, Path.GetDirectoryName(package.Payload.PayloadItem.FirstOrDefault().Path));
+                            if (!Directory.Exists(appxFolder))
+                            {
+                                Logging.Log($"Creating {appxFolder}");
+                                Directory.CreateDirectory(appxFolder);
+                            }
+
+                            var appxPath = Path.Combine(appxRoot, package.Payload.PayloadItem.FirstOrDefault().Path);
+                            Logging.Log($"Moving {appxFile} to {appxPath}");
+                            File.Move(appxFile, appxPath, true);
+
+                            if (package.LicenseData != null)
+                            {
+                                var appxLicensePath = Path.Combine(appxFolder, $"{appxLicenseFileMap[Path.GetFileName(appxPath)]}");
+                                Logging.Log($"Writing license to {appxLicensePath}");
+                                File.WriteAllText(appxLicensePath, package.LicenseData);
+                            }
+                        }
+                    }
+                }
+            }
+
+            Logging.Log($"Appx fixup applied.");
         }
 
         private static async Task PerformOperation(DownloadRequestOptions o)
