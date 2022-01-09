@@ -27,6 +27,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Serialization;
@@ -633,14 +634,31 @@ namespace WindowsUpdateLib
 
     public class UpdateData
     {
-        public CSyncUpdatesResponse.UpdateInfo UpdateInfo;
-        public CSOAPCommon.Update Update;
-        public CExtendedUpdateInfoXml.Xml Xml;
-        public CAppxMetadataJSON.AppxMetadataJson AppxMetadata;
-        public CTAC CTAC;
-        public string CachedMetadata;
-        public string SyncUpdatesResponse;
-        public string GEI2Response;
-        public HashSet<CompDBXmlClass.CompDB> CompDBs;
+        [JsonPropertyName("UpdateInfo")]
+        public CSyncUpdatesResponse.UpdateInfo UpdateInfo { get; set; }
+
+        [JsonPropertyName("Update")]
+        public CSOAPCommon.Update Update { get; set; }
+
+        [JsonPropertyName("Xml")]
+        public CExtendedUpdateInfoXml.Xml Xml { get; set; }
+
+        [JsonPropertyName("AppxMetadata")]
+        public CAppxMetadataJSON.AppxMetadataJson AppxMetadata { get; set; }
+
+        [JsonPropertyName("CTAC")]
+        public CTAC CTAC { get; set; }
+
+        [JsonPropertyName("CachedMetadata")]
+        public string CachedMetadata { get; set; }
+
+        [JsonPropertyName("SyncUpdatesResponse")]
+        public string SyncUpdatesResponse { get; set; }
+
+        [JsonPropertyName("GEI2Response")]
+        public string GEI2Response { get; set; }
+
+        [JsonPropertyName("CompDBs")]
+        public HashSet<CompDBXmlClass.CompDB> CompDBs { get; set; }
     }
 }
