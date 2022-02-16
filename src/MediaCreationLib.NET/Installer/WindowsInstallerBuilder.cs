@@ -264,10 +264,9 @@ namespace MediaCreationLib.Installer
                 goto exit;
             }
 
-            string matchingfile1 = Path.Combine(MediaPath, "sources", "background_cli.bmp");
-            string matchingfile2 = Path.Combine(MediaPath, "sources", "background_svr.bmp");
-
-            string bgfile = File.Exists(matchingfile1) ? matchingfile1 : matchingfile2;
+            string bgfile = new[] { "background_cli.bmp", "background_svr.bmp", "background_cli.png", "background_svr.png" }
+                .Select(asset => Path.Combine(MediaPath, $@"sources\{asset}"))
+                .FirstOrDefault(assetPath => File.Exists(assetPath));
 
             result = imagingInterface.AddFileToImage(bootwim, 2, bgfile, Path.Combine("Windows", "System32", "setup.bmp"), progressCallback: callback);
             if (!result)
@@ -304,21 +303,10 @@ namespace MediaCreationLib.Installer
 
                 if (file == $"sources{Path.DirectorySeparatorChar}background.bmp")
                 {
-                    if (File.Exists(matchingfile1))
+                    result = imagingInterface.AddFileToImage(bootwim, 2, bgfile, normalizedPath, progressCallback: callback);
+                    if (!result)
                     {
-                        result = imagingInterface.AddFileToImage(bootwim, 2, matchingfile1, normalizedPath, progressCallback: callback);
-                        if (!result)
-                        {
-                            goto exit;
-                        }
-                    }
-                    else if (File.Exists(matchingfile2))
-                    {
-                        result = imagingInterface.AddFileToImage(bootwim, 2, matchingfile2, normalizedPath, progressCallback: callback);
-                        if (!result)
-                        {
-                            goto exit;
-                        }
+                        goto exit;
                     }
                 }
                 else if (File.Exists(matchingfile))
@@ -341,21 +329,10 @@ namespace MediaCreationLib.Installer
 
                     if (file == $"sources{Path.DirectorySeparatorChar}background.bmp")
                     {
-                        if (File.Exists(matchingfile1))
+                        result = imagingInterface.AddFileToImage(bootwim, 2, bgfile, normalizedPath, progressCallback: callback);
+                        if (!result)
                         {
-                            result = imagingInterface.AddFileToImage(bootwim, 2, matchingfile1, normalizedPath, progressCallback: callback);
-                            if (!result)
-                            {
-                                goto exit;
-                            }
-                        }
-                        else if (File.Exists(matchingfile2))
-                        {
-                            result = imagingInterface.AddFileToImage(bootwim, 2, matchingfile2, normalizedPath, progressCallback: callback);
-                            if (!result)
-                            {
-                                goto exit;
-                            }
+                            goto exit;
                         }
                     }
                     else if (File.Exists(matchingfile))
