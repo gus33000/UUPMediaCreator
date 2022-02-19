@@ -24,8 +24,8 @@
     <ProjectReference Include="..\..\thirdparty\Microsoft.Wim.NET\Microsoft.Wim.NET.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Joveler.DynLoader" Version="2.1.0" />
-    <PackageReference Include="ManagedWimLib" Version="2.2.0" />
+    <PackageReference Include="Joveler.DynLoader" Version="2.1.1" />
+    <PackageReference Include="ManagedWimLib" Version="2.4.0" />
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageReference Include="System.Buffers" Version="4.5.1" />
     <PackageReference Include="System.Data.DataSetExtensions" Version="4.6.0-preview3.19128.7" />
