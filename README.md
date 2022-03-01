@@ -19,6 +19,11 @@ Right now the tooling includes:
 - UUPMediaConverterCli: Allows you to convert a downloaded UUP update for Windows Desktop into an usable ISO image to use in last decade DVD reader or simply mounted.
 - An experimental UWP front end is also provided, but is not the main focus for now.
 
+## Credits and Acknowledgements
+
+- Rafael Rivera (@WithinRafael - https://github.com/riverar) for being a strong supporter of this project and a few contributions
+- Lucas (@thebookisclosed - https://github.com/thebookisclosed) for a lot of important contributions to this project including the AppX code for Nickel and beyond
+
 ## Supported features by OS
 
 | Feature                                                                                  | Windows | Linux  | macOS  |
