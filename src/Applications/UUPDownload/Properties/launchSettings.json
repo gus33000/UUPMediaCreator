@@ -2,7 +2,7 @@
   "profiles": {
     "UUPDownload": {
       "commandName": "Project",
-      "commandLineArgs": "replay-download -r \"Z:\\__tosort\\20279_WCOS\\20279_WCOS\\10.0.20279.1002.fe_release_10x.201214-1532_amd64fre_749626328dfb\\20279.1002.fe_release_10x.201214-1532 (UUP-CTv2) (amd64).uupmcreplay\" -t amd64 --fixup Appx --appxroot \"Z:\\__tosort\\20279_WCOS\\20279_WCOS\\10.0.20279.1002.fe_release_10x.201214-1532_amd64fre_749626328dfb\" --cabsroot \"Z:\\__tosort\\20279_WCOS\\20279_WCOS\\10.0.20279.1002.fe_release_10x.201214-1532_amd64fre_749626328dfb\""
+      "commandLineArgs": "-s Professional -v 10.0.19043.1 -r External -b Dev -c vb_release -t arm64 -l en-us -p Professional"
     }
   }
 }
