@@ -58,14 +58,12 @@ namespace MediaCreationLib.Installer
             {
                 AdjustPermissionsForDirectory(path);
 
-                System.Collections.Generic.IEnumerable<string> subFiles = Directory.EnumerateFiles(path);
-                foreach (string subFile in subFiles)
+                foreach (string subFile in (System.Collections.Generic.IEnumerable<string>)Directory.EnumerateFiles(path))
                 {
                     TakeOwnFile(subFile);
                 }
 
-                System.Collections.Generic.IEnumerable<string> subDirectories = Directory.EnumerateDirectories(path);
-                foreach (string subDir in subDirectories)
+                foreach (string subDir in (System.Collections.Generic.IEnumerable<string>)Directory.EnumerateDirectories(path))
                 {
                     TakeOwnDirectory(subDir);
                 }

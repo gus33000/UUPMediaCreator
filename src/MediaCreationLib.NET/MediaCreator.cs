@@ -236,7 +236,9 @@ namespace MediaCreationLib
                     foreach (EditionTarget ed in targetEdition.NonDestructiveTargets)
                     {
                         if (edition != null && !IsRightPath(ed, edition))
+                        {
                             continue;
+                        }
 
                         result = HandleEditionPlan(
                             ed,
@@ -263,7 +265,9 @@ namespace MediaCreationLib
                     foreach (EditionTarget ed in targetEdition.DestructiveTargets)
                     {
                         if (edition != null && !IsRightPath(ed, edition))
+                        {
                             continue;
+                        }
 
                         result = HandleEditionPlan(
                             ed,
@@ -360,16 +364,20 @@ namespace MediaCreationLib
                 return true;
             }
 
-            foreach (var ed in editionTarget.DestructiveTargets)
+            foreach (EditionTarget ed in editionTarget.DestructiveTargets)
             {
                 if (IsRightPath(ed, edition))
+                {
                     return true;
+                }
             }
 
-            foreach (var ed in editionTarget.NonDestructiveTargets)
+            foreach (EditionTarget ed in editionTarget.NonDestructiveTargets)
             {
                 if (IsRightPath(ed, edition))
+                {
                     return true;
+                }
             }
 
             return false;
@@ -433,7 +441,9 @@ namespace MediaCreationLib
                 foreach (EditionTarget ed in editionTargets)
                 {
                     if (Edition != null && !IsRightPath(ed, Edition))
+                    {
                         continue;
+                    }
 
                     result = HandleEditionPlan(ed, UUPPath, MediaRootPath, LanguageCode, InstallWIMFilePath, WinREWIMFilePath, CompressionType, tempManager, progressCallback: progressCallback, edition: Edition);
                     if (!result)
