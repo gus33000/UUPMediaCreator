@@ -21,6 +21,7 @@
  */
 using Cabinet;
 using Imaging;
+using MediaCreationLib.Planning.Applications;
 using MediaCreationLib.NET;
 using Microsoft.Wim;
 using System;
@@ -28,6 +29,7 @@ using System.Collections.Generic;
 using System.IO;
 using UUPMediaCreator.InterCommunication;
 using static MediaCreationLib.MediaCreator;
+using System.Diagnostics;
 
 namespace MediaCreationLib.BaseEditions
 {
@@ -120,6 +122,220 @@ namespace MediaCreationLib.BaseEditions
             {
                 progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, "CreateBaseEdition -> ExportImage failed");
                 goto exit;
+            }
+
+            result = WIMImaging.GetWIMInformation(OutputInstallImage, out WIMInformationXML.WIM wim);
+            if (!result)
+            {
+                progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, "CreateBaseEdition -> GetWIMInformation failed");
+                goto exit;
+            }
+
+            //
+            // Set the correct metadata on the image
+            //
+            image.DISPLAYNAME = image.NAME;
+            image.DISPLAYDESCRIPTION = image.DESCRIPTION;
+            image.NAME = image.NAME;
+            image.DESCRIPTION = image.NAME;
+            image.FLAGS = image.WINDOWS.EDITIONID;
+            if (image.WINDOWS.INSTALLATIONTYPE.EndsWith(" Core", StringComparison.InvariantCultureIgnoreCase) && !image.FLAGS.EndsWith("Core", StringComparison.InvariantCultureIgnoreCase))
+            {
+                image.FLAGS += "Core";
+            }
+
+            if (image.WINDOWS.LANGUAGES == null)
+            {
+                image.WINDOWS.LANGUAGES = new WIMInformationXML.LANGUAGES()
+                {
+                    LANGUAGE = LanguageCode,
+                    FALLBACK = new WIMInformationXML.FALLBACK()
+                    {
+                        LANGUAGE = LanguageCode,
+                        Text = "en-US"
+                    },
+                    DEFAULT = LanguageCode
+                };
+            }
+            result = WIMImaging.SetWIMImageInformation(OutputInstallImage, wim.IMAGE.Count, image);
+            if (!result)
+            {
+                progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, "CreateBaseEdition -> SetWIMImageInformation failed");
+                goto exit;
+            }
+
+            void callback2(string Operation, int ProgressPercentage, bool IsIndeterminate)
+            {
+                progressCallback?.Invoke(Common.ProcessPhase.IntegratingWinRE, IsIndeterminate, ProgressPercentage, Operation);
+            }
+
+            //
+            // Integrate the WinRE image into the installation image
+            //
+            progressCallback?.Invoke(Common.ProcessPhase.IntegratingWinRE, true, 0, "");
+
+            result = imagingInterface.AddFileToImage(
+                OutputInstallImage,
+                wim.IMAGE.Count,
+                InputWindowsREPath,
+                Path.Combine("Windows", "System32", "Recovery", "Winre.wim"),
+                callback2);
+            if (!result)
+            {
+                progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, "CreateBaseEdition -> AddFileToImage failed");
+                goto exit;
+            }
+
+        exit:
+            return result;
+        }
+
+        private static bool RunDismInstallAppXWorkload(
+            string OSPath,
+            string UUPPath,
+            AppxInstallWorkload Payload,
+            ProgressCallback progressCallback = null
+            )
+        {
+            string parentDirectory = PathUtils.GetParentExecutableDirectory();
+            string toolpath = Path.Combine(parentDirectory, "UUPMediaConverterDismBroker", "UUPMediaConverterDismBroker.exe");
+
+            if (!File.Exists(toolpath))
+            {
+                parentDirectory = PathUtils.GetExecutableDirectory();
+                toolpath = Path.Combine(parentDirectory, "UUPMediaConverterDismBroker", "UUPMediaConverterDismBroker.exe");
+            }
+
+            if (!File.Exists(toolpath))
+            {
+                parentDirectory = PathUtils.GetExecutableDirectory();
+                toolpath = Path.Combine(parentDirectory, "UUPMediaConverterDismBroker.exe");
+            }
+
+            Process proc = new();
+            proc.StartInfo = new ProcessStartInfo("cmd.exe", $"/c \"\"{toolpath}\" /InstallAppXWorkload \"{OSPath}\" \"{UUPPath}\" \"{System.Text.Json.JsonSerializer.Serialize(Payload).Replace("\"", "\"\"")}\"\"")
+            {
+                UseShellExecute = false,
+                WindowStyle = ProcessWindowStyle.Hidden,
+                RedirectStandardOutput = true,
+                CreateNoWindow = true
+            };
+
+            proc.Start();
+            proc.BeginOutputReadLine();
+            proc.WaitForExit();
+            if (proc.ExitCode != 0)
+            {
+                progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, "An error occured while running the external tool for appx installation. Error code: " + proc.ExitCode);
+            }
+            return proc.ExitCode == 0;
+        }
+
+        public static bool CreateBaseEditionWithAppXs(
+            string UUPPath,
+            string LanguageCode,
+            string EditionID,
+            string InputWindowsREPath,
+            string OutputInstallImage,
+            Common.CompressionType CompressionType,
+            AppxInstallWorkload[] appxWorkloads,
+            TempManager.TempManager tempManager,
+            ProgressCallback progressCallback = null)
+        {
+            bool result = true;
+
+            WimCompressionType compression = WimCompressionType.None;
+            switch (CompressionType)
+            {
+                case Common.CompressionType.LZMS:
+                    compression = WimCompressionType.Lzms;
+                    break;
+
+                case Common.CompressionType.LZX:
+                    compression = WimCompressionType.Lzx;
+                    break;
+
+                case Common.CompressionType.XPRESS:
+                    compression = WimCompressionType.Xpress;
+                    break;
+            }
+
+            HashSet<string> ReferencePackages, referencePackagesToConvert;
+            string BaseESD = null;
+
+            (result, BaseESD, ReferencePackages, referencePackagesToConvert) = FileLocator.LocateFilesForBaseEditionCreation(UUPPath, LanguageCode, EditionID, progressCallback);
+            if (!result)
+            {
+                goto exit;
+            }
+
+            progressCallback?.Invoke(Common.ProcessPhase.PreparingFiles, true, 0, "Converting Reference Cabinets");
+
+            int counter = 0;
+            int total = referencePackagesToConvert.Count;
+            foreach (string file in referencePackagesToConvert)
+            {
+                int progressoffset = (int)Math.Round((double)counter / total * 100);
+                int progressScale = (int)Math.Round((double)1 / total * 100);
+
+                string refesd = ConvertCABToESD(Path.Combine(UUPPath, file), progressCallback, progressoffset, progressScale, tempManager);
+                if (string.IsNullOrEmpty(refesd))
+                {
+                    progressCallback?.Invoke(Common.ProcessPhase.ReadingMetadata, true, 0, "CreateBaseEdition -> Reference ESD creation from Cabinet files failed");
+                    goto exit;
+                }
+                ReferencePackages.Add(refesd);
+                counter++;
+            }
+
+            //
+            // Gather information to transplant later into DisplayName and DisplayDescription
+            //
+            result = WIMImaging.GetWIMImageInformation(BaseESD, 3, out WIMInformationXML.IMAGE image);
+            if (!result)
+            {
+                progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, "CreateBaseEdition -> GetWIMImageInformation failed");
+                goto exit;
+            }
+
+            //
+            // Export the install image
+            //
+            void callback(string Operation, int ProgressPercentage, bool IsIndeterminate)
+            {
+                progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, IsIndeterminate, ProgressPercentage, Operation);
+            }
+
+            using (VirtualHardDiskLib.VirtualDiskSession vhdSession = new(delete: true))
+            {
+                result = imagingInterface.ApplyImage(BaseESD, 3, vhdSession.GetMountedPath(), referenceWIMs: ReferencePackages, progressCallback: callback);
+                if (!result)
+                {
+                    progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, "CreateBaseEditionWithAppXs -> ApplyImage failed");
+                    goto exit;
+                }
+
+                foreach (AppxInstallWorkload appx in appxWorkloads)
+                {
+                    progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, $"Installing {appx.AppXPath}");
+                    RunDismInstallAppXWorkload(vhdSession.GetMountedPath(), UUPPath, appx, progressCallback);
+                }
+
+                result = imagingInterface.CaptureImage(
+                    BaseESD, 
+                    image.NAME, 
+                    image.DESCRIPTION, 
+                    image.FLAGS, 
+                    vhdSession.GetMountedPath(), 
+                    image.DISPLAYNAME, 
+                    image.DISPLAYDESCRIPTION, 
+                    compressionType: compression,
+                    progressCallback: callback);
+                if (!result)
+                {
+                    progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, "CreateBaseEditionWithAppXs -> CaptureImage failed");
+                    goto exit;
+                }
             }
 
             result = WIMImaging.GetWIMInformation(OutputInstallImage, out WIMInformationXML.WIM wim);

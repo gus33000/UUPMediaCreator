@@ -102,15 +102,33 @@ namespace MediaCreationLib
             {
                 case AvailabilityType.Canonical:
                     {
-                        result = BaseEditionBuilder.CreateBaseEdition(
-                                UUPPath,
-                                LanguageCode,
-                                targetEdition.PlannedEdition.EditionName,
-                                WinREWIMFilePath,
-                                InstallWIMFilePath,
-                                CompressionType,
-                                tempManager,
-                                progressCallback);
+                        if (RunsAsAdministrator && targetEdition.PlannedEdition.AppXInstallWorkloads?.Length > 0)
+                        {
+                            // Allow AppX Slipstreaming
+                            result = BaseEditionBuilder.CreateBaseEditionWithAppXs(
+                                    UUPPath,
+                                    LanguageCode,
+                                    targetEdition.PlannedEdition.EditionName,
+                                    WinREWIMFilePath,
+                                    InstallWIMFilePath,
+                                    CompressionType,
+                                    targetEdition.PlannedEdition.AppXInstallWorkloads,
+                                    tempManager,
+                                    progressCallback);
+                        }
+                        else
+                        {
+                            // Otherwise not
+                            result = BaseEditionBuilder.CreateBaseEdition(
+                                    UUPPath,
+                                    LanguageCode,
+                                    targetEdition.PlannedEdition.EditionName,
+                                    WinREWIMFilePath,
+                                    InstallWIMFilePath,
+                                    CompressionType,
+                                    tempManager,
+                                    progressCallback);
+                        }
 
                         if (!result)
                         {
