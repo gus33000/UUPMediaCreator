@@ -25,6 +25,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using MediaCreationLib.Planning.Applications;
 
 #nullable enable
 
@@ -41,6 +42,7 @@ namespace MediaCreationLib.Planning.NET
     {
         public string EditionName { get; set; } = "";
         public AvailabilityType AvailabilityType { get; set; }
+        public AppxInstallWorkload[] AppXInstallWorkloads { get; set; } = Array.Empty<AppxInstallWorkload>();
     }
 
     public enum AvailabilityType
@@ -389,6 +391,16 @@ namespace MediaCreationLib.Planning.NET
         {
             List<string> lines = new();
             lines.Add($"-> Name: {editionTarget.PlannedEdition.EditionName}, Availability: {editionTarget.PlannedEdition.AvailabilityType}");
+            
+            if (editionTarget.PlannedEdition.AppXInstallWorkloads?.Length > 0)
+            {
+                lines.Add($"-> Apps: ");
+                foreach (AppxInstallWorkload app in editionTarget.PlannedEdition.AppXInstallWorkloads)
+                {
+                    lines.Add($"   " + app.ToString());
+                }
+            }
+
             if (editionTarget.NonDestructiveTargets.Count > 0)
             {
                 lines.Add("   Non Destructive Edition Upgrade Targets:");
@@ -475,6 +487,12 @@ namespace MediaCreationLib.Planning.NET
                 {
                     AvailabilityType = AvailabilityType.Canonical
                 };
+
+                if (compDBs.Any(x => x.Name.StartsWith("Build~") && x.Name.EndsWith("~Desktop_Apps~~")))
+                {
+                    CompDBXmlClass.CompDB AppCompDB = compDBs.First(x => x.Name.StartsWith("Build~") && x.Name.EndsWith("~Desktop_Apps~~"));
+                    edition.AppXInstallWorkloads = AppxSelectionEngine.GetAppxInstallationWorkloads(compDB, AppCompDB);
+                }
 
                 if (compDB.Tags != null)
                 {

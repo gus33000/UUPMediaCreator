@@ -26,7 +26,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace MediaCreationLib.Applications
+namespace MediaCreationLib.Planning.Applications
 {
     public static class AppxSelectionEngine
     {
@@ -37,7 +37,7 @@ namespace MediaCreationLib.Applications
         /// <param name="appsCdb"></param>
         /// <param name="repositoryPath"></param>
         /// <returns></returns>
-        private static (Dictionary<string, DeploymentProperties> preinstalledApps, CompDB.CompDBXmlClass.Feature[] appsFeatures) SetupVariables(CompDB.CompDBXmlClass.CompDB editionCdb, CompDB.CompDBXmlClass.CompDB appsCdb, string repositoryPath)
+        private static (Dictionary<string, DeploymentProperties> preinstalledApps, CompDB.CompDBXmlClass.Feature[] appsFeatures) SetupVariables(CompDB.CompDBXmlClass.CompDB editionCdb, CompDB.CompDBXmlClass.CompDB appsCdb)
         {
             Dictionary<string, DeploymentProperties> preinstalledApps = editionCdb.Features.Feature
                 .First(x => x.Type == "DesktopMedia")
@@ -105,7 +105,7 @@ namespace MediaCreationLib.Applications
         /// <param name="repositoryPath">The path to the repository file set</param>
         public static void GenerateLicenseXmlFiles(CompDB.CompDBXmlClass.CompDB editionCdb, CompDB.CompDBXmlClass.CompDB appsCdb, string repositoryPath)
         {
-            (Dictionary<string, DeploymentProperties> preinstalledApps, CompDB.CompDBXmlClass.Feature[] appsFeatures) = SetupVariables(editionCdb, appsCdb, repositoryPath);
+            (Dictionary<string, DeploymentProperties> preinstalledApps, CompDB.CompDBXmlClass.Feature[] appsFeatures) = SetupVariables(editionCdb, appsCdb);
 
             // Pick packages and dump licenses
             foreach (CompDB.CompDBXmlClass.Feature ftr in appsFeatures)
@@ -141,7 +141,7 @@ namespace MediaCreationLib.Applications
         /// <param name="appsCdb">The application Composition Database</param>
         /// <param name="repositoryPath">The path to the repository file set</param>
         /// <returns></returns>
-        public static AppxInstallWorkload[] GetAppxInstallationWorkloads(CompDB.CompDBXmlClass.CompDB editionCdb, CompDB.CompDBXmlClass.CompDB appsCdb, string repositoryPath)
+        public static AppxInstallWorkload[] GetAppxInstallationWorkloads(CompDB.CompDBXmlClass.CompDB editionCdb, CompDB.CompDBXmlClass.CompDB appsCdb)
         {
             List<AppxInstallWorkload> workloads = new();
 
@@ -150,7 +150,7 @@ namespace MediaCreationLib.Applications
 
             IEnumerable<string> applicableLanguageTags = editionLanguage.Split('-').Combinations().Select(x => string.Join("-", x));
 
-            (Dictionary<string, DeploymentProperties> preinstalledApps, CompDB.CompDBXmlClass.Feature[] appsFeatures) = SetupVariables(editionCdb, appsCdb, repositoryPath);
+            (Dictionary<string, DeploymentProperties> preinstalledApps, CompDB.CompDBXmlClass.Feature[] appsFeatures) = SetupVariables(editionCdb, appsCdb);
 
             HashSet<string> allPackageIDs = new();
             // Pick packages and dump licenses
@@ -194,7 +194,7 @@ namespace MediaCreationLib.Applications
                     .First(x => x.PayloadType == "Canonical");
                 packageHashDict[packageId] = new PackageProperties()
                 {
-                    Path = Path.Combine(repositoryPath, pCanonical.Path),
+                    Path = pCanonical.Path,
                     SHA256 = pCanonical.PayloadHash
                 };
             }
@@ -217,7 +217,7 @@ namespace MediaCreationLib.Applications
                 }
                 if (deployProps.HasLicense)
                 {
-                    workload.LicensePath = Path.Combine(repositoryPath, "Licenses", deployKvp.Key + "_License.xml");
+                    workload.LicensePath = Path.Combine("Licenses", deployKvp.Key + "_License.xml");
                 }
 
                 if (deployProps.PreferStub)

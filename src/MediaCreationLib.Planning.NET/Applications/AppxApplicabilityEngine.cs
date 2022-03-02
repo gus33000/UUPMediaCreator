@@ -24,7 +24,7 @@
  */
 using System.Collections.Generic;
 
-namespace MediaCreationLib.Applications
+namespace MediaCreationLib.Planning.Applications
 {
     internal class AppxApplicabilityEngine
     {
@@ -268,8 +268,14 @@ namespace MediaCreationLib.Applications
         internal static double GetScaleFactorScore(int target, int candidate)
         {
             double score;
-            try { score = BuiltInScaleFactorScores[target][candidate]; }
-            catch { score = CalculateScaleFactorScore(target, candidate); }
+            if (BuiltInScaleFactorScores.ContainsKey(target) && BuiltInScaleFactorScores[target].ContainsKey(candidate))
+            {
+                score = BuiltInScaleFactorScores[target][candidate];
+            }
+            else
+            {
+                score = CalculateScaleFactorScore(target, candidate);
+            }
             return score;
         }
     }

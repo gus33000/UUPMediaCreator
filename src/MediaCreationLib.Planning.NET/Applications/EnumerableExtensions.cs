@@ -23,7 +23,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace MediaCreationLib.Applications
+namespace MediaCreationLib.Planning.Applications
 {
     public static class EnumerableExtensions
     {
