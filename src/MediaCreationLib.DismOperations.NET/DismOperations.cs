@@ -25,6 +25,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using System.Xml.Linq;
 
 namespace MediaCreationLib.Dism
 {
@@ -32,41 +33,26 @@ namespace MediaCreationLib.Dism
     {
         public delegate void ProgressCallback(bool IsIndeterminate, int ProgressInPercentage, string SubOperation);
 
-        private static readonly string[] componentsNotInWinPE = new string[]
+        private static List<string> GetRemovableREPackages(string mountDir)
         {
-            "Microsoft-Windows-ImageBasedSetup-Rejuvenation-Package-onecore~31bf3856ad364e35",
-            "Microsoft-Windows-ImageBasedSetup-Rejuvenation-Package~31bf3856ad364e35",
-            "Microsoft-Windows-OneCoreUAP-WCN-Package~31bf3856ad364e35",
-            "Microsoft-Windows-WCN-net-Package~31bf3856ad364e35",
-            "Microsoft-Windows-WCN-Package~31bf3856ad364e35",
-            //"Microsoft-Windows-WinPE-AppxPackaging-Package~31bf3856ad364e35",
-            "Microsoft-Windows-WinPE-Fonts-Legacy-onecoreuap-Package~31bf3856ad364e35",
-            "Microsoft-Windows-WinPE-Fonts-Legacy-Package~31bf3856ad364e35",
-            "Microsoft-Windows-WinPE-Fonts-Legacy-windows-Package~31bf3856ad364e35",
-            "Microsoft-Windows-WinPE-FontSupport-WinRE-onecoreuap-Package~31bf3856ad364e35",
-            "Microsoft-Windows-WinPE-FontSupport-WinRE-Package~31bf3856ad364e35",
-            "Microsoft-Windows-WinPE-FontSupport-WinRE-windows-Package~31bf3856ad364e35",
-            //"Microsoft-Windows-WinPE-OpcServices-Package~31bf3856ad364e35",
-            "WinPE-AppxPackaging-Package~31bf3856ad364e35",
-            "WinPE-FMAPI-Package~31bf3856ad364e35",
-            "WinPE-HTA-Package-com~31bf3856ad364e35",
-            "WinPE-HTA-Package-inetcore~31bf3856ad364e35",
-            "WinPE-HTA-Package-onecoreuapwindows~31bf3856ad364e35",
-            "WinPE-HTA-Package-onecoreuap~31bf3856ad364e35",
-            "WinPE-HTA-Package-onecore~31bf3856ad364e35",
-            "WinPE-HTA-Package-shell~31bf3856ad364e35",
-            "WinPE-HTA-Package-windows~31bf3856ad364e35",
-            "WinPE-HTA-Package~31bf3856ad364e35",
-            "WinPE-OneCoreUAP-WiFi-Package~31bf3856ad364e35",
-            "WinPE-OpcServices-Package~31bf3856ad364e35",
-            "WinPE-Rejuv-Package~31bf3856ad364e35",
-            "WinPE-Setup-Client-Package~31bf3856ad364e35",
-            "WinPE-Setup-Package~31bf3856ad364e35",
-            "WinPE-StorageWMI-Package-onecore~31bf3856ad364e35",
-            "WinPE-StorageWMI-Package-servercommon~31bf3856ad364e35",
-            "WinPE-StorageWMI-Package~31bf3856ad364e35",
-            "WinPE-WiFi-Package~31bf3856ad364e35",
-        };
+            XDocument sessDoc = XDocument.Load(Path.Combine(mountDir, @"Windows\servicing\Sessions\Sessions.xml"));
+            IEnumerable<XElement> sessions = sessDoc.Element("Sessions").Elements("Session");
+            bool dupeFound = false;
+            List<string> pkgsToRemove = new List<string>();
+            foreach (XElement test in sessions)
+            {
+                bool phasesEmpty = !test.Element("Actions").Elements("Phase").First().Elements().Any();
+                if (phasesEmpty && !dupeFound)
+                    dupeFound = true;
+                if (dupeFound && !phasesEmpty)
+                {
+                    string pkgName = test.Element("Tasks").Elements("Phase").First().Element("package").Attribute("id").Value;
+                    if (pkgName.Contains("~~"))
+                        pkgsToRemove.Add(pkgName);
+                }
+            }
+            return pkgsToRemove;
+        }
 
         /// <summary>
         /// Uninstalls unneeded Windows Components for Windows Setup Preinstallation-Environment
@@ -76,6 +62,8 @@ namespace MediaCreationLib.Dism
         /// <param name="progressCallback">Callback to be notified of progress</param>
         public static void UninstallPEComponents(string ospath, ProgressCallback progressCallback)
         {
+            List<string> componentsNotInWinPE = GetRemovableREPackages(ospath);
+
             //
             // Initialize DISM log
             //
