@@ -315,6 +315,13 @@ namespace MediaCreationLib.BaseEditions
                     goto exit;
                 }
 
+                result = FileLocator.GenerateAppXLicenseFiles(UUPPath, LanguageCode, EditionID, progressCallback);
+                if (!result)
+                {
+                    progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, "CreateBaseEditionWithAppXs -> GenerateAppXLicenseFiles failed");
+                    goto exit;
+                }
+
                 foreach (AppxInstallWorkload appx in appxWorkloads)
                 {
                     progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, $"Installing {appx.AppXPath}");

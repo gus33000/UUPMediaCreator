@@ -20,6 +20,7 @@
  * SOFTWARE.
  */
 using CompDB;
+using MediaCreationLib.Planning.Applications;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -134,6 +135,41 @@ namespace MediaCreationLib.NET
                 progressCallback?.Invoke(Common.ProcessPhase.Error, true, 0, "We couldn't find the Composition Database. Please make sure you have downloaded the <aggregatedmetadata> cabinet file, or the <CompDB> cabinet files (if the build is lower than RS3 RTM). This error is fatal.");
                 return (false, null);
             }
+        }
+
+        internal static bool GenerateAppXLicenseFiles(
+            string UUPPath,
+            string LanguageCode,
+            string EditionID,
+            ProgressCallback? progressCallback = null)
+        {
+            bool success = true;
+
+            progressCallback?.Invoke(Common.ProcessPhase.ReadingMetadata, true, 0, "Enumerating files");
+
+            HashSet<CompDBXmlClass.CompDB> compDBs = Planning.NET.FileLocator.GetCompDBsFromUUPFiles(UUPPath);
+
+            CompDBXmlClass.CompDB? compDB = GetEditionCompDBForLanguage(compDBs, EditionID, LanguageCode);
+
+            if (compDB == null)
+            {
+                progressCallback?.Invoke(Common.ProcessPhase.ReadingMetadata, true, 0, "No compDB found");
+                goto error;
+            }
+
+            if (compDBs.Any(x => x.Name.StartsWith("Build~") && x.Name.EndsWith("~Desktop_Apps~~")))
+            {
+                CompDBXmlClass.CompDB AppCompDB = compDBs.First(x => x.Name.StartsWith("Build~") && x.Name.EndsWith("~Desktop_Apps~~"));
+                AppxSelectionEngine.GenerateLicenseXmlFiles(compDB, AppCompDB, UUPPath);
+            }
+
+            goto exit;
+
+        error:
+            success = false;
+
+        exit:
+            return success;
         }
 
         internal static (bool Succeeded, string BaseESD, HashSet<string> ReferencePackages, HashSet<string> ReferencePackagesToConvert) LocateFilesForBaseEditionCreation(
