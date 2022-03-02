@@ -22,7 +22,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -31,7 +30,13 @@ namespace MediaCreationLib.Applications
 {
     public static class AppxSelectionEngine
     {
-        public static void GetAppxDismCommands(CompDB.CompDBXmlClass.CompDB editionCdb, CompDB.CompDBXmlClass.CompDB appsCdb, string repositoryPath)
+        /// <summary>
+        /// Generates License XML files for AppX packages
+        /// </summary>
+        /// <param name="editionCdb">The edition Composition Database to generate licenses for</param>
+        /// <param name="appsCdb">The application Composition Database</param>
+        /// <param name="repositoryPath">The path to the repository file set</param>
+        public static void GenerateLicenseXmlFiles(CompDB.CompDBXmlClass.CompDB editionCdb, CompDB.CompDBXmlClass.CompDB appsCdb, string repositoryPath)
         {
             Dictionary<string, DeploymentProperties> preinstalledApps = editionCdb.Features.Feature
                 .First(x => x.Type == "DesktopMedia")
@@ -118,6 +123,97 @@ namespace MediaCreationLib.Applications
                     deployProps.HasLicense = true;
                     File.WriteAllText(Path.Combine(repositoryPath, "Licenses", appFeatureId + "_License.xml"), licenseData);
                 }
+            }
+        }
+
+        /// <summary>
+        /// Gathers a list of AppX files to install for a target edition
+        /// </summary>
+        /// <param name="editionCdb">The edition Composition Database to generate workloads for</param>
+        /// <param name="appsCdb">The application Composition Database</param>
+        /// <param name="repositoryPath">The path to the repository file set</param>
+        /// <returns></returns>
+        public static AppxInstallWorkload[] GetAppxInstallationWorkloads(CompDB.CompDBXmlClass.CompDB editionCdb, CompDB.CompDBXmlClass.CompDB appsCdb, string repositoryPath)
+        {
+            List<AppxInstallWorkload> workloads = new();
+
+            Dictionary<string, DeploymentProperties> preinstalledApps = editionCdb.Features.Feature
+                .First(x => x.Type == "DesktopMedia")
+                .Dependencies
+                .Feature
+                .Where(x => x.Group == "PreinstalledApps")
+                .Select(x => x.FeatureID)
+                .Distinct()
+                .ToDictionary(x => x, _ => new DeploymentProperties());
+
+            CompDB.CompDBXmlClass.Feature[] appsFeatures = appsCdb.Features.Feature;
+
+            // Load dependencies & intents
+            foreach (CompDB.CompDBXmlClass.Feature ftr in appsFeatures)
+            {
+                string appFeatureId = ftr.FeatureID;
+                if (!preinstalledApps.ContainsKey(appFeatureId))
+                {
+                    continue;
+                }
+
+                DeploymentProperties deployProps = preinstalledApps[appFeatureId];
+
+                bool preferStub = ftr.InitialIntents?.InitialIntent
+                    .Any(x => x.Value == "PREFERSTUB") ?? false;
+
+                if (preferStub)
+                {
+                    deployProps.PreferStub = true;
+                }
+
+                List<CompDB.CompDBXmlClass.Feature> dependencies = ftr.Dependencies?.Feature;
+                if (dependencies == null)
+                {
+                    continue;
+                }
+
+                HashSet<string> depsForApp = new();
+                foreach (CompDB.CompDBXmlClass.Feature dep in dependencies)
+                {
+                    string depAppId = dep.FeatureID;
+                    if (!preferStub)
+                    {
+                        preinstalledApps[depAppId] = new DeploymentProperties();
+                        depsForApp.Add(depAppId);
+                    }
+                    else if (depAppId.StartsWith("Microsoft.VCLibs.140.00_"))
+                    {
+                        preinstalledApps[depAppId] = new DeploymentProperties();
+                        depsForApp.Add(depAppId);
+                        break;
+                    }
+                }
+                preinstalledApps[appFeatureId].Dependencies = depsForApp;
+            }
+
+            string editionLanguage = editionCdb.Tags.Tag
+                .First(x => x.Name == "Language").Value;
+
+            IEnumerable<string> applicableLanguageTags = editionLanguage.Split('-').Combinations().Select(x => string.Join("-", x));
+
+            HashSet<string> allPackageIDs = new();
+            // Pick packages and dump licenses
+            foreach (CompDB.CompDBXmlClass.Feature ftr in appsFeatures)
+            {
+                string appFeatureId = ftr.FeatureID;
+                if (!preinstalledApps.ContainsKey(appFeatureId))
+                {
+                    continue;
+                }
+
+                DeploymentProperties deployProps = preinstalledApps[appFeatureId];
+
+                bool isFramework = ftr.Type == "MSIXFramework";
+                if (isFramework)
+                {
+                    deployProps.IsFramework = true;
+                }
 
                 List<CompDB.CompDBXmlClass.Package> appPackages = ftr.Packages.Package;
                 deployProps.AddApplicablePackages(appPackages, applicableLanguageTags);
@@ -143,42 +239,41 @@ namespace MediaCreationLib.Applications
                     .First(x => x.PayloadType == "Canonical");
                 packageHashDict[packageId] = new PackageProperties()
                 {
-                    Path = pCanonical.Path.Replace(@"UUP\Desktop\Apps\IPA\", ""),
+                    Path = Path.Combine(repositoryPath, pCanonical.Path),
                     SHA256 = pCanonical.PayloadHash
                 };
-            }
-
-            foreach (KeyValuePair<string, PackageProperties> x in packageHashDict)
-            {
-                Console.WriteLine("{ \"" + x.Value.SHA256 + "\", @\"" + x.Value.Path + "\" },");
             }
 
             foreach (KeyValuePair<string, DeploymentProperties> deployKvp in preinstalledApps.Where(x => !x.Value.IsFramework))
             {
                 DeploymentProperties deployProps = deployKvp.Value;
-                string deployCommand = "dism /image:mount /add-provisionedappxpackage /packagepath:\"";
-                deployCommand += packageHashDict[deployProps.MainPackageID].Path + "\"";
+                AppxInstallWorkload workload = new();
+                workload.AppXPath = packageHashDict[deployProps.MainPackageID].Path;
+
                 if (deployProps.Dependencies != null)
                 {
+                    List<string> dependencies = new();
                     foreach (string dependency in deployProps.Dependencies)
                     {
                         DeploymentProperties dependProps = preinstalledApps[dependency];
-                        deployCommand += " /dependencypackagepath:\"";
-                        deployCommand += packageHashDict[dependProps.MainPackageID].Path + "\"";
+                        dependencies.Add(packageHashDict[dependProps.MainPackageID].Path);
                     }
+                    workload.DependenciesPath = dependencies.ToArray();
                 }
                 if (deployProps.HasLicense)
                 {
-                    deployCommand += " /licensepath:\"Licenses\\" + deployKvp.Key + "_License.xml\"";
+                    workload.LicensePath = Path.Combine(repositoryPath, "Licenses", deployKvp.Key + "_License.xml");
                 }
 
                 if (deployProps.PreferStub)
                 {
-                    deployCommand += " /stubpackageoption:installstub";
+                    workload.StubPackageOption = "installstub";
                 }
 
-                Console.WriteLine(deployCommand);
+                workloads.Add(workload);
             }
+
+            return workloads.ToArray();
         }
     }
 }

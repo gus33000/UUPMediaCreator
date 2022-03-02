@@ -597,7 +597,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <PRIResource Include="Resources\en\Resources.resw" />
-    <None Include="UUPMediaCreator_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
     <SDKReference Include="WindowsDesktop, Version=10.0.19041.0">
