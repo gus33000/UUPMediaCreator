@@ -329,7 +329,7 @@ namespace MediaCreationLib.BaseEditions
                 }
 
                 result = imagingInterface.CaptureImage(
-                    BaseESD, 
+                    OutputInstallImage, 
                     image.NAME, 
                     image.DESCRIPTION, 
                     image.FLAGS, 

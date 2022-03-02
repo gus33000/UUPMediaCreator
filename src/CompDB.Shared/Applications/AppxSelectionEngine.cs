@@ -129,7 +129,12 @@ namespace MediaCreationLib.Planning.Applications
                 if (licenseData != null)
                 {
                     deployProps.HasLicense = true;
-                    File.WriteAllText(Path.Combine(repositoryPath, "Licenses", appFeatureId + "_License.xml"), licenseData);
+                    string LicenseDirectory = Path.Combine(repositoryPath, "Licenses");
+                    if (!Directory.Exists(LicenseDirectory))
+                    {
+                        Directory.CreateDirectory(LicenseDirectory);
+                    }
+                    File.WriteAllText(Path.Combine(LicenseDirectory, appFeatureId + "_License.xml"), licenseData);
                 }
             }
         }
