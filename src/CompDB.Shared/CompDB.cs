@@ -250,6 +250,7 @@ namespace CompDB
             [XmlAttribute(AttributeName = "Key", Namespace = "")]
             public string Key { get; set; }
 
+            [XmlText]
             public string Value { get; set; }
         }
 

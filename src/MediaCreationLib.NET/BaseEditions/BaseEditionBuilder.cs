@@ -299,6 +299,16 @@ namespace MediaCreationLib.BaseEditions
             }
 
             //
+            // Export License files
+            //
+            result = FileLocator.GenerateAppXLicenseFiles(UUPPath, LanguageCode, EditionID, progressCallback);
+            if (!result)
+            {
+                progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, "CreateBaseEditionWithAppXs -> GenerateAppXLicenseFiles failed");
+                goto exit;
+            }
+
+            //
             // Export the install image
             //
             void callback(string Operation, int ProgressPercentage, bool IsIndeterminate)
@@ -312,13 +322,6 @@ namespace MediaCreationLib.BaseEditions
                 if (!result)
                 {
                     progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, "CreateBaseEditionWithAppXs -> ApplyImage failed");
-                    goto exit;
-                }
-
-                result = FileLocator.GenerateAppXLicenseFiles(UUPPath, LanguageCode, EditionID, progressCallback);
-                if (!result)
-                {
-                    progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, "CreateBaseEditionWithAppXs -> GenerateAppXLicenseFiles failed");
                     goto exit;
                 }
 

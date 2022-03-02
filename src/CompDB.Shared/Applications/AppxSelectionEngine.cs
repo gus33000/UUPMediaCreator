@@ -116,19 +116,10 @@ namespace MediaCreationLib.Planning.Applications
                     continue;
                 }
 
-                DeploymentProperties deployProps = preinstalledApps[appFeatureId];
-
-                bool isFramework = ftr.Type == "MSIXFramework";
-                if (isFramework)
-                {
-                    deployProps.IsFramework = true;
-                }
-
                 string licenseData = ftr.CustomInformation?.CustomInfo
                     .FirstOrDefault(x => x.Key == "licensedata")?.Value;
                 if (licenseData != null)
                 {
-                    deployProps.HasLicense = true;
                     string LicenseDirectory = Path.Combine(repositoryPath, "Licenses");
                     if (!Directory.Exists(LicenseDirectory))
                     {
@@ -173,6 +164,13 @@ namespace MediaCreationLib.Planning.Applications
                 if (isFramework)
                 {
                     deployProps.IsFramework = true;
+                }
+
+                string licenseData = ftr.CustomInformation?.CustomInfo
+                    .FirstOrDefault(x => x.Key == "licensedata")?.Value;
+                if (licenseData != null)
+                {
+                    deployProps.HasLicense = true;
                 }
 
                 List<CompDB.CompDBXmlClass.Package> appPackages = ftr.Packages.Package;
