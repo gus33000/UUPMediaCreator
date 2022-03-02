@@ -31,12 +31,13 @@ namespace MediaCreationLib.Applications
     public static class AppxSelectionEngine
     {
         /// <summary>
-        /// Generates License XML files for AppX packages
+        /// Internal Variable setup function
         /// </summary>
-        /// <param name="editionCdb">The edition Composition Database to generate licenses for</param>
-        /// <param name="appsCdb">The application Composition Database</param>
-        /// <param name="repositoryPath">The path to the repository file set</param>
-        public static void GenerateLicenseXmlFiles(CompDB.CompDBXmlClass.CompDB editionCdb, CompDB.CompDBXmlClass.CompDB appsCdb, string repositoryPath)
+        /// <param name="editionCdb"></param>
+        /// <param name="appsCdb"></param>
+        /// <param name="repositoryPath"></param>
+        /// <returns></returns>
+        private static (Dictionary<string, DeploymentProperties> preinstalledApps, CompDB.CompDBXmlClass.Feature[] appsFeatures) SetupVariables(CompDB.CompDBXmlClass.CompDB editionCdb, CompDB.CompDBXmlClass.CompDB appsCdb, string repositoryPath)
         {
             Dictionary<string, DeploymentProperties> preinstalledApps = editionCdb.Features.Feature
                 .First(x => x.Type == "DesktopMedia")
@@ -93,12 +94,19 @@ namespace MediaCreationLib.Applications
                 preinstalledApps[appFeatureId].Dependencies = depsForApp;
             }
 
-            string editionLanguage = editionCdb.Tags.Tag
-                .First(x => x.Name == "Language").Value;
+            return (preinstalledApps, appsFeatures);
+        }
 
-            IEnumerable<string> applicableLanguageTags = editionLanguage.Split('-').Combinations().Select(x => string.Join("-", x));
+        /// <summary>
+        /// Generates License XML files for AppX packages
+        /// </summary>
+        /// <param name="editionCdb">The edition Composition Database to generate licenses for</param>
+        /// <param name="appsCdb">The application Composition Database</param>
+        /// <param name="repositoryPath">The path to the repository file set</param>
+        public static void GenerateLicenseXmlFiles(CompDB.CompDBXmlClass.CompDB editionCdb, CompDB.CompDBXmlClass.CompDB appsCdb, string repositoryPath)
+        {
+            (Dictionary<string, DeploymentProperties> preinstalledApps, CompDB.CompDBXmlClass.Feature[] appsFeatures) = SetupVariables(editionCdb, appsCdb, repositoryPath);
 
-            HashSet<string> allPackageIDs = new();
             // Pick packages and dump licenses
             foreach (CompDB.CompDBXmlClass.Feature ftr in appsFeatures)
             {
@@ -137,65 +145,12 @@ namespace MediaCreationLib.Applications
         {
             List<AppxInstallWorkload> workloads = new();
 
-            Dictionary<string, DeploymentProperties> preinstalledApps = editionCdb.Features.Feature
-                .First(x => x.Type == "DesktopMedia")
-                .Dependencies
-                .Feature
-                .Where(x => x.Group == "PreinstalledApps")
-                .Select(x => x.FeatureID)
-                .Distinct()
-                .ToDictionary(x => x, _ => new DeploymentProperties());
-
-            CompDB.CompDBXmlClass.Feature[] appsFeatures = appsCdb.Features.Feature;
-
-            // Load dependencies & intents
-            foreach (CompDB.CompDBXmlClass.Feature ftr in appsFeatures)
-            {
-                string appFeatureId = ftr.FeatureID;
-                if (!preinstalledApps.ContainsKey(appFeatureId))
-                {
-                    continue;
-                }
-
-                DeploymentProperties deployProps = preinstalledApps[appFeatureId];
-
-                bool preferStub = ftr.InitialIntents?.InitialIntent
-                    .Any(x => x.Value == "PREFERSTUB") ?? false;
-
-                if (preferStub)
-                {
-                    deployProps.PreferStub = true;
-                }
-
-                List<CompDB.CompDBXmlClass.Feature> dependencies = ftr.Dependencies?.Feature;
-                if (dependencies == null)
-                {
-                    continue;
-                }
-
-                HashSet<string> depsForApp = new();
-                foreach (CompDB.CompDBXmlClass.Feature dep in dependencies)
-                {
-                    string depAppId = dep.FeatureID;
-                    if (!preferStub)
-                    {
-                        preinstalledApps[depAppId] = new DeploymentProperties();
-                        depsForApp.Add(depAppId);
-                    }
-                    else if (depAppId.StartsWith("Microsoft.VCLibs.140.00_"))
-                    {
-                        preinstalledApps[depAppId] = new DeploymentProperties();
-                        depsForApp.Add(depAppId);
-                        break;
-                    }
-                }
-                preinstalledApps[appFeatureId].Dependencies = depsForApp;
-            }
-
             string editionLanguage = editionCdb.Tags.Tag
                 .First(x => x.Name == "Language").Value;
 
             IEnumerable<string> applicableLanguageTags = editionLanguage.Split('-').Combinations().Select(x => string.Join("-", x));
+
+            (Dictionary<string, DeploymentProperties> preinstalledApps, CompDB.CompDBXmlClass.Feature[] appsFeatures) = SetupVariables(editionCdb, appsCdb, repositoryPath);
 
             HashSet<string> allPackageIDs = new();
             // Pick packages and dump licenses
