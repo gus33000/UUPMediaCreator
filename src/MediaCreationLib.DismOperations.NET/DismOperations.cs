@@ -54,6 +54,49 @@ namespace MediaCreationLib.Dism
             return pkgsToRemove;
         }
 
+        public static void PerformAppxWorkloadInstallation(string ospath, string repositoryPath, AppxInstallWorkload workload)
+        {
+            //
+            // Initialize DISM log
+            //
+            string tempLog = Path.GetTempFileName();
+            DismApi.Initialize(DismLogLevel.LogErrorsWarningsInfo, tempLog);
+
+            DismSession session = DismApi.OpenOfflineSession(ospath);
+
+            try
+            {
+                DismApi.AddProvisionedAppxPackage(
+                    session,
+                    workload.AppXPath,
+                    workload.DependenciesPath?.Select(x => Path.Combine(repositoryPath, x)).ToList() ?? new List<string>(),
+                    string.IsNullOrEmpty(workload.LicensePath) ? null : workload.LicensePath,
+                    null);
+            }
+            catch { }
+
+            //
+            // Clean DISM
+            //
+            try
+            {
+                DismApi.CloseSession(session);
+            }
+            catch { }
+
+            try
+            {
+                DismApi.Shutdown();
+            }
+            catch { }
+
+            try
+            {
+                File.Delete(tempLog);
+            }
+            catch { }
+        }
+
         /// <summary>
         /// Uninstalls unneeded Windows Components for Windows Setup Preinstallation-Environment
         /// TODO: Get the list from session files instead
