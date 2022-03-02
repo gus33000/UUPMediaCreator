@@ -26,16 +26,22 @@ namespace UUPMediaCreator.DismBroker
 {
     internal static class Program
     {
-        private static void Main(string[] args)
+        private static int Main(string[] args)
         {
-            if (args.Length < 2)
+            if (args.Length < 1)
             {
-                return;
+                return 2;
             }
+
             switch (args[0])
             {
                 case "/PECompUninst":
                     {
+                        if (args.Length < 2)
+                        {
+                            return 2;
+                        }
+
                         static void callback(bool IsIndeterminate, int Percentage, string Operation)
                         {
                             if (!IsIndeterminate)
@@ -43,6 +49,7 @@ namespace UUPMediaCreator.DismBroker
                                 Console.WriteLine(Percentage + "," + Operation);
                             }
                         }
+
                         DismOperations.UninstallPEComponents(args[1], callback);
                         break;
                     }
@@ -54,12 +61,18 @@ namespace UUPMediaCreator.DismBroker
                     {
                         if (args.Length < 4)
                         {
-                            return;
+                            return 2;
                         }
-                        DismOperations.PerformAppxWorkloadInstallation(args[1], args[2], AppxInstallWorkload.FromString(args[3]));
+
+                        if (!DismOperations.PerformAppxWorkloadInstallation(args[1], args[2], AppxInstallWorkload.FromString(args[3])))
+                        {
+                            return 1;
+                        }
                         break;
                     }
             }
+
+            return 0;
         }
     }
 }

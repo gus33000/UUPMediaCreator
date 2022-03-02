@@ -54,8 +54,10 @@ namespace MediaCreationLib.Dism
             return pkgsToRemove;
         }
 
-        public static void PerformAppxWorkloadInstallation(string ospath, string repositoryPath, AppxInstallWorkload workload)
+        public static bool PerformAppxWorkloadInstallation(string ospath, string repositoryPath, AppxInstallWorkload workload)
         {
+            bool result = true;
+
             //
             // Initialize DISM log
             //
@@ -71,9 +73,10 @@ namespace MediaCreationLib.Dism
                     Path.Combine(repositoryPath, workload.AppXPath),
                     workload.DependenciesPath?.Select(x => Path.Combine(repositoryPath, x)).ToList() ?? new List<string>(),
                     string.IsNullOrEmpty(workload.LicensePath) ? null : Path.Combine(repositoryPath, workload.LicensePath),
-                    null);
+                    null,
+                    string.IsNullOrEmpty(workload.StubPackageOption) ? Microsoft.Dism.StubPackageOption.None : Microsoft.Dism.StubPackageOption.InstallStub); // TODO: proper handling
             }
-            catch { }
+            catch { result = false; }
 
             //
             // Clean DISM
@@ -95,6 +98,8 @@ namespace MediaCreationLib.Dism
                 File.Delete(tempLog);
             }
             catch { }
+
+            return result;
         }
 
         /// <summary>

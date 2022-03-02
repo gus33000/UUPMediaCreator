@@ -37,7 +37,8 @@ namespace MediaCreationLib
     {
         None,
         InstallFull,
-        InstallStub
+        InstallStub,
+        UserPreference
     }
 
     public enum DismRegistryHive

@@ -7,6 +7,14 @@ using System;
 // ReSharper disable InconsistentNaming
 namespace Microsoft.Dism
 {
+    public enum StubPackageOption
+    {
+        None,
+        InstallFull,
+        InstallStub,
+        UserPreference
+    }
+
     /// <summary>
     /// Specifies the signature status of a driver.
     /// </summary>
