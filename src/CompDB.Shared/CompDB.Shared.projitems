@@ -9,6 +9,13 @@
     <Import_RootNamespace>CompDB.Shared</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Applications\AppxApplicabilityEngine.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Applications\AppxInstallWorkload.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Applications\AppxSelectionEngine.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Applications\DeploymentProperties.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Applications\EnumerableExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Applications\PackageProperties.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Applications\ResourceType.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CompDB.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CompDBExtensions.cs" />
   </ItemGroup>
