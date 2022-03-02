@@ -68,9 +68,9 @@ namespace MediaCreationLib.Dism
             {
                 DismApi.AddProvisionedAppxPackage(
                     session,
-                    workload.AppXPath,
+                    Path.Combine(repositoryPath, workload.AppXPath),
                     workload.DependenciesPath?.Select(x => Path.Combine(repositoryPath, x)).ToList() ?? new List<string>(),
-                    string.IsNullOrEmpty(workload.LicensePath) ? null : workload.LicensePath,
+                    string.IsNullOrEmpty(workload.LicensePath) ? null : Path.Combine(repositoryPath, workload.LicensePath),
                     null);
             }
             catch { }
