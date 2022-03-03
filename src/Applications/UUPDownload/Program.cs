@@ -46,8 +46,7 @@ namespace UUPDownload
         {
             ServicePointManager.DefaultConnectionLimit = int.MaxValue;
 
-            new Parser(settings => settings.CaseSensitive = false)
-                .ParseArguments<DownloadRequestOptions, DownloadReplayOptions, GetBuildsOptions>(args).MapResult(
+            Parser.Default.ParseArguments<DownloadRequestOptions, DownloadReplayOptions, GetBuildsOptions>(args).MapResult(
               (DownloadRequestOptions opts) =>
               {
                   PrintLogo();
