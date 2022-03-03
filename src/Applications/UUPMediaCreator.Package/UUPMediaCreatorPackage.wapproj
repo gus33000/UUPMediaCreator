@@ -409,7 +409,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\UUPDownload\UUPDownload.csproj" />
-    <ProjectReference Include="..\UUPMediaConverterCli\UUPMediaConverterCli.csproj" />
+    <ProjectReference Include="..\UUPMediaConverter\UUPMediaConverter.csproj" />
     <ProjectReference Include="..\UUPMediaCreator.Broker\UUPMediaCreator.Broker.csproj" />
     <ProjectReference Include="..\UUPMediaConverterDismBroker\UUPMediaConverterDismBroker.csproj" />
     <ProjectReference Include="..\UUPMediaCreator\UUPMediaCreator.csproj" />

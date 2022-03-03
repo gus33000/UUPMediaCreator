@@ -16,7 +16,7 @@ UUP Media Creator is a set of tools designed to help you scan, fetch updates fro
 Right now the tooling includes:
 
 - UUPDownload: Allows you to scan, fetch and download updates from UUP (Windows Desktop, Windows 10X, Windows Holographic, Windows Server, Windows Mobile, Windows IoT etc...)
-- UUPMediaConverterCli: Allows you to convert a downloaded UUP update for Windows Desktop into an usable ISO image to use in last decade DVD reader or simply mounted.
+- UUPMediaConverter: Allows you to convert a downloaded UUP update for Windows Desktop into an usable ISO image to use in last decade DVD reader or simply mounted.
 - An experimental UWP front end is also provided, but is not the main focus for now.
 
 ## Credits and Acknowledgements
@@ -33,24 +33,22 @@ Right now the tooling includes:
 | Decrypting ESRP payloads from UUP (UUPDownload)                                          | ✅       | ✅       | ✅       |
 | Verifying downloaded payloads from UUP (UUPDownload)                                     | ✅       | ✅       | ✅       |
 | Sample available builds from UUP (get-builds argument) (UUPDownload)                     | ✅       | ✅       | ✅       |
-| Converting Desktop UUP files to an ISO for one base edition (UUPMediaConverterCli)       | ✅       | ✅       | ✅       |
+| Converting Desktop UUP files to an ISO for one base edition (UUPMediaConverter)          | ✅       | ✅       | ✅       |
 | Does not require administrative privileges for base edition ISO images                   | ✅       | ✅       | ✅       |
 | CLI available                                                                            | ✅       | ✅       | ✅       |
+| ARM64 Support (aka works on @sinclairinat0r device (TM))                                 | ✅       | ✅       | ✅       |
 | GUI available                                                                            | ✅       | ❌       | ❌       |
-| Converting Desktop UUP files to an ISO for all possible editions (UUPMediaConverterCli)  | ✅       | ❌       | ❌       |
-| ISO Preinstallation Environment close to original (UUPMediaConverterCli)                 | ✅       | ❌       | ❌       |
-| ISO built by CDImage Mastering Utility with UDF and boot sector (UUPMediaConverterCli)   | ✅       | ❌       | ❌       |
-| ISO built by mkisofs with UDF and boot sector (UUPMediaConverterCli)                     | ❌       | ✅   (2) | ✅   (3) |
-| Update file integration (UUPMediaConverterCli)                                           | ❌       | ❌       | ❌       |
+| Converting Desktop UUP files to an ISO for all possible editions (UUPMediaConverter)     | ✅       | ❌       | ❌       |
+| ISO Preinstallation Environment close to original (UUPMediaConverter)                    | ✅       | ❌       | ❌       |
+| ISO built by CDImage Mastering Utility with UDF and boot sector (UUPMediaConverter)      | ✅       | ❌       | ❌       |
+| ISO built by mkisofs with UDF and boot sector (UUPMediaConverter)                        | ❌       | ✅   (1) | ✅   (2) |
+| Update file integration (UUPMediaConverter)                                              | ❌       | ❌       | ❌       |
 | Building Hololens, Mobile, 10X, IoT images                                               | ❌       | ❌       | ❌       |
 | UUPDownload ease of use (will come soon, we promise)                                     | ❌       | ❌       | ❌       |
-| ARM64 Support (aka works on @sinclairinat0r device (TM))                                 | ✅       | ✅       | ❌  (1)  |
 
-(1): Can be ran through Rosetta
+(1): requires ```apt-get install genisoimage```
 
-(2): requires ```apt-get install genisoimage```
-
-(3): requires ```brew install cdrtools```
+(2): requires ```brew install cdrtools```
 
 ## Usage
 

@@ -29,6 +29,20 @@ namespace TempManager
     {
         private readonly List<string> tempPaths = new();
         private bool disposed = false;
+        private readonly string Temp = Environment.GetEnvironmentVariable("TEMP") ?? "";
+
+        public TempManager()
+        {
+
+        }
+
+        public TempManager(string Temp)
+        {
+            if (!string.IsNullOrEmpty(Temp))
+            {
+                this.Temp = Temp;
+            }
+        }
 
         public string GetTempPath()
         {
@@ -37,6 +51,7 @@ namespace TempManager
             {
                 File.Delete(path);
             }
+            path = Path.Combine(Temp, Path.GetFileName(path));
 
             tempPaths.Add(path);
             return path;

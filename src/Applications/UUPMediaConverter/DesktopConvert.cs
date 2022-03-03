@@ -23,14 +23,13 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Security.Principal;
 using UUPMediaCreator.InterCommunication;
 
-namespace UUPMediaConverterCli
+namespace UUPMediaConverter
 {
-    internal static class Program
+    internal static class DesktopConvert
     {
         public static string GetExecutableDirectory()
         {
@@ -44,52 +43,25 @@ namespace UUPMediaConverterCli
             return runningDirectory.Contains(Path.DirectorySeparatorChar) ? string.Join(Path.DirectorySeparatorChar, runningDirectory.Split(Path.DirectorySeparatorChar).Reverse().Skip(1).Reverse()) : "";
         }
 
-        private static void Main(string[] args)
+        public static int ProcessDesktopConvert(DesktopConvertOptions opt)
         {
-            Log($"UUPMediaConverterCli {Assembly.GetExecutingAssembly().GetName().Version} - Converts an UUP file set to an usable ISO file");
-            Log("Copyright (c) Gustave Monce and Contributors");
-            Log("https://github.com/gus33000/UUPMediaCreator");
-            Log("");
-            Log("This program comes with ABSOLUTELY NO WARRANTY.");
-            Log("This is free software, and you are welcome to redistribute it under certain conditions.");
-            Log("");
-            Log("This software contains work derived from libmspack licensed under the LGPL-2.1 license.");
-            Log("(C) 2003-2004 Stuart Caie.");
-            Log("(C) 2011 Ali Scissons.");
-            Log("");
-
-            if (args.Length < 3)
-            {
-                Log("Usage: UUPMediaConverterCli.exe <UUP File set path> <Destination ISO file> <Language Code> [Edition]");
-                return;
-            }
-
-            string UUPPath = Path.GetFullPath(args[0]);
-            string DestinationISO = args[1];
-            string LanguageCode = args[2];
-            string Edition = null;
-            if (args.Length > 3)
-            {
-                Edition = args[3];
-            }
-
             if (GetOperatingSystem() == OSPlatform.OSX)
             {
-                Log("WARNING: For successful ISO creation, please install cdrtools via brew", LoggingLevel.Warning);
+                Logging.Log("WARNING: For successful ISO creation, please install cdrtools via brew", Logging.LoggingLevel.Warning);
             }
             else if (GetOperatingSystem() == OSPlatform.Linux)
             {
-                Log("WARNING: For successful ISO creation, please install genisoimage", LoggingLevel.Warning);
+                Logging.Log("WARNING: For successful ISO creation, please install genisoimage", Logging.LoggingLevel.Warning);
             }
 
-            Log("WARNING: This tool does NOT currently integrate updates into the finished media file. Any UUP set with updates (KBXXXXX).MSU/.CAB will not have the update integrated.", severity: LoggingLevel.Warning);
+            Logging.Log("WARNING: This tool does NOT currently integrate updates into the finished media file. Any UUP set with updates (KBXXXXX).MSU/.CAB will not have the update integrated.", severity: Logging.LoggingLevel.Warning);
             if (!IsAdministrator())
             {
-                Log("WARNING: This tool is NOT currently running under Windows as administrator. The resulting image will be less clean/proper compared to Microsoft original.", severity: LoggingLevel.Warning);
+                Logging.Log("WARNING: This tool is NOT currently running under Windows as administrator. The resulting image will be less clean/proper compared to Microsoft original.", severity: Logging.LoggingLevel.Warning);
 
-                if (string.IsNullOrEmpty(Edition))
+                if (string.IsNullOrEmpty(opt.Edition))
                 {
-                    Log("WARNING: You are attempting to create an ISO media with potentially all editions available. Due to the tool not running under Windows as administrator, this request might not be fullfilled.", severity: LoggingLevel.Warning);
+                    Logging.Log("WARNING: You are attempting to create an ISO media with potentially all editions available. Due to the tool not running under Windows as administrator, this request might not be fullfilled.", severity: Logging.LoggingLevel.Warning);
                 }
             }
             else
@@ -111,8 +83,8 @@ namespace UUPMediaConverterCli
 
                 if (!File.Exists(toolpath))
                 {
-                    Log("ERROR: Could not find: " + toolpath, severity: LoggingLevel.Error);
-                    return;
+                    Logging.Log("ERROR: Could not find: " + toolpath, severity: Logging.LoggingLevel.Error);
+                    return 1;
                 }
             }
 
@@ -133,8 +105,8 @@ namespace UUPMediaConverterCli
 
                 if (phase == Common.ProcessPhase.Error)
                 {
-                    Log("An error occured!", severity: LoggingLevel.Error);
-                    Log(SubOperation, severity: LoggingLevel.Error);
+                    Logging.Log("An error occured!", severity: Logging.LoggingLevel.Error);
+                    Logging.Log(SubOperation, severity: Logging.LoggingLevel.Error);
                     if (Debugger.IsAttached)
                     {
                         Console.ReadLine();
@@ -143,86 +115,38 @@ namespace UUPMediaConverterCli
                     return;
                 }
                 string progress = IsIndeterminate ? "" : $" [Progress: {ProgressInPercentage}%]";
-                Log($"[{phase}]{progress} {SubOperation}");
+                Logging.Log($"[{phase}]{progress} {SubOperation}");
             }
 
             try
             {
                 MediaCreationLib.MediaCreator.CreateISOMedia(
-                    DestinationISO,
-                    UUPPath,
-                    Edition,
-                    LanguageCode,
+                    opt.ISOPath,
+                    opt.UUPPath,
+                    opt.Edition,
+                    opt.LanguageCode,
                     false,
                     Common.CompressionType.LZX,
-                    callback);
+                    callback,
+                    opt.TempPath);
             }
             catch (Exception ex)
             {
-                Log("An error occured!", severity: LoggingLevel.Error);
+                Logging.Log("An error occured!", severity: Logging.LoggingLevel.Error);
                 while (ex != null)
                 {
-                    Log(ex.Message, LoggingLevel.Error);
-                    Log(ex.StackTrace, LoggingLevel.Error);
+                    Logging.Log(ex.Message, Logging.LoggingLevel.Error);
+                    Logging.Log(ex.StackTrace, Logging.LoggingLevel.Error);
                     ex = ex.InnerException;
                 }
                 if (Debugger.IsAttached)
                 {
                     Console.ReadLine();
                 }
+                return 1;
             }
-        }
 
-        public enum LoggingLevel
-        {
-            Information,
-            Warning,
-            Error
-        }
-
-        private static readonly object lockObj = new();
-
-        public static void Log(string message, LoggingLevel severity = LoggingLevel.Information, bool returnline = true)
-        {
-            lock (lockObj)
-            {
-                if (message?.Length == 0)
-                {
-                    Console.WriteLine();
-                    return;
-                }
-
-                string msg = "";
-
-                switch (severity)
-                {
-                    case LoggingLevel.Warning:
-                        msg = "  Warning  ";
-                        Console.ForegroundColor = ConsoleColor.Yellow;
-                        break;
-
-                    case LoggingLevel.Error:
-                        msg = "   Error   ";
-                        Console.ForegroundColor = ConsoleColor.Red;
-                        break;
-
-                    case LoggingLevel.Information:
-                        msg = "Information";
-                        Console.ForegroundColor = ConsoleColor.White;
-                        break;
-                }
-
-                if (returnline)
-                {
-                    Console.WriteLine(DateTime.Now.ToString("'['HH':'mm':'ss']'") + "[" + msg + "] " + message);
-                }
-                else
-                {
-                    Console.Write("\r" + DateTime.Now.ToString("'['HH':'mm':'ss']'") + "[" + msg + "] " + message);
-                }
-
-                Console.ForegroundColor = ConsoleColor.White;
-            }
+            return 0;
         }
 
         private static bool IsAdministrator()

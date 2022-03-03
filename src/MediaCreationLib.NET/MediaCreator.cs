@@ -244,7 +244,7 @@ namespace MediaCreationLib
                     vhdpath = vhdSession.VirtualDiskPath;
                 }
 
-                if (targetEdition.NonDestructiveTargets.Count > 0 && (edition == null || (edition != null && targetEdition.NonDestructiveTargets.Any(x => IsRightPath(x, edition)))))
+                if (targetEdition.NonDestructiveTargets.Count > 0 && (string.IsNullOrEmpty(edition) || (!string.IsNullOrEmpty(edition) && targetEdition.NonDestructiveTargets.Any(x => IsRightPath(x, edition)))))
                 {
                     string newvhd = VirtualHardDiskLib.VHDUtilities.CreateDiffDisk(vhdpath);
 
@@ -253,7 +253,7 @@ namespace MediaCreationLib
                     using VirtualHardDiskLib.VirtualDiskSession vhdSession = new(existingVHD: newvhd);
                     foreach (EditionTarget ed in targetEdition.NonDestructiveTargets)
                     {
-                        if (edition != null && !IsRightPath(ed, edition))
+                        if (!string.IsNullOrEmpty(edition) && !IsRightPath(ed, edition))
                         {
                             continue;
                         }
@@ -278,11 +278,11 @@ namespace MediaCreationLib
                     }
                 }
 
-                if (targetEdition.DestructiveTargets.Count > 0 && (edition == null || (edition != null && targetEdition.DestructiveTargets.Any(x => IsRightPath(x, edition)))))
+                if (targetEdition.DestructiveTargets.Count > 0 && (string.IsNullOrEmpty(edition) || (!string.IsNullOrEmpty(edition) && targetEdition.DestructiveTargets.Any(x => IsRightPath(x, edition)))))
                 {
                     foreach (EditionTarget ed in targetEdition.DestructiveTargets)
                     {
-                        if (edition != null && !IsRightPath(ed, edition))
+                        if (!string.IsNullOrEmpty(edition) && !IsRightPath(ed, edition))
                         {
                             continue;
                         }
@@ -408,12 +408,13 @@ namespace MediaCreationLib
             string LanguageCode,
             bool IntegrateUpdates,
             Common.CompressionType CompressionType,
-            ProgressCallback progressCallback = null)
+            ProgressCallback progressCallback = null,
+            string Temp = null)
         {
             bool result = true;
             string error = "";
 
-            TempManager.TempManager tempManager = new();
+            TempManager.TempManager tempManager = new(Temp);
 
             try
             {
@@ -458,7 +459,7 @@ namespace MediaCreationLib
                 //
                 foreach (EditionTarget ed in editionTargets)
                 {
-                    if (Edition != null && !IsRightPath(ed, Edition))
+                    if (!string.IsNullOrEmpty(Edition) && !IsRightPath(ed, Edition))
                     {
                         continue;
                     }

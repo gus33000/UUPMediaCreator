@@ -59,7 +59,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UUPMediaCreator.Broker", "s
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UUPMediaConverterDismBroker", "src\Applications\UUPMediaConverterDismBroker\UUPMediaConverterDismBroker.csproj", "{775242B5-1184-4D4C-99B6-96AD29E11C44}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UUPMediaConverterCli", "src\Applications\UUPMediaConverterCli\UUPMediaConverterCli.csproj", "{0BAE9C75-B86F-4976-B24D-7A4B54853342}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UUPMediaConverter", "src\Applications\UUPMediaConverter\UUPMediaConverter.csproj", "{0BAE9C75-B86F-4976-B24D-7A4B54853342}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UUPDownload", "src\Applications\UUPDownload\UUPDownload.csproj", "{67CB3F20-E40A-41F8-B159-A8857A7DC409}"
 EndProject
