@@ -45,9 +45,20 @@ namespace UUPMediaConverter
 
         public static int ProcessDesktopConvert(DesktopConvertOptions opt)
         {
-            opt.UUPPath = Path.GetFullPath(opt.UUPPath);
-            opt.ISOPath = Path.GetFullPath(opt.ISOPath);
-            opt.TempPath = Path.GetFullPath(opt.TempPath);
+            if (!string.IsNullOrEmpty(opt.UUPPath))
+            {
+                opt.UUPPath = Path.GetFullPath(opt.UUPPath);
+            }
+
+            if (!string.IsNullOrEmpty(opt.ISOPath))
+            {
+                opt.ISOPath = Path.GetFullPath(opt.ISOPath);
+            }
+
+            if (!string.IsNullOrEmpty(opt.TempPath))
+            {
+                opt.TempPath = Path.GetFullPath(opt.TempPath);
+            }
 
             if (GetOperatingSystem() == OSPlatform.OSX)
             {

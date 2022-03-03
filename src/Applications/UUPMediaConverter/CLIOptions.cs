@@ -27,10 +27,10 @@ namespace UUPMediaConverter
     [Verb("desktop-convert", isDefault: true, HelpText = "Converts an UUP set to a Desktop ISO Media")]
     internal class DesktopConvertOptions
     {
-        [Option('u', "uup-path", HelpText = "The path to the downloaded files from UUP (Universal Update Platform)", Required = true)]
+        [Option('u', "uup-path", HelpText = "The path to the downloaded files from UUP (Unified Update Platform)", Required = true)]
         public string UUPPath { get; set; }
 
-        [Option('i', "iso-path", HelpText = "The destination ISO file path", Required = true)]
+        [Option('i', "iso-path", HelpText = "The destination ISO file path (includes the filename)", Required = true)]
         public string ISOPath { get; set; }
 
         [Option('l', "language-code", HelpText = "The language to make media for. e.g. en-US", Required = true)]
@@ -42,7 +42,7 @@ namespace UUPMediaConverter
         [Option('t', "temp-path", HelpText = "The temp path for the tool to use. Defaults to %TEMP%.", Required = false)]
         public string TempPath { get; set; }
 
-        [Option('c', "compression-format", HelpText = "The compression format to use. Valid values are: XPRESS, LZX, LZMS", Required = true, Default = Common.CompressionType.LZX)]
+        [Option('c', "compression-format", HelpText = "The compression format to use. Valid values are: XPRESS, LZX, LZMS", Required = false, Default = Common.CompressionType.LZX)]
         public Common.CompressionType Compression { get; set; }
     }
 }
