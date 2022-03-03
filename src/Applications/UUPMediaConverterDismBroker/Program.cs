@@ -21,6 +21,7 @@
  */
 using MediaCreationLib.Dism;
 using System;
+using MediaCreationLib.Planning.Applications;
 
 namespace UUPMediaCreator.DismBroker
 {
@@ -50,7 +51,7 @@ namespace UUPMediaCreator.DismBroker
                             }
                         }
 
-                        DismOperations.UninstallPEComponents(args[1], callback);
+                        DismOperations.Instance.UninstallPEComponents(args[1], callback);
                         break;
                     }
                 case "/SetTargetEdition":
@@ -64,7 +65,7 @@ namespace UUPMediaCreator.DismBroker
                             return 2;
                         }
 
-                        if (!DismOperations.PerformAppxWorkloadInstallation(args[1], args[2], AppxInstallWorkload.FromString(args[3])))
+                        if (!DismOperations.Instance.PerformAppxWorkloadInstallation(args[1], args[2], System.Text.Json.JsonSerializer.Deserialize<AppxInstallWorkload>(args[3])))
                         {
                             return 1;
                         }

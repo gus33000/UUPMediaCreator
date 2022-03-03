@@ -240,7 +240,7 @@ namespace MediaCreationLib.BootlegEditions
             string OutputInstallImage,
             Common.CompressionType CompressionType,
             TempManager.TempManager tempManager,
-            ProgressCallback progressCallback = null)
+            MediaCreator.ProgressCallback progressCallback = null)
         {
             bool result = true;
             progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, "Applying " + EditionID + " - Package Swap");
@@ -255,7 +255,7 @@ namespace MediaCreationLib.BootlegEditions
             progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, "Serial: " + serial);
 
             progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, "Getting current edition");
-            string SourceEdition = DismOperations.GetCurrentEdition(MountedImagePath);
+            string SourceEdition = DismOperations.Instance.GetCurrentEdition(MountedImagePath);
             progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, "Current edition is: " + SourceEdition);
 
             progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, "Getting wim info for: " + OutputInstallImage);
@@ -561,7 +561,7 @@ namespace MediaCreationLib.BootlegEditions
             // Apply unattend
             //
             progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, "Applying unattend");
-            DismOperations.ApplyUnattend(MountedImagePath, unattendPath);
+            DismOperations.Instance.ApplyUnattend(MountedImagePath, unattendPath);
 
             //
             // Restore OEMDefaultAssociations
@@ -602,14 +602,14 @@ namespace MediaCreationLib.BootlegEditions
             // Apply edition xml as unattend
             //
             progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, "Applying Edition Unattend XML");
-            DismOperations.ApplyUnattend(MountedImagePath, desintationEditionXml);
+            DismOperations.Instance.ApplyUnattend(MountedImagePath, desintationEditionXml);
 
             //
             // Install correct product key
             //
             progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, "Installing product key");
 
-            DismOperations.SetProductKey(MountedImagePath, serial);
+            DismOperations.Instance.SetProductKey(MountedImagePath, serial);
 
             //
             // Application handling

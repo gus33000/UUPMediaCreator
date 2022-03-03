@@ -115,11 +115,11 @@ namespace MediaCreationLib
             string OutputInstallImage,
             bool IsVirtual,
             Common.CompressionType CompressionType,
-            ProgressCallback progressCallback = null)
+            MediaCreator.ProgressCallback progressCallback = null)
         {
             bool result = true;
 
-            string SourceEdition = DismOperations.GetCurrentEdition(MountedImagePath);
+            string SourceEdition = DismOperations.Instance.GetCurrentEdition(MountedImagePath);
 
             result = WIMImaging.GetWIMInformation(OutputInstallImage, out WIMInformationXML.WIM wiminfo);
             if (!result)
@@ -151,7 +151,7 @@ namespace MediaCreationLib
                 progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, IsIndeterminate, ProgressInPercentage, SubOperation);
             }
 
-            DismOperations.SetTargetEdition(MountedImagePath, EditionID, callback);
+            DismOperations.Instance.SetTargetEdition(MountedImagePath, EditionID, callback);
 
             void callback2(string Operation, int ProgressPercentage, bool IsIndeterminate)
             {
@@ -262,7 +262,7 @@ namespace MediaCreationLib
         public static bool CreateISO(
             string OutputMediaPath,
             string OutputISOPath,
-            ProgressCallback progressCallback = null)
+            MediaCreator.ProgressCallback progressCallback = null)
         {
             bool result = true;
 

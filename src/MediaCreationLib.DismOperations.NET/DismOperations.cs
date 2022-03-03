@@ -26,14 +26,15 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Xml.Linq;
+using MediaCreationLib.Planning.Applications;
 
 namespace MediaCreationLib.Dism
 {
-    public static class DismOperations
+    public class DismOperations : IDismOperations
     {
-        public delegate void ProgressCallback(bool IsIndeterminate, int ProgressInPercentage, string SubOperation);
+        public static readonly DismOperations Instance = new();
 
-        private static List<string> GetRemovableREPackages(string mountDir)
+        private List<string> GetRemovableREPackages(string mountDir)
         {
             XDocument sessDoc = XDocument.Load(Path.Combine(mountDir, @"Windows\servicing\Sessions\Sessions.xml"));
             IEnumerable<XElement> sessions = sessDoc.Element("Sessions").Elements("Session");
@@ -54,7 +55,7 @@ namespace MediaCreationLib.Dism
             return pkgsToRemove;
         }
 
-        public static bool PerformAppxWorkloadInstallation(string ospath, string repositoryPath, AppxInstallWorkload workload)
+        public bool PerformAppxWorkloadInstallation(string ospath, string repositoryPath, AppxInstallWorkload workload)
         {
             bool result = true;
 
@@ -108,7 +109,7 @@ namespace MediaCreationLib.Dism
         /// </summary>
         /// <param name="ospath">Path to the operating system</param>
         /// <param name="progressCallback">Callback to be notified of progress</param>
-        public static void UninstallPEComponents(string ospath, ProgressCallback progressCallback)
+        public bool UninstallPEComponents(string ospath, ProgressCallback progressCallback)
         {
             List<string> componentsNotInWinPE = GetRemovableREPackages(ospath);
 
@@ -197,9 +198,11 @@ namespace MediaCreationLib.Dism
                 File.Delete(tempLog);
             }
             catch { }
+
+            return true;
         }
 
-        public static string GetCurrentEdition(string ospath)
+        public string GetCurrentEdition(string ospath)
         {
             //
             // Initialize DISM log
@@ -235,7 +238,7 @@ namespace MediaCreationLib.Dism
             return edition;
         }
 
-        public static void ApplyUnattend(string ospath, string unattendpath)
+        public void ApplyUnattend(string ospath, string unattendpath)
         {
             int counter = 0;
         //
@@ -301,7 +304,7 @@ namespace MediaCreationLib.Dism
             catch { }
         }
 
-        public static void SetProductKey(string ospath, string productkey)
+        public void SetProductKey(string ospath, string productkey)
         {
             //
             // Initialize DISM log
@@ -335,7 +338,7 @@ namespace MediaCreationLib.Dism
             catch { }
         }
 
-        public static void SetTargetEdition(string ospath, string edition, ProgressCallback progressCallback)
+        public void SetTargetEdition(string ospath, string edition, ProgressCallback progressCallback)
         {
             int counter = 0;
         //

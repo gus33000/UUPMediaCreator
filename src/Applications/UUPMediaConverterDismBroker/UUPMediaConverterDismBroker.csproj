@@ -10,6 +10,7 @@
     <Platforms>AnyCPU;x64;x86;arm64</Platforms>
   </PropertyGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\CompDB.NET\CompDB.NET.csproj" />
     <ProjectReference Include="..\..\MediaCreationLib.DismOperations.NET\MediaCreationLib.DismOperations.NET.csproj" />
   </ItemGroup>
 </Project>

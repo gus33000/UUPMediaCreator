@@ -29,7 +29,6 @@ using System.Collections.Generic;
 using System.IO;
 using UUPMediaCreator.InterCommunication;
 using static MediaCreationLib.MediaCreator;
-using System.Diagnostics;
 
 namespace MediaCreationLib.BaseEditions
 {
@@ -190,47 +189,6 @@ namespace MediaCreationLib.BaseEditions
             return result;
         }
 
-        private static bool RunDismInstallAppXWorkload(
-            string OSPath,
-            string UUPPath,
-            AppxInstallWorkload Payload,
-            ProgressCallback progressCallback = null
-            )
-        {
-            string parentDirectory = PathUtils.GetParentExecutableDirectory();
-            string toolpath = Path.Combine(parentDirectory, "UUPMediaConverterDismBroker", "UUPMediaConverterDismBroker.exe");
-
-            if (!File.Exists(toolpath))
-            {
-                parentDirectory = PathUtils.GetExecutableDirectory();
-                toolpath = Path.Combine(parentDirectory, "UUPMediaConverterDismBroker", "UUPMediaConverterDismBroker.exe");
-            }
-
-            if (!File.Exists(toolpath))
-            {
-                parentDirectory = PathUtils.GetExecutableDirectory();
-                toolpath = Path.Combine(parentDirectory, "UUPMediaConverterDismBroker.exe");
-            }
-
-            Process proc = new();
-            proc.StartInfo = new ProcessStartInfo("cmd.exe", $"/c \"\"{toolpath}\" /InstallAppXWorkload \"{OSPath}\" \"{UUPPath}\" \"{System.Text.Json.JsonSerializer.Serialize(Payload).Replace("\"", "\"\"")}\"\"")
-            {
-                UseShellExecute = false,
-                WindowStyle = ProcessWindowStyle.Hidden,
-                RedirectStandardOutput = true,
-                CreateNoWindow = true
-            };
-
-            proc.Start();
-            proc.BeginOutputReadLine();
-            proc.WaitForExit();
-            if (proc.ExitCode != 0)
-            {
-                progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, "An error occured while running the external tool for appx installation. Error code: " + proc.ExitCode);
-            }
-            return proc.ExitCode == 0;
-        }
-
         public static bool CreateBaseEditionWithAppXs(
             string UUPPath,
             string LanguageCode,
@@ -328,7 +286,10 @@ namespace MediaCreationLib.BaseEditions
                 foreach (AppxInstallWorkload appx in appxWorkloads)
                 {
                     progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, $"Installing {appx.AppXPath}");
-                    RunDismInstallAppXWorkload(vhdSession.GetMountedPath(), UUPPath, appx, progressCallback);
+                    if (!Dism.RemoteDismOperations.Instance.PerformAppxWorkloadInstallation(vhdSession.GetMountedPath(), UUPPath, appx))
+                    {
+                        progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, "An error occured while running the external tool for appx installation.");
+                    }
                 }
 
                 result = imagingInterface.CaptureImage(

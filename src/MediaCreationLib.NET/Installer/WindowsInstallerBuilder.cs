@@ -519,7 +519,12 @@ namespace MediaCreationLib.Installer
 
                 File.Delete(Path.Combine(MediaPath, "sources", "boot.wim"));
 
-                result = RunDismComponentRemovalOperation(ospath, progressCallback);
+                void customCallback(bool IsIndeterminate, int ProgressInPercentage, string SubOperation)
+                {
+                    progressCallback?.Invoke(Common.ProcessPhase.CreatingWindowsInstaller, IsIndeterminate, ProgressInPercentage, SubOperation);
+                }
+
+                result = Dism.RemoteDismOperations.Instance.UninstallPEComponents(ospath, customCallback);
                 if (!result)
                 {
                     progressCallback?.Invoke(Common.ProcessPhase.CreatingWindowsInstaller, true, 0, "An error occured while performing component cleanup with external tool.");
@@ -596,53 +601,6 @@ namespace MediaCreationLib.Installer
             exit:
                 return result;
             }
-        }
-
-        private static bool RunDismComponentRemovalOperation(
-            string OSPath,
-            ProgressCallback progressCallback = null
-            )
-        {
-            string parentDirectory = PathUtils.GetParentExecutableDirectory();
-            string toolpath = Path.Combine(parentDirectory, "UUPMediaConverterDismBroker", "UUPMediaConverterDismBroker.exe");
-
-            if (!File.Exists(toolpath))
-            {
-                parentDirectory = PathUtils.GetExecutableDirectory();
-                toolpath = Path.Combine(parentDirectory, "UUPMediaConverterDismBroker", "UUPMediaConverterDismBroker.exe");
-            }
-
-            if (!File.Exists(toolpath))
-            {
-                parentDirectory = PathUtils.GetExecutableDirectory();
-                toolpath = Path.Combine(parentDirectory, "UUPMediaConverterDismBroker.exe");
-            }
-
-            Process proc = new();
-            proc.StartInfo = new ProcessStartInfo("cmd.exe", $"/c \"\"{toolpath}\" /PECompUninst \"{OSPath}\"\"")
-            {
-                UseShellExecute = false,
-                WindowStyle = ProcessWindowStyle.Hidden,
-                RedirectStandardOutput = true,
-                CreateNoWindow = true
-            };
-
-            proc.OutputDataReceived += (object sender, DataReceivedEventArgs e) =>
-            {
-                if (e.Data?.Contains(",") == true)
-                {
-                    int percent = int.Parse(e.Data.Split(',')[0]);
-                    progressCallback?.Invoke(Common.ProcessPhase.CreatingWindowsInstaller, false, percent, e.Data.Split(',')[1]);
-                }
-            };
-            proc.Start();
-            proc.BeginOutputReadLine();
-            proc.WaitForExit();
-            if (proc.ExitCode != 0)
-            {
-                progressCallback?.Invoke(Common.ProcessPhase.CreatingWindowsInstaller, true, 0, "An error occured while running the external tool for component cleanup. Error code: " + proc.ExitCode);
-            }
-            return proc.ExitCode == 0;
         }
 
         private static bool CreateSetupMediaRoot(
