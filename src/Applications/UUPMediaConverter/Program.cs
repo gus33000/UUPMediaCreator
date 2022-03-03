@@ -46,7 +46,8 @@ namespace UUPMediaConverter
         {
             ServicePointManager.DefaultConnectionLimit = int.MaxValue;
 
-            new Parser(settings => settings.CaseSensitive = false);.ParseArguments<DesktopConvertOptions>(args).MapResult(
+            new Parser(settings => settings.CaseSensitive = false)
+                .ParseArguments<DesktopConvertOptions>(args).MapResult(
               (DesktopConvertOptions opts) =>
               {
                   PrintLogo();
