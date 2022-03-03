@@ -166,7 +166,7 @@ namespace Imaging
                         case ProgressMsg.WriteStreams:
                             {
                                 WriteStreamsProgress m = (WriteStreamsProgress)info;
-                                progressCallback?.Invoke(title, (int)Math.Round((double)m.CompletedBytes / m.TotalBytes * 100), false);
+                                progressCallback?.Invoke(title, m.TotalBytes > 0 ? (int)Math.Round((double)m.CompletedBytes / m.TotalBytes * 100) : 0, false);
                             }
                             break;
 
@@ -228,7 +228,7 @@ namespace Imaging
                         case ProgressMsg.WriteStreams:
                             {
                                 WriteStreamsProgress m = (WriteStreamsProgress)info;
-                                progressCallback?.Invoke(title, (int)Math.Round((double)m.CompletedBytes / m.TotalBytes * 100), false);
+                                progressCallback?.Invoke(title, m.TotalBytes > 0 ? (int)Math.Round((double)m.CompletedBytes / m.TotalBytes * 100) : 0, false);
                             }
                             break;
 
@@ -265,7 +265,7 @@ namespace Imaging
                         case ProgressMsg.WriteStreams:
                             {
                                 WriteStreamsProgress m = (WriteStreamsProgress)info;
-                                progressCallback?.Invoke(title, (int)Math.Round((double)m.CompletedBytes / m.TotalBytes * 100), false);
+                                progressCallback?.Invoke(title, m.TotalBytes > 0 ? (int)Math.Round((double)m.CompletedBytes / m.TotalBytes * 100) : 0, false);
                             }
                             break;
 
@@ -407,7 +407,7 @@ namespace Imaging
                         case ProgressMsg.WriteStreams:
                             {
                                 WriteStreamsProgress m = (WriteStreamsProgress)info;
-                                progressCallback?.Invoke(title, (int)Math.Round((double)m.CompletedBytes / m.TotalBytes * 100), false);
+                                progressCallback?.Invoke(title, m.TotalBytes > 0 ? (int)Math.Round((double)m.CompletedBytes / m.TotalBytes * 100) : 0, false);
                             }
                             break;
 
@@ -456,7 +456,8 @@ namespace Imaging
                         case ProgressMsg.ExtractFileStructure:
                             {
                                 ExtractProgress m = (ExtractProgress)info;
-                                progressCallback?.Invoke($"Applying file structure ({(int)Math.Round((double)m.CurrentFileCount / m.EndFileCount * 100)}%)", 0, true);
+                                int i = m.EndFileCount > 0 ? (int)Math.Round((double)m.CurrentFileCount / m.EndFileCount * 100) : 0;
+                                progressCallback?.Invoke($"Applying file structure ({i}%)", 0, true);
                             }
                             break;
 
@@ -470,7 +471,8 @@ namespace Imaging
                         case ProgressMsg.ExtractMetadata:
                             {
                                 ExtractProgress m = (ExtractProgress)info;
-                                progressCallback?.Invoke($"Applying metadata ({(int)Math.Round((double)m.CompletedBytes / m.TotalBytes * 100)}%)", 0, true);
+                                int i = m.TotalBytes > 0 ? (int)Math.Round((double)m.CompletedBytes / m.TotalBytes * 100) : 0;
+                                progressCallback?.Invoke($"Applying metadata ({i}%)", 0, true);
                             }
                             break;
                     }
