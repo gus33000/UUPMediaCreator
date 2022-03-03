@@ -136,6 +136,7 @@ namespace MediaCreationLib
             $"sources{Path.DirectorySeparatorChar}hwcompat.dll",
             $"sources{Path.DirectorySeparatorChar}hwcompat.txt",
             $"sources{Path.DirectorySeparatorChar}hwexclude.txt",
+            $"sources{Path.DirectorySeparatorChar}hwreqchk.dll",
             $"sources{Path.DirectorySeparatorChar}idwbinfo.txt",
             $"sources{Path.DirectorySeparatorChar}imagingprovider.dll",
             $"sources{Path.DirectorySeparatorChar}input.dll",
