@@ -11,7 +11,11 @@ namespace MediaCreationLib.Planning.Applications
 
         public override string ToString()
         {
-            return $"{AppXPath}|{LicensePath}|{StubPackageOption}|" + string.Join('|', DependenciesPath);
+            return $"AppX: {AppXPath}\n" +
+                   $"License: {LicensePath}\n" +
+                   $"Stub Package Option: {StubPackageOption}\n" +
+                   $"Dependencies: \n" + 
+                   string.Join("\n\t", DependenciesPath);
         }
     }
 }
