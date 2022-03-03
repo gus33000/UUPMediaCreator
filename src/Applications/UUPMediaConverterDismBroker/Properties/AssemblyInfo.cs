@@ -28,5 +28,5 @@ using System.Reflection;
 [assembly: AssemblyCopyright("Copyright © Gustave Monce and Contributors")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
-[assembly: AssemblyVersion("0.3.0.9")]
-[assembly: AssemblyFileVersion("0.3.0.9")]
+[assembly: AssemblyVersion("0.3.1.0")]
+[assembly: AssemblyFileVersion("0.3.1.0")]
