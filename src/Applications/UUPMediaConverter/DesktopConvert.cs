@@ -118,7 +118,7 @@ namespace UUPMediaConverter
 
                     return;
                 }
-                string progress = IsIndeterminate ? "" : $" [Progress: {ProgressInPercentage}%]";
+                string progress = IsIndeterminate ? "" : $"[{ProgressInPercentage}%]";
                 Logging.Log($"[{phase}]{progress} {SubOperation}");
             }
 
