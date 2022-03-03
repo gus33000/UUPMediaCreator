@@ -21,18 +21,21 @@
  */
 using System;
 using System.IO;
+using System.Linq;
 
 namespace VirtualHardDiskLib
 {
     public class VirtualDiskSession : IDisposable
     {
         private readonly int DiskId;
-        private readonly char DriveLetter = 'B';
+        private readonly char DriveLetter;
         public string VirtualDiskPath;
         private readonly bool delete;
 
         public VirtualDiskSession(long sizeInGB = 20, bool delete = true, string existingVHD = null)
         {
+            DriveLetter = GetNextAvailableDriveLetter();
+
             this.delete = delete;
             if (string.IsNullOrEmpty(existingVHD))
             {
@@ -60,6 +63,12 @@ namespace VirtualHardDiskLib
             }
 
             GC.SuppressFinalize(this);
+        }
+
+        private static char GetNextAvailableDriveLetter()
+        {
+            var allocatedLetters = Directory.GetLogicalDrives().Select(d => d.First());
+            return "ABCDEFGHIJKLMNOPQRSTUVWXYZ".First(letter => !allocatedLetters.Contains(letter));
         }
     }
 }
