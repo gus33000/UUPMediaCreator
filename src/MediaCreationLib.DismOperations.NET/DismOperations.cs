@@ -113,6 +113,18 @@ namespace MediaCreationLib.Dism
             List<string> componentsNotInWinPE = GetRemovableREPackages(ospath);
 
             //
+            // Backup Windows\Globalization\Sorting\SortDefault.nls
+            // Some builds have a composition issue leading to its removal when cleaning up components
+            //
+            string SortDefaultNlsPath = Path.Combine(ospath, "Windows", "Globalization", "Sorting", "SortDefault.nls");
+            string SortDefaultNlsBackup = Path.GetTempFileName();
+            if (File.Exists(SortDefaultNlsBackup))
+            {
+                File.Delete(SortDefaultNlsBackup);
+            }
+            File.Copy(SortDefaultNlsPath, SortDefaultNlsBackup);
+
+            //
             // Initialize DISM log
             //
             string tempLog = Path.GetTempFileName();
@@ -149,6 +161,20 @@ namespace MediaCreationLib.Dism
                 catch //(Exception ex)
                 {
                 }
+            }
+
+            //
+            // Add back the file if it's now missing
+            //
+            if (!File.Exists(SortDefaultNlsPath))
+            {
+                string dir = Path.GetDirectoryName(SortDefaultNlsPath);
+                if (!Directory.Exists(dir))
+                {
+                    Directory.CreateDirectory(dir);
+                }
+
+                File.Move(SortDefaultNlsBackup, SortDefaultNlsPath);
             }
 
             //
