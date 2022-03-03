@@ -130,7 +130,7 @@ namespace UUPMediaConverter
                     opt.Edition,
                     opt.LanguageCode,
                     false,
-                    Common.CompressionType.LZX,
+                    opt.Compression,
                     callback,
                     opt.TempPath);
             }
