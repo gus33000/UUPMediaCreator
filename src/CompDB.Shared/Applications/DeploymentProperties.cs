@@ -146,7 +146,7 @@ namespace MediaCreationLib.Planning.Applications
             }
         }
 
-        private (ResourceType, string) GetResourcePackageInfo(string packageId)
+        private static (ResourceType, string) GetResourcePackageInfo(string packageId)
         {
             int lastUnderscore = packageId.LastIndexOf('_');
             int prevUnderscore = packageId.LastIndexOf('_', lastUnderscore - 1) + 1;
@@ -158,15 +158,12 @@ namespace MediaCreationLib.Planning.Applications
                 int typeDash = resourceType.IndexOf('-');
                 string resourceVariant = resourceType.Substring(typeDash + 1);
                 resourceType = resourceType.Substring(typeDot, typeDash - typeDot);
-                switch (resourceType)
+                return resourceType switch
                 {
-                    case "language":
-                        return (ResourceType.Language, resourceVariant);
-                    case "scale":
-                        return (ResourceType.Scale, resourceVariant);
-                    default:
-                        throw new Exception();
-                }
+                    "language" => (ResourceType.Language, resourceVariant),
+                    "scale" => (ResourceType.Scale, resourceVariant),
+                    _ => throw new Exception(),
+                };
             }
             else
             {

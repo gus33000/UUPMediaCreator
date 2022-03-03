@@ -26,7 +26,7 @@ using System.Collections.Generic;
 
 namespace MediaCreationLib.Planning.Applications
 {
-    internal class AppxApplicabilityEngine
+    internal static class AppxApplicabilityEngine
     {
         internal static Dictionary<int, Dictionary<int, double>> BuiltInScaleFactorScores = new()
         {
@@ -238,11 +238,11 @@ namespace MediaCreationLib.Planning.Applications
             {
                 if (target - candidate > candidate)
                 {
-                    return 0.5 - (double)(target - 2 * candidate) / (1000 - 2 * candidate) * 0.25;
+                    return 0.5 - ((double)(target - (2 * candidate)) / (1000 - (2 * candidate)) * 0.25);
                 }
                 else
                 {
-                    return 1.0 - (double)(target - candidate) / candidate * 0.25;
+                    return 1.0 - ((double)(target - candidate) / candidate * 0.25);
                 }
             }
             else
@@ -250,11 +250,11 @@ namespace MediaCreationLib.Planning.Applications
                 double candidateHalf = (double)candidate / 2;
                 if (target < candidateHalf)
                 {
-                    return (double)(target - 50) / (candidateHalf - 50) * 0.23 + 0.01;
+                    return ((double)(target - 50) / (candidateHalf - 50) * 0.23) + 0.01;
                 }
                 else
                 {
-                    return (double)(target - candidateHalf) / (candidate - candidateHalf) * 0.25 + 0.5;
+                    return ((double)(target - candidateHalf) / (candidate - candidateHalf) * 0.25) + 0.5;
                 }
             }
         }
@@ -267,16 +267,9 @@ namespace MediaCreationLib.Planning.Applications
         /// <returns></returns>
         internal static double GetScaleFactorScore(int target, int candidate)
         {
-            double score;
-            if (BuiltInScaleFactorScores.ContainsKey(target) && BuiltInScaleFactorScores[target].ContainsKey(candidate))
-            {
-                score = BuiltInScaleFactorScores[target][candidate];
-            }
-            else
-            {
-                score = CalculateScaleFactorScore(target, candidate);
-            }
-            return score;
+            return (double)(BuiltInScaleFactorScores.ContainsKey(target) && BuiltInScaleFactorScores[target].ContainsKey(candidate)
+                ? BuiltInScaleFactorScores[target][candidate]
+                : CalculateScaleFactorScore(target, candidate));
         }
     }
 }

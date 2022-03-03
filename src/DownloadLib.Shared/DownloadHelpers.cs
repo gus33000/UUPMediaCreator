@@ -41,7 +41,7 @@ namespace DownloadLib
                 CompDBXmlClass.PayloadItem payload = payloadItems.First(x => x.PayloadHash == file2.AdditionalDigest.Text || x.PayloadHash == file2.Digest);
                 return payload.Path.Replace('\\', Path.DirectorySeparatorChar);
             }
-            else if (!payloadItems.Any() && filename.Contains("_") && !filename.StartsWith("_") && (!filename.Contains('-') || filename.IndexOf('-') > filename.IndexOf('_')))
+            else if (!payloadItems.Any() && filename.Contains('_') && !filename.StartsWith("_") && (!filename.Contains('-') || filename.IndexOf('-') > filename.IndexOf('_')))
             {
                 filename = filename.Substring(0, filename.IndexOf('_')) + Path.DirectorySeparatorChar + filename[(filename.IndexOf('_') + 1)..];
                 return filename.TrimStart(Path.DirectorySeparatorChar);
@@ -65,7 +65,7 @@ namespace DownloadLib
             }
 
             return !filename.Contains("Diff", StringComparison.InvariantCultureIgnoreCase) &&
-!filename.Contains("Baseless", StringComparison.InvariantCultureIgnoreCase);
+                    !filename.Contains("Baseless", StringComparison.InvariantCultureIgnoreCase);
         }
 
         public static UpdateData TrimDeltasFromUpdateData(UpdateData update)
@@ -81,20 +81,158 @@ namespace DownloadLib
             return bannedItems.Any(x => x.PayloadHash == file2.AdditionalDigest.Text || x.PayloadHash == file2.Digest);
         }
 
-        public static async Task<string> ProcessUpdateAsync(UpdateData update, string pOutputFolder, MachineType MachineType, IProgress<GeneralDownloadProgress> generalDownloadProgress, string Language = "", string Edition = "", bool WriteMetadata = true, bool UseAutomaticDownloadFolder = true)
+        private static
+        (
+            HashSet<CompDBXmlClass.CompDB> selectedCompDBs,
+            HashSet<CompDBXmlClass.CompDB> discardedCompDBs,
+            HashSet<CompDBXmlClass.CompDB> specificCompDBs
+        )
+        FilterCompDBs(HashSet<CompDBXmlClass.CompDB> compDBs, string Edition, string Language)
+        {
+            HashSet<CompDBXmlClass.CompDB> selectedCompDBs = new();
+            HashSet<CompDBXmlClass.CompDB> discardedCompDBs = new();
+            HashSet<CompDBXmlClass.CompDB> specificCompDBs = new();
+
+            bool getSpecific = !string.IsNullOrEmpty(Language) && !string.IsNullOrEmpty(Edition);
+            bool getSpecificLanguageOnly = !string.IsNullOrEmpty(Language) && string.IsNullOrEmpty(Edition);
+
+            foreach (CompDBXmlClass.CompDB cdb in compDBs)
+            {
+                bool IsDiff = cdb.Tags?.Tag?.Any(x => x.Name.Equals("UpdateType", StringComparison.InvariantCultureIgnoreCase) && (x.Value.Equals("Diff", StringComparison.InvariantCultureIgnoreCase) || x.Value.Equals("Baseless", StringComparison.InvariantCultureIgnoreCase))) == true;
+
+                if (IsDiff)
+                {
+                    discardedCompDBs.Add(cdb);
+                }
+                else
+                {
+                    if (getSpecific || getSpecificLanguageOnly)
+                    {
+                        bool hasLang = cdb.Tags?.Tag?.Any(x => x.Name.Equals("Language", StringComparison.InvariantCultureIgnoreCase)) == true;
+                        bool hasEdition = cdb.Tags?.Tag?.Any(x => x.Name.Equals("Edition", StringComparison.InvariantCultureIgnoreCase)) == true;
+
+                        bool editionMatching = cdb.Tags?.Tag?.Any(x => x.Name.Equals("Edition", StringComparison.InvariantCultureIgnoreCase) && x.Value.Equals(Edition, StringComparison.InvariantCultureIgnoreCase)) == true;
+                        bool langMatching = cdb.Tags?.Tag?.Any(x => x.Name.Equals("Language", StringComparison.InvariantCultureIgnoreCase) && x.Value.Equals(Language, StringComparison.InvariantCultureIgnoreCase)) == true;
+
+                        if (cdb.Tags != null && ((getSpecificLanguageOnly && langMatching) || (getSpecific && editionMatching && langMatching) || (!hasLang && !hasEdition && cdb.Tags?.Type.Equals("Neutral", StringComparison.InvariantCultureIgnoreCase) == false)))
+                        {
+                            specificCompDBs.Add(cdb);
+                            selectedCompDBs.Add(cdb);
+                        }
+                        else if (cdb.Tags != null &&
+                            (cdb.Tags.Type.Equals("Language", StringComparison.InvariantCultureIgnoreCase) ||
+                            cdb.Tags.Type.Equals("Edition", StringComparison.InvariantCultureIgnoreCase) ||
+                            (!getSpecificLanguageOnly && cdb.Tags.Type.Equals("Neutral", StringComparison.InvariantCultureIgnoreCase)) ||
+                            (!getSpecificLanguageOnly && hasLang) || (getSpecific && hasLang && hasEdition)))
+                        {
+                            discardedCompDBs.Add(cdb);
+                        }
+                        else
+                        {
+                            selectedCompDBs.Add(cdb);
+                        }
+                    }
+                    else
+                    {
+                        selectedCompDBs.Add(cdb);
+                    }
+                }
+            }
+
+            return (selectedCompDBs, discardedCompDBs, specificCompDBs);
+        }
+
+        private static
+        (
+            HashSet<CompDBXmlClass.PayloadItem> payloadItems,
+            HashSet<CompDBXmlClass.PayloadItem> bannedPayloadItems
+        )
+        BuildListOfPayloads(HashSet<CompDBXmlClass.CompDB> compDBs, string Edition, string Language)
         {
             HashSet<CompDBXmlClass.PayloadItem> payloadItems = new();
             HashSet<CompDBXmlClass.PayloadItem> bannedPayloadItems = new();
-            HashSet<CompDBXmlClass.CompDB> specificCompDBs = new();
 
+            bool getSpecific = !string.IsNullOrEmpty(Language) && !string.IsNullOrEmpty(Edition);
+            bool getSpecificLanguageOnly = !string.IsNullOrEmpty(Language) && string.IsNullOrEmpty(Edition);
+
+            if (compDBs != null)
+            {
+                (HashSet<CompDBXmlClass.CompDB> selectedCompDBs, HashSet<CompDBXmlClass.CompDB> discardedCompDBs, HashSet<CompDBXmlClass.CompDB> specificCompDBs) = FilterCompDBs(compDBs, Edition, Language);
+
+                foreach (CompDBXmlClass.CompDB cdb in selectedCompDBs)
+                {
+                    foreach (CompDBXmlClass.Package pkg in cdb.Packages.Package)
+                    {
+                        if (pkg.Payload == null)
+                            continue;
+
+                        foreach (CompDBXmlClass.PayloadItem item in pkg.Payload.PayloadItem)
+                        {
+                            if (item.PayloadType.Equals("Diff", StringComparison.InvariantCultureIgnoreCase))
+                            {
+                                bannedPayloadItems.Add(item);
+                            }
+                            else
+                            {
+                                payloadItems.Add(item);
+                            }
+                        }
+                    }
+                }
+
+                foreach (CompDBXmlClass.CompDB cdb in discardedCompDBs)
+                {
+                    foreach (CompDBXmlClass.Package pkg in cdb.Packages.Package)
+                    {
+                        if (pkg.Payload == null)
+                            continue;
+
+                        foreach (CompDBXmlClass.PayloadItem item in pkg.Payload.PayloadItem)
+                        {
+                            bannedPayloadItems.Add(item);
+                        }
+                    }
+                }
+
+                if (getSpecific || getSpecificLanguageOnly)
+                {
+                    if (specificCompDBs.Count == 0)
+                    {
+                        throw new Exception("No update metadata matched the specified criteria");
+                    }
+                    else
+                    {
+                        foreach (CompDBXmlClass.CompDB specificCompDB in specificCompDBs)
+                        {
+                            foreach (CompDBXmlClass.Package pkg in specificCompDB.Packages.Package)
+                            {
+                                if (pkg.Payload == null)
+                                    continue;
+
+                                foreach (CompDBXmlClass.PayloadItem item in pkg.Payload.PayloadItem)
+                                {
+                                    bannedPayloadItems.RemoveWhere(x => x.PayloadHash == item.PayloadHash);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            else if (getSpecific || getSpecificLanguageOnly)
+            {
+                throw new Exception("No update metadata matched the specified criteria");
+            }
+
+            return (payloadItems, bannedPayloadItems);
+        }
+
+        public static async Task<string> ProcessUpdateAsync(UpdateData update, string pOutputFolder, MachineType MachineType, IProgress<GeneralDownloadProgress> generalDownloadProgress, string Language = "", string Edition = "", bool WriteMetadata = true, bool UseAutomaticDownloadFolder = true)
+        {
             string buildstr = "";
             IEnumerable<string> languages = null;
 
             int returnCode = 0;
             IEnumerable<CExtendedUpdateInfoXml.File> filesToDownload = null;
-
-            bool getSpecific = !string.IsNullOrEmpty(Language) && !string.IsNullOrEmpty(Edition);
-            bool getSpecificLanguageOnly = !string.IsNullOrEmpty(Language) && string.IsNullOrEmpty(Edition);
 
             HashSet<CompDBXmlClass.CompDB> compDBs = await update.GetCompDBsAsync().ConfigureAwait(false);
 
@@ -126,130 +264,8 @@ namespace DownloadLib
                 OutputFolder = Path.Combine(pOutputFolder, name);
             }
 
-            if (compDBs != null)
-            {
-                foreach (CompDBXmlClass.CompDB cdb in compDBs)
-                {
-                    bool IsDiff = cdb.Tags?.Tag?.Any(x => x.Name.Equals("UpdateType", StringComparison.InvariantCultureIgnoreCase) && (x.Value.Equals("Diff", StringComparison.InvariantCultureIgnoreCase) || x.Value.Equals("Baseless", StringComparison.InvariantCultureIgnoreCase))) == true;
-
-                    if (IsDiff)
-                    {
-                        foreach (CompDBXmlClass.Package pkg in cdb.Packages.Package)
-                        {
-                            foreach (CompDBXmlClass.PayloadItem item in pkg.Payload.PayloadItem)
-                            {
-                                bannedPayloadItems.Add(item);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        if (getSpecific || getSpecificLanguageOnly)
-                        {
-                            bool hasLang = cdb.Tags?.Tag?.Any(x => x.Name.Equals("Language", StringComparison.InvariantCultureIgnoreCase)) == true;
-                            bool hasEdition = cdb.Tags?.Tag?.Any(x => x.Name.Equals("Edition", StringComparison.InvariantCultureIgnoreCase)) == true;
-
-                            bool editionMatching = cdb.Tags?.Tag?.Any(x => x.Name.Equals("Edition", StringComparison.InvariantCultureIgnoreCase) && x.Value.Equals(Edition, StringComparison.InvariantCultureIgnoreCase)) == true;
-                            bool langMatching = cdb.Tags?.Tag?.Any(x => x.Name.Equals("Language", StringComparison.InvariantCultureIgnoreCase) && x.Value.Equals(Language, StringComparison.InvariantCultureIgnoreCase)) == true;
-
-                            if (cdb.Tags != null && ((getSpecificLanguageOnly && langMatching) || (getSpecific && editionMatching && langMatching) || (!hasLang && !hasEdition && cdb.Tags?.Type.Equals("Neutral", StringComparison.InvariantCultureIgnoreCase) == false)))
-                            {
-                                specificCompDBs.Add(cdb);
-
-                                foreach (CompDBXmlClass.Package pkg in cdb.Packages.Package)
-                                {
-                                    foreach (CompDBXmlClass.PayloadItem item in pkg.Payload.PayloadItem)
-                                    {
-                                        if (item.PayloadType.Equals("Diff", StringComparison.InvariantCultureIgnoreCase))
-                                        {
-                                            bannedPayloadItems.Add(item);
-                                        }
-                                        else
-                                        {
-                                            payloadItems.Add(item);
-                                        }
-                                    }
-                                }
-                            }
-                            else if (cdb.Tags != null &&
-                                (cdb.Tags.Type.Equals("Language", StringComparison.InvariantCultureIgnoreCase) ||
-                                cdb.Tags.Type.Equals("Edition", StringComparison.InvariantCultureIgnoreCase) ||
-                                (!getSpecificLanguageOnly && cdb.Tags.Type.Equals("Neutral", StringComparison.InvariantCultureIgnoreCase)) ||
-                                (!getSpecificLanguageOnly && hasLang) || (getSpecific && hasLang && hasEdition)))
-                            {
-                                foreach (CompDBXmlClass.Package pkg in cdb.Packages.Package)
-                                {
-                                    foreach (CompDBXmlClass.PayloadItem item in pkg.Payload.PayloadItem)
-                                    {
-                                        bannedPayloadItems.Add(item);
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                foreach (CompDBXmlClass.Package pkg in cdb.Packages.Package)
-                                {
-                                    if (pkg.Payload == null)
-                                        continue;
-
-                                    foreach (CompDBXmlClass.PayloadItem item in pkg.Payload.PayloadItem)
-                                    {
-                                        if (item.PayloadType.Equals("Diff", StringComparison.InvariantCultureIgnoreCase))
-                                        {
-                                            bannedPayloadItems.Add(item);
-                                        }
-                                        else
-                                        {
-                                            payloadItems.Add(item);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        else
-                        {
-                            foreach (CompDBXmlClass.Package pkg in cdb.Packages.Package)
-                            {
-                                if (pkg.Payload == null)
-                                    continue;
-
-                                foreach (CompDBXmlClass.PayloadItem item in pkg.Payload.PayloadItem)
-                                {
-                                    if (item.PayloadType.Equals("Diff", StringComparison.InvariantCultureIgnoreCase))
-                                    {
-                                        bannedPayloadItems.Add(item);
-                                    }
-                                    else
-                                    {
-                                        payloadItems.Add(item);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            if (getSpecific || getSpecificLanguageOnly)
-            {
-                if (specificCompDBs.Count == 0)
-                {
-                    throw new Exception("No update metadata matched the specified criteria");
-                }
-                else
-                {
-                    foreach (CompDBXmlClass.CompDB specificCompDB in specificCompDBs)
-                    {
-                        foreach (CompDBXmlClass.Package pkg in specificCompDB.Packages.Package)
-                        {
-                            foreach (CompDBXmlClass.PayloadItem item in pkg.Payload.PayloadItem)
-                            {
-                                bannedPayloadItems.RemoveWhere(x => x.PayloadHash == item.PayloadHash);
-                            }
-                        }
-                    }
-                }
-            }
+            (HashSet<CompDBXmlClass.PayloadItem> payloadItems, HashSet<CompDBXmlClass.PayloadItem> bannedPayloadItems) =
+                BuildListOfPayloads(compDBs, Edition, Language);
 
             do
             {
