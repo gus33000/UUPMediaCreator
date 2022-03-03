@@ -45,6 +45,10 @@ namespace UUPMediaConverter
 
         public static int ProcessDesktopConvert(DesktopConvertOptions opt)
         {
+            opt.UUPPath = Path.GetFullPath(opt.UUPPath);
+            opt.ISOPath = Path.GetFullPath(opt.ISOPath);
+            opt.TempPath = Path.GetFullPath(opt.TempPath);
+
             if (GetOperatingSystem() == OSPlatform.OSX)
             {
                 Logging.Log("WARNING: For successful ISO creation, please install cdrtools via brew", Logging.LoggingLevel.Warning);
