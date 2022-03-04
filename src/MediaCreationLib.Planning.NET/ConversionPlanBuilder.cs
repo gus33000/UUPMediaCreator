@@ -490,9 +490,9 @@ namespace MediaCreationLib.Planning.NET
                     AvailabilityType = AvailabilityType.Canonical
                 };
 
-                if (compDBs.Any(x => x.Name.StartsWith("Build~") && x.Name.EndsWith("~Desktop_Apps~~")))
+                if (compDBs.Any(x => x.Name?.StartsWith("Build~") == true && x.Name?.EndsWith("~Desktop_Apps~~") == true))
                 {
-                    CompDBXmlClass.CompDB AppCompDB = compDBs.First(x => x.Name.StartsWith("Build~") && x.Name.EndsWith("~Desktop_Apps~~"));
+                    CompDBXmlClass.CompDB AppCompDB = compDBs.First(x => x.Name?.StartsWith("Build~") == true && x.Name?.EndsWith("~Desktop_Apps~~") == true);
                     edition.AppXInstallWorkloads = AppxSelectionEngine.GetAppxInstallationWorkloads(compDB, AppCompDB);
                 }
 

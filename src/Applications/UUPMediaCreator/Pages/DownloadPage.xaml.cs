@@ -23,6 +23,7 @@ using DownloadLib;
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -51,6 +52,8 @@ namespace UUPMediaCreator.UWP.Pages
         }
 
         private readonly Dictionary<string, FileStatus> files = new();
+
+        private readonly Mutex mutex = new();
 
         private static string FormatBytes(double bytes)
         {
@@ -81,7 +84,11 @@ namespace UUPMediaCreator.UWP.Pages
                     continue;
                 }*/
 
+                mutex.WaitOne();
+
                 files[status.File.FileName] = status.FileStatus;
+
+                mutex.ReleaseMutex();
 
                 string msg = "Unknown: ";
 
