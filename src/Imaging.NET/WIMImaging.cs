@@ -501,6 +501,7 @@ namespace Imaging
             string imageDescription,
             string imageFlag,
             string InputDirectory,
+            TempManager.TempManager tempManager,
             string imageDisplayName = null,
             string imageDisplayDescription = null,
             WimCompressionType compressionType = WimCompressionType.Lzx,
@@ -621,8 +622,7 @@ namespace Imaging
 \swapfile.sys
 \System Volume Information";
 
-                    string configpath = Path.GetTempFileName();
-                    File.Delete(configpath);
+                    string configpath = tempManager.GetTempPath();
                     File.WriteAllText(configpath, config);
 
                     wim.AddImage(InputDirectory, imageName, configpath, PreserveACL ? AddFlags.StrictAcls : AddFlags.NoAcls);

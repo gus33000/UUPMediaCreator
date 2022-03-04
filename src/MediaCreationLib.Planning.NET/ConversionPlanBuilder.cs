@@ -382,9 +382,10 @@ namespace MediaCreationLib.Planning.NET
             string LanguageCode,
             bool IncludeServicingCapableOnlyTargets,
             out List<EditionTarget> EditionTargets,
+            TempManager.TempManager tempManager,
             ProgressCallback? progressCallback = null)
         {
-            return GetTargetedPlan("", compDBs, EditionPack, LanguageCode, IncludeServicingCapableOnlyTargets, out EditionTargets, progressCallback);
+            return GetTargetedPlan("", compDBs, EditionPack, LanguageCode, IncludeServicingCapableOnlyTargets, out EditionTargets, tempManager, progressCallback);
         }
 
         public static List<string> PrintEditionTarget(EditionTarget editionTarget, int padding = 0)
@@ -397,7 +398,7 @@ namespace MediaCreationLib.Planning.NET
                 lines.Add($"-> Apps: ");
                 foreach (AppxInstallWorkload app in editionTarget.PlannedEdition.AppXInstallWorkloads)
                 {
-                    lines.Add($"   " + app.ToString());
+                    lines.Add($"   " + app.AppXPath);
                 }
             }
 
@@ -436,6 +437,7 @@ namespace MediaCreationLib.Planning.NET
             string LanguageCode,
             bool IncludeServicingCapableOnlyTargets,
             out List<EditionTarget> EditionTargets,
+            TempManager.TempManager tempManager,
             ProgressCallback? progressCallback = null)
         {
             bool VerifyFiles = !string.IsNullOrEmpty(UUPPath);
@@ -531,8 +533,7 @@ namespace MediaCreationLib.Planning.NET
                     {
                         try
                         {
-                            string? tempHashMap = Path.GetTempFileName();
-                            File.Delete(tempHashMap);
+                            string? tempHashMap = tempManager.GetTempPath();
 
                             string pathEditionMapping = "";
                             int index = 0;
@@ -582,8 +583,7 @@ namespace MediaCreationLib.Planning.NET
                     {
                         try
                         {
-                            string? tempHashMap = Path.GetTempFileName();
-                            File.Delete(tempHashMap);
+                            string tempHashMap = tempManager.GetTempPath();
 
                             string pathEditionMatrix = "";
                             int index = 0;

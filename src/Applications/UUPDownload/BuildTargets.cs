@@ -53,7 +53,7 @@ namespace UUPDownload
                 return null;
             }
 
-            _ = ConversionPlanBuilder.GetTargetedPlan(compDBs, editionPkg, LanguageCode, true, out List<EditionTarget> targets, null);
+            _ = ConversionPlanBuilder.GetTargetedPlan(compDBs, editionPkg, LanguageCode, true, out List<EditionTarget> targets, new TempManager.TempManager(), null);
             return new EditionPlanningWithLanguage() { EditionTargets = targets, LanguageCode = LanguageCode };
         }
 

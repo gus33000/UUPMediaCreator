@@ -24,7 +24,7 @@
  */
 namespace MediaCreationLib.Planning.Applications
 {
-    internal class PackageProperties
+    public class PackageProperties
     {
         public string Path { get; set; }
         public string SHA256 { get; set; }

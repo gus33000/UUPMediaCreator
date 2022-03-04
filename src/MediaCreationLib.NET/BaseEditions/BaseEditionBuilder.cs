@@ -67,7 +67,7 @@ namespace MediaCreationLib.BaseEditions
             HashSet<string> ReferencePackages, referencePackagesToConvert;
             string BaseESD = null;
 
-            (result, BaseESD, ReferencePackages, referencePackagesToConvert) = FileLocator.LocateFilesForBaseEditionCreation(UUPPath, LanguageCode, EditionID, progressCallback);
+            (result, BaseESD, ReferencePackages, referencePackagesToConvert) = FileLocator.LocateFilesForBaseEditionCreation(UUPPath, LanguageCode, EditionID, tempManager, progressCallback);
             if (!result)
             {
                 goto exit;
@@ -221,7 +221,7 @@ namespace MediaCreationLib.BaseEditions
             HashSet<string> ReferencePackages, referencePackagesToConvert;
             string BaseESD = null;
 
-            (result, BaseESD, ReferencePackages, referencePackagesToConvert) = FileLocator.LocateFilesForBaseEditionCreation(UUPPath, LanguageCode, EditionID, progressCallback);
+            (result, BaseESD, ReferencePackages, referencePackagesToConvert) = FileLocator.LocateFilesForBaseEditionCreation(UUPPath, LanguageCode, EditionID, tempManager, progressCallback);
             if (!result)
             {
                 goto exit;
@@ -259,7 +259,7 @@ namespace MediaCreationLib.BaseEditions
             //
             // Export License files
             //
-            result = FileLocator.GenerateAppXLicenseFiles(UUPPath, LanguageCode, EditionID, progressCallback);
+            result = FileLocator.GenerateAppXLicenseFiles(UUPPath, LanguageCode, EditionID, tempManager, progressCallback);
             if (!result)
             {
                 progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, "CreateBaseEditionWithAppXs -> GenerateAppXLicenseFiles failed");
@@ -274,7 +274,7 @@ namespace MediaCreationLib.BaseEditions
                 progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, IsIndeterminate, ProgressPercentage, Operation);
             }
 
-            using (VirtualHardDiskLib.VirtualDiskSession vhdSession = new(delete: true))
+            using (VirtualHardDiskLib.VirtualDiskSession vhdSession = new(tempManager, delete: true))
             {
                 result = imagingInterface.ApplyImage(BaseESD, 3, vhdSession.GetMountedPath(), referenceWIMs: ReferencePackages, progressCallback: callback);
                 if (!result)
@@ -298,6 +298,7 @@ namespace MediaCreationLib.BaseEditions
                     image.DESCRIPTION, 
                     image.FLAGS, 
                     vhdSession.GetMountedPath(), 
+                    tempManager,
                     image.DISPLAYNAME, 
                     image.DISPLAYDESCRIPTION, 
                     compressionType: compression,
@@ -402,7 +403,7 @@ namespace MediaCreationLib.BaseEditions
                 progressCallback?.Invoke(Common.ProcessPhase.PreparingFiles, IsIndeterminate, progressoffset + progressScaleHalf + (int)Math.Round((double)ProgressPercentage / 100 * progressScaleHalf), Operation);
             }
 
-            bool result = imagingInterface.CaptureImage(esdFilePath, "Metadata ESD", null, null, tempExtractionPath, compressionType: WimCompressionType.None, PreserveACL: false, progressCallback: callback);
+            bool result = imagingInterface.CaptureImage(esdFilePath, "Metadata ESD", null, null, tempExtractionPath, tempManager, compressionType: WimCompressionType.None, PreserveACL: false, progressCallback: callback);
 
             Directory.Delete(tmp, true);
 

@@ -115,6 +115,7 @@ namespace MediaCreationLib
             string OutputInstallImage,
             bool IsVirtual,
             Common.CompressionType CompressionType,
+            TempManager.TempManager tempManager,
             MediaCreator.ProgressCallback progressCallback = null)
         {
             bool result = true;
@@ -204,6 +205,7 @@ namespace MediaCreationLib
                 description,
                 EditionID,
                 MountedImagePath,
+                tempManager,
                 displayname,
                 displaydescription,
                 compression,

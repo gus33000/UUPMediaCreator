@@ -42,11 +42,9 @@ namespace UUPMediaConverter
             Logging.Log("");
         }
 
-        private static void Main(string[] args)
+        private static int Main(string[] args)
         {
-            ServicePointManager.DefaultConnectionLimit = int.MaxValue;
-
-            Parser.Default.ParseArguments<DesktopConvertOptions>(args).MapResult(
+            return Parser.Default.ParseArguments<DesktopConvertOptions>(args).MapResult(
               (DesktopConvertOptions opts) =>
               {
                   PrintLogo();

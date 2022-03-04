@@ -93,11 +93,12 @@ namespace MediaCreationLib.NET
         internal static (bool Succeeded, string BaseESD) LocateFilesForSetupMediaCreation(
             string UUPPath,
             string LanguageCode,
+            TempManager.TempManager tempManager,
             ProgressCallback? progressCallback = null)
         {
             progressCallback?.Invoke(Common.ProcessPhase.ReadingMetadata, true, 0, "Looking up Composition Database in order to find a Base ESD image appropriate for building windows setup files.");
 
-            if (Planning.NET.FileLocator.GetCompDBsFromUUPFiles(UUPPath) is HashSet<CompDBXmlClass.CompDB> compDBs)
+            if (Planning.NET.FileLocator.GetCompDBsFromUUPFiles(UUPPath, tempManager) is HashSet<CompDBXmlClass.CompDB> compDBs)
             {
                 HashSet<CompDBXmlClass.CompDB> filteredCompDBs = compDBs.GetEditionCompDBsForLanguage(LanguageCode);
                 if (filteredCompDBs.Count > 0)
@@ -141,13 +142,14 @@ namespace MediaCreationLib.NET
             string UUPPath,
             string LanguageCode,
             string EditionID,
+            TempManager.TempManager tempManager,
             ProgressCallback? progressCallback = null)
         {
             bool success = true;
 
             progressCallback?.Invoke(Common.ProcessPhase.ReadingMetadata, true, 0, "Enumerating files");
 
-            HashSet<CompDBXmlClass.CompDB> compDBs = Planning.NET.FileLocator.GetCompDBsFromUUPFiles(UUPPath);
+            HashSet<CompDBXmlClass.CompDB> compDBs = Planning.NET.FileLocator.GetCompDBsFromUUPFiles(UUPPath, tempManager);
 
             CompDBXmlClass.CompDB? compDB = GetEditionCompDBForLanguage(compDBs, EditionID, LanguageCode);
 
@@ -176,6 +178,7 @@ namespace MediaCreationLib.NET
             string UUPPath,
             string LanguageCode,
             string EditionID,
+            TempManager.TempManager tempManager,
             ProgressCallback? progressCallback = null)
         {
             bool success = true;
@@ -185,7 +188,7 @@ namespace MediaCreationLib.NET
             string? BaseESD = null;
             progressCallback?.Invoke(Common.ProcessPhase.ReadingMetadata, true, 0, "Enumerating files");
 
-            CompDBXmlClass.CompDB? compDB = GetEditionCompDBForLanguage(Planning.NET.FileLocator.GetCompDBsFromUUPFiles(UUPPath), EditionID, LanguageCode);
+            CompDBXmlClass.CompDB? compDB = GetEditionCompDBForLanguage(Planning.NET.FileLocator.GetCompDBsFromUUPFiles(UUPPath, tempManager), EditionID, LanguageCode);
 
             if (compDB == null)
             {

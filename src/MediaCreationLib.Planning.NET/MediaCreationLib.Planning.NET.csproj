@@ -11,6 +11,7 @@
     <ProjectReference Include="..\Cabinet.NET\Cabinet.NET.csproj" />
     <ProjectReference Include="..\CompDB.NET\CompDB.NET.csproj" />
     <ProjectReference Include="..\Imaging.NET\Imaging.NET.csproj" />
+    <ProjectReference Include="..\TempManager.NET\TempManager.NET.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />

@@ -41,10 +41,10 @@ namespace VirtualHardDiskLib
         /// </summary>
         /// <param name="sizeInGB">The size of the VHD in GB</param>
         /// <returns>The path to the created vhd</returns>
-        internal static string CreateVirtualDisk(long sizeInGB = 10)
+        internal static string CreateVirtualDisk(TempManager.TempManager tempManager, long sizeInGB = 10)
         {
             long diskSize = sizeInGB * 1024 * 1024 * 1024;
-            string tempVhd = Path.GetTempFileName();
+            string tempVhd = tempManager.GetTempPath();
 
             using Stream vhdStream = File.Create(tempVhd);
             using Disk disk = Disk.InitializeDynamic(vhdStream, DiscUtils.Streams.Ownership.Dispose, diskSize);
@@ -56,9 +56,9 @@ namespace VirtualHardDiskLib
             return tempVhd;
         }
 
-        public static string CreateDiffDisk(string OriginalVirtualDisk)
+        public static string CreateDiffDisk(string OriginalVirtualDisk, TempManager.TempManager tempManager)
         {
-            string tempVhd = Path.GetTempFileName();
+            string tempVhd = tempManager.GetTempPath();
             Disk.InitializeDifferencing(tempVhd, OriginalVirtualDisk).Dispose();
             return tempVhd;
         }

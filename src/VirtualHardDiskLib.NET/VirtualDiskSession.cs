@@ -32,14 +32,14 @@ namespace VirtualHardDiskLib
         public string VirtualDiskPath;
         private readonly bool delete;
 
-        public VirtualDiskSession(long sizeInGB = 20, bool delete = true, string existingVHD = null)
+        public VirtualDiskSession(TempManager.TempManager tempManager, long sizeInGB = 20, bool delete = true, string existingVHD = null)
         {
             DriveLetter = GetNextAvailableDriveLetter();
 
             this.delete = delete;
             if (string.IsNullOrEmpty(existingVHD))
             {
-                VirtualDiskPath = VHDUtilities.CreateVirtualDisk(sizeInGB);
+                VirtualDiskPath = VHDUtilities.CreateVirtualDisk(tempManager, sizeInGB);
             }
             else
             {

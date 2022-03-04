@@ -642,6 +642,7 @@ namespace MediaCreationLib.BootlegEditions
                 name,
                 EditionID,
                 MountedImagePath,
+                tempManager,
                 name,
                 name,
                 compression,

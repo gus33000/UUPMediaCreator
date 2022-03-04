@@ -107,7 +107,7 @@ namespace MediaCreationLib.Installer
             //
             if (RunsAsAdministrator)
             {
-                result = PerformComponentCleanupOnPEImage(MediaPath, compressionType, image, progressCallback);
+                result = PerformComponentCleanupOnPEImage(MediaPath, compressionType, image, tempManager, progressCallback);
                 if (!result)
                 {
                     progressCallback?.Invoke(Common.ProcessPhase.CreatingWindowsInstaller, true, 0, "An error occured while performing component cleanup on pe image.");
@@ -495,10 +495,11 @@ namespace MediaCreationLib.Installer
             string MediaPath,
             WimCompressionType compressionType,
             WIMInformationXML.IMAGE image,
+            TempManager.TempManager tempManager,
             ProgressCallback progressCallback = null
             )
         {
-            using (VirtualDiskSession vhdsession = new())
+            using (VirtualDiskSession vhdsession = new(tempManager))
             {
                 string ospath = vhdsession.GetMountedPath();
 
@@ -590,6 +591,7 @@ namespace MediaCreationLib.Installer
                     image.DESCRIPTION,
                     image.FLAGS,
                     ospath,
+                    tempManager,
                     progressCallback: callback,
                     compressionType: compressionType);
                 if (!result)

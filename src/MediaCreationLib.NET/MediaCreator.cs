@@ -145,6 +145,7 @@ namespace MediaCreationLib
                                     InstallWIMFilePath,
                                     true,
                                     CompressionType,
+                                    tempManager,
                                     progressCallback);
 
                         if (!result)
@@ -156,10 +157,10 @@ namespace MediaCreationLib
                     }
                 case AvailabilityType.EditionUpgrade:
                     {
-                        string newvhd = VirtualHardDiskLib.VHDUtilities.CreateDiffDisk(CurrentBackupVHD);
+                        string newvhd = VirtualHardDiskLib.VHDUtilities.CreateDiffDisk(CurrentBackupVHD, tempManager);
 
                         progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, "Mounting VHD");
-                        using VirtualHardDiskLib.VirtualDiskSession vhdSession = new(existingVHD: newvhd);
+                        using VirtualHardDiskLib.VirtualDiskSession vhdSession = new(tempManager, existingVHD: newvhd);
                         VHDMountPath = vhdSession.GetMountedPath();
 
                         result = UUPMediaCreator.CreateUpgradedEditionFromMountedImage(
@@ -168,6 +169,7 @@ namespace MediaCreationLib
                             InstallWIMFilePath,
                             false,
                             CompressionType,
+                            tempManager,
                             progressCallback);
 
                         if (!result)
@@ -196,10 +198,10 @@ namespace MediaCreationLib
                         }
                         else
                         {
-                            string newvhd = VirtualHardDiskLib.VHDUtilities.CreateDiffDisk(CurrentBackupVHD);
+                            string newvhd = VirtualHardDiskLib.VHDUtilities.CreateDiffDisk(CurrentBackupVHD, tempManager);
 
                             progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, "Mounting VHD");
-                            using VirtualHardDiskLib.VirtualDiskSession vhdSession = new(existingVHD: newvhd);
+                            using VirtualHardDiskLib.VirtualDiskSession vhdSession = new(tempManager, existingVHD: newvhd);
                             VHDMountPath = vhdSession.GetMountedPath();
 
                             result = BootlegEditionCreator.CreateHackedEditionFromMountedImage(
@@ -224,7 +226,7 @@ namespace MediaCreationLib
             {
                 string vhdpath = null;
 
-                using (VirtualHardDiskLib.VirtualDiskSession vhdSession = new(delete: false))
+                using (VirtualHardDiskLib.VirtualDiskSession vhdSession = new(tempManager, delete: false))
                 {
                     // Apply WIM
                     WIMImaging.GetWIMInformation(InstallWIMFilePath, out WIMInformationXML.WIM wiminfo);
@@ -246,11 +248,11 @@ namespace MediaCreationLib
 
                 if (targetEdition.NonDestructiveTargets.Count > 0 && (string.IsNullOrEmpty(edition) || (!string.IsNullOrEmpty(edition) && targetEdition.NonDestructiveTargets.Any(x => IsRightPath(x, edition)))))
                 {
-                    string newvhd = VirtualHardDiskLib.VHDUtilities.CreateDiffDisk(vhdpath);
+                    string newvhd = VirtualHardDiskLib.VHDUtilities.CreateDiffDisk(vhdpath, tempManager);
 
                     progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, "Mounting VHD");
 
-                    using VirtualHardDiskLib.VirtualDiskSession vhdSession = new(existingVHD: newvhd);
+                    using VirtualHardDiskLib.VirtualDiskSession vhdSession = new(tempManager, existingVHD: newvhd);
                     foreach (EditionTarget ed in targetEdition.NonDestructiveTargets)
                     {
                         if (!string.IsNullOrEmpty(edition) && !IsRightPath(ed, edition))
@@ -317,11 +319,12 @@ namespace MediaCreationLib
             string UUPPath,
             string LanguageCode,
             out List<EditionTarget> EditionTargets,
+            TempManager.TempManager tempManager,
             ProgressCallback progressCallback = null)
         {
             progressCallback?.Invoke(Common.ProcessPhase.ReadingMetadata, true, 0, "Acquiring Composition Databases");
 
-            HashSet<CompDBXmlClass.CompDB> compDBs = FileLocator.GetCompDBsFromUUPFiles(UUPPath);
+            HashSet<CompDBXmlClass.CompDB> compDBs = FileLocator.GetCompDBsFromUUPFiles(UUPPath, tempManager);
 
             string EditionPack = "";
 
@@ -365,14 +368,14 @@ namespace MediaCreationLib
                 bool result = true;
                 string BaseESD = null;
 
-                (result, BaseESD) = NET.FileLocator.LocateFilesForSetupMediaCreation(UUPPath, LanguageCode, progressCallback);
+                (result, BaseESD) = NET.FileLocator.LocateFilesForSetupMediaCreation(UUPPath, LanguageCode, tempManager, progressCallback);
                 if (result)
                 {
                     EditionPack = BaseESD;
                 }
             }
 
-            return ConversionPlanBuilder.GetTargetedPlan(UUPPath, compDBs, EditionPack, LanguageCode, RunsAsAdministrator, out EditionTargets, (string msg) => progressCallback?.Invoke(Common.ProcessPhase.ReadingMetadata, true, 0, msg));
+            return ConversionPlanBuilder.GetTargetedPlan(UUPPath, compDBs, EditionPack, LanguageCode, RunsAsAdministrator, out EditionTargets, tempManager, (string msg) => progressCallback?.Invoke(Common.ProcessPhase.ReadingMetadata, true, 0, msg));
         }
 
         public static bool IsRightPath(EditionTarget editionTarget, string edition)
@@ -418,7 +421,7 @@ namespace MediaCreationLib
 
             try
             {
-                result = GetTargetedPlan(UUPPath, LanguageCode, out List<EditionTarget> editionTargets, progressCallback);
+                result = GetTargetedPlan(UUPPath, LanguageCode, out List<EditionTarget> editionTargets, tempManager, progressCallback);
                 if (!result)
                 {
                     error = "An error occurred while getting target plans for the conversion.";

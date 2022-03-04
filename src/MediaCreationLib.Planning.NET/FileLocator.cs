@@ -32,7 +32,7 @@ namespace MediaCreationLib.Planning.NET
 {
     public static class FileLocator
     {
-        public static HashSet<CompDBXmlClass.CompDB> GetCompDBsFromUUPFiles(string UUPPath)
+        public static HashSet<CompDBXmlClass.CompDB> GetCompDBsFromUUPFiles(string UUPPath, TempManager.TempManager tempManager)
         {
             HashSet<CompDBXmlClass.CompDB> compDBs = new();
 
@@ -47,10 +47,11 @@ namespace MediaCreationLib.Planning.NET
                     {
                         try
                         {
-                            string? tmp = Path.GetTempFileName();
+                            string tmp = tempManager.GetTempPath();
                             File.WriteAllBytes(tmp, CabinetExtractor.ExtractCabinetFile(cabFile, file));
 
-                            byte[] xmlfile = CabinetExtractor.ExtractCabinetFile(tmp, CabinetExtractor.EnumCabinetFiles(tmp).First().FileName);
+                            string filename = CabinetExtractor.EnumCabinetFiles(tmp).First().FileName;
+                            byte[] xmlfile = CabinetExtractor.ExtractCabinetFile(tmp, filename);
 
                             using Stream xmlstream = new MemoryStream(xmlfile);
                             compDBs.Add(CompDBXmlClass.DeserializeCompDB(xmlstream));

@@ -42,11 +42,11 @@ namespace UUPDownload
             Logging.Log("");
         }
 
-        private static void Main(string[] args)
+        private static int Main(string[] args)
         {
             ServicePointManager.DefaultConnectionLimit = int.MaxValue;
 
-            Parser.Default.ParseArguments<DownloadRequestOptions, DownloadReplayOptions, GetBuildsOptions>(args).MapResult(
+            return Parser.Default.ParseArguments<DownloadRequestOptions, DownloadReplayOptions, GetBuildsOptions>(args).MapResult(
               (DownloadRequestOptions opts) =>
               {
                   PrintLogo();

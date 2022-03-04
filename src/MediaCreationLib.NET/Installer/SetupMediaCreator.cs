@@ -83,7 +83,7 @@ namespace MediaCreationLib.Installer
             bool result = true;
             string BaseESD = null;
 
-            (result, BaseESD) = FileLocator.LocateFilesForSetupMediaCreation(UUPPath, LanguageCode, progressCallback);
+            (result, BaseESD) = FileLocator.LocateFilesForSetupMediaCreation(UUPPath, LanguageCode, tempManager, progressCallback);
             if (!result)
             {
                 goto exit;

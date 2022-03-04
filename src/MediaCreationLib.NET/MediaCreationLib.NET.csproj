@@ -18,6 +18,7 @@
     <ProjectReference Include="..\..\thirdparty\Microsoft.Wim.NET\Microsoft.Wim.NET.csproj" />
     <ProjectReference Include="..\..\thirdparty\Privileges.NET\Privileges.NET.csproj" />
     <ProjectReference Include="..\MediaCreationLib.Planning.NET\MediaCreationLib.Planning.NET.csproj" />
+    <ProjectReference Include="..\TempManager.NET\TempManager.NET.csproj" />
     <ProjectReference Include="..\VirtualHardDiskLib.NET\VirtualHardDiskLib.NET.csproj" />
   </ItemGroup>
   <ItemGroup>
@@ -35,5 +36,4 @@
     <PackageReference Include="System.IO.FileSystem.AccessControl" Version="6.0.0-preview.5.21301.5" />
     <PackageReference Include="System.Security.AccessControl" Version="6.0.0" />
   </ItemGroup>
-  <Import Project="..\TempManager.Shared\TempManager.Shared.projitems" Label="Shared" />
 </Project>

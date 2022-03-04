@@ -21,4 +21,7 @@
     <PackageReference Include="DiscUtils.Streams" Version="0.16.13" />
     <PackageReference Include="DiscUtils.Vhd" Version="0.16.13" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\TempManager.NET\TempManager.NET.csproj" />
+  </ItemGroup>
 </Project>
