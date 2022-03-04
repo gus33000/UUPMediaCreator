@@ -19,6 +19,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+using System;
+using System.Text.Json;
+using System.Threading.Tasks;
+using UUPMediaCreator.InterCommunication;
+using Windows.ApplicationModel.AppService;
+using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
@@ -36,10 +42,36 @@ namespace UUPMediaCreator.UWP.Pages
             this.InitializeComponent();
         }
 
+        public async Task<bool> IsBrokerElevated()
+        {
+            Common.InterCommunication comm = new() { InterCommunicationType = Common.InterCommunicationType.IsElevated };
+
+            ValueSet val = new()
+            {
+                { "InterCommunication", JsonSerializer.Serialize(comm) }
+            };
+
+            AppServiceResponse response = await App.Connection.SendMessageAsync(val);
+            if (response.Message.ContainsKey("InterCommunication"))
+            {
+                if (response.Message["InterCommunication"] is bool adminStatus)
+                {
+                    return adminStatus;
+                }
+            }
+
+            return false;
+        }
+
         public void WizardPage_NextClicked(object sender, RoutedEventArgs e)
         {
             //Frame.Navigate(typeof(BuildingISOPage));
             Frame.Navigate(typeof(ArchitecturePage));
+        }
+
+        private async void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+            AdminWarningBar.IsOpen = !await IsBrokerElevated();
         }
     }
 }

@@ -13,6 +13,14 @@
     <TargetPlatformMinVersion>10.0.16299.0</TargetPlatformMinVersion>
     <TargetPlatformVersion>10.0.17763.0</TargetPlatformVersion>
     <CsWinRTWindowsMetadata>sdk</CsWinRTWindowsMetadata>
+
+
+	<Company>IT Dev Team</Company>
+	<Copyright>Copyright © Gustave Monce and Contributors</Copyright>
+	<AssemblyVersion>0.3.1.0</AssemblyVersion>
+	<FileVersion>0.3.1.0</FileVersion>
+	<Version>0.3.1.0</Version>
+	<Product>UUP Media Creator Broker</Product>
   </PropertyGroup>
 
   <ItemGroup>

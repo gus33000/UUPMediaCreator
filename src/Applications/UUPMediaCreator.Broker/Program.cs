@@ -20,13 +20,23 @@
  * SOFTWARE.
  */
 using System;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.Security.Principal;
+using System.Text.Json;
 using System.Threading;
+using System.Threading.Tasks;
+using UUPMediaCreator.InterCommunication;
+using Windows.ApplicationModel;
+using Windows.ApplicationModel.AppService;
+using Windows.Foundation.Collections;
 
 namespace UUPMediaCreator.Broker
 {
     internal static class Program
     {
-        public static ManualResetEvent _Shutdown = new(false);
+        private static AppServiceConnection connection;
+        private static ManualResetEvent appServiceExit;
 
         /// <summary>
         /// The main entry point for the application.
@@ -34,13 +44,237 @@ namespace UUPMediaCreator.Broker
         [STAThread]
         private static void Main()
         {
-            if (!Mutex.TryOpenExisting("UUPMediaCreatorMutex", out Mutex mutex))
+            AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
+
+            if (!ElevateIfPossibleToAdministrator())
             {
-                mutex = new Mutex(false, "UUPMediaCreatorMutex");
-                WinRT.ComWrappersSupport.InitializeComWrappers();
-                _ = new UUPMediaCreatorApplicationContext();
-                _Shutdown.WaitOne();
-                mutex.Close();
+                return;
+            }
+
+            try
+            {
+                appServiceExit = new(false);
+                InitializeAppServiceConnection();
+
+                appServiceExit.WaitOne();
+            }
+            finally
+            {
+                connection?.Dispose();
+                appServiceExit?.Dispose();
+                appServiceExit = null;
+            }
+        }
+
+        private static bool IsAdministrator()
+        {
+            WindowsIdentity identity = WindowsIdentity.GetCurrent();
+            WindowsPrincipal principal = new(identity);
+            return principal.IsInRole(WindowsBuiltInRole.Administrator);
+        }
+
+        private static bool ElevateIfPossibleToAdministrator()
+        {
+            if (!IsAdministrator())
+            {
+                try
+                {
+                    using (Process elevatedProcess = new())
+                    {
+                        elevatedProcess.StartInfo.Verb = "runas";
+                        elevatedProcess.StartInfo.UseShellExecute = true;
+                        elevatedProcess.StartInfo.FileName = Environment.ProcessPath;
+                        elevatedProcess.StartInfo.Arguments = "elevate";
+                        elevatedProcess.Start();
+                    }
+                    return false;
+                }
+                catch (Win32Exception)
+                {
+                    return true;
+                }
+            }
+            return true;
+        }
+
+        private static void OnUnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            var exception = e.ExceptionObject as Exception;
+            // Log error
+        }
+
+        private static async void InitializeAppServiceConnection()
+        {
+            string packageFamilyName = Package.Current.Id.FamilyName;
+
+            try
+            {
+                using CancellationTokenSource cts = new();
+                cts.CancelAfter(TimeSpan.FromSeconds(15));
+
+                connection = new()
+                {
+                    PackageFamilyName = packageFamilyName,
+                    AppServiceName = "UUPMediaCreatorService"
+                };
+
+                connection.ServiceClosed += OnServiceClosed;
+                connection.RequestReceived += OnConnectionRequestReceived;
+
+                AppServiceConnectionStatus connectionStatus = await connection.OpenAsync();
+                if (connectionStatus != AppServiceConnectionStatus.Success)
+                {
+                    throw new Exception("Could not connect to the main application!");
+                }
+            }
+            catch (Exception)
+            {
+
+            }
+        }
+
+        private static void OnServiceClosed(AppServiceConnection sender, AppServiceClosedEventArgs args)
+        {
+            connection.ServiceClosed -= OnServiceClosed;
+            connection.RequestReceived -= OnConnectionRequestReceived;
+            connection = null;
+            appServiceExit?.Set();
+        }
+
+        private static async void OnConnectionRequestReceived(AppServiceConnection sender, AppServiceRequestReceivedEventArgs arguments)
+        {
+            ValueSet message = arguments.Request.Message;
+            AppServiceDeferral deferral = arguments.GetDeferral();
+
+            if (message == null)
+            {
+                return;
+            }
+
+            if (message.ContainsKey("InterCommunication"))
+            {
+                try
+                {
+                    await Task.Run(() => ParseInterCommunicationMessage(message, arguments, deferral));
+                }
+                catch (Exception) { }
+            }
+            else
+            {
+                deferral.Complete();
+            }
+        }
+
+        private static void ParseInterCommunicationMessage(ValueSet message, AppServiceRequestReceivedEventArgs arguments, AppServiceDeferral deferral)
+        {
+            Common.InterCommunication interCommunication = JsonSerializer.Deserialize<Common.InterCommunication>((string)message["InterCommunication"]);
+
+            switch (interCommunication.InterCommunicationType)
+            {
+                case Common.InterCommunicationType.Exit:
+                    {
+                        Thread thread = new(async () =>
+                        {
+                            ValueSet val = new()
+                            {
+                                { "InterCommunication", "" }
+                            };
+                            await arguments.Request.SendResponseAsync(val);
+                        });
+
+                        thread.Start();
+                        thread.Join();
+
+                        deferral.Complete();
+
+                        appServiceExit?.Set();
+                        break;
+                    }
+
+                case Common.InterCommunicationType.IsElevated:
+                    {
+                        Thread thread = new(async () =>
+                        {
+                            ValueSet val = new()
+                            {
+                                { "InterCommunication", IsAdministrator() }
+                            };
+                            await arguments.Request.SendResponseAsync(val);
+                        });
+
+                        thread.Start();
+                        thread.Join();
+
+                        deferral.Complete();
+                        break;
+                    }
+
+                case Common.InterCommunicationType.StartISOConversionProcess:
+                    {
+                        async void callback(Common.ProcessPhase phase, bool IsIndeterminate, int ProgressInPercentage, string SubOperation)
+                        {
+                            Common.ISOConversionProgress prog = new()
+                            {
+                                Phase = phase,
+                                IsIndeterminate = IsIndeterminate,
+                                ProgressInPercentage = ProgressInPercentage,
+                                SubOperation = SubOperation
+                            };
+
+                            Common.InterCommunication comm = new() { InterCommunicationType = Common.InterCommunicationType.ReportISOConversionProgress, ISOConversionProgress = prog };
+
+                            ValueSet val = new()
+                            {
+                                { "InterCommunication", JsonSerializer.Serialize(comm) }
+                            };
+
+                            await connection.SendMessageAsync(val);
+                        }
+
+                        Thread thread = new(async () =>
+                        {
+                            try
+                            {
+                                MediaCreationLib.MediaCreator.CreateISOMedia(
+                                        interCommunication.ISOConversion.ISOPath,
+                                        interCommunication.ISOConversion.UUPPath,
+                                        interCommunication.ISOConversion.Edition,
+                                        interCommunication.ISOConversion.LanguageCode,
+                                        interCommunication.ISOConversion.IntegrateUpdates,
+                                        interCommunication.ISOConversion.CompressionType,
+                                        callback);
+                            }
+                            catch (Exception ex)
+                            {
+                                Common.ISOConversionProgress prog = new()
+                                {
+                                    Phase = Common.ProcessPhase.Error,
+                                    IsIndeterminate = true,
+                                    ProgressInPercentage = 0,
+                                    SubOperation = ex.ToString()
+                                };
+
+                                Common.InterCommunication comm = new() { InterCommunicationType = Common.InterCommunicationType.ReportISOConversionProgress, ISOConversionProgress = prog };
+
+                                ValueSet val = new()
+                                {
+                                    { "InterCommunication", JsonSerializer.Serialize(comm) }
+                                };
+
+                                await connection.SendMessageAsync(val);
+                            }
+                        });
+
+                        thread.Start();
+
+                        deferral.Complete();
+                        break;
+                    }
+
+                default:
+
+                    deferral.Complete();
+                    break;
             }
         }
     }

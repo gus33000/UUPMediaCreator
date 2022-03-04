@@ -185,9 +185,9 @@ namespace DownloadLib
 
                 (HashSet<CompDBXmlClass.CompDB> selectedCompDBs, HashSet<CompDBXmlClass.CompDB> discardedCompDBs, HashSet<CompDBXmlClass.CompDB> specificCompDBs) = FilterCompDBs(compDBs, Edition, Language);
 
-                if (compDBs.Any(x => x.Name.StartsWith("Build~") && x.Name.EndsWith("~Desktop_Apps~~")))
+                if (compDBs.Any(x => x.Name?.StartsWith("Build~") == true && x.Name?.EndsWith("~Desktop_Apps~~") == true))
                 {
-                    AppCompDB = compDBs.First(x => x.Name.StartsWith("Build~") && x.Name.EndsWith("~Desktop_Apps~~"));
+                    AppCompDB = compDBs.First(x => x.Name?.StartsWith("Build~") == true && x.Name?.EndsWith("~Desktop_Apps~~") == true);
                 }
 
                 foreach (CompDBXmlClass.CompDB cdb in selectedCompDBs)

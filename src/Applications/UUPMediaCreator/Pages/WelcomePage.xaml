@@ -5,6 +5,7 @@
     xmlns:local="using:UUPMediaCreator.UWP.Pages"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Loaded="Page_Loaded"
     xmlns:uupmediacreator="using:UUPMediaCreator.UWP"
     mc:Ignorable="d"
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
@@ -17,5 +18,10 @@
                                        BackEnabled="False"
                                        NextEnabled="True"
                                        NextClicked="WizardPage_NextClicked">
+        <muxc:InfoBar x:Name="AdminWarningBar"
+                      IsClosable="False"
+                      Severity="Warning"
+                      Title="Administrator consent not granted"
+                      Message="This tool is NOT currently running under Windows as administrator. The resulting image will be less clean/proper compared to Microsoft original. Some builds might be missing features and/or Applications." />
     </uupmediacreator:WizardPageControl>
 </Page>

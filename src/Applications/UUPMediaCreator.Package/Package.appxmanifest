@@ -13,7 +13,7 @@
   <Identity
     Name="52346ITDevTeam.UUPMediaCreator"
     Publisher="CN=EDCB61F7-02FF-43C6-8E0B-FDE1D2E3E137"
-    Version="3.0.29.0" />
+    Version="3.0.34.0" />
 
   <Properties>
     <DisplayName>UUP Media Creator</DisplayName>
@@ -60,70 +60,12 @@
         <desktop:Extension Category="windows.fullTrustProcess" Executable="UUPMediaCreator.Broker\UUPMediaCreator.Broker.exe" />
       </Extensions>
     </Application>
-
-    <!--<Application Id="UUPDownload"
-                 Executable="UUPDownload\UUPDownload.exe"
-                 EntryPoint="Windows.FullTrustApplication"
-                 desktop4:Subsystem="console"
-                 desktop4:SupportsMultipleInstances="true"
-                 iot2:Subsystem="console"
-                 iot2:SupportsMultipleInstances="true">
-      <uap:VisualElements
-        DisplayName="UUP Downloader"
-        Square150x150Logo="Assets\Square150x150Logo.png"
-        Square44x44Logo="Assets\Square44x44Logo.png"
-        Description="Unified Update Platform Downloader"
-        BackgroundColor="transparent"
-        AppListEntry="none">
-        <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png" />
-        <uap:SplashScreen Image="Assets\SplashScreen.png" />
-      </uap:VisualElements>
-      <Extensions>
-        <uap5:Extension
-          Category="windows.appExecutionAlias"
-          Executable="UUPDownload\UUPDownload.exe"
-          EntryPoint="UUPDownload.App">
-          <uap5:AppExecutionAlias desktop4:Subsystem="console">
-            <uap5:ExecutionAlias Alias="UUPDownload.exe" />
-          </uap5:AppExecutionAlias>
-        </uap5:Extension>
-      </Extensions>
-    </Application>
-
-    <Application Id="UUPMediaConverterCli"
-                 Executable="UUPMediaConverterCli\UUPMediaConverterCli.exe"
-                 EntryPoint="Windows.FullTrustApplication"
-                 desktop4:Subsystem="console"
-                 desktop4:SupportsMultipleInstances="true"
-                 iot2:Subsystem="console"
-                 iot2:SupportsMultipleInstances="true">
-      <uap:VisualElements
-        DisplayName="UUP Media Converter CLI"
-        Square150x150Logo="Assets\Square150x150Logo.png"
-        Square44x44Logo="Assets\Square44x44Logo.png"
-        Description="Unified Update Platform Media Converter CLI"
-        BackgroundColor="transparent"
-        AppListEntry="none">
-        <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png" />
-        <uap:SplashScreen Image="Assets\SplashScreen.png" />
-      </uap:VisualElements>
-      <Extensions>
-        <uap5:Extension
-          Category="windows.appExecutionAlias"
-          Executable="UUPMediaConverterCli\UUPMediaConverterCli.exe"
-          EntryPoint="UUPMediaConverterCli.App">
-          <uap5:AppExecutionAlias desktop4:Subsystem="console">
-            <uap5:ExecutionAlias Alias="UUPMediaConverterCli.exe" />
-            <uap5:ExecutionAlias Alias="UUPMediaConverter.exe" />
-          </uap5:AppExecutionAlias>
-        </uap5:Extension>
-      </Extensions>
-    </Application>-->
   </Applications>
 
   <Capabilities>
     <Capability Name="internetClient" />
     <rescap:Capability Name="runFullTrust" />
     <rescap:Capability Name="confirmAppClose" />
+	<rescap:Capability Name="allowElevation"/>
   </Capabilities>
 </Package>

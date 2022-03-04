@@ -94,14 +94,6 @@ namespace UUPMediaCreator
         public static AppServiceConnection Connection = null;
         public static ConversionPlan ConversionPlan = new();
 
-        protected override void OnActivated(IActivatedEventArgs args)
-        {
-            if (args.Kind == ActivationKind.Protocol)
-            {
-                ShowMainPage();
-            }
-        }
-
         protected override void OnBackgroundActivated(BackgroundActivatedEventArgs args)
         {
             // connection established from the fulltrust process
@@ -111,13 +103,14 @@ namespace UUPMediaCreator
                 AppServiceDeferral = args.TaskInstance.GetDeferral();
                 args.TaskInstance.Canceled += OnTaskCanceled;
                 Connection = details.AppServiceConnection;
-                Connection.RequestReceived += OnRequestReceived;
+                Connection.ServiceClosed += Connection_ServiceClosed;
                 ShowMainPage();
             }
         }
 
-        private void OnRequestReceived(AppServiceConnection sender, AppServiceRequestReceivedEventArgs args)
+        private void Connection_ServiceClosed(AppServiceConnection sender, AppServiceClosedEventArgs args)
         {
+            Connection = null;
         }
 
         private void OnTaskCanceled(IBackgroundTaskInstance sender, BackgroundTaskCancellationReason reason)
@@ -137,10 +130,8 @@ namespace UUPMediaCreator
             ApplicationView.PreferredLaunchWindowingMode = Windows.UI.ViewManagement.ApplicationViewWindowingMode.PreferredLaunchViewSize;
         }
 
-        private async void ShowMainPage()
+        private void ShowMainPage()
         {
-            await Windows.ApplicationModel.FullTrustProcessLauncher.LaunchFullTrustProcessForCurrentAppAsync();
-
             // Do not repeat app initialization when the Window already has content,
             // just ensure that the window is active
             if (Window.Current.Content is not Frame rootFrame)
@@ -166,18 +157,7 @@ namespace UUPMediaCreator
                     SystemNavigationManagerPreview mgr = SystemNavigationManagerPreview.GetForCurrentView();
                     mgr.CloseRequested += SystemNavigationManager_CloseRequested;
                 }
-                /*else
-                {
-                    rootFrame.Navigate(typeof(AdministratorAccessRequiredPage));
-                }*/
             }
-            /*else if (rootFrame.Content.GetType() == typeof(AdministratorAccessRequiredPage) && Connection != null)
-            {
-                rootFrame.Navigate(typeof(WelcomePage));
-
-                SystemNavigationManagerPreview mgr = SystemNavigationManagerPreview.GetForCurrentView();
-                mgr.CloseRequested += SystemNavigationManager_CloseRequested;
-            }*/
 
             // Ensure the current window is active
             Window.Current.Activate();
@@ -212,9 +192,16 @@ namespace UUPMediaCreator
         /// will be used such as when the application is launched to open a specific file.
         /// </summary>
         /// <param name="e">Details about the launch request and process.</param>
-        protected override void OnLaunched(LaunchActivatedEventArgs e)
+        protected async override void OnLaunched(LaunchActivatedEventArgs e)
         {
-            ShowMainPage();
+            if (Connection == null)
+            {
+                await FullTrustProcessLauncher.LaunchFullTrustProcessForCurrentAppAsync();
+            }
+            else
+            {
+                ShowMainPage();
+            }
         }
 
         /// <summary>

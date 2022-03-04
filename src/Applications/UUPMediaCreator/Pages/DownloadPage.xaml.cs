@@ -23,7 +23,6 @@ using DownloadLib;
 using System;
 using System.Collections.Generic;
 using System.Threading;
-using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -40,6 +39,7 @@ namespace UUPMediaCreator.UWP.Pages
         private void DownloadPage_Loaded(object sender, RoutedEventArgs e)
         {
             ProgressBar.IsIndeterminate = true;
+
             _ = Windows.System.Threading.ThreadPool.RunAsync(async (o) =>
             {
                 StorageFolder tmp = await ApplicationData.Current.TemporaryFolder.CreateFolderAsync($"{DateTime.Now.Ticks}");
@@ -51,8 +51,6 @@ namespace UUPMediaCreator.UWP.Pages
         }
 
         private readonly Dictionary<string, FileStatus> files = new();
-
-        private readonly Mutex mutex = new();
 
         private static string FormatBytes(double bytes)
         {
@@ -67,10 +65,8 @@ namespace UUPMediaCreator.UWP.Pages
             return $"{dblSByte:0.##}{suffix[i]}";
         }
 
-        public void Report(GeneralDownloadProgress e)
+        public async void Report(GeneralDownloadProgress e)
         {
-            mutex.WaitOne();
-
             foreach (FileDownloadStatus status in e.DownloadedStatus)
             {
                 if (status == null)
@@ -110,19 +106,14 @@ namespace UUPMediaCreator.UWP.Pages
 
                 uint progress = (uint)Math.Round((double)status.DownloadedBytes / status.File.FileSize * 100);
 
-                Task.Run(async () =>
+                await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
                 {
-                    await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
-                    {
-                        ProgressBar.IsIndeterminate = false;
-                        StatusText.Text = $"{msg} {status.File.FileName} ({FormatBytes(status.File.FileSize)}) ({progress}%)";
-                        ProgressBar.Maximum = e.NumFiles;
-                        ProgressBar.Value = e.NumFilesDownloadedSuccessfully;
-                    });
+                    ProgressBar.IsIndeterminate = false;
+                    StatusText.Text = $"{msg} {status.File.FileName} ({FormatBytes(status.File.FileSize)}) ({progress}%)";
+                    ProgressBar.Maximum = e.NumFiles;
+                    ProgressBar.Value = e.NumFilesDownloadedSuccessfully;
                 });
             }
-
-            mutex.ReleaseMutex();
         }
     }
 }

@@ -69,6 +69,7 @@ namespace UUPMediaCreator.InterCommunication
         public enum InterCommunicationType
         {
             Exit,
+            IsElevated,
             ReportISOConversionProgress,
             StartISOConversionProcess
         }
