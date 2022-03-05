@@ -23,64 +23,22 @@ using CompDB;
 using Imaging;
 using MediaCreationLib.BaseEditions;
 using MediaCreationLib.BootlegEditions;
+using MediaCreationLib.CDImage;
 using MediaCreationLib.Installer;
 using MediaCreationLib.Planning.NET;
+using MediaCreationLib.Utils;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
-using System.Security.Principal;
 using UUPMediaCreator.InterCommunication;
 
 namespace MediaCreationLib
 {
+    public delegate void ProgressCallback(Common.ProcessPhase phase, bool IsIndeterminate, int ProgressInPercentage, string SubOperation);
+
     public static class MediaCreator
     {
-        private static readonly bool RunsAsAdministrator = IsAdministrator();
-
-        private static bool IsAdministrator()
-        {
-            if (GetOperatingSystem() == OSPlatform.Windows)
-            {
-#pragma warning disable CA1416 // Validate platform compatibility
-                WindowsIdentity identity = WindowsIdentity.GetCurrent();
-                WindowsPrincipal principal = new(identity);
-                return principal.IsInRole(WindowsBuiltInRole.Administrator);
-#pragma warning restore CA1416 // Validate platform compatibility
-            }
-            else
-            {
-                return false;
-            }
-        }
-
-        public static OSPlatform GetOperatingSystem()
-        {
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-            {
-                return OSPlatform.OSX;
-            }
-
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-            {
-                return OSPlatform.Linux;
-            }
-
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            {
-                return OSPlatform.Windows;
-            }
-
-            return RuntimeInformation.IsOSPlatform(OSPlatform.FreeBSD)
-                ? OSPlatform.FreeBSD
-                : throw new Exception("Cannot determine operating system!");
-        }
-
-        private static readonly WIMImaging imagingInterface = new();
-
-        public delegate void ProgressCallback(Common.ProcessPhase phase, bool IsIndeterminate, int ProgressInPercentage, string SubOperation);
-
         private static bool HandleEditionPlan(
             EditionTarget targetEdition,
             string UUPPath,
@@ -89,6 +47,7 @@ namespace MediaCreationLib
             string InstallWIMFilePath,
             string WinREWIMFilePath,
             Common.CompressionType CompressionType,
+            IEnumerable<CompDBXmlClass.CompDB> CompositionDatabases,
             TempManager.TempManager tempManager,
             string VHDMountPath = null,
             string CurrentBackupVHD = null,
@@ -102,7 +61,7 @@ namespace MediaCreationLib
             {
                 case AvailabilityType.Canonical:
                     {
-                        if (RunsAsAdministrator && targetEdition.PlannedEdition.AppXInstallWorkloads?.Length > 0)
+                        if (PlatformUtilities.RunsAsAdministrator && targetEdition.PlannedEdition.AppXInstallWorkloads?.Length > 0)
                         {
                             // Allow AppX Slipstreaming
                             result = BaseEditionBuilder.CreateBaseEditionWithAppXs(
@@ -113,6 +72,7 @@ namespace MediaCreationLib
                                     InstallWIMFilePath,
                                     CompressionType,
                                     targetEdition.PlannedEdition.AppXInstallWorkloads,
+                                    CompositionDatabases,
                                     tempManager,
                                     progressCallback);
                         }
@@ -126,6 +86,7 @@ namespace MediaCreationLib
                                     WinREWIMFilePath,
                                     InstallWIMFilePath,
                                     CompressionType,
+                                    CompositionDatabases,
                                     tempManager,
                                     progressCallback);
                         }
@@ -237,7 +198,7 @@ namespace MediaCreationLib
                     {
                         progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, IsIndeterminate, ProgressPercentage, Operation);
                     }
-                    result = imagingInterface.ApplyImage(InstallWIMFilePath, index, vhdSession.GetMountedPath(), progressCallback: callback);
+                    result = Constants.imagingInterface.ApplyImage(InstallWIMFilePath, index, vhdSession.GetMountedPath(), progressCallback: callback);
                     if (!result)
                     {
                         goto exit;
@@ -268,6 +229,7 @@ namespace MediaCreationLib
                             InstallWIMFilePath,
                             WinREWIMFilePath,
                             CompressionType,
+                            CompositionDatabases,
                             tempManager,
                             VHDMountPath: vhdSession.GetMountedPath(),
                             CurrentBackupVHD: vhdpath,
@@ -297,6 +259,7 @@ namespace MediaCreationLib
                             InstallWIMFilePath,
                             WinREWIMFilePath,
                             CompressionType,
+                            CompositionDatabases,
                             tempManager,
                             CurrentBackupVHD: vhdpath,
                             progressCallback: progressCallback);
@@ -318,30 +281,29 @@ namespace MediaCreationLib
         public static bool GetTargetedPlan(
             string UUPPath,
             string LanguageCode,
+            List<CompDBXmlClass.CompDB> CompositionDatabases,
             out List<EditionTarget> EditionTargets,
             TempManager.TempManager tempManager,
             ProgressCallback progressCallback = null)
         {
             progressCallback?.Invoke(Common.ProcessPhase.ReadingMetadata, true, 0, "Acquiring Composition Databases");
 
-            HashSet<CompDBXmlClass.CompDB> compDBs = FileLocator.GetCompDBsFromUUPFiles(UUPPath, tempManager);
-
             string EditionPack = "";
 
             //
             // Get base editions that are available with all their files
             //
-            IEnumerable<CompDBXmlClass.CompDB> filteredCompDBs = compDBs.GetEditionCompDBsForLanguage(LanguageCode).Where(x =>
+            IEnumerable<CompDBXmlClass.CompDB> filteredCompositionDatabases = CompositionDatabases.GetEditionCompDBsForLanguage(LanguageCode).Where(x =>
             {
                 (bool success, HashSet<string> missingfiles) = FileLocator.VerifyFilesAreAvailableForCompDB(x, UUPPath);
                 return success;
             });
 
-            if (filteredCompDBs.Any())
+            if (filteredCompositionDatabases.Any())
             {
-                foreach (CompDBXmlClass.Package feature in filteredCompDBs.First().Features.Feature[0].Packages.Package)
+                foreach (CompDBXmlClass.Package feature in filteredCompositionDatabases.First().Features.Feature[0].Packages.Package)
                 {
-                    CompDBXmlClass.Package pkg = filteredCompDBs.First().Packages.Package.First(x => x.ID == feature.ID);
+                    CompDBXmlClass.Package pkg = filteredCompositionDatabases.First().Packages.Package.First(x => x.ID == feature.ID);
 
                     string file = pkg.GetCommonlyUsedIncorrectFileName();
 
@@ -368,14 +330,14 @@ namespace MediaCreationLib
                 bool result = true;
                 string BaseESD = null;
 
-                (result, BaseESD) = NET.FileLocator.LocateFilesForSetupMediaCreation(UUPPath, LanguageCode, tempManager, progressCallback);
+                (result, BaseESD) = NET.FileLocator.LocateFilesForSetupMediaCreation(UUPPath, LanguageCode, CompositionDatabases, progressCallback);
                 if (result)
                 {
                     EditionPack = BaseESD;
                 }
             }
 
-            return ConversionPlanBuilder.GetTargetedPlan(UUPPath, compDBs, EditionPack, LanguageCode, RunsAsAdministrator, out EditionTargets, tempManager, (string msg) => progressCallback?.Invoke(Common.ProcessPhase.ReadingMetadata, true, 0, msg));
+            return ConversionPlanBuilder.GetTargetedPlan(UUPPath, CompositionDatabases, EditionPack, LanguageCode, PlatformUtilities.RunsAsAdministrator, out EditionTargets, tempManager, (string msg) => progressCallback?.Invoke(Common.ProcessPhase.ReadingMetadata, true, 0, msg));
         }
 
         public static bool IsRightPath(EditionTarget editionTarget, string edition)
@@ -421,7 +383,9 @@ namespace MediaCreationLib
 
             try
             {
-                result = GetTargetedPlan(UUPPath, LanguageCode, out List<EditionTarget> editionTargets, tempManager, progressCallback);
+                List<CompDBXmlClass.CompDB> CompositionDatabases = FileLocator.GetCompDBsFromUUPFiles(UUPPath, tempManager);
+
+                result = GetTargetedPlan(UUPPath, LanguageCode, CompositionDatabases, out List<EditionTarget> editionTargets, tempManager, progressCallback);
                 if (!result)
                 {
                     error = "An error occurred while getting target plans for the conversion.";
@@ -450,7 +414,7 @@ namespace MediaCreationLib
                 //
                 // Build installer
                 //
-                result = SetupMediaCreator.CreateSetupMedia(UUPPath, LanguageCode, MediaRootPath, WinREWIMFilePath, CompressionType, tempManager, progressCallback);
+                result = SetupMediaCreator.CreateSetupMedia(UUPPath, LanguageCode, MediaRootPath, WinREWIMFilePath, CompressionType, CompositionDatabases, tempManager, progressCallback);
                 if (!result)
                 {
                     error = "An error occurred while creating setup media.";
@@ -467,7 +431,7 @@ namespace MediaCreationLib
                         continue;
                     }
 
-                    result = HandleEditionPlan(ed, UUPPath, MediaRootPath, LanguageCode, InstallWIMFilePath, WinREWIMFilePath, CompressionType, tempManager, progressCallback: progressCallback, edition: Edition);
+                    result = HandleEditionPlan(ed, UUPPath, MediaRootPath, LanguageCode, InstallWIMFilePath, WinREWIMFilePath, CompressionType, CompositionDatabases, tempManager, progressCallback: progressCallback, edition: Edition);
                     if (!result)
                     {
                         error = "An error occurred while handling edition plan for the following edition: " + ed.PlannedEdition.EditionName + " available as: " + ed.PlannedEdition.AvailabilityType;
@@ -480,7 +444,7 @@ namespace MediaCreationLib
                 //
                 // Build ISO
                 //
-                result = UUPMediaCreator.CreateISO(MediaRootPath, ISOPath, progressCallback);
+                result = DiscImageFactory.CreateDiscImageFromWindowsMediaPath(MediaRootPath, ISOPath, progressCallback);
                 if (!result)
                 {
                     error = "An error occurred while creating the ISO.";

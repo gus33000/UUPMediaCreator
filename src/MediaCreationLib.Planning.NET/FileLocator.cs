@@ -32,9 +32,9 @@ namespace MediaCreationLib.Planning.NET
 {
     public static class FileLocator
     {
-        public static HashSet<CompDBXmlClass.CompDB> GetCompDBsFromUUPFiles(string UUPPath, TempManager.TempManager tempManager)
+        public static List<CompDBXmlClass.CompDB> GetCompDBsFromUUPFiles(string UUPPath, TempManager.TempManager tempManager)
         {
-            HashSet<CompDBXmlClass.CompDB> compDBs = new();
+            List<CompDBXmlClass.CompDB> compDBs = new();
 
             try
             {

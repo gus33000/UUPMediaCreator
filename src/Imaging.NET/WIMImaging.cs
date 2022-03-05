@@ -336,7 +336,7 @@ namespace Imaging
                     destWim.Write(destinationWimFile, Wim.AllImages, compression == CompressionType.LZMS ? WriteFlags.Solid : WriteFlags.None, Wim.DefaultThreads);
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return false;
             }
@@ -488,7 +488,7 @@ namespace Imaging
 
                 wim.ExtractImage(imageIndex, OutputDirectory, PreserveACL ? ExtractFlags.StrictAcls : ExtractFlags.NoAcls);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return false;
             }
@@ -650,7 +650,7 @@ namespace Imaging
                     File.Delete(configpath);
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return false;
             }

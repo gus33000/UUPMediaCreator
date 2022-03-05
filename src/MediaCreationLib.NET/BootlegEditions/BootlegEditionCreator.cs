@@ -24,19 +24,17 @@ using Imaging;
 using IniParser;
 using IniParser.Model;
 using MediaCreationLib.Dism;
+using MediaCreationLib.Settings;
 using Microsoft.Wim;
 using System;
 using System.IO;
 using System.Linq;
 using UUPMediaCreator.InterCommunication;
-using static MediaCreationLib.MediaCreator;
 
 namespace MediaCreationLib.BootlegEditions
 {
     public static class BootlegEditionCreator
     {
-        private static readonly WIMImaging imagingInterface = new();
-
         private static string LPFolder = null;
 
         public static void CleanupLanguagePackFolderIfRequired()
@@ -112,13 +110,13 @@ namespace MediaCreationLib.BootlegEditions
             {
                 var apppackage = potentialSourceEditionAppPackages.First();
                 string[] entries;
-                imagingInterface.EnumerateFiles(Path.Combine(UUPPath, apppackage + ".esd"), 1, "", out entries);
+                Constants.imagingInterface.EnumerateFiles(Path.Combine(UUPPath, apppackage + ".esd"), 1, "", out entries);
                 foreach (var entry in entries)
                 {
                     if (entry.ToLower() != "$filehashes$.dat")
                     {
                         string[] entries2;
-                        imagingInterface.EnumerateFiles(Path.Combine(UUPPath, apppackage + ".esd"), 1, entry, out entries2);
+                        Constants.imagingInterface.EnumerateFiles(Path.Combine(UUPPath, apppackage + ".esd"), 1, entry, out entries2);
                         var pkg = entries2.Where(x => x.ToLower() != "appxsignature.p7x" && x.ToLower() != "appxblockmap.xml" && x.ToLower() != "appxmetadata").First();
                         var newpkg = pkg.Split('_')[0] + "_" + pkg.Split('_')[1] + "_neutral_~_" + pkg.Split('_')[4];
                         bool isbundle = entries2.Any(x => x.ToLower() == "appxmetadata");
@@ -136,13 +134,13 @@ namespace MediaCreationLib.BootlegEditions
                 }
 
                 string[] entries;
-                imagingInterface.EnumerateFiles(Path.Combine(UUPPath, package), 1, "", out entries);
+                Constants.imagingInterface.EnumerateFiles(Path.Combine(UUPPath, package), 1, "", out entries);
                 foreach (var entry in entries)
                 {
                     if (entry.ToLower() != "$filehashes$.dat")
                     {
                         string[] entries2;
-                        imagingInterface.EnumerateFiles(Path.Combine(UUPPath, package), 1, entry, out entries2);
+                        Constants.imagingInterface.EnumerateFiles(Path.Combine(UUPPath, package), 1, entry, out entries2);
                         var pkg = entries2.Where(x => x.ToLower() != "appxsignature.p7x" && x.ToLower() != "appxblockmap.xml" && x.ToLower() != "appxmetadata").First();
                         var newpkg = pkg.Split('_')[0] + "_" + pkg.Split('_')[1] + "_neutral_~_" + pkg.Split('_')[4];
                         bool isbundle = entries2.Any(x => x.ToLower() == "appxmetadata");
@@ -156,13 +154,13 @@ namespace MediaCreationLib.BootlegEditions
             {
                 var apppackage = potentialTargetEditionAppPackages.First();
                 string[] entries;
-                imagingInterface.EnumerateFiles(Path.Combine(UUPPath, apppackage + ".esd"), 1, "", out entries);
+                Constants.imagingInterface.EnumerateFiles(Path.Combine(UUPPath, apppackage + ".esd"), 1, "", out entries);
                 foreach (var entry in entries)
                 {
                     if (entry.ToLower() != "$filehashes$.dat")
                     {
                         string[] entries2;
-                        imagingInterface.EnumerateFiles(Path.Combine(UUPPath, apppackage + ".esd"), 1, entry, out entries2);
+                        Constants.imagingInterface.EnumerateFiles(Path.Combine(UUPPath, apppackage + ".esd"), 1, entry, out entries2);
                         var pkg = entries2.Where(x => x.ToLower() != "appxsignature.p7x" && x.ToLower() != "appxblockmap.xml" && x.ToLower() != "appxmetadata").First();
                         var newpkg = pkg.Split('_')[0] + "_" + pkg.Split('_')[1] + "_neutral_~_" + pkg.Split('_')[4];
                         bool isbundle = entries2.Any(x => x.ToLower() == "appxmetadata");
@@ -180,13 +178,13 @@ namespace MediaCreationLib.BootlegEditions
                 }
 
                 string[] entries;
-                imagingInterface.EnumerateFiles(Path.Combine(UUPPath, package), 1, "", out entries);
+                Constants.imagingInterface.EnumerateFiles(Path.Combine(UUPPath, package), 1, "", out entries);
                 foreach (var entry in entries)
                 {
                     if (entry.ToLower() != "$filehashes$.dat")
                     {
                         string[] entries2;
-                        imagingInterface.EnumerateFiles(Path.Combine(UUPPath, package), 1, entry, out entries2);
+                        Constants.imagingInterface.EnumerateFiles(Path.Combine(UUPPath, package), 1, entry, out entries2);
                         var pkg = entries2.Where(x => x.ToLower() != "appxsignature.p7x" && x.ToLower() != "appxblockmap.xml" && x.ToLower() != "appxmetadata").First();
                         var newpkg = pkg.Split('_')[0] + "_" + pkg.Split('_')[1] + "_neutral_~_" + pkg.Split('_')[4];
                         bool isbundle = entries2.Any(x => x.ToLower() == "appxmetadata");
@@ -240,7 +238,7 @@ namespace MediaCreationLib.BootlegEditions
             string OutputInstallImage,
             Common.CompressionType CompressionType,
             TempManager.TempManager tempManager,
-            MediaCreator.ProgressCallback progressCallback = null)
+            ProgressCallback progressCallback = null)
         {
             bool result = true;
             progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, "Applying " + EditionID + " - Package Swap");
@@ -399,7 +397,7 @@ namespace MediaCreationLib.BootlegEditions
 
                     lppackage = Directory.EnumerateFiles(UUPPath, lpfilter2, SearchOption.AllDirectories).First();
 
-                    result = imagingInterface.ApplyImage(lppackage, 1, LPFolder, PreserveACL: false, progressCallback: callback2);
+                    result = Constants.imagingInterface.ApplyImage(lppackage, 1, LPFolder, PreserveACL: false, progressCallback: callback2);
                     if (!result)
                     {
                         goto exit;
@@ -412,7 +410,7 @@ namespace MediaCreationLib.BootlegEditions
             //
             foreach (string package in packages)
             {
-                result = imagingInterface.ApplyImage(package, 1, SxSFolder, PreserveACL: false, progressCallback: callback2);
+                result = Constants.imagingInterface.ApplyImage(package, 1, SxSFolder, PreserveACL: false, progressCallback: callback2);
                 if (!result)
                 {
                     goto exit;
@@ -420,7 +418,7 @@ namespace MediaCreationLib.BootlegEditions
 
                 if (File.Exists(Path.Combine(SxSFolder, "update.mum")))
                 {
-                    AssemblyManifestHandler.Assembly assembly = AssemblyManifestHandler.Deserialize(File.ReadAllText(Path.Combine(SxSFolder, "update.mum")));
+                    Assembly assembly = AssemblyManifestHandler.Deserialize(File.ReadAllText(Path.Combine(SxSFolder, "update.mum")));
                     string cbsKey = assembly.AssemblyIdentity.Name + "~" + assembly.AssemblyIdentity.PublicKeyToken + "~" + assembly.AssemblyIdentity.ProcessorArchitecture + "~" + (string.Equals(assembly.AssemblyIdentity.Language, "neutral", StringComparison.CurrentCultureIgnoreCase) ? "" : assembly.AssemblyIdentity.Language) + "~" + assembly.AssemblyIdentity.Version;
                     if (!File.Exists(Path.Combine(SxSFolder, cbsKey + ".mum")))
                     {
@@ -631,12 +629,12 @@ namespace MediaCreationLib.BootlegEditions
             }
 
             string name = $"Windows 10 {EditionID}";
-            if (Constants.FriendlyEditionNames.Any(x => x.Key.Equals(EditionID, StringComparison.InvariantCultureIgnoreCase)))
+            if (IniReader.FriendlyEditionNames.Any(x => x.Key.Equals(EditionID, StringComparison.InvariantCultureIgnoreCase)))
             {
-                name = Constants.FriendlyEditionNames.First(x => x.Key.Equals(EditionID, StringComparison.InvariantCultureIgnoreCase)).Value;
+                name = IniReader.FriendlyEditionNames.First(x => x.Key.Equals(EditionID, StringComparison.InvariantCultureIgnoreCase)).Value;
             }
 
-            result = imagingInterface.CaptureImage(
+            result = Constants.imagingInterface.CaptureImage(
                 OutputInstallImage,
                 name,
                 name,

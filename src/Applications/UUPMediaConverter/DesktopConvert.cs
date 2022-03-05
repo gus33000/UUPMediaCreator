@@ -101,6 +101,26 @@ namespace UUPMediaConverter
                     Logging.Log("ERROR: Could not find: " + toolpath, severity: Logging.LoggingLevel.Error);
                     return 1;
                 }
+
+                toolpath = Path.Combine(parentDirectory, "Settings", "Settings.ini");
+
+                if (!File.Exists(toolpath))
+                {
+                    parentDirectory = GetExecutableDirectory();
+                    toolpath = Path.Combine(parentDirectory, "Settings", "Settings.ini");
+                }
+
+                if (!File.Exists(toolpath))
+                {
+                    parentDirectory = GetExecutableDirectory();
+                    toolpath = Path.Combine(parentDirectory, "Settings.ini");
+                }
+
+                if (!File.Exists(toolpath))
+                {
+                    Logging.Log("ERROR: Could not find: " + toolpath, severity: Logging.LoggingLevel.Error);
+                    return 1;
+                }
             }
 
             int prevperc = -1;

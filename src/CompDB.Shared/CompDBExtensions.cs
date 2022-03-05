@@ -40,6 +40,9 @@ namespace CompDB
                 if (compDB.Type != "Build")
                     continue;
 
+                if (compDB.Name?.Contains("Desktop_FOD") == true)
+                    continue;
+
                 //
                 // Newer style compdbs have a tag attribute, make use of it.
                 //

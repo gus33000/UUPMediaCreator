@@ -20,22 +20,20 @@
  * SOFTWARE.
  */
 using Imaging;
+using MediaCreationLib.Settings;
+using MediaCreationLib.Utils;
 using Microsoft.Wim;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using UUPMediaCreator.InterCommunication;
 using VirtualHardDiskLib;
-using static MediaCreationLib.MediaCreator;
 
 namespace MediaCreationLib.Installer
 {
     public static class WindowsInstallerBuilder
     {
-        private static readonly WIMImaging imagingInterface = new();
-
         // 6 progress bars
         public static bool BuildSetupMedia(
             string BaseESD,
@@ -64,7 +62,7 @@ namespace MediaCreationLib.Installer
             result = WIMImaging.GetWIMImageInformation(BaseESD, 2, out WIMInformationXML.IMAGE image);
             if (!result)
             {
-                progressCallback?.Invoke(Common.ProcessPhase.CreatingWindowsInstaller, true, 0, "An error occured while getting WIM image information.");
+                progressCallback?.Log("An error occured while getting WIM image information.");
                 goto exit;
             }
 
@@ -86,11 +84,6 @@ namespace MediaCreationLib.Installer
                 compressionType = WimCompressionType.Lzx;
             }
 
-            void callback(string Operation, int ProgressPercentage, bool IsIndeterminate)
-            {
-                progressCallback?.Invoke(Common.ProcessPhase.CreatingWindowsInstaller, IsIndeterminate, ProgressPercentage, Operation);
-            }
-
             //
             // Prepare our base PE image which will serve as a basis for all subsequent operations
             // This function also generates WinRE
@@ -98,7 +91,7 @@ namespace MediaCreationLib.Installer
             result = PreparePEImage(BaseESD, OutputWinREPath, MediaPath, compressionType, LanguageCode, tempManager, progressCallback);
             if (!result)
             {
-                progressCallback?.Invoke(Common.ProcessPhase.CreatingWindowsInstaller, true, 0, "An error occured while preparing the PE image.");
+                progressCallback?.Log("An error occured while preparing the PE image.");
                 goto exit;
             }
 
@@ -110,7 +103,7 @@ namespace MediaCreationLib.Installer
                 result = PerformComponentCleanupOnPEImage(MediaPath, compressionType, image, tempManager, progressCallback);
                 if (!result)
                 {
-                    progressCallback?.Invoke(Common.ProcessPhase.CreatingWindowsInstaller, true, 0, "An error occured while performing component cleanup on pe image.");
+                    progressCallback?.Log("An error occured while performing component cleanup on pe image.");
                     goto exit;
                 }
             }
@@ -123,10 +116,10 @@ namespace MediaCreationLib.Installer
             //
             // Duplicate the boot image so we have two of them
             //
-            result = imagingInterface.ExportImage(tmpwimcopy, bootwim, 1, compressionType: compressionType, progressCallback: callback);
+            result = Constants.imagingInterface.ExportImage(tmpwimcopy, bootwim, 1, compressionType: compressionType, progressCallback: progressCallback?.GetImagingCallback());
             if (!result)
             {
-                progressCallback?.Invoke(Common.ProcessPhase.CreatingWindowsInstaller, true, 0, "An error occured while exporting the main boot image.");
+                progressCallback?.Log("An error occured while exporting the main boot image.");
                 goto exit;
             }
 
@@ -154,7 +147,7 @@ namespace MediaCreationLib.Installer
             result = WIMImaging.SetWIMImageInformation(bootwim, 1, image);
             if (!result)
             {
-                progressCallback?.Invoke(Common.ProcessPhase.CreatingWindowsInstaller, true, 0, "An error occured while setting image information for index 1.");
+                progressCallback?.Log("An error occured while setting image information for index 1.");
                 goto exit;
             }
 
@@ -177,7 +170,7 @@ namespace MediaCreationLib.Installer
             result = WIMImaging.SetWIMImageInformation(bootwim, 2, image);
             if (!result)
             {
-                progressCallback?.Invoke(Common.ProcessPhase.CreatingWindowsInstaller, true, 0, "An error occured while setting image information for index 2.");
+                progressCallback?.Log("An error occured while setting image information for index 2.");
                 goto exit;
             }
 
@@ -190,77 +183,117 @@ namespace MediaCreationLib.Installer
                 goto exit;
             }
 
+            result = ModifyImageRegistry(MediaPath, tempManager, progressCallback);
+            if (!result)
+            {
+                goto exit;
+            }
+
+            result = IntegrateSetupFilesIntoImage(MediaPath, tempManager, progressCallback);
+            if (!result)
+            {
+                goto exit;
+            }
+
+        //
+        // We're done
+        //
+
+        exit:
+            return result;
+        }
+
+        private static bool ModifyImageRegistry(
+            string MediaPath,
+            TempManager.TempManager tempManager,
+            ProgressCallback progressCallback = null
+            )
+        {
+            string bootwim = Path.Combine(MediaPath, "sources", "boot.wim");
+
             //
             // Modifying registry for each index
             //
             string tempSoftwareHiveBackup = tempManager.GetTempPath();
             string tempSystemHiveBackup = tempManager.GetTempPath();
 
-            result = WIMImaging.ExtractFileFromImage(bootwim, 1, Constants.SYSTEM_Hive_Location, tempSystemHiveBackup);
+            bool result = WIMImaging.ExtractFileFromImage(bootwim, 1, Constants.SYSTEM_Hive_Location, tempSystemHiveBackup);
             if (!result)
             {
-                progressCallback?.Invoke(Common.ProcessPhase.CreatingWindowsInstaller, true, 0, "An error occured while extracting the SYSTEM hive from index 1.");
+                progressCallback?.Log("An error occured while extracting the SYSTEM hive from index 1.");
                 goto exit;
             }
 
             result = WIMImaging.ExtractFileFromImage(bootwim, 1, Constants.SOFTWARE_Hive_Location, tempSoftwareHiveBackup);
             if (!result)
             {
-                progressCallback?.Invoke(Common.ProcessPhase.CreatingWindowsInstaller, true, 0, "An error occured while extracting the SOFTWARE hive from index 1.");
+                progressCallback?.Log("An error occured while extracting the SOFTWARE hive from index 1.");
                 goto exit;
             }
 
             File.Copy(tempSoftwareHiveBackup, $"{tempSoftwareHiveBackup}.2");
 
-            result = RegistryOperations.ModifyBootIndex2Registry($"{tempSoftwareHiveBackup}.2");
+            result = PreinstallationEnvironmentRegistryService.ModifyBootIndex2Registry($"{tempSoftwareHiveBackup}.2");
             if (!result)
             {
-                progressCallback?.Invoke(Common.ProcessPhase.CreatingWindowsInstaller, true, 0, "An error occured while modifying the SOFTWARE hive for index 2.");
+                progressCallback?.Log("An error occured while modifying the SOFTWARE hive for index 2.");
                 goto exit;
             }
 
-            result = imagingInterface.AddFileToImage(bootwim, 2, $"{tempSoftwareHiveBackup}.2", Constants.SOFTWARE_Hive_Location, progressCallback: callback);
+            result = Constants.imagingInterface.AddFileToImage(bootwim, 2, $"{tempSoftwareHiveBackup}.2", Constants.SOFTWARE_Hive_Location, progressCallback: progressCallback?.GetImagingCallback());
             if (!result)
             {
-                progressCallback?.Invoke(Common.ProcessPhase.CreatingWindowsInstaller, true, 0, "An error occured while modifying adding back the SOFTWARE hive for index 2.");
+                progressCallback?.Log("An error occured while modifying adding back the SOFTWARE hive for index 2.");
                 goto exit;
             }
 
             File.Delete($"{tempSoftwareHiveBackup}.2");
 
-            result = RegistryOperations.ModifyBootIndex1Registry(tempSystemHiveBackup, tempSoftwareHiveBackup);
+            result = PreinstallationEnvironmentRegistryService.ModifyBootIndex1Registry(tempSystemHiveBackup, tempSoftwareHiveBackup);
             if (!result)
             {
-                progressCallback?.Invoke(Common.ProcessPhase.CreatingWindowsInstaller, true, 0, "An error occured while modifying the SOFTWARE/SYSTEM hives for index 1.");
+                progressCallback?.Log("An error occured while modifying the SOFTWARE/SYSTEM hives for index 1.");
                 goto exit;
             }
 
-            result = imagingInterface.AddFileToImage(bootwim, 1, tempSystemHiveBackup, Constants.SYSTEM_Hive_Location, progressCallback: callback);
+            result = Constants.imagingInterface.AddFileToImage(bootwim, 1, tempSystemHiveBackup, Constants.SYSTEM_Hive_Location, progressCallback: progressCallback?.GetImagingCallback());
             if (!result)
             {
-                progressCallback?.Invoke(Common.ProcessPhase.CreatingWindowsInstaller, true, 0, "An error occured while modifying adding back the SYSTEM hive for index 1.");
+                progressCallback?.Log("An error occured while modifying adding back the SYSTEM hive for index 1.");
                 goto exit;
             }
 
-            result = imagingInterface.AddFileToImage(bootwim, 1, tempSoftwareHiveBackup, Constants.SOFTWARE_Hive_Location, progressCallback: callback);
+            result = Constants.imagingInterface.AddFileToImage(bootwim, 1, tempSoftwareHiveBackup, Constants.SOFTWARE_Hive_Location, progressCallback: progressCallback?.GetImagingCallback());
             if (!result)
             {
-                progressCallback?.Invoke(Common.ProcessPhase.CreatingWindowsInstaller, true, 0, "An error occured while modifying adding back the SOFTWARE hive for index 1.");
+                progressCallback?.Log("An error occured while modifying adding back the SOFTWARE hive for index 1.");
                 goto exit;
             }
 
             File.Delete(tempSoftwareHiveBackup);
             File.Delete(tempSystemHiveBackup);
 
+        exit:
+            return result;
+        }
+
+        private static bool IntegrateSetupFilesIntoImage(
+            string MediaPath,
+            TempManager.TempManager tempManager,
+            ProgressCallback progressCallback = null
+            )
+        {
+            string bootwim = Path.Combine(MediaPath, "sources", "boot.wim");
+
             //
             // Adding missing files in index 2
             //
-            progressCallback?.Invoke(Common.ProcessPhase.CreatingWindowsInstaller, true, 0, "Modifying assets for Setup PE (1)");
+            progressCallback?.Log("Modifying assets for Setup PE (1)");
 
-            result = imagingInterface.DeleteFileFromImage(bootwim, 2, Path.Combine("Windows", "System32", "winpe.jpg"), progressCallback: callback);
+            bool result = Constants.imagingInterface.DeleteFileFromImage(bootwim, 2, Path.Combine("Windows", "System32", "winpe.jpg"), progressCallback: progressCallback?.GetImagingCallback());
             if (!result)
             {
-                progressCallback?.Invoke(Common.ProcessPhase.CreatingWindowsInstaller, true, 0, "An error occured while modifying deleting the background file for index 2.");
+                progressCallback?.Log("An error occured while modifying deleting the background file for index 2.");
                 goto exit;
             }
 
@@ -268,25 +301,25 @@ namespace MediaCreationLib.Installer
                 .Select(asset => Path.Combine(MediaPath, $@"sources\{asset}"))
                 .FirstOrDefault(assetPath => File.Exists(assetPath));
 
-            result = imagingInterface.AddFileToImage(bootwim, 2, bgfile, Path.Combine("Windows", "System32", "setup.bmp"), progressCallback: callback);
+            result = Constants.imagingInterface.AddFileToImage(bootwim, 2, bgfile, Path.Combine("Windows", "System32", "setup.bmp"), progressCallback: progressCallback?.GetImagingCallback());
             if (!result)
             {
-                progressCallback?.Invoke(Common.ProcessPhase.CreatingWindowsInstaller, true, 0, "An error occured while modifying adding the background file for index 2.");
+                progressCallback?.Log("An error occured while modifying adding the background file for index 2.");
                 goto exit;
             }
 
-            progressCallback?.Invoke(Common.ProcessPhase.CreatingWindowsInstaller, true, 0, "Modifying assets for Setup PE (2)");
+            progressCallback?.Log("Modifying assets for Setup PE (2)");
             string winpejpgtmp = tempManager.GetTempPath();
             File.WriteAllBytes(winpejpgtmp, Constants.winpejpg);
-            result = imagingInterface.AddFileToImage(bootwim, 2, winpejpgtmp, Path.Combine("Windows", "System32", "winpe.jpg"), progressCallback: callback);
+            result = Constants.imagingInterface.AddFileToImage(bootwim, 2, winpejpgtmp, Path.Combine("Windows", "System32", "winpe.jpg"), progressCallback: progressCallback?.GetImagingCallback());
             File.Delete(winpejpgtmp);
             if (!result)
             {
-                progressCallback?.Invoke(Common.ProcessPhase.CreatingWindowsInstaller, true, 0, "An error occured while adding back the background file for index 2.");
+                progressCallback?.Log("An error occured while adding back the background file for index 2.");
                 goto exit;
             }
 
-            progressCallback?.Invoke(Common.ProcessPhase.CreatingWindowsInstaller, true, 0, "Backporting missing files");
+            progressCallback?.Log("Backporting missing files");
 
             IEnumerable<string> dirs = Directory.EnumerateDirectories(Path.Combine(MediaPath, "sources"), "??-??");
             if (!dirs.Any())
@@ -295,15 +328,15 @@ namespace MediaCreationLib.Installer
             }
             string langcode = dirs.First().Replace(Path.Combine(MediaPath, "sources") + Path.DirectorySeparatorChar, "");
 
-            foreach (string file in Constants.SetupFilesToBackport)
+            foreach (string file in IniReader.SetupFilesToBackport)
             {
                 string matchingfile = Path.Combine(MediaPath, file).Replace("??-??", langcode);
                 string normalizedPath = file.Replace("??-??", langcode);
-                string normalizedPathWithoutFile = normalizedPath.Contains(Path.DirectorySeparatorChar) ? string.Join(Path.DirectorySeparatorChar, normalizedPath.Split(Path.DirectorySeparatorChar).Reverse().Skip(1).Reverse()) : "";
+                string normalizedPathWithoutFile = FolderUtilities.GetParentPath(normalizedPath);
 
                 if (file == $"sources{Path.DirectorySeparatorChar}background.bmp")
                 {
-                    result = imagingInterface.AddFileToImage(bootwim, 2, bgfile, normalizedPath, progressCallback: callback);
+                    result = Constants.imagingInterface.AddFileToImage(bootwim, 2, bgfile, normalizedPath, progressCallback: progressCallback?.GetImagingCallback());
                     if (!result)
                     {
                         goto exit;
@@ -311,44 +344,13 @@ namespace MediaCreationLib.Installer
                 }
                 else if (File.Exists(matchingfile))
                 {
-                    result = imagingInterface.AddFileToImage(bootwim, 2, matchingfile, normalizedPath, progressCallback: callback);
+                    result = Constants.imagingInterface.AddFileToImage(bootwim, 2, matchingfile, normalizedPath, progressCallback: progressCallback?.GetImagingCallback());
                     if (!result)
                     {
                         goto exit;
                     }
                 }
             }
-
-            if (ulong.Parse(image.WINDOWS.VERSION.BUILD) >= 20231)
-            {
-                foreach (string file in Constants.SetupFilesToBackportStartingWith20231)
-                {
-                    string matchingfile = Path.Combine(MediaPath, file).Replace("??-??", langcode);
-                    string normalizedPath = file.Replace("??-??", langcode);
-                    string normalizedPathWithoutFile = normalizedPath.Contains(Path.DirectorySeparatorChar) ? string.Join(Path.DirectorySeparatorChar, normalizedPath.Split(Path.DirectorySeparatorChar).Reverse().Skip(1).Reverse()) : "";
-
-                    if (file == $"sources{Path.DirectorySeparatorChar}background.bmp")
-                    {
-                        result = imagingInterface.AddFileToImage(bootwim, 2, bgfile, normalizedPath, progressCallback: callback);
-                        if (!result)
-                        {
-                            goto exit;
-                        }
-                    }
-                    else if (File.Exists(matchingfile))
-                    {
-                        result = imagingInterface.AddFileToImage(bootwim, 2, matchingfile, normalizedPath, progressCallback: callback);
-                        if (!result)
-                        {
-                            goto exit;
-                        }
-                    }
-                }
-            }
-
-        //
-        // We're done
-        //
 
         exit:
             return result;
@@ -367,12 +369,7 @@ namespace MediaCreationLib.Installer
             //
             // Export the RE image to our re path, in this case a WIM
             //
-            void callback(string Operation, int ProgressPercentage, bool IsIndeterminate)
-            {
-                progressCallback?.Invoke(Common.ProcessPhase.CreatingWindowsInstaller, IsIndeterminate, ProgressPercentage, Operation);
-            }
-
-            bool result = imagingInterface.ExportImage(BaseESD, OutputWinREPath, 2, compressionType: compressionType, progressCallback: callback);
+            bool result = Constants.imagingInterface.ExportImage(BaseESD, OutputWinREPath, 2, compressionType: compressionType, progressCallback: progressCallback.GetImagingCallback());
             if (!result)
             {
                 goto exit;
@@ -404,7 +401,7 @@ namespace MediaCreationLib.Installer
                 }
             }
 
-            progressCallback?.Invoke(Common.ProcessPhase.CreatingWindowsInstaller, true, 0, "Marking image as bootable");
+            progressCallback?.Log("Marking image as bootable");
             result = WIMImaging.MarkImageAsBootable(OutputWinREPath, 1);
             if (!result)
             {
@@ -421,14 +418,14 @@ namespace MediaCreationLib.Installer
             string peshellini = Path.Combine(sys32, "winpeshl.ini");
 
             // Ignore return result
-            imagingInterface.DeleteFileFromImage(bootwim, 1, peshellini, progressCallback: callback);
+            Constants.imagingInterface.DeleteFileFromImage(bootwim, 1, peshellini, progressCallback: progressCallback?.GetImagingCallback());
 
             //
             // Cleanup log file from RE conversion phase mentions
             //
             try
             {
-                progressCallback?.Invoke(Common.ProcessPhase.CreatingWindowsInstaller, true, 0, "Cleaning log files");
+                progressCallback?.Log("Cleaning log files");
                 string logfile = tempManager.GetTempPath();
                 string pathinimage = Path.Combine("Windows", "INF", "setupapi.offline.log");
 
@@ -451,7 +448,7 @@ namespace MediaCreationLib.Installer
                             finallines.RemoveAt(finallines.Count - 1);
                             File.WriteAllLines(logfile, finallines);
                             // Ignore return result
-                            imagingInterface.AddFileToImage(bootwim, 1, logfile, pathinimage, progressCallback: callback);
+                            Constants.imagingInterface.AddFileToImage(bootwim, 1, logfile, pathinimage, progressCallback: progressCallback?.GetImagingCallback());
                             break;
                         }
                         finallines.Add(line);
@@ -463,7 +460,7 @@ namespace MediaCreationLib.Installer
             //
             // Disable UMCI
             //
-            progressCallback?.Invoke(Common.ProcessPhase.CreatingWindowsInstaller, true, 0, "Disabling UMCI");
+            progressCallback?.Log("Disabling UMCI");
             string tempSystemHiveBackup = tempManager.GetTempPath();
 
             result = WIMImaging.ExtractFileFromImage(bootwim, 1, Constants.SYSTEM_Hive_Location, tempSystemHiveBackup);
@@ -472,13 +469,13 @@ namespace MediaCreationLib.Installer
                 goto cleanup;
             }
 
-            result = RegistryOperations.ModifyBootGlobalRegistry(tempSystemHiveBackup);
+            result = PreinstallationEnvironmentRegistryService.ModifyBootGlobalRegistry(tempSystemHiveBackup);
             if (!result)
             {
                 goto cleanup;
             }
 
-            result = imagingInterface.AddFileToImage(bootwim, 1, tempSystemHiveBackup, Constants.SYSTEM_Hive_Location, progressCallback: callback);
+            result = Constants.imagingInterface.AddFileToImage(bootwim, 1, tempSystemHiveBackup, Constants.SYSTEM_Hive_Location, progressCallback: progressCallback?.GetImagingCallback());
             if (!result)
             {
                 goto cleanup;
@@ -506,15 +503,10 @@ namespace MediaCreationLib.Installer
                 //
                 // Apply the RE image to our ospath, in this case our VHD
                 //
-                void callback(string Operation, int ProgressPercentage, bool IsIndeterminate)
-                {
-                    progressCallback?.Invoke(Common.ProcessPhase.CreatingWindowsInstaller, IsIndeterminate, ProgressPercentage, Operation);
-                }
-
-                bool result = imagingInterface.ApplyImage(Path.Combine(MediaPath, "sources", "boot.wim"), 1, ospath, progressCallback: callback);
+                bool result = Constants.imagingInterface.ApplyImage(Path.Combine(MediaPath, "sources", "boot.wim"), 1, ospath, progressCallback: progressCallback?.GetImagingCallback());
                 if (!result)
                 {
-                    progressCallback?.Invoke(Common.ProcessPhase.CreatingWindowsInstaller, true, 0, "An error occured while applying the first boot image for component cleanup.");
+                    progressCallback?.Log("An error occured while applying the first boot image for component cleanup.");
                     goto exit;
                 }
 
@@ -528,14 +520,14 @@ namespace MediaCreationLib.Installer
                 result = Dism.RemoteDismOperations.Instance.UninstallPEComponents(ospath, customCallback);
                 if (!result)
                 {
-                    progressCallback?.Invoke(Common.ProcessPhase.CreatingWindowsInstaller, true, 0, "An error occured while performing component cleanup with external tool.");
+                    progressCallback?.Log("An error occured while performing component cleanup with external tool.");
                     goto exit;
                 }
 
                 //
                 // Cleanup leftovers for WLAN
                 //
-                progressCallback?.Invoke(Common.ProcessPhase.CreatingWindowsInstaller, true, 0, "Cleaning up leftovers");
+                progressCallback?.Log("Cleaning up leftovers");
 
                 string winsxsfolder = Path.Combine(ospath, "Windows", "WinSxS");
                 string winsxsManFolder = Path.Combine(winsxsfolder, "Manifests");
@@ -547,7 +539,7 @@ namespace MediaCreationLib.Installer
                 {
                     try
                     {
-                        progressCallback?.Invoke(Common.ProcessPhase.CreatingWindowsInstaller, true, 0, "Deleting " + dir);
+                        progressCallback?.Log("Deleting " + dir);
                         TakeOwn.TakeOwnDirectory(dir);
                         Directory.Delete(dir, true);
                     }
@@ -558,7 +550,7 @@ namespace MediaCreationLib.Installer
                 {
                     try
                     {
-                        progressCallback?.Invoke(Common.ProcessPhase.CreatingWindowsInstaller, true, 0, "Deleting " + file);
+                        progressCallback?.Log("Deleting " + file);
                         TakeOwn.TakeOwnFile(file);
                         File.Delete(file);
                     }
@@ -568,7 +560,7 @@ namespace MediaCreationLib.Installer
                 //
                 // Add missing files from the setup media root
                 //
-                progressCallback?.Invoke(Common.ProcessPhase.CreatingWindowsInstaller, true, 0, "Adding missing files");
+                progressCallback?.Log("Adding missing files");
 
                 if (!File.Exists(Path.Combine(ospath, "Windows", "System32", "ReAgent.dll")))
                 {
@@ -585,18 +577,18 @@ namespace MediaCreationLib.Installer
                     File.Copy(Path.Combine(MediaPath, "sources", "wpx.dll"), Path.Combine(ospath, "Windows", "System32", "wpx.dll"));
                 }
 
-                result = imagingInterface.CaptureImage(
+                result = Constants.imagingInterface.CaptureImage(
                     Path.Combine(MediaPath, "sources", "boot.wim"),
                     image.NAME,
                     image.DESCRIPTION,
                     image.FLAGS,
                     ospath,
                     tempManager,
-                    progressCallback: callback,
+                    progressCallback: progressCallback?.GetImagingCallback(),
                     compressionType: compressionType);
                 if (!result)
                 {
-                    progressCallback?.Invoke(Common.ProcessPhase.CreatingWindowsInstaller, true, 0, "An error occured while capturing the modified boot image for component cleanup.");
+                    progressCallback?.Log("An error occured while capturing the modified boot image for component cleanup.");
                     goto exit;
                 }
 
@@ -608,7 +600,7 @@ namespace MediaCreationLib.Installer
         private static bool CreateSetupMediaRoot(
             string BaseESD,
             string OutputPath,
-            ProgressCallback ProgressCallback = null
+            ProgressCallback progressCallback = null
             )
         {
             bool result = true;
@@ -621,23 +613,18 @@ namespace MediaCreationLib.Installer
                 Directory.CreateDirectory(OutputPath);
             }
 
-            void callback(string Operation, int ProgressPercentage, bool IsIndeterminate)
-            {
-                ProgressCallback?.Invoke(Common.ProcessPhase.CreatingWindowsInstaller, IsIndeterminate, ProgressPercentage, Operation);
-            }
-
             //
             // Apply the first index of the base ESD containing the setup files we need
             //
-            result = imagingInterface.ApplyImage(
+            result = Constants.imagingInterface.ApplyImage(
                 BaseESD,
                 1,
                 OutputPath,
-                progressCallback: callback,
+                progressCallback: progressCallback?.GetImagingCallback(),
                 PreserveACL: false);
             if (!result)
             {
-                ProgressCallback?.Invoke(Common.ProcessPhase.CreatingWindowsInstaller, true, 0, "An error occured while applying the image for the setup files.");
+                progressCallback?.Log("An error occured while applying the image for the setup files.");
                 goto exit;
             }
 
@@ -645,11 +632,11 @@ namespace MediaCreationLib.Installer
             // The setup files from the first index are missing a single component (wtf?) so extract it from index 3 and place it in sources
             // Note: the file in question isn't in a wim that needs to be referenced, so we don't need to mention reference images.
             //
-            ProgressCallback?.Invoke(Common.ProcessPhase.CreatingWindowsInstaller, true, 0, "Extracting XML Lite");
+            progressCallback?.Log("Extracting XML Lite");
             result = WIMImaging.ExtractFileFromImage(BaseESD, 3, Path.Combine("Windows", "System32", "xmllite.dll"), Path.Combine(OutputPath, "sources", "xmllite.dll"));
             if (!result)
             {
-                ProgressCallback?.Invoke(Common.ProcessPhase.CreatingWindowsInstaller, true, 0, "An error occured while extracting XML Lite.");
+                progressCallback?.Log("An error occured while extracting XML Lite.");
                 goto exit;
             }
 

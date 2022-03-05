@@ -137,7 +137,7 @@ namespace DownloadLib
                         // Get language
                         case (true, false):
                             {
-                                if ((!hasLang || langMatching) && !IsNeutral)
+                                if (!hasLang || langMatching)
                                 {
                                     specificCompDBs.Add(cdb);
                                     selectedCompDBs.Add(cdb);

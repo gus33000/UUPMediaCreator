@@ -27,6 +27,7 @@ namespace TempManager
 {
     public class TempManager : IDisposable
     {
+        private ulong i = 0;
         private readonly List<string> tempPaths = new();
         private bool disposed = false;
         private readonly string Temp = Environment.GetEnvironmentVariable("TEMP") ?? "";
@@ -46,15 +47,12 @@ namespace TempManager
 
         public string GetTempPath()
         {
-            string path = Path.GetTempFileName();
-            if (File.Exists(path))
-            {
-                File.Delete(path);
-            }
-            path = Path.Combine(Temp, Path.GetFileName(path));
-
-            tempPaths.Add(path);
-            return path;
+            string filename = $"{DateTimeOffset.Now.ToUnixTimeSeconds()}{i}";
+            string fullpath = Path.Combine(Temp, Path.GetFileName(filename));
+            i++;
+            
+            tempPaths.Add(fullpath);
+            return fullpath;
         }
 
         public void Dispose()
