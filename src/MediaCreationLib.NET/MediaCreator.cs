@@ -39,8 +39,6 @@ namespace MediaCreationLib
 
     public static class MediaCreator
     {
-        private static readonly WIMImaging imagingInterface = new();
-
         private static bool HandleEditionPlan(
             EditionTarget targetEdition,
             string UUPPath,
@@ -200,7 +198,7 @@ namespace MediaCreationLib
                     {
                         progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, IsIndeterminate, ProgressPercentage, Operation);
                     }
-                    result = imagingInterface.ApplyImage(InstallWIMFilePath, index, vhdSession.GetMountedPath(), progressCallback: callback);
+                    result = Constants.imagingInterface.ApplyImage(InstallWIMFilePath, index, vhdSession.GetMountedPath(), progressCallback: callback);
                     if (!result)
                     {
                         goto exit;

@@ -34,8 +34,6 @@ namespace MediaCreationLib.BaseEditions
 {
     public static class BaseEditionBuilder
     {
-        private static readonly WIMImaging imagingInterface = new();
-
         public static bool CreateBaseEdition(
             string UUPPath,
             string LanguageCode,
@@ -47,8 +45,6 @@ namespace MediaCreationLib.BaseEditions
             TempManager.TempManager tempManager,
             ProgressCallback progressCallback = null)
         {
-            bool result = true;
-
             WimCompressionType compression = WimCompressionType.None;
             switch (CompressionType)
             {
@@ -65,32 +61,11 @@ namespace MediaCreationLib.BaseEditions
                     break;
             }
 
-            HashSet<string> ReferencePackages, referencePackagesToConvert;
-            string BaseESD = null;
-
-            (result, BaseESD, ReferencePackages, referencePackagesToConvert) = FileLocator.LocateFilesForBaseEditionCreation(UUPPath, LanguageCode, EditionID, CompositionDatabases, progressCallback);
+            (bool result, string BaseESD, HashSet<string> ReferencePackages) = BuildReferenceImageList(UUPPath, LanguageCode, EditionID, CompositionDatabases, tempManager, progressCallback);
             if (!result)
             {
+                progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, "CreateBaseEdition -> BuildReferenceImageList failed");
                 goto exit;
-            }
-
-            progressCallback?.Invoke(Common.ProcessPhase.PreparingFiles, true, 0, "Converting Reference Cabinets");
-
-            int counter = 0;
-            int total = referencePackagesToConvert.Count;
-            foreach (string file in referencePackagesToConvert)
-            {
-                int progressoffset = (int)Math.Round((double)counter / total * 100);
-                int progressScale = (int)Math.Round((double)1 / total * 100);
-
-                string refesd = ConvertCABToESD(Path.Combine(UUPPath, file), progressCallback, progressoffset, progressScale, tempManager);
-                if (string.IsNullOrEmpty(refesd))
-                {
-                    progressCallback?.Invoke(Common.ProcessPhase.ReadingMetadata, true, 0, "CreateBaseEdition -> Reference ESD creation from Cabinet files failed");
-                    goto exit;
-                }
-                ReferencePackages.Add(refesd);
-                counter++;
             }
 
             //
@@ -111,7 +86,7 @@ namespace MediaCreationLib.BaseEditions
                 progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, IsIndeterminate, ProgressPercentage, Operation);
             }
 
-            result = imagingInterface.ExportImage(
+            result = Constants.imagingInterface.ExportImage(
                 BaseESD,
                 OutputInstallImage,
                 3,
@@ -174,7 +149,7 @@ namespace MediaCreationLib.BaseEditions
             //
             progressCallback?.Invoke(Common.ProcessPhase.IntegratingWinRE, true, 0, "");
 
-            result = imagingInterface.AddFileToImage(
+            result = Constants.imagingInterface.AddFileToImage(
                 OutputInstallImage,
                 wim.IMAGE.Count,
                 InputWindowsREPath,
@@ -202,8 +177,6 @@ namespace MediaCreationLib.BaseEditions
             TempManager.TempManager tempManager,
             ProgressCallback progressCallback = null)
         {
-            bool result = true;
-
             WimCompressionType compression = WimCompressionType.None;
             switch (CompressionType)
             {
@@ -220,32 +193,11 @@ namespace MediaCreationLib.BaseEditions
                     break;
             }
 
-            HashSet<string> ReferencePackages, referencePackagesToConvert;
-            string BaseESD = null;
-
-            (result, BaseESD, ReferencePackages, referencePackagesToConvert) = FileLocator.LocateFilesForBaseEditionCreation(UUPPath, LanguageCode, EditionID, CompositionDatabases, progressCallback);
+            (bool result, string BaseESD, HashSet<string> ReferencePackages) = BuildReferenceImageList(UUPPath, LanguageCode, EditionID, CompositionDatabases, tempManager, progressCallback);
             if (!result)
             {
+                progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, "CreateBaseEditionWithAppXs -> BuildReferenceImageList failed");
                 goto exit;
-            }
-
-            progressCallback?.Invoke(Common.ProcessPhase.PreparingFiles, true, 0, "Converting Reference Cabinets");
-
-            int counter = 0;
-            int total = referencePackagesToConvert.Count;
-            foreach (string file in referencePackagesToConvert)
-            {
-                int progressoffset = (int)Math.Round((double)counter / total * 100);
-                int progressScale = (int)Math.Round((double)1 / total * 100);
-
-                string refesd = ConvertCABToESD(Path.Combine(UUPPath, file), progressCallback, progressoffset, progressScale, tempManager);
-                if (string.IsNullOrEmpty(refesd))
-                {
-                    progressCallback?.Invoke(Common.ProcessPhase.ReadingMetadata, true, 0, "CreateBaseEdition -> Reference ESD creation from Cabinet files failed");
-                    goto exit;
-                }
-                ReferencePackages.Add(refesd);
-                counter++;
             }
 
             //
@@ -254,7 +206,7 @@ namespace MediaCreationLib.BaseEditions
             result = WIMImaging.GetWIMImageInformation(BaseESD, 3, out WIMInformationXML.IMAGE image);
             if (!result)
             {
-                progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, "CreateBaseEdition -> GetWIMImageInformation failed");
+                progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, "CreateBaseEditionWithAppXs -> GetWIMImageInformation failed");
                 goto exit;
             }
 
@@ -278,7 +230,7 @@ namespace MediaCreationLib.BaseEditions
 
             using (VirtualHardDiskLib.VirtualDiskSession vhdSession = new(tempManager, delete: true))
             {
-                result = imagingInterface.ApplyImage(BaseESD, 3, vhdSession.GetMountedPath(), referenceWIMs: ReferencePackages, progressCallback: callback);
+                result = Constants.imagingInterface.ApplyImage(BaseESD, 3, vhdSession.GetMountedPath(), referenceWIMs: ReferencePackages, progressCallback: callback);
                 if (!result)
                 {
                     progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, "CreateBaseEditionWithAppXs -> ApplyImage failed");
@@ -294,7 +246,7 @@ namespace MediaCreationLib.BaseEditions
                     }
                 }
 
-                result = imagingInterface.CaptureImage(
+                result = Constants.imagingInterface.CaptureImage(
                     OutputInstallImage, 
                     image.NAME, 
                     image.DESCRIPTION, 
@@ -362,7 +314,7 @@ namespace MediaCreationLib.BaseEditions
             //
             progressCallback?.Invoke(Common.ProcessPhase.IntegratingWinRE, true, 0, "");
 
-            result = imagingInterface.AddFileToImage(
+            result = Constants.imagingInterface.AddFileToImage(
                 OutputInstallImage,
                 wim.IMAGE.Count,
                 InputWindowsREPath,
@@ -376,6 +328,46 @@ namespace MediaCreationLib.BaseEditions
 
         exit:
             return result;
+        }
+
+        private static (bool result, string BaseESD, HashSet<string> ReferencePackages) BuildReferenceImageList(
+            string UUPPath,
+            string LanguageCode,
+            string EditionID,
+            IEnumerable<CompDBXmlClass.CompDB> CompositionDatabases,
+            TempManager.TempManager tempManager,
+            ProgressCallback progressCallback = null)
+        {
+            HashSet<string> ReferencePackages, referencePackagesToConvert;
+            string BaseESD = null;
+
+            (bool result, BaseESD, ReferencePackages, referencePackagesToConvert) = FileLocator.LocateFilesForBaseEditionCreation(UUPPath, LanguageCode, EditionID, CompositionDatabases, progressCallback);
+            if (!result)
+            {
+                goto exit;
+            }
+
+            progressCallback?.Invoke(Common.ProcessPhase.PreparingFiles, true, 0, "Converting Reference Cabinets");
+
+            int counter = 0;
+            int total = referencePackagesToConvert.Count;
+            foreach (string file in referencePackagesToConvert)
+            {
+                int progressoffset = (int)Math.Round((double)counter / total * 100);
+                int progressScale = (int)Math.Round((double)1 / total * 100);
+
+                string refesd = ConvertCABToESD(Path.Combine(UUPPath, file), progressCallback, progressoffset, progressScale, tempManager);
+                if (string.IsNullOrEmpty(refesd))
+                {
+                    progressCallback?.Invoke(Common.ProcessPhase.ReadingMetadata, true, 0, "CreateBaseEdition -> Reference ESD creation from Cabinet files failed");
+                    goto exit;
+                }
+                ReferencePackages.Add(refesd);
+                counter++;
+            }
+
+        exit:
+            return (result, BaseESD, ReferencePackages);
         }
 
         private static string ConvertCABToESD(string cabFilePath, ProgressCallback progressCallback, int progressoffset, int progressscale, TempManager.TempManager tempManager)
@@ -405,7 +397,7 @@ namespace MediaCreationLib.BaseEditions
                 progressCallback?.Invoke(Common.ProcessPhase.PreparingFiles, IsIndeterminate, progressoffset + progressScaleHalf + (int)Math.Round((double)ProgressPercentage / 100 * progressScaleHalf), Operation);
             }
 
-            bool result = imagingInterface.CaptureImage(esdFilePath, "Metadata ESD", null, null, tempExtractionPath, tempManager, compressionType: WimCompressionType.None, PreserveACL: false, progressCallback: callback);
+            bool result = Constants.imagingInterface.CaptureImage(esdFilePath, "Metadata ESD", null, null, tempExtractionPath, tempManager, compressionType: WimCompressionType.None, PreserveACL: false, progressCallback: callback);
 
             Directory.Delete(tmp, true);
 

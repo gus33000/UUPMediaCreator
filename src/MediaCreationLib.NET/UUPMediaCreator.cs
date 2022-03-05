@@ -34,8 +34,6 @@ namespace MediaCreationLib
 {
     public static class UUPMediaCreator
     {
-        private static readonly WIMImaging imagingInterface = new();
-
         public static string LongestCommonSubstring(IList<string> values)
         {
             string result = string.Empty;
@@ -199,7 +197,7 @@ namespace MediaCreationLib
                 displaydescription = name;
             }
 
-            result = imagingInterface.CaptureImage(
+            result = Constants.imagingInterface.CaptureImage(
                 OutputInstallImage,
                 name,
                 description,

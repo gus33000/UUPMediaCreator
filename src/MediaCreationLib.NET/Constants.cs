@@ -19,6 +19,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+using Imaging;
 using MediaCreationLib.Settings;
 using System.Collections.Generic;
 using System.IO;
@@ -27,6 +28,8 @@ namespace MediaCreationLib
 {
     public static class Constants
     {
+        internal static readonly WIMImaging imagingInterface = new();
+
         internal static byte[] winpejpg = new byte[]
         {
             0xFF, 0xD8, 0xFF, 0xE0, 0x00, 0x10, 0x4A, 0x46,
