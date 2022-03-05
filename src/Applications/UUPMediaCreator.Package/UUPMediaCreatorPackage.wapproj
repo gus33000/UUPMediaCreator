@@ -59,7 +59,7 @@
     <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
     <AppxAutoIncrementPackageRevision>True</AppxAutoIncrementPackageRevision>
     <GenerateTestArtifacts>True</GenerateTestArtifacts>
-    <AppxBundlePlatforms>x64</AppxBundlePlatforms>
+    <AppxBundlePlatforms>x86|x64|arm64</AppxBundlePlatforms>
     <HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
@@ -405,8 +405,6 @@
     <None Include="Package.StoreAssociation.xml" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\UUPDownload\UUPDownload.csproj" />
-    <ProjectReference Include="..\UUPMediaConverter\UUPMediaConverter.csproj" />
     <ProjectReference Include="..\UUPMediaCreator.Broker\UUPMediaCreator.Broker.csproj" />
     <ProjectReference Include="..\UUPMediaConverterDismBroker\UUPMediaConverterDismBroker.csproj" />
     <ProjectReference Include="..\UUPMediaCreator\UUPMediaCreator.csproj" />
