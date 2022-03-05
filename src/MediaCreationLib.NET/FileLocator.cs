@@ -33,11 +33,11 @@ namespace MediaCreationLib.NET
 {
     internal static class FileLocator
     {
-        internal static (bool, HashSet<string>) VerifyFilesAreAvailableForCompDBs(HashSet<CompDBXmlClass.CompDB> compDBs, string UUPPath)
+        internal static (bool, HashSet<string>) VerifyFilesAreAvailableForCompositionDatabases(HashSet<CompDBXmlClass.CompDB> CompositionDatabases, string UUPPath)
         {
             HashSet<string> missingPackages = new();
 
-            foreach (CompDBXmlClass.CompDB compDB in compDBs)
+            foreach (CompDBXmlClass.CompDB compDB in CompositionDatabases)
             {
                 (bool succeeded, HashSet<string> missingFiles) = Planning.NET.FileLocator.VerifyFilesAreAvailableForCompDB(compDB, UUPPath);
                 foreach (string? missingFile in missingFiles)
@@ -53,11 +53,11 @@ namespace MediaCreationLib.NET
         }
 
         internal static CompDBXmlClass.CompDB? GetEditionCompDBForLanguage(
-            HashSet<CompDBXmlClass.CompDB> compDBs,
+            IEnumerable<CompDBXmlClass.CompDB> CompositionDatabases,
             string Edition,
             string LanguageCode)
         {
-            foreach (CompDBXmlClass.CompDB? compDB in compDBs)
+            foreach (CompDBXmlClass.CompDB? compDB in CompositionDatabases)
             {
                 //
                 // Newer style compdbs have a tag attribute, make use of it.
@@ -92,65 +92,55 @@ namespace MediaCreationLib.NET
         internal static (bool Succeeded, string BaseESD) LocateFilesForSetupMediaCreation(
             string UUPPath,
             string LanguageCode,
-            TempManager.TempManager tempManager,
+            IEnumerable<CompDBXmlClass.CompDB> CompositionDatabases,
             ProgressCallback? progressCallback = null)
         {
             progressCallback?.Invoke(Common.ProcessPhase.ReadingMetadata, true, 0, "Looking up Composition Database in order to find a Base ESD image appropriate for building windows setup files.");
 
-            if (Planning.NET.FileLocator.GetCompDBsFromUUPFiles(UUPPath, tempManager) is HashSet<CompDBXmlClass.CompDB> compDBs)
+            HashSet<CompDBXmlClass.CompDB> filteredCompositionDatabases = CompositionDatabases.GetEditionCompDBsForLanguage(LanguageCode);
+            if (filteredCompositionDatabases.Count > 0)
             {
-                HashSet<CompDBXmlClass.CompDB> filteredCompDBs = compDBs.GetEditionCompDBsForLanguage(LanguageCode);
-                if (filteredCompDBs.Count > 0)
+                foreach (CompDBXmlClass.CompDB? currentCompDB in filteredCompositionDatabases)
                 {
-                    foreach (CompDBXmlClass.CompDB? currentCompDB in filteredCompDBs)
+                    foreach (CompDBXmlClass.Package feature in currentCompDB.Features.Feature[0].Packages.Package)
                     {
-                        foreach (CompDBXmlClass.Package feature in currentCompDB.Features.Feature[0].Packages.Package)
+                        CompDBXmlClass.Package pkg = currentCompDB.Packages.Package.First(x => x.ID == feature.ID);
+
+                        string file = pkg.GetCommonlyUsedIncorrectFileName();
+
+                        if (feature.PackageType == "MetadataESD")
                         {
-                            CompDBXmlClass.Package pkg = currentCompDB.Packages.Package.First(x => x.ID == feature.ID);
-
-                            string file = pkg.GetCommonlyUsedIncorrectFileName();
-
-                            if (feature.PackageType == "MetadataESD")
+                            if (!File.Exists(Path.Combine(UUPPath, file)))
                             {
+                                file = pkg.Payload.PayloadItem[0].Path.Replace('\\', Path.DirectorySeparatorChar);
                                 if (!File.Exists(Path.Combine(UUPPath, file)))
                                 {
-                                    file = pkg.Payload.PayloadItem[0].Path.Replace('\\', Path.DirectorySeparatorChar);
-                                    if (!File.Exists(Path.Combine(UUPPath, file)))
-                                    {
-                                        break;
-                                    }
+                                    break;
                                 }
-
-                                return (true, Path.Combine(UUPPath, file));
                             }
+
+                            return (true, Path.Combine(UUPPath, file));
                         }
                     }
                 }
+            }
 
-                progressCallback?.Invoke(Common.ProcessPhase.Error, true, 0, "While looking up the Composition Database, we couldn't find an edition composition for the specified language. This error is fatal.");
-                return (false, null);
-            }
-            else
-            {
-                progressCallback?.Invoke(Common.ProcessPhase.Error, true, 0, "We couldn't find the Composition Database. Please make sure you have downloaded the <aggregatedmetadata> cabinet file, or the <CompDB> cabinet files (if the build is lower than RS3 RTM). This error is fatal.");
-                return (false, null);
-            }
+            progressCallback?.Invoke(Common.ProcessPhase.Error, true, 0, "While looking up the Composition Database, we couldn't find an edition composition for the specified language. This error is fatal.");
+            return (false, null);
         }
 
         internal static bool GenerateAppXLicenseFiles(
             string UUPPath,
             string LanguageCode,
             string EditionID,
-            TempManager.TempManager tempManager,
+            IEnumerable<CompDBXmlClass.CompDB> CompositionDatabases,
             ProgressCallback? progressCallback = null)
         {
             bool success = true;
 
             progressCallback?.Invoke(Common.ProcessPhase.ReadingMetadata, true, 0, "Enumerating files");
 
-            HashSet<CompDBXmlClass.CompDB> compDBs = Planning.NET.FileLocator.GetCompDBsFromUUPFiles(UUPPath, tempManager);
-
-            CompDBXmlClass.CompDB? compDB = GetEditionCompDBForLanguage(compDBs, EditionID, LanguageCode);
+            CompDBXmlClass.CompDB? compDB = GetEditionCompDBForLanguage(CompositionDatabases, EditionID, LanguageCode);
 
             if (compDB == null)
             {
@@ -158,9 +148,9 @@ namespace MediaCreationLib.NET
                 goto error;
             }
 
-            if (compDBs.Any(x => x.Name?.StartsWith("Build~") == true && x.Name?.EndsWith("~Desktop_Apps~~") == true))
+            if (CompositionDatabases.Any(x => x.Name?.StartsWith("Build~") == true && x.Name?.EndsWith("~Desktop_Apps~~") == true))
             {
-                CompDBXmlClass.CompDB AppCompDB = compDBs.First(x => x.Name?.StartsWith("Build~") == true && x.Name?.EndsWith("~Desktop_Apps~~") == true);
+                CompDBXmlClass.CompDB AppCompDB = CompositionDatabases.First(x => x.Name?.StartsWith("Build~") == true && x.Name?.EndsWith("~Desktop_Apps~~") == true);
                 AppxSelectionEngine.GenerateLicenseXmlFiles(compDB, AppCompDB, UUPPath);
             }
 
@@ -177,7 +167,7 @@ namespace MediaCreationLib.NET
             string UUPPath,
             string LanguageCode,
             string EditionID,
-            TempManager.TempManager tempManager,
+            IEnumerable<CompDBXmlClass.CompDB> CompositionDatabases,
             ProgressCallback? progressCallback = null)
         {
             bool success = true;
@@ -187,7 +177,7 @@ namespace MediaCreationLib.NET
             string? BaseESD = null;
             progressCallback?.Invoke(Common.ProcessPhase.ReadingMetadata, true, 0, "Enumerating files");
 
-            CompDBXmlClass.CompDB? compDB = GetEditionCompDBForLanguage(Planning.NET.FileLocator.GetCompDBsFromUUPFiles(UUPPath, tempManager), EditionID, LanguageCode);
+            CompDBXmlClass.CompDB? compDB = GetEditionCompDBForLanguage(CompositionDatabases, EditionID, LanguageCode);
 
             if (compDB == null)
             {

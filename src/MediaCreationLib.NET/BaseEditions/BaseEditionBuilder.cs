@@ -28,6 +28,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using UUPMediaCreator.InterCommunication;
+using CompDB;
 
 namespace MediaCreationLib.BaseEditions
 {
@@ -42,6 +43,7 @@ namespace MediaCreationLib.BaseEditions
             string InputWindowsREPath,
             string OutputInstallImage,
             Common.CompressionType CompressionType,
+            IEnumerable<CompDBXmlClass.CompDB> CompositionDatabases,
             TempManager.TempManager tempManager,
             ProgressCallback progressCallback = null)
         {
@@ -66,7 +68,7 @@ namespace MediaCreationLib.BaseEditions
             HashSet<string> ReferencePackages, referencePackagesToConvert;
             string BaseESD = null;
 
-            (result, BaseESD, ReferencePackages, referencePackagesToConvert) = FileLocator.LocateFilesForBaseEditionCreation(UUPPath, LanguageCode, EditionID, tempManager, progressCallback);
+            (result, BaseESD, ReferencePackages, referencePackagesToConvert) = FileLocator.LocateFilesForBaseEditionCreation(UUPPath, LanguageCode, EditionID, CompositionDatabases, progressCallback);
             if (!result)
             {
                 goto exit;
@@ -196,6 +198,7 @@ namespace MediaCreationLib.BaseEditions
             string OutputInstallImage,
             Common.CompressionType CompressionType,
             AppxInstallWorkload[] appxWorkloads,
+            IEnumerable<CompDBXmlClass.CompDB> CompositionDatabases,
             TempManager.TempManager tempManager,
             ProgressCallback progressCallback = null)
         {
@@ -220,7 +223,7 @@ namespace MediaCreationLib.BaseEditions
             HashSet<string> ReferencePackages, referencePackagesToConvert;
             string BaseESD = null;
 
-            (result, BaseESD, ReferencePackages, referencePackagesToConvert) = FileLocator.LocateFilesForBaseEditionCreation(UUPPath, LanguageCode, EditionID, tempManager, progressCallback);
+            (result, BaseESD, ReferencePackages, referencePackagesToConvert) = FileLocator.LocateFilesForBaseEditionCreation(UUPPath, LanguageCode, EditionID, CompositionDatabases, progressCallback);
             if (!result)
             {
                 goto exit;
@@ -258,7 +261,7 @@ namespace MediaCreationLib.BaseEditions
             //
             // Export License files
             //
-            result = FileLocator.GenerateAppXLicenseFiles(UUPPath, LanguageCode, EditionID, tempManager, progressCallback);
+            result = FileLocator.GenerateAppXLicenseFiles(UUPPath, LanguageCode, EditionID, CompositionDatabases, progressCallback);
             if (!result)
             {
                 progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, "CreateBaseEditionWithAppXs -> GenerateAppXLicenseFiles failed");

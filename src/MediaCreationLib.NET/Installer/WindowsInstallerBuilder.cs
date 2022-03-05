@@ -505,11 +505,6 @@ namespace MediaCreationLib.Installer
                 //
                 // Apply the RE image to our ospath, in this case our VHD
                 //
-                void callback(string Operation, int ProgressPercentage, bool IsIndeterminate)
-                {
-                    progressCallback?.Invoke(Common.ProcessPhase.CreatingWindowsInstaller, IsIndeterminate, ProgressPercentage, Operation);
-                }
-
                 bool result = imagingInterface.ApplyImage(Path.Combine(MediaPath, "sources", "boot.wim"), 1, ospath, progressCallback: progressCallback?.GetImagingCallback());
                 if (!result)
                 {

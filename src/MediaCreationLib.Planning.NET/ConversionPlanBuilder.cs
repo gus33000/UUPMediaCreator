@@ -266,7 +266,7 @@ namespace MediaCreationLib.Planning.NET
 
         private static (List<PlannedEdition>, List<PlannedEdition>) GetEditionsThatCanBeTargetedUsingPackageDowngrade(
             string UUPPath,
-            HashSet<CompDBXmlClass.CompDB> compDBs,
+            IEnumerable<CompDBXmlClass.CompDB> compDBs,
             IEnumerable<PlannedEdition> availableCanonicalEditions,
             List<EditionMappingXML.Edition> possibleEditionUpgrades,
             ProgressCallback? progressCallback = null)
@@ -377,7 +377,7 @@ namespace MediaCreationLib.Planning.NET
         }
 
         public static bool GetTargetedPlan(
-            HashSet<CompDBXmlClass.CompDB> compDBs,
+            IEnumerable<CompDBXmlClass.CompDB> compDBs,
             string EditionPack,
             string LanguageCode,
             bool IncludeServicingCapableOnlyTargets,
@@ -432,7 +432,7 @@ namespace MediaCreationLib.Planning.NET
 
         public static bool GetTargetedPlan(
             string UUPPath,
-            HashSet<CompDBXmlClass.CompDB> compDBs,
+            IEnumerable<CompDBXmlClass.CompDB> compDBs,
             string EditionPack,
             string LanguageCode,
             bool IncludeServicingCapableOnlyTargets,

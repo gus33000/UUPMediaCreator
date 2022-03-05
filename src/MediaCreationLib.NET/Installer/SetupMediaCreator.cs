@@ -19,9 +19,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+using CompDB;
 using MediaCreationLib.NET;
 using MediaCreationLib.Utils;
 using Microsoft.Wim;
+using System.Collections.Generic;
 using UUPMediaCreator.InterCommunication;
 
 namespace MediaCreationLib.Installer
@@ -34,13 +36,14 @@ namespace MediaCreationLib.Installer
             string OutputMediaPath,
             string OutputWindowsREPath,
             Common.CompressionType CompressionType,
+            IEnumerable<CompDBXmlClass.CompDB> CompositionDatabases,
             TempManager.TempManager tempManager,
             ProgressCallback progressCallback = null)
         {
             bool result = true;
             string BaseESD = null;
 
-            (result, BaseESD) = FileLocator.LocateFilesForSetupMediaCreation(UUPPath, LanguageCode, tempManager, progressCallback);
+            (result, BaseESD) = FileLocator.LocateFilesForSetupMediaCreation(UUPPath, LanguageCode, CompositionDatabases, progressCallback);
             if (!result)
             {
                 goto exit;
