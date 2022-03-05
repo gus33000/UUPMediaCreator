@@ -46,15 +46,23 @@ namespace TempManager
 
         public string GetTempPath()
         {
-            string path = Path.GetTempFileName();
+            string fullpath;
+            string path;
+
+            do
+            {
+                path = Path.GetTempFileName();
+                fullpath = Path.Combine(Temp, Path.GetFileName(path));
+            }
+            while (File.Exists(fullpath));
+
             if (File.Exists(path))
             {
                 File.Delete(path);
             }
-            path = Path.Combine(Temp, Path.GetFileName(path));
 
-            tempPaths.Add(path);
-            return path;
+            tempPaths.Add(fullpath);
+            return fullpath;
         }
 
         public void Dispose()
