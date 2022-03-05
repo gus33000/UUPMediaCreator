@@ -20,6 +20,7 @@
  * SOFTWARE.
  */
 using DiscUtils.Registry;
+using MediaCreationLib.Utils;
 using System;
 using System.IO;
 using System.Linq;
@@ -27,7 +28,7 @@ using System.Runtime.InteropServices;
 
 namespace MediaCreationLib.Installer
 {
-    internal static class RegistryOperations
+    internal static class PreinstallationEnvironmentRegistryService
     {
         private static void ResetWindowsRootInValue(RegistryHive hive, string key, string value)
         {
@@ -230,7 +231,7 @@ namespace MediaCreationLib.Installer
                     ), DiscUtils.Streams.Ownership.Dispose);
                 RegistryKey winpekey = hive.Root.OpenSubKey(@"Microsoft\Windows NT\CurrentVersion\WinPE");
                 winpekey.SetValue("CustomBackground", @"%SystemRoot%\system32\setup.bmp", RegistryValueType.ExpandString);
-                if (GetOperatingSystem() == OSPlatform.Windows)
+                if (PlatformUtilities.OperatingSystem == OSPlatform.Windows)
                 {
                     RegistryKey ockey = winpekey.OpenSubKey("OC");
                     ockey.CreateSubKey("Microsoft-WinPE-Setup");
@@ -242,28 +243,6 @@ namespace MediaCreationLib.Installer
                 return false;
             }
             return true;
-        }
-
-        public static OSPlatform GetOperatingSystem()
-        {
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-            {
-                return OSPlatform.OSX;
-            }
-
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-            {
-                return OSPlatform.Linux;
-            }
-
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            {
-                return OSPlatform.Windows;
-            }
-
-            return RuntimeInformation.IsOSPlatform(OSPlatform.FreeBSD)
-                ? OSPlatform.FreeBSD
-                : throw new Exception("Cannot determine operating system!");
         }
     }
 }

@@ -25,7 +25,7 @@ using System.IO;
 using System.Security.AccessControl;
 using System.Security.Principal;
 
-namespace MediaCreationLib.Installer
+namespace MediaCreationLib.Utils
 {
     public static class TakeOwn
     {

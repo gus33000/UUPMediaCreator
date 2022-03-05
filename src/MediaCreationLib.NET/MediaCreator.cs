@@ -23,63 +23,23 @@ using CompDB;
 using Imaging;
 using MediaCreationLib.BaseEditions;
 using MediaCreationLib.BootlegEditions;
+using MediaCreationLib.CDImage;
 using MediaCreationLib.Installer;
 using MediaCreationLib.Planning.NET;
+using MediaCreationLib.Utils;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
-using System.Security.Principal;
 using UUPMediaCreator.InterCommunication;
 
 namespace MediaCreationLib
 {
+    public delegate void ProgressCallback(Common.ProcessPhase phase, bool IsIndeterminate, int ProgressInPercentage, string SubOperation);
+
     public static class MediaCreator
     {
-        private static readonly bool RunsAsAdministrator = IsAdministrator();
-
-        private static bool IsAdministrator()
-        {
-            if (GetOperatingSystem() == OSPlatform.Windows)
-            {
-#pragma warning disable CA1416 // Validate platform compatibility
-                WindowsIdentity identity = WindowsIdentity.GetCurrent();
-                WindowsPrincipal principal = new(identity);
-                return principal.IsInRole(WindowsBuiltInRole.Administrator);
-#pragma warning restore CA1416 // Validate platform compatibility
-            }
-            else
-            {
-                return false;
-            }
-        }
-
-        public static OSPlatform GetOperatingSystem()
-        {
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-            {
-                return OSPlatform.OSX;
-            }
-
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-            {
-                return OSPlatform.Linux;
-            }
-
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            {
-                return OSPlatform.Windows;
-            }
-
-            return RuntimeInformation.IsOSPlatform(OSPlatform.FreeBSD)
-                ? OSPlatform.FreeBSD
-                : throw new Exception("Cannot determine operating system!");
-        }
-
         private static readonly WIMImaging imagingInterface = new();
-
-        public delegate void ProgressCallback(Common.ProcessPhase phase, bool IsIndeterminate, int ProgressInPercentage, string SubOperation);
 
         private static bool HandleEditionPlan(
             EditionTarget targetEdition,
@@ -102,7 +62,7 @@ namespace MediaCreationLib
             {
                 case AvailabilityType.Canonical:
                     {
-                        if (RunsAsAdministrator && targetEdition.PlannedEdition.AppXInstallWorkloads?.Length > 0)
+                        if (PlatformUtilities.RunsAsAdministrator && targetEdition.PlannedEdition.AppXInstallWorkloads?.Length > 0)
                         {
                             // Allow AppX Slipstreaming
                             result = BaseEditionBuilder.CreateBaseEditionWithAppXs(
@@ -375,7 +335,7 @@ namespace MediaCreationLib
                 }
             }
 
-            return ConversionPlanBuilder.GetTargetedPlan(UUPPath, compDBs, EditionPack, LanguageCode, RunsAsAdministrator, out EditionTargets, tempManager, (string msg) => progressCallback?.Invoke(Common.ProcessPhase.ReadingMetadata, true, 0, msg));
+            return ConversionPlanBuilder.GetTargetedPlan(UUPPath, compDBs, EditionPack, LanguageCode, PlatformUtilities.RunsAsAdministrator, out EditionTargets, tempManager, (string msg) => progressCallback?.Invoke(Common.ProcessPhase.ReadingMetadata, true, 0, msg));
         }
 
         public static bool IsRightPath(EditionTarget editionTarget, string edition)
@@ -480,7 +440,7 @@ namespace MediaCreationLib
                 //
                 // Build ISO
                 //
-                result = UUPMediaCreator.CreateISO(MediaRootPath, ISOPath, progressCallback);
+                result = DiscImageFactory.CreateDiscImageFromWindowsMediaPath(MediaRootPath, ISOPath, progressCallback);
                 if (!result)
                 {
                     error = "An error occurred while creating the ISO.";

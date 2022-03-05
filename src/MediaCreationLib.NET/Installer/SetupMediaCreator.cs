@@ -20,57 +20,14 @@
  * SOFTWARE.
  */
 using MediaCreationLib.NET;
+using MediaCreationLib.Utils;
 using Microsoft.Wim;
-using System;
-using System.Runtime.InteropServices;
-using System.Security.Principal;
 using UUPMediaCreator.InterCommunication;
-using static MediaCreationLib.MediaCreator;
 
 namespace MediaCreationLib.Installer
 {
     public static class SetupMediaCreator
     {
-        private static readonly bool RunsAsAdministrator = IsAdministrator();
-
-        private static bool IsAdministrator()
-        {
-            if (GetOperatingSystem() == OSPlatform.Windows)
-            {
-#pragma warning disable CA1416 // Validate platform compatibility
-                WindowsIdentity identity = WindowsIdentity.GetCurrent();
-                WindowsPrincipal principal = new(identity);
-                return principal.IsInRole(WindowsBuiltInRole.Administrator);
-#pragma warning restore CA1416 // Validate platform compatibility
-            }
-            else
-            {
-                return false;
-            }
-        }
-
-        public static OSPlatform GetOperatingSystem()
-        {
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-            {
-                return OSPlatform.OSX;
-            }
-
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-            {
-                return OSPlatform.Linux;
-            }
-
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            {
-                return OSPlatform.Windows;
-            }
-
-            return RuntimeInformation.IsOSPlatform(OSPlatform.FreeBSD)
-                ? OSPlatform.FreeBSD
-                : throw new Exception("Cannot determine operating system!");
-        }
-
         public static bool CreateSetupMedia(
             string UUPPath,
             string LanguageCode,
@@ -108,7 +65,7 @@ namespace MediaCreationLib.Installer
             //
             // Build installer
             //
-            result = WindowsInstallerBuilder.BuildSetupMedia(BaseESD, OutputWindowsREPath, OutputMediaPath, compression, RunsAsAdministrator, LanguageCode, tempManager, progressCallback);
+            result = WindowsInstallerBuilder.BuildSetupMedia(BaseESD, OutputWindowsREPath, OutputMediaPath, compression, PlatformUtilities.RunsAsAdministrator, LanguageCode, tempManager, progressCallback);
             if (!result)
             {
                 goto exit;

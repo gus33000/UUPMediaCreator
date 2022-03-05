@@ -26,7 +26,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UUPMediaCreator.InterCommunication;
-using static MediaCreationLib.MediaCreator;
 
 #nullable enable
 

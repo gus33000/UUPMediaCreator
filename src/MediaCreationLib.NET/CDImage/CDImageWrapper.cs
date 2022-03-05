@@ -19,6 +19,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+using MediaCreationLib.Utils;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -27,42 +28,18 @@ using System.Runtime.InteropServices;
 
 namespace MediaCreationLib.CDImage
 {
-    public static class CDImage
+    internal static class CDImageWrapper
     {
-        public delegate void ProgressCallback(string Operation, int ProgressPercentage, bool IsIndeterminate);
+        internal delegate void ProgressCallback(string Operation, int ProgressPercentage, bool IsIndeterminate);
 
-        public static OSPlatform GetOperatingSystem()
-        {
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-            {
-                return OSPlatform.OSX;
-            }
-
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-            {
-                return OSPlatform.Linux;
-            }
-
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            {
-                return OSPlatform.Windows;
-            }
-
-            return RuntimeInformation.IsOSPlatform(OSPlatform.FreeBSD)
-                ? OSPlatform.FreeBSD
-                : throw new Exception("Cannot determine operating system!");
-        }
-
-        public static bool GenerateISOImage(string isopath, string cdroot, string volumelabel, ProgressCallback progressCallback)
+        internal static bool GenerateISOImage(string isopath, string cdroot, string volumelabel, ProgressCallback progressCallback)
         {
             string setupexe = Path.Combine(cdroot, "setup.exe");
             DateTime creationtime = File.GetCreationTimeUtc(setupexe);
 
-            if (GetOperatingSystem() == OSPlatform.Windows)
+            if (PlatformUtilities.OperatingSystem == OSPlatform.Windows)
             {
-                string runningDirectory = Process.GetCurrentProcess().MainModule.FileName.Contains(Path.DirectorySeparatorChar) ? string.Join(Path.DirectorySeparatorChar, Process.GetCurrentProcess().MainModule.FileName.Split(Path.DirectorySeparatorChar).Reverse().Skip(1).Reverse()) : "";
-
-                string cdimagepath = Path.Combine(runningDirectory, "CDImage", "cdimage.exe");
+                string cdimagepath = Path.Combine(PlatformUtilities.CurrentRunningDirectory, "CDImage", "cdimage.exe");
 
                 string timestamp = creationtime.ToString("MM/dd/yyyy,hh:mm:ss");
 
@@ -101,45 +78,7 @@ namespace MediaCreationLib.CDImage
             {
                 try
                 {
-                    foreach (string entry in Directory.EnumerateFileSystemEntries(cdroot, "*", SearchOption.AllDirectories))
-                    {
-                        if (Directory.Exists(entry))
-                        {
-                            try
-                            {
-                                Directory.SetCreationTimeUtc(entry, creationtime);
-                            }
-                            catch { }
-                            try
-                            {
-                                Directory.SetLastAccessTimeUtc(entry, creationtime);
-                            }
-                            catch { }
-                            try
-                            {
-                                Directory.SetLastWriteTimeUtc(entry, creationtime);
-                            }
-                            catch { }
-                        }
-                        else
-                        {
-                            try
-                            {
-                                File.SetCreationTimeUtc(entry, creationtime);
-                            }
-                            catch { }
-                            try
-                            {
-                                File.SetLastAccessTimeUtc(entry, creationtime);
-                            }
-                            catch { }
-                            try
-                            {
-                                File.SetLastWriteTimeUtc(entry, creationtime);
-                            }
-                            catch { }
-                        }
-                    }
+                    FolderUtilities.TrySetTimestampsRecursive(cdroot, creationtime);
 
                     string cmdline = $"-b \"boot/etfsboot.com\" --no-emul-boot --eltorito-alt-boot -b \"efi/microsoft/boot/efisys.bin\" --no-emul-boot --udf --hide \"*\" -V \"{volumelabel}\" -o \"{isopath}\" {cdroot}";
 

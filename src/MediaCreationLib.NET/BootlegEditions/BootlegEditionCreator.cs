@@ -24,12 +24,12 @@ using Imaging;
 using IniParser;
 using IniParser.Model;
 using MediaCreationLib.Dism;
+using MediaCreationLib.Settings;
 using Microsoft.Wim;
 using System;
 using System.IO;
 using System.Linq;
 using UUPMediaCreator.InterCommunication;
-using static MediaCreationLib.MediaCreator;
 
 namespace MediaCreationLib.BootlegEditions
 {
@@ -240,7 +240,7 @@ namespace MediaCreationLib.BootlegEditions
             string OutputInstallImage,
             Common.CompressionType CompressionType,
             TempManager.TempManager tempManager,
-            MediaCreator.ProgressCallback progressCallback = null)
+            ProgressCallback progressCallback = null)
         {
             bool result = true;
             progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, "Applying " + EditionID + " - Package Swap");
@@ -420,7 +420,7 @@ namespace MediaCreationLib.BootlegEditions
 
                 if (File.Exists(Path.Combine(SxSFolder, "update.mum")))
                 {
-                    AssemblyManifestHandler.Assembly assembly = AssemblyManifestHandler.Deserialize(File.ReadAllText(Path.Combine(SxSFolder, "update.mum")));
+                    Assembly assembly = AssemblyManifestHandler.Deserialize(File.ReadAllText(Path.Combine(SxSFolder, "update.mum")));
                     string cbsKey = assembly.AssemblyIdentity.Name + "~" + assembly.AssemblyIdentity.PublicKeyToken + "~" + assembly.AssemblyIdentity.ProcessorArchitecture + "~" + (string.Equals(assembly.AssemblyIdentity.Language, "neutral", StringComparison.CurrentCultureIgnoreCase) ? "" : assembly.AssemblyIdentity.Language) + "~" + assembly.AssemblyIdentity.Version;
                     if (!File.Exists(Path.Combine(SxSFolder, cbsKey + ".mum")))
                     {
@@ -631,9 +631,9 @@ namespace MediaCreationLib.BootlegEditions
             }
 
             string name = $"Windows 10 {EditionID}";
-            if (Constants.FriendlyEditionNames.Any(x => x.Key.Equals(EditionID, StringComparison.InvariantCultureIgnoreCase)))
+            if (IniReader.FriendlyEditionNames.Any(x => x.Key.Equals(EditionID, StringComparison.InvariantCultureIgnoreCase)))
             {
-                name = Constants.FriendlyEditionNames.First(x => x.Key.Equals(EditionID, StringComparison.InvariantCultureIgnoreCase)).Value;
+                name = IniReader.FriendlyEditionNames.First(x => x.Key.Equals(EditionID, StringComparison.InvariantCultureIgnoreCase)).Value;
             }
 
             result = imagingInterface.CaptureImage(

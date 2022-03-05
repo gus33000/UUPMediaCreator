@@ -28,7 +28,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using UUPMediaCreator.InterCommunication;
-using static MediaCreationLib.MediaCreator;
 
 namespace MediaCreationLib.BaseEditions
 {

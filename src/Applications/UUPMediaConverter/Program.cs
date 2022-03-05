@@ -20,7 +20,6 @@
  * SOFTWARE.
  */
 using CommandLine;
-using System.Net;
 using System.Reflection;
 
 namespace UUPMediaConverter
