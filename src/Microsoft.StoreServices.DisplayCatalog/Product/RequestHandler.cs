@@ -1,7 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
-
-namespace Microsoft.StoreServices.DisplayCatalog.Product
+﻿namespace Microsoft.StoreServices.DisplayCatalog.Product
 {
     public static class RequestHandler
     {

@@ -20,8 +20,6 @@
  * SOFTWARE.
  */
 using Imaging;
-using MediaCreationLib.Settings;
-using System.Collections.Generic;
 using System.IO;
 
 namespace MediaCreationLib
