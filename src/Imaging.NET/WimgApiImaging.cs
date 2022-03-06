@@ -76,31 +76,28 @@ namespace Imaging
                         {
                             WimMessageScanning scanningMessage = (WimMessageScanning)message;
 
-                            int cDirectoriesScanned = 0;
-                            int cFilesScanned = 0;
-
                             int threshold = 1000;
 
                             switch (scanningMessage.CountType)
                             {
                                 case WimMessageScanningType.Directories:
                                     {
-                                        cDirectoriesScanned = scanningMessage.Count;
+                                        if (scanningMessage.Count >= directoriesScanned + threshold)
+                                        {
+                                            directoriesScanned = scanningMessage.Count;
+                                            progressCallback?.Invoke($"Scanning objects ({filesScanned} files, {directoriesScanned} directories scanned)", 0, true);
+                                        }
                                         break;
                                     }
                                 case WimMessageScanningType.Files:
                                     {
-                                        cFilesScanned = scanningMessage.Count;
+                                        if (scanningMessage.Count >= filesScanned + threshold)
+                                        {
+                                            filesScanned = scanningMessage.Count;
+                                            progressCallback?.Invoke($"Scanning objects ({filesScanned} files, {directoriesScanned} directories scanned)", 0, true);
+                                        }
                                         break;
                                     }
-                            }
-
-                            if (cDirectoriesScanned >= directoriesScanned + threshold || cFilesScanned >= filesScanned + threshold)
-                            {
-                                directoriesScanned = cDirectoriesScanned;
-                                filesScanned = cFilesScanned;
-
-                                progressCallback?.Invoke($"Scanning objects ({filesScanned} files, {directoriesScanned} directories scanned)", 0, true);
                             }
 
                             break;
