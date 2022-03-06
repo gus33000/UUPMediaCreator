@@ -26,7 +26,7 @@ namespace MediaCreationLib
 {
     public static class Constants
     {
-        internal static readonly WIMImaging imagingInterface = new();
+        internal static readonly WimImaging imagingInterface = new();
 
         internal static byte[] winpejpg = new byte[]
         {

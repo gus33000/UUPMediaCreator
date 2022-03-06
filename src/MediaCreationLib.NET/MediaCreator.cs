@@ -190,7 +190,7 @@ namespace MediaCreationLib
                 using (VirtualHardDiskLib.VirtualDiskSession vhdSession = new(tempManager, delete: false))
                 {
                     // Apply WIM
-                    WIMImaging.GetWIMInformation(InstallWIMFilePath, out WIMInformationXML.WIM wiminfo);
+                    Constants.imagingInterface.GetWIMInformation(InstallWIMFilePath, out WIMInformationXML.WIM wiminfo);
 
                     int index = int.Parse(wiminfo.IMAGE.First(x => x.WINDOWS.EDITIONID.Equals(targetEdition.PlannedEdition.EditionName, StringComparison.InvariantCultureIgnoreCase)).INDEX);
 

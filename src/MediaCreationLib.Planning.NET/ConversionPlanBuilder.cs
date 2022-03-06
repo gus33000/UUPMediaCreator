@@ -57,6 +57,8 @@ namespace MediaCreationLib.Planning.NET
     {
         public delegate void ProgressCallback(string SubOperation);
 
+        private static WimImaging imagingInterface = new();
+
         private static EditionTarget BuildTarget(
             PlannedEdition edition,
             List<PlannedEdition> availableEditionsByDowngrading,
@@ -538,7 +540,7 @@ namespace MediaCreationLib.Planning.NET
                             string pathEditionMapping = "";
                             int index = 0;
 
-                            result = WIMImaging.ExtractFileFromImage(EditionPack, 1, "$filehashes$.dat", tempHashMap);
+                            result = imagingInterface.ExtractFileFromImage(EditionPack, 1, "$filehashes$.dat", tempHashMap);
                             if (result)
                             {
                                 string[] hashmapcontent = File.ReadAllLines(tempHashMap);
@@ -555,7 +557,7 @@ namespace MediaCreationLib.Planning.NET
 
                             try
                             {
-                                result = WIMImaging.ExtractFileFromImage(EditionPack, index, pathEditionMapping, tempHashMap);
+                                result = imagingInterface.ExtractFileFromImage(EditionPack, index, pathEditionMapping, tempHashMap);
                                 if (!result)
                                 {
                                     goto error;
@@ -588,7 +590,7 @@ namespace MediaCreationLib.Planning.NET
                             string pathEditionMatrix = "";
                             int index = 0;
 
-                            result = WIMImaging.ExtractFileFromImage(EditionPack, 1, "$filehashes$.dat", tempHashMap);
+                            result = imagingInterface.ExtractFileFromImage(EditionPack, 1, "$filehashes$.dat", tempHashMap);
                             if (result)
                             {
                                 string[] hashmapcontent = File.ReadAllLines(tempHashMap);
@@ -605,7 +607,7 @@ namespace MediaCreationLib.Planning.NET
 
                             try
                             {
-                                result = WIMImaging.ExtractFileFromImage(EditionPack, index, pathEditionMatrix, tempHashMap);
+                                result = imagingInterface.ExtractFileFromImage(EditionPack, index, pathEditionMatrix, tempHashMap);
                                 if (!result)
                                 {
                                     goto error;

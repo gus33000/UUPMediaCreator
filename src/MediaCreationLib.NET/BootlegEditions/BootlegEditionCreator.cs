@@ -257,7 +257,7 @@ namespace MediaCreationLib.BootlegEditions
             progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, "Current edition is: " + SourceEdition);
 
             progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, "Getting wim info for: " + OutputInstallImage);
-            result = WIMImaging.GetWIMInformation(OutputInstallImage, out WIMInformationXML.WIM wiminfo);
+            result = Constants.imagingInterface.GetWIMInformation(OutputInstallImage, out WIMInformationXML.WIM wiminfo);
             if (!result)
             {
                 goto exit;
@@ -652,7 +652,7 @@ namespace MediaCreationLib.BootlegEditions
                 goto exit;
             }
 
-            result = WIMImaging.GetWIMImageInformation(OutputInstallImage, wiminfo.IMAGE.Count + 1, out WIMInformationXML.IMAGE tmpImageInfo);
+            result = Constants.imagingInterface.GetWIMImageInformation(OutputInstallImage, wiminfo.IMAGE.Count + 1, out WIMInformationXML.IMAGE tmpImageInfo);
             if (!result)
             {
                 goto exit;
@@ -668,7 +668,7 @@ namespace MediaCreationLib.BootlegEditions
             tmpImageInfo.DISPLAYNAME = name;
             tmpImageInfo.DISPLAYDESCRIPTION = name;
 
-            result = WIMImaging.SetWIMImageInformation(OutputInstallImage, wiminfo.IMAGE.Count + 1, tmpImageInfo);
+            result = Constants.imagingInterface.SetWIMImageInformation(OutputInstallImage, wiminfo.IMAGE.Count + 1, tmpImageInfo);
             if (!result)
             {
                 goto exit;

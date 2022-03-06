@@ -18,9 +18,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="WIMGImaging.cs" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\..\thirdparty\Microsoft.Wim.NET\Microsoft.Wim.NET.csproj" />
     <ProjectReference Include="..\TempManager.NET\TempManager.NET.csproj" />
   </ItemGroup>
@@ -33,8 +30,5 @@
     <PackageReference Include="System.Memory" Version="4.5.4" />
     <PackageReference Include="System.Numerics.Vectors" Version="4.5.0" />
     <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="6.0.0" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Remove="WIMGImaging.cs" />
   </ItemGroup>
 </Project>

@@ -59,7 +59,7 @@ namespace MediaCreationLib.Installer
             // Gather information about the Windows Recovery Environment image so we can transplant it later
             // into our new images
             //
-            result = WIMImaging.GetWIMImageInformation(BaseESD, 2, out WIMInformationXML.IMAGE image);
+            result = Constants.imagingInterface.GetWIMImageInformation(BaseESD, 2, out WIMInformationXML.IMAGE image);
             if (!result)
             {
                 progressCallback?.Log("An error occured while getting WIM image information.");
@@ -144,7 +144,7 @@ namespace MediaCreationLib.Installer
                     DEFAULT = LanguageCode
                 };
             }
-            result = WIMImaging.SetWIMImageInformation(bootwim, 1, image);
+            result = Constants.imagingInterface.SetWIMImageInformation(bootwim, 1, image);
             if (!result)
             {
                 progressCallback?.Log("An error occured while setting image information for index 1.");
@@ -167,7 +167,7 @@ namespace MediaCreationLib.Installer
                     DEFAULT = LanguageCode
                 };
             }
-            result = WIMImaging.SetWIMImageInformation(bootwim, 2, image);
+            result = Constants.imagingInterface.SetWIMImageInformation(bootwim, 2, image);
             if (!result)
             {
                 progressCallback?.Log("An error occured while setting image information for index 2.");
@@ -177,7 +177,7 @@ namespace MediaCreationLib.Installer
             //
             // Mark image as bootable
             //
-            result = WIMImaging.MarkImageAsBootable(bootwim, 2);
+            result = Constants.imagingInterface.MarkImageAsBootable(bootwim, 2);
             if (!result)
             {
                 goto exit;
@@ -217,14 +217,14 @@ namespace MediaCreationLib.Installer
             string tempSoftwareHiveBackup = tempManager.GetTempPath();
             string tempSystemHiveBackup = tempManager.GetTempPath();
 
-            bool result = WIMImaging.ExtractFileFromImage(bootwim, 1, Constants.SYSTEM_Hive_Location, tempSystemHiveBackup);
+            bool result = Constants.imagingInterface.ExtractFileFromImage(bootwim, 1, Constants.SYSTEM_Hive_Location, tempSystemHiveBackup);
             if (!result)
             {
                 progressCallback?.Log("An error occured while extracting the SYSTEM hive from index 1.");
                 goto exit;
             }
 
-            result = WIMImaging.ExtractFileFromImage(bootwim, 1, Constants.SOFTWARE_Hive_Location, tempSoftwareHiveBackup);
+            result = Constants.imagingInterface.ExtractFileFromImage(bootwim, 1, Constants.SOFTWARE_Hive_Location, tempSoftwareHiveBackup);
             if (!result)
             {
                 progressCallback?.Log("An error occured while extracting the SOFTWARE hive from index 1.");
@@ -330,25 +330,28 @@ namespace MediaCreationLib.Installer
 
             foreach (string file in IniReader.SetupFilesToBackport)
             {
-                string matchingfile = Path.Combine(MediaPath, file).Replace("??-??", langcode);
-                string normalizedPath = file.Replace("??-??", langcode);
-                string normalizedPathWithoutFile = FolderUtilities.GetParentPath(normalizedPath);
+                progressCallback?.Log($"Processing {file}");
 
-                if (file == $"sources{Path.DirectorySeparatorChar}background.bmp")
+                string normalizedPath = file.Replace("??-??", langcode);
+                string matchingfile = Path.Combine(MediaPath, normalizedPath);
+
+                progressCallback?.Log($"Looking for {matchingfile}");
+
+                string sourcePath = file == $"sources{Path.DirectorySeparatorChar}background.bmp" ? bgfile : matchingfile;
+
+                if (File.Exists(sourcePath))
                 {
-                    result = Constants.imagingInterface.AddFileToImage(bootwim, 2, bgfile, normalizedPath, progressCallback: progressCallback?.GetImagingCallback());
+                    progressCallback?.Log($"Found {matchingfile}");
+
+                    result = Constants.imagingInterface.AddFileToImage(bootwim, 2, sourcePath, normalizedPath, progressCallback: progressCallback?.GetImagingCallback());
                     if (!result)
                     {
                         goto exit;
                     }
                 }
-                else if (File.Exists(matchingfile))
+                else
                 {
-                    result = Constants.imagingInterface.AddFileToImage(bootwim, 2, matchingfile, normalizedPath, progressCallback: progressCallback?.GetImagingCallback());
-                    if (!result)
-                    {
-                        goto exit;
-                    }
+                    progressCallback?.Log($"Didn't find {matchingfile}");
                 }
             }
 
@@ -375,7 +378,7 @@ namespace MediaCreationLib.Installer
                 goto exit;
             }
 
-            result = WIMImaging.GetWIMImageInformation(OutputWinREPath, 1, out WIMInformationXML.IMAGE image);
+            result = Constants.imagingInterface.GetWIMImageInformation(OutputWinREPath, 1, out WIMInformationXML.IMAGE image);
             if (!result)
             {
                 goto exit;
@@ -394,7 +397,7 @@ namespace MediaCreationLib.Installer
                     DEFAULT = LanguageCode
                 };
 
-                result = WIMImaging.SetWIMImageInformation(OutputWinREPath, 1, image);
+                result = Constants.imagingInterface.SetWIMImageInformation(OutputWinREPath, 1, image);
                 if (!result)
                 {
                     goto exit;
@@ -402,7 +405,7 @@ namespace MediaCreationLib.Installer
             }
 
             progressCallback?.Log("Marking image as bootable");
-            result = WIMImaging.MarkImageAsBootable(OutputWinREPath, 1);
+            result = Constants.imagingInterface.MarkImageAsBootable(OutputWinREPath, 1);
             if (!result)
             {
                 goto exit;
@@ -429,7 +432,7 @@ namespace MediaCreationLib.Installer
                 string logfile = tempManager.GetTempPath();
                 string pathinimage = Path.Combine("Windows", "INF", "setupapi.offline.log");
 
-                bool cresult = WIMImaging.ExtractFileFromImage(bootwim, 1, pathinimage, logfile);
+                bool cresult = Constants.imagingInterface.ExtractFileFromImage(bootwim, 1, pathinimage, logfile);
 
                 if (cresult)
                 {
@@ -463,7 +466,7 @@ namespace MediaCreationLib.Installer
             progressCallback?.Log("Disabling UMCI");
             string tempSystemHiveBackup = tempManager.GetTempPath();
 
-            result = WIMImaging.ExtractFileFromImage(bootwim, 1, Constants.SYSTEM_Hive_Location, tempSystemHiveBackup);
+            result = Constants.imagingInterface.ExtractFileFromImage(bootwim, 1, Constants.SYSTEM_Hive_Location, tempSystemHiveBackup);
             if (!result)
             {
                 goto cleanup;
@@ -633,7 +636,7 @@ namespace MediaCreationLib.Installer
             // Note: the file in question isn't in a wim that needs to be referenced, so we don't need to mention reference images.
             //
             progressCallback?.Log("Extracting XML Lite");
-            result = WIMImaging.ExtractFileFromImage(BaseESD, 3, Path.Combine("Windows", "System32", "xmllite.dll"), Path.Combine(OutputPath, "sources", "xmllite.dll"));
+            result = Constants.imagingInterface.ExtractFileFromImage(BaseESD, 3, Path.Combine("Windows", "System32", "xmllite.dll"), Path.Combine(OutputPath, "sources", "xmllite.dll"));
             if (!result)
             {
                 progressCallback?.Log("An error occured while extracting XML Lite.");
