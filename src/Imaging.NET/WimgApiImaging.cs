@@ -180,7 +180,7 @@ namespace Imaging
             int UpdateFrom = -1,
             bool PreserveACL = true)
         {
-            string title = $"Creating {imageName} ({wimFile.Split(Path.DirectorySeparatorChar).Last()})";
+            /*string title = $"Creating {imageName} ({wimFile.Split(Path.DirectorySeparatorChar).Last()})";
             try
             {
                 WimMessageCallback callback2 = GetWimMessageCallback(title, InputDirectory, progressCallback);
@@ -234,7 +234,8 @@ namespace Imaging
             {
                 return false;
             }
-            return true;
+            return true;*/
+            return false;
         }
 
         public bool ExportImage(string wimFile, string destinationWimFile, int imageIndex, IEnumerable<string> referenceWIMs = null, WimCompressionType compressionType = WimCompressionType.Lzx, IImaging.ProgressCallback progressCallback = null)
