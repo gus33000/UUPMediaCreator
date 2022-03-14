@@ -103,18 +103,56 @@ namespace MediaCreationLib.Dism
             return result;
         }
 
-        public bool PerformAppxWorkloadsInstallation(string ospath, string repositoryPath, AppxInstallWorkload[] workloads)
+        public bool PerformAppxWorkloadsInstallation(string ospath, string repositoryPath, AppxInstallWorkload[] workloads, ProgressCallback progressCallback)
         {
             bool result = true;
 
-            foreach (AppxInstallWorkload workload in workloads)
+            //
+            // Initialize DISM log
+            //
+            string tempLog = Path.GetTempFileName();
+            DismApi.Initialize(DismLogLevel.LogErrorsWarningsInfo, tempLog);
+
+            DismSession session = DismApi.OpenOfflineSession(ospath);
+
+            try
             {
-                result = PerformAppxWorkloadInstallation(ospath, repositoryPath, workload);
-                if (!result)
+                int current = 0;
+                foreach (AppxInstallWorkload workload in workloads)
                 {
-                    break;
+                    current++;
+                    progressCallback?.Invoke(false, (int)Math.Round((double)current / workloads.Length * 100), "Installing " + workload.AppXPath);
+                    DismApi.AddProvisionedAppxPackage(
+                        session,
+                        Path.Combine(repositoryPath, workload.AppXPath),
+                        workload.DependenciesPath?.Select(x => Path.Combine(repositoryPath, x)).ToList() ?? new List<string>(),
+                        string.IsNullOrEmpty(workload.LicensePath) ? null : Path.Combine(repositoryPath, workload.LicensePath),
+                        null,
+                        string.IsNullOrEmpty(workload.StubPackageOption) ? Microsoft.Dism.StubPackageOption.None : Microsoft.Dism.StubPackageOption.InstallStub); // TODO: proper handling
                 }
             }
+            catch { result = false; }
+
+            //
+            // Clean DISM
+            //
+            try
+            {
+                DismApi.CloseSession(session);
+            }
+            catch { }
+
+            try
+            {
+                DismApi.Shutdown();
+            }
+            catch { }
+
+            try
+            {
+                File.Delete(tempLog);
+            }
+            catch { }
 
             return result;
         }

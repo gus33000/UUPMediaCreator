@@ -120,12 +120,13 @@ namespace MediaCreationLib.Dism
             return proc.ExitCode == 0;
         }
 
-        public bool PerformAppxWorkloadsInstallation(string ospath, string repositoryPath, AppxInstallWorkload[] workloads)
+        public bool PerformAppxWorkloadsInstallation(string ospath, string repositoryPath, AppxInstallWorkload[] workloads, ProgressCallback progressCallback)
         {
             string toolpath = SetupDismBroker();
 
             if (toolpath == null || !File.Exists(toolpath))
             {
+                progressCallback?.Invoke(true, 0, "Cannot find the external tool for appx installation.");
                 return false;
             }
 
@@ -138,9 +139,21 @@ namespace MediaCreationLib.Dism
                 CreateNoWindow = true
             };
 
+            proc.OutputDataReceived += (object sender, DataReceivedEventArgs e) =>
+            {
+                if (e.Data?.Contains(",") == true)
+                {
+                    int percent = int.Parse(e.Data.Split(',')[0]);
+                    progressCallback?.Invoke(false, percent, e.Data.Split(',')[1]);
+                }
+            };
             proc.Start();
             proc.BeginOutputReadLine();
             proc.WaitForExit();
+            if (proc.ExitCode != 0)
+            {
+                progressCallback?.Invoke(true, 0, "An error occured while running the external tool for appx installation. Error code: " + proc.ExitCode);
+            }
             return proc.ExitCode == 0;
         }
 

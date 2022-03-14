@@ -253,11 +253,16 @@ namespace MediaCreationLib.BaseEditions
                     }
                 }*/
 
+                void customCallback(bool IsIndeterminate, int ProgressInPercentage, string SubOperation)
+                {
+                    progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, IsIndeterminate, ProgressInPercentage, SubOperation);
+                }
+
                 progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, $"Installing Applications");
-                result = Dism.RemoteDismOperations.Instance.PerformAppxWorkloadsInstallation(vhdSession.GetMountedPath(), UUPPath, appxWorkloads);
+                result = Dism.RemoteDismOperations.Instance.PerformAppxWorkloadsInstallation(vhdSession.GetMountedPath(), UUPPath, appxWorkloads, customCallback);
                 if (!result)
                 {
-                    result = Dism.DismOperations.Instance.PerformAppxWorkloadsInstallation(vhdSession.GetMountedPath(), UUPPath, appxWorkloads);
+                    result = Dism.DismOperations.Instance.PerformAppxWorkloadsInstallation(vhdSession.GetMountedPath(), UUPPath, appxWorkloads, customCallback);
                 }
 
                 if (!result)

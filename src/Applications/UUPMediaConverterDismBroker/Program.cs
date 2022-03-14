@@ -27,6 +27,14 @@ namespace UUPMediaCreator.DismBroker
 {
     internal static class Program
     {
+        static void callback(bool IsIndeterminate, int Percentage, string Operation)
+        {
+            if (!IsIndeterminate)
+            {
+                Console.WriteLine(Percentage + "," + Operation);
+            }
+        }
+
         private static int Main(string[] args)
         {
             if (args.Length < 1)
@@ -41,14 +49,6 @@ namespace UUPMediaCreator.DismBroker
                         if (args.Length < 2)
                         {
                             return 2;
-                        }
-
-                        static void callback(bool IsIndeterminate, int Percentage, string Operation)
-                        {
-                            if (!IsIndeterminate)
-                            {
-                                Console.WriteLine(Percentage + "," + Operation);
-                            }
                         }
 
                         DismOperations.Instance.UninstallPEComponents(args[1], callback);
@@ -78,7 +78,7 @@ namespace UUPMediaCreator.DismBroker
                             return 2;
                         }
 
-                        if (!DismOperations.Instance.PerformAppxWorkloadsInstallation(args[1], args[2], System.Text.Json.JsonSerializer.Deserialize<AppxInstallWorkload[]>(args[3])))
+                        if (!DismOperations.Instance.PerformAppxWorkloadsInstallation(args[1], args[2], System.Text.Json.JsonSerializer.Deserialize<AppxInstallWorkload[]>(args[3]), callback))
                         {
                             return 1;
                         }
