@@ -120,6 +120,30 @@ namespace MediaCreationLib.Dism
             return proc.ExitCode == 0;
         }
 
+        public bool PerformAppxWorkloadsInstallation(string ospath, string repositoryPath, AppxInstallWorkload[] workloads)
+        {
+            string toolpath = SetupDismBroker();
+
+            if (toolpath == null || !File.Exists(toolpath))
+            {
+                return false;
+            }
+
+            Process proc = new();
+            proc.StartInfo = new ProcessStartInfo("cmd.exe", $"/c \"\"{toolpath}\" /InstallAppXWorkloads \"{ospath}\" \"{repositoryPath}\" \"{System.Text.Json.JsonSerializer.Serialize(workloads).Replace("\"", "\"\"")}\"\"")
+            {
+                UseShellExecute = false,
+                WindowStyle = ProcessWindowStyle.Hidden,
+                RedirectStandardOutput = true,
+                CreateNoWindow = true
+            };
+
+            proc.Start();
+            proc.BeginOutputReadLine();
+            proc.WaitForExit();
+            return proc.ExitCode == 0;
+        }
+
         /// <summary>
         /// Uninstalls unneeded Windows Components for Windows Setup Preinstallation-Environment
         /// </summary>

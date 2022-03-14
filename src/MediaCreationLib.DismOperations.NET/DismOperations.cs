@@ -103,6 +103,22 @@ namespace MediaCreationLib.Dism
             return result;
         }
 
+        public bool PerformAppxWorkloadsInstallation(string ospath, string repositoryPath, AppxInstallWorkload[] workloads)
+        {
+            bool result = true;
+
+            foreach (AppxInstallWorkload workload in workloads)
+            {
+                result = PerformAppxWorkloadInstallation(ospath, repositoryPath, workload);
+                if (!result)
+                {
+                    break;
+                }
+            }
+
+            return result;
+        }
+
         /// <summary>
         /// Uninstalls unneeded Windows Components for Windows Setup Preinstallation-Environment
         /// </summary>

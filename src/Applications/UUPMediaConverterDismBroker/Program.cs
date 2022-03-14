@@ -71,6 +71,19 @@ namespace UUPMediaCreator.DismBroker
                         }
                         break;
                     }
+                case "/InstallAppXWorkloads":
+                    {
+                        if (args.Length < 4)
+                        {
+                            return 2;
+                        }
+
+                        if (!DismOperations.Instance.PerformAppxWorkloadsInstallation(args[1], args[2], System.Text.Json.JsonSerializer.Deserialize<AppxInstallWorkload[]>(args[3])))
+                        {
+                            return 1;
+                        }
+                        break;
+                    }
             }
 
             return 0;

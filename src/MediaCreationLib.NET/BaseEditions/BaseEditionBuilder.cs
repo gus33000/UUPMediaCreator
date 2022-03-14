@@ -237,7 +237,7 @@ namespace MediaCreationLib.BaseEditions
                     goto exit;
                 }
 
-                foreach (AppxInstallWorkload appx in appxWorkloads)
+                /*foreach (AppxInstallWorkload appx in appxWorkloads)
                 {
                     progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, $"Installing {appx.AppXPath}");
                     result = Dism.RemoteDismOperations.Instance.PerformAppxWorkloadInstallation(vhdSession.GetMountedPath(), UUPPath, appx);
@@ -251,6 +251,19 @@ namespace MediaCreationLib.BaseEditions
                         progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, "An error occured while running the external tool for appx installation.");
                         goto exit;
                     }
+                }*/
+
+                progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, $"Installing Applications");
+                result = Dism.RemoteDismOperations.Instance.PerformAppxWorkloadsInstallation(vhdSession.GetMountedPath(), UUPPath, appxWorkloads);
+                if (!result)
+                {
+                    result = Dism.DismOperations.Instance.PerformAppxWorkloadsInstallation(vhdSession.GetMountedPath(), UUPPath, appxWorkloads);
+                }
+
+                if (!result)
+                {
+                    progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, "An error occured while running the external tool for appx installation.");
+                    goto exit;
                 }
 
                 result = Constants.imagingInterface.CaptureImage(
