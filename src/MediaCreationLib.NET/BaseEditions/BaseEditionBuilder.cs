@@ -240,9 +240,16 @@ namespace MediaCreationLib.BaseEditions
                 foreach (AppxInstallWorkload appx in appxWorkloads)
                 {
                     progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, $"Installing {appx.AppXPath}");
-                    if (!Dism.RemoteDismOperations.Instance.PerformAppxWorkloadInstallation(vhdSession.GetMountedPath(), UUPPath, appx))
+                    result = Dism.RemoteDismOperations.Instance.PerformAppxWorkloadInstallation(vhdSession.GetMountedPath(), UUPPath, appx);
+                    if (!result)
+                    {
+                        result = Dism.DismOperations.Instance.PerformAppxWorkloadInstallation(vhdSession.GetMountedPath(), UUPPath, appx);
+                    }
+
+                    if (!result)
                     {
                         progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, "An error occured while running the external tool for appx installation.");
+                        goto exit;
                     }
                 }
 

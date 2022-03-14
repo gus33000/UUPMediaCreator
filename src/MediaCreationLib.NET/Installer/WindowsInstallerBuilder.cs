@@ -523,6 +523,11 @@ namespace MediaCreationLib.Installer
                 result = Dism.RemoteDismOperations.Instance.UninstallPEComponents(ospath, customCallback);
                 if (!result)
                 {
+                    result = Dism.DismOperations.Instance.UninstallPEComponents(ospath, customCallback);
+                }
+
+                if (!result)
+                {
                     progressCallback?.Log("An error occured while performing component cleanup with external tool.");
                     goto exit;
                 }

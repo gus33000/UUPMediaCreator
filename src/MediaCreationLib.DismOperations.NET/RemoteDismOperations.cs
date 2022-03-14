@@ -29,7 +29,28 @@ namespace MediaCreationLib.Dism
     {
         public static readonly RemoteDismOperations Instance = new();
 
-        public bool PerformAppxWorkloadInstallation(string ospath, string repositoryPath, AppxInstallWorkload workload)
+        private static void CopyFolder(string sourceFolder, string destFolder)
+        {
+            if (!Directory.Exists(destFolder))
+                Directory.CreateDirectory(destFolder);
+
+            string[] files = Directory.GetFiles(sourceFolder);
+            foreach (string file in files)
+            {
+                string name = Path.GetFileName(file);
+                string dest = Path.Combine(destFolder, name);
+                File.Copy(file, dest);
+            }
+            string[] folders = Directory.GetDirectories(sourceFolder);
+            foreach (string folder in folders)
+            {
+                string name = Path.GetFileName(folder);
+                string dest = Path.Combine(destFolder, name);
+                CopyFolder(folder, dest);
+            }
+        }
+
+        private static string SetupDismBroker()
         {
             string parentDirectory = PathUtils.GetParentExecutableDirectory();
             string toolpath = Path.Combine(parentDirectory, "UUPMediaConverterDismBroker", "UUPMediaConverterDismBroker.exe");
@@ -44,6 +65,33 @@ namespace MediaCreationLib.Dism
             {
                 parentDirectory = PathUtils.GetExecutableDirectory();
                 toolpath = Path.Combine(parentDirectory, "UUPMediaConverterDismBroker.exe");
+            }
+
+            if (!File.Exists(toolpath))
+            {
+                return null;
+            }
+
+            string dst = Path.Combine(Path.GetTempPath(), "UUPMediaConverterDismBroker");
+            if (Directory.Exists(dst))
+            {
+                Directory.Delete(dst, true);
+            }
+
+            Directory.CreateDirectory(dst);
+            CopyFolder(toolpath.Replace(@"\UUPMediaConverterDismBroker.exe", ""), dst);
+            toolpath = Path.Combine(dst, "UUPMediaConverterDismBroker.exe");
+
+            return toolpath;
+        }
+
+        public bool PerformAppxWorkloadInstallation(string ospath, string repositoryPath, AppxInstallWorkload workload)
+        {
+            string toolpath = SetupDismBroker();
+
+            if (toolpath == null || !File.Exists(toolpath))
+            {
+                return false;
             }
 
             Process proc = new();
@@ -68,19 +116,12 @@ namespace MediaCreationLib.Dism
         /// <param name="progressCallback">Callback to be notified of progress</param>
         public bool UninstallPEComponents(string ospath, ProgressCallback progressCallback)
         {
-            string parentDirectory = PathUtils.GetParentExecutableDirectory();
-            string toolpath = Path.Combine(parentDirectory, "UUPMediaConverterDismBroker", "UUPMediaConverterDismBroker.exe");
+            string toolpath = SetupDismBroker();
 
-            if (!File.Exists(toolpath))
+            if (toolpath == null || !File.Exists(toolpath))
             {
-                parentDirectory = PathUtils.GetExecutableDirectory();
-                toolpath = Path.Combine(parentDirectory, "UUPMediaConverterDismBroker", "UUPMediaConverterDismBroker.exe");
-            }
-
-            if (!File.Exists(toolpath))
-            {
-                parentDirectory = PathUtils.GetExecutableDirectory();
-                toolpath = Path.Combine(parentDirectory, "UUPMediaConverterDismBroker.exe");
+                progressCallback?.Invoke(true, 0, "Cannot find the external tool for component cleanup.");
+                return false;
             }
 
             Process proc = new();
