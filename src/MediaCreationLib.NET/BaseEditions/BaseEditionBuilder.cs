@@ -71,7 +71,7 @@ namespace MediaCreationLib.BaseEditions
             //
             // Gather information to transplant later into DisplayName and DisplayDescription
             //
-            result = WIMImaging.GetWIMImageInformation(BaseESD, 3, out WIMInformationXML.IMAGE image);
+            result = Constants.imagingInterface.GetWIMImageInformation(BaseESD, 3, out WIMInformationXML.IMAGE image);
             if (!result)
             {
                 progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, "CreateBaseEdition -> GetWIMImageInformation failed");
@@ -99,7 +99,7 @@ namespace MediaCreationLib.BaseEditions
                 goto exit;
             }
 
-            result = WIMImaging.GetWIMInformation(OutputInstallImage, out WIMInformationXML.WIM wim);
+            result = Constants.imagingInterface.GetWIMInformation(OutputInstallImage, out WIMInformationXML.WIM wim);
             if (!result)
             {
                 progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, "CreateBaseEdition -> GetWIMInformation failed");
@@ -132,7 +132,7 @@ namespace MediaCreationLib.BaseEditions
                     DEFAULT = LanguageCode
                 };
             }
-            result = WIMImaging.SetWIMImageInformation(OutputInstallImage, wim.IMAGE.Count, image);
+            result = Constants.imagingInterface.SetWIMImageInformation(OutputInstallImage, wim.IMAGE.Count, image);
             if (!result)
             {
                 progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, "CreateBaseEdition -> SetWIMImageInformation failed");
@@ -203,7 +203,7 @@ namespace MediaCreationLib.BaseEditions
             //
             // Gather information to transplant later into DisplayName and DisplayDescription
             //
-            result = WIMImaging.GetWIMImageInformation(BaseESD, 3, out WIMInformationXML.IMAGE image);
+            result = Constants.imagingInterface.GetWIMImageInformation(BaseESD, 3, out WIMInformationXML.IMAGE image);
             if (!result)
             {
                 progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, "CreateBaseEditionWithAppXs -> GetWIMImageInformation failed");
@@ -240,9 +240,16 @@ namespace MediaCreationLib.BaseEditions
                 foreach (AppxInstallWorkload appx in appxWorkloads)
                 {
                     progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, $"Installing {appx.AppXPath}");
-                    if (!Dism.RemoteDismOperations.Instance.PerformAppxWorkloadInstallation(vhdSession.GetMountedPath(), UUPPath, appx))
+                    result = Dism.RemoteDismOperations.Instance.PerformAppxWorkloadInstallation(vhdSession.GetMountedPath(), UUPPath, appx);
+                    if (!result)
+                    {
+                        result = Dism.DismOperations.Instance.PerformAppxWorkloadInstallation(vhdSession.GetMountedPath(), UUPPath, appx);
+                    }
+
+                    if (!result)
                     {
                         progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, "An error occured while running the external tool for appx installation.");
+                        goto exit;
                     }
                 }
 
@@ -264,7 +271,7 @@ namespace MediaCreationLib.BaseEditions
                 }
             }
 
-            result = WIMImaging.GetWIMInformation(OutputInstallImage, out WIMInformationXML.WIM wim);
+            result = Constants.imagingInterface.GetWIMInformation(OutputInstallImage, out WIMInformationXML.WIM wim);
             if (!result)
             {
                 progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, "CreateBaseEdition -> GetWIMInformation failed");
@@ -297,7 +304,7 @@ namespace MediaCreationLib.BaseEditions
                     DEFAULT = LanguageCode
                 };
             }
-            result = WIMImaging.SetWIMImageInformation(OutputInstallImage, wim.IMAGE.Count, image);
+            result = Constants.imagingInterface.SetWIMImageInformation(OutputInstallImage, wim.IMAGE.Count, image);
             if (!result)
             {
                 progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, "CreateBaseEdition -> SetWIMImageInformation failed");

@@ -90,6 +90,7 @@ namespace UUPMediaCreator.UWP.Pages
         private void Log(string msg)
         {
             bw.Write(System.Text.Encoding.UTF8.GetBytes(msg + "\r\n"));
+            bw.Flush();
         }
 
         private void LogInterComm(Common.InterCommunication interCommunication)

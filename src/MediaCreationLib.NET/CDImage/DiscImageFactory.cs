@@ -23,7 +23,7 @@ namespace MediaCreationLib.CDImage
             //
             // Gather information to transplant later into DisplayName and DisplayDescription
             //
-            result = WIMImaging.GetWIMInformation(installimage, out WIMInformationXML.WIM image);
+            result = Constants.imagingInterface.GetWIMInformation(installimage, out WIMInformationXML.WIM image);
             if (!result)
             {
                 goto exit;
