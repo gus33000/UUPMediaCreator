@@ -237,22 +237,6 @@ namespace MediaCreationLib.BaseEditions
                     goto exit;
                 }
 
-                /*foreach (AppxInstallWorkload appx in appxWorkloads)
-                {
-                    progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, $"Installing {appx.AppXPath}");
-                    result = Dism.RemoteDismOperations.Instance.PerformAppxWorkloadInstallation(vhdSession.GetMountedPath(), UUPPath, appx);
-                    if (!result)
-                    {
-                        result = Dism.DismOperations.Instance.PerformAppxWorkloadInstallation(vhdSession.GetMountedPath(), UUPPath, appx);
-                    }
-
-                    if (!result)
-                    {
-                        progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, "An error occured while running the external tool for appx installation.");
-                        goto exit;
-                    }
-                }*/
-
                 void customCallback(bool IsIndeterminate, int ProgressInPercentage, string SubOperation)
                 {
                     progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, IsIndeterminate, ProgressInPercentage, SubOperation);
@@ -263,6 +247,18 @@ namespace MediaCreationLib.BaseEditions
                 if (!result)
                 {
                     result = Dism.DismOperations.Instance.PerformAppxWorkloadsInstallation(vhdSession.GetMountedPath(), UUPPath, appxWorkloads, customCallback);
+                    if (!result)
+                    {
+                        foreach (AppxInstallWorkload appx in appxWorkloads)
+                        {
+                            progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, $"Installing {appx.AppXPath}");
+                            result = Dism.RemoteDismOperations.Instance.PerformAppxWorkloadInstallation(vhdSession.GetMountedPath(), UUPPath, appx);
+                            if (!result)
+                            {
+                                result = Dism.DismOperations.Instance.PerformAppxWorkloadInstallation(vhdSession.GetMountedPath(), UUPPath, appx);
+                            }
+                        }
+                    }
                 }
 
                 if (!result)

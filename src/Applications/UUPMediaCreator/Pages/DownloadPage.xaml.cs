@@ -67,6 +67,8 @@ namespace UUPMediaCreator.UWP.Pages
             return $"{dblSByte:0.##}{suffix[i]}";
         }
 
+        int previous = -1;
+
         public async void Report(GeneralDownloadProgress e)
         {
             foreach (FileDownloadStatus status in e.DownloadedStatus)
@@ -76,48 +78,31 @@ namespace UUPMediaCreator.UWP.Pages
                     continue;
                 }
 
-                /*const bool shouldReport = true;//!files.ContainsKey(status.File.FileName) || files[status.File.FileName] != status.FileStatus;
-
-                if (!shouldReport)
-                {
-                    continue;
-                }*/
-
                 mutex.WaitOne();
 
                 files[status.File.FileName] = status.FileStatus;
 
-                mutex.ReleaseMutex();
-
-                string msg = "Unknown: ";
-
-                switch (status.FileStatus)
+                if (e.NumFilesDownloadedSuccessfully == previous)
                 {
-                    case FileStatus.Completed:
-                        msg = "Completed: ";
-                        break;
-                    case FileStatus.Downloading:
-                        msg = "Downloading ";
-                        break;
-                    case FileStatus.Expired:
-                        msg = "Expired: ";
-                        break;
-                    case FileStatus.Failed:
-                        msg = "Failed: ";
-                        break;
-                    case FileStatus.Verifying:
-                        msg = "Verifying: ";
-                        break;
+                    mutex.ReleaseMutex();
+                    return;
                 }
+
+                previous = e.NumFilesDownloadedSuccessfully;
+
+                mutex.ReleaseMutex();
 
                 uint progress = (uint)Math.Round((double)status.DownloadedBytes / status.File.FileSize * 100);
 
                 await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
                 {
-                    ProgressBar.IsIndeterminate = false;
-                    StatusText.Text = $"{msg} {status.File.FileName} ({FormatBytes(status.File.FileSize)}) ({progress}%)";
-                    ProgressBar.Maximum = e.NumFiles;
-                    ProgressBar.Value = e.NumFilesDownloadedSuccessfully;
+                    if (ProgressBar.Value != e.NumFilesDownloadedSuccessfully || ProgressBar.IsIndeterminate == true)
+                    {
+                        ProgressBar.IsIndeterminate = false;
+                        ProgressBar.Value = e.NumFilesDownloadedSuccessfully;
+                        StatusText.Text = $"{progress}%";
+                        ProgressBar.Maximum = e.NumFiles;
+                    }
                 });
             }
         }
