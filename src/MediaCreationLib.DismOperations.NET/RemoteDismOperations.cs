@@ -50,6 +50,8 @@ namespace MediaCreationLib.Dism
             }
         }
 
+        private static bool DismBrokerInstalled = false;
+
         private static string SetupDismBroker()
         {
             string parentDirectory = PathUtils.GetParentExecutableDirectory();
@@ -75,13 +77,22 @@ namespace MediaCreationLib.Dism
             string dst = Path.Combine(Path.GetTempPath(), "UUPMediaConverterDismBroker");
             if (Directory.Exists(dst))
             {
-                Directory.Delete(dst, true);
+                if (DismBrokerInstalled)
+                {
+                    toolpath = Path.Combine(dst, "UUPMediaConverterDismBroker.exe");
+                    return toolpath;
+                }
+                else
+                {
+                    Directory.Delete(dst, true);
+                }
             }
 
             Directory.CreateDirectory(dst);
             CopyFolder(toolpath.Replace(@"\UUPMediaConverterDismBroker.exe", ""), dst);
             toolpath = Path.Combine(dst, "UUPMediaConverterDismBroker.exe");
 
+            DismBrokerInstalled = true;
             return toolpath;
         }
 
