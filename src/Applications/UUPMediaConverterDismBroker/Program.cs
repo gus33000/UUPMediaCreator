@@ -42,48 +42,56 @@ namespace UUPMediaCreator.DismBroker
                 return 2;
             }
 
-            switch (args[0])
+            try
             {
-                case "/PECompUninst":
-                    {
-                        if (args.Length < 2)
+                switch (args[0])
+                {
+                    case "/PECompUninst":
                         {
-                            return 2;
-                        }
+                            if (args.Length < 2)
+                            {
+                                return 2;
+                            }
 
-                        DismOperations.Instance.UninstallPEComponents(args[1], callback);
-                        break;
-                    }
-                case "/SetTargetEdition":
-                    {
-                        break;
-                    }
-                case "/InstallAppXWorkload":
-                    {
-                        if (args.Length < 4)
-                        {
-                            return 2;
+                            DismOperations.Instance.UninstallPEComponents(args[1], callback);
+                            break;
                         }
+                    case "/SetTargetEdition":
+                        {
+                            break;
+                        }
+                    case "/InstallAppXWorkload":
+                        {
+                            if (args.Length < 5)
+                            {
+                                return 2;
+                            }
 
-                        if (!DismOperations.Instance.PerformAppxWorkloadInstallation(args[1], args[2], System.Text.Json.JsonSerializer.Deserialize<AppxInstallWorkload>(args[3])))
-                        {
-                            return 1;
+                            if (!DismOperations.Instance.PerformAppxWorkloadInstallation(args[1], args[2], args[3], System.Text.Json.JsonSerializer.Deserialize<AppxInstallWorkload>(args[4])))
+                            {
+                                return 3;
+                            }
+                            break;
                         }
-                        break;
-                    }
-                case "/InstallAppXWorkloads":
-                    {
-                        if (args.Length < 4)
+                    case "/InstallAppXWorkloads":
                         {
-                            return 2;
-                        }
+                            if (args.Length < 5)
+                            {
+                                return 2;
+                            }
 
-                        if (!DismOperations.Instance.PerformAppxWorkloadsInstallation(args[1], args[2], System.Text.Json.JsonSerializer.Deserialize<AppxInstallWorkload[]>(args[3]), callback))
-                        {
-                            return 1;
+                            if (!DismOperations.Instance.PerformAppxWorkloadsInstallation(args[1], args[2], args[3], System.Text.Json.JsonSerializer.Deserialize<AppxInstallWorkload[]>(args[4]), callback))
+                            {
+                                return 3;
+                            }
+                            break;
                         }
-                        break;
-                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                callback(true, 0, ex.ToString());
+                return 4;
             }
 
             return 0;

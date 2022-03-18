@@ -29,10 +29,15 @@ namespace MediaCreationLib.Dism
     {
         public static readonly RemoteDismOperations Instance = new();
 
-        private static bool DismBrokerInstalled = false;
+        private static string DismBrokerInstalledLocation;
 
-        private static string SetupDismBroker()
+        private static void SetupDismBroker()
         {
+            if (DismBrokerInstalledLocation != null)
+            {
+                return;
+            }
+
             string parentDirectory = PathUtils.GetParentExecutableDirectory();
             string toolpath = Path.Combine(parentDirectory, "UUPMediaConverterDismBroker", "UUPMediaConverterDismBroker.exe");
 
@@ -50,42 +55,28 @@ namespace MediaCreationLib.Dism
 
             if (!File.Exists(toolpath))
             {
-                return null;
+                return;
             }
 
             string dst = Path.Combine(Path.GetTempPath(), "UUPMediaConverterDismBroker");
-            if (Directory.Exists(dst))
-            {
-                if (DismBrokerInstalled)
-                {
-                    toolpath = Path.Combine(dst, "UUPMediaConverterDismBroker.exe");
-                    return toolpath;
-                }
-                else
-                {
-                    Directory.Delete(dst, true);
-                }
-            }
-
             Directory.CreateDirectory(dst);
             File.Copy(toolpath, Path.Combine(dst, "UUPMediaConverterDismBroker.exe"), true);
             toolpath = Path.Combine(dst, "UUPMediaConverterDismBroker.exe");
 
-            DismBrokerInstalled = true;
-            return toolpath;
+            DismBrokerInstalledLocation = toolpath;
         }
 
-        public bool PerformAppxWorkloadInstallation(string ospath, string repositoryPath, AppxInstallWorkload workload)
+        public bool PerformAppxWorkloadInstallation(string ospath, string repositoryPath, string licenseFolder, AppxInstallWorkload workload)
         {
-            string toolpath = SetupDismBroker();
+            SetupDismBroker();
 
-            if (toolpath == null || !File.Exists(toolpath))
+            if (DismBrokerInstalledLocation == null || !File.Exists(DismBrokerInstalledLocation))
             {
                 return false;
             }
 
             Process proc = new();
-            proc.StartInfo = new ProcessStartInfo("cmd.exe", $"/c \"\"{toolpath}\" /InstallAppXWorkload \"{ospath}\" \"{repositoryPath}\" \"{System.Text.Json.JsonSerializer.Serialize(workload).Replace("\"", "\"\"")}\"\"")
+            proc.StartInfo = new ProcessStartInfo("cmd.exe", $"/c \"\"{DismBrokerInstalledLocation}\" /InstallAppXWorkload \"{ospath}\" \"{repositoryPath}\" \"{licenseFolder}\" \"{System.Text.Json.JsonSerializer.Serialize(workload).Replace("\"", "\"\"")}\"\"")
             {
                 UseShellExecute = false,
                 WindowStyle = ProcessWindowStyle.Hidden,
@@ -99,18 +90,19 @@ namespace MediaCreationLib.Dism
             return proc.ExitCode == 0;
         }
 
-        public bool PerformAppxWorkloadsInstallation(string ospath, string repositoryPath, AppxInstallWorkload[] workloads, ProgressCallback progressCallback)
+        public bool PerformAppxWorkloadsInstallation(string ospath, string repositoryPath, string licenseFolder, AppxInstallWorkload[] workloads, ProgressCallback progressCallback)
         {
-            string toolpath = SetupDismBroker();
+            SetupDismBroker();
 
-            if (toolpath == null || !File.Exists(toolpath))
+            if (DismBrokerInstalledLocation == null || !File.Exists(DismBrokerInstalledLocation))
             {
                 progressCallback?.Invoke(true, 0, "Cannot find the external tool for appx installation.");
                 return false;
             }
 
             Process proc = new();
-            proc.StartInfo = new ProcessStartInfo("cmd.exe", $"/c \"\"{toolpath}\" /InstallAppXWorkloads \"{ospath}\" \"{repositoryPath}\" \"{System.Text.Json.JsonSerializer.Serialize(workloads).Replace("\"", "\"\"")}\"\"")
+            string workloadsArgument = $"\"{System.Text.Json.JsonSerializer.Serialize(workloads).Replace("\"", "\"\"")}\"";
+            proc.StartInfo = new ProcessStartInfo("cmd.exe", $"/c \"\"{DismBrokerInstalledLocation}\" /InstallAppXWorkloads \"{ospath}\" \"{repositoryPath}\" \"{licenseFolder}\" {workloadsArgument}\"")
             {
                 UseShellExecute = false,
                 WindowStyle = ProcessWindowStyle.Hidden,
@@ -143,16 +135,16 @@ namespace MediaCreationLib.Dism
         /// <param name="progressCallback">Callback to be notified of progress</param>
         public bool UninstallPEComponents(string ospath, ProgressCallback progressCallback)
         {
-            string toolpath = SetupDismBroker();
+            SetupDismBroker();
 
-            if (toolpath == null || !File.Exists(toolpath))
+            if (DismBrokerInstalledLocation == null || !File.Exists(DismBrokerInstalledLocation))
             {
                 progressCallback?.Invoke(true, 0, "Cannot find the external tool for component cleanup.");
                 return false;
             }
 
             Process proc = new();
-            proc.StartInfo = new ProcessStartInfo("cmd.exe", $"/c \"\"{toolpath}\" /PECompUninst \"{ospath}\"\"")
+            proc.StartInfo = new ProcessStartInfo("cmd.exe", $"/c \"\"{DismBrokerInstalledLocation}\" /PECompUninst \"{ospath}\"\"")
             {
                 UseShellExecute = false,
                 WindowStyle = ProcessWindowStyle.Hidden,

@@ -27,9 +27,9 @@ namespace MediaCreationLib.Dism
 
     public interface IDismOperations
     {
-        public bool PerformAppxWorkloadInstallation(string ospath, string repositoryPath, AppxInstallWorkload workload);
+        public bool PerformAppxWorkloadInstallation(string ospath, string repositoryPath, string licenseFolder, AppxInstallWorkload workload);
 
-        public bool PerformAppxWorkloadsInstallation(string ospath, string repositoryPath, AppxInstallWorkload[] workloads, ProgressCallback progressCallback);
+        public bool PerformAppxWorkloadsInstallation(string ospath, string repositoryPath, string licenseFolder, AppxInstallWorkload[] workloads, ProgressCallback progressCallback);
 
         /// <summary>
         /// Uninstalls unneeded Windows Components for Windows Setup Preinstallation-Environment

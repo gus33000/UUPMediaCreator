@@ -55,7 +55,7 @@ namespace MediaCreationLib.Dism
             return pkgsToRemove;
         }
 
-        public bool PerformAppxWorkloadInstallation(string ospath, string repositoryPath, AppxInstallWorkload workload)
+        public bool PerformAppxWorkloadInstallation(string ospath, string repositoryPath, string licenseFolder, AppxInstallWorkload workload)
         {
             bool result = true;
 
@@ -73,7 +73,7 @@ namespace MediaCreationLib.Dism
                     session,
                     Path.Combine(repositoryPath, workload.AppXPath),
                     workload.DependenciesPath?.Select(x => Path.Combine(repositoryPath, x)).ToList() ?? new List<string>(),
-                    string.IsNullOrEmpty(workload.LicensePath) ? null : Path.Combine(repositoryPath, workload.LicensePath),
+                    string.IsNullOrEmpty(workload.LicensePath) ? null : Path.Combine(licenseFolder, workload.LicensePath),
                     null,
                     string.IsNullOrEmpty(workload.StubPackageOption) ? Microsoft.Dism.StubPackageOption.None : Microsoft.Dism.StubPackageOption.InstallStub); // TODO: proper handling
             }
@@ -103,7 +103,7 @@ namespace MediaCreationLib.Dism
             return result;
         }
 
-        public bool PerformAppxWorkloadsInstallation(string ospath, string repositoryPath, AppxInstallWorkload[] workloads, ProgressCallback progressCallback)
+        public bool PerformAppxWorkloadsInstallation(string ospath, string repositoryPath, string licenseFolder, AppxInstallWorkload[] workloads, ProgressCallback progressCallback)
         {
             bool result = true;
 
@@ -126,7 +126,7 @@ namespace MediaCreationLib.Dism
                         session,
                         Path.Combine(repositoryPath, workload.AppXPath),
                         workload.DependenciesPath?.Select(x => Path.Combine(repositoryPath, x)).ToList() ?? new List<string>(),
-                        string.IsNullOrEmpty(workload.LicensePath) ? null : Path.Combine(repositoryPath, workload.LicensePath),
+                        string.IsNullOrEmpty(workload.LicensePath) ? null : Path.Combine(licenseFolder, workload.LicensePath),
                         null,
                         string.IsNullOrEmpty(workload.StubPackageOption) ? Microsoft.Dism.StubPackageOption.None : Microsoft.Dism.StubPackageOption.InstallStub); // TODO: proper handling
                 }

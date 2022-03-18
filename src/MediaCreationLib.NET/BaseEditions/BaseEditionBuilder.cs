@@ -29,6 +29,9 @@ using System.Collections.Generic;
 using System.IO;
 using UUPMediaCreator.InterCommunication;
 using CompDB;
+using System.Threading.Tasks;
+using IniParser;
+using IniParser.Model;
 
 namespace MediaCreationLib.BaseEditions
 {
@@ -175,8 +178,11 @@ namespace MediaCreationLib.BaseEditions
             AppxInstallWorkload[] appxWorkloads,
             IEnumerable<CompDBXmlClass.CompDB> CompositionDatabases,
             TempManager.TempManager tempManager,
+            bool keepVhd,
+            out string vhdPath,
             ProgressCallback progressCallback = null)
         {
+            vhdPath = null;
             WimCompressionType compression = WimCompressionType.None;
             switch (CompressionType)
             {
@@ -210,10 +216,13 @@ namespace MediaCreationLib.BaseEditions
                 goto exit;
             }
 
+            string licenseFolder = tempManager.GetTempPath();
+            Directory.CreateDirectory(licenseFolder);
+
             //
             // Export License files
             //
-            result = FileLocator.GenerateAppXLicenseFiles(UUPPath, LanguageCode, EditionID, CompositionDatabases, progressCallback);
+            result = FileLocator.GenerateAppXLicenseFiles(licenseFolder, LanguageCode, EditionID, CompositionDatabases, progressCallback);
             if (!result)
             {
                 progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, "CreateBaseEditionWithAppXs -> GenerateAppXLicenseFiles failed");
@@ -228,8 +237,10 @@ namespace MediaCreationLib.BaseEditions
                 progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, IsIndeterminate, ProgressPercentage, Operation);
             }
 
-            using (VirtualHardDiskLib.VirtualDiskSession vhdSession = new(tempManager, delete: true))
+            using (VirtualHardDiskLib.VirtualDiskSession vhdSession = new(tempManager, delete: !keepVhd))
             {
+                vhdPath = vhdSession.VirtualDiskPath;
+
                 result = Constants.imagingInterface.ApplyImage(BaseESD, 3, vhdSession.GetMountedPath(), referenceWIMs: ReferencePackages, progressCallback: callback);
                 if (!result)
                 {
@@ -243,19 +254,19 @@ namespace MediaCreationLib.BaseEditions
                 }
 
                 progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, $"Installing Applications");
-                result = Dism.RemoteDismOperations.Instance.PerformAppxWorkloadsInstallation(vhdSession.GetMountedPath(), UUPPath, appxWorkloads, customCallback);
+                result = Dism.RemoteDismOperations.Instance.PerformAppxWorkloadsInstallation(vhdSession.GetMountedPath(), UUPPath, licenseFolder, appxWorkloads, customCallback);
                 if (!result)
                 {
-                    result = Dism.DismOperations.Instance.PerformAppxWorkloadsInstallation(vhdSession.GetMountedPath(), UUPPath, appxWorkloads, customCallback);
+                    result = Dism.DismOperations.Instance.PerformAppxWorkloadsInstallation(vhdSession.GetMountedPath(), UUPPath, licenseFolder, appxWorkloads, customCallback);
                     if (!result)
                     {
                         foreach (AppxInstallWorkload appx in appxWorkloads)
                         {
                             progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, $"Installing {appx.AppXPath}");
-                            result = Dism.RemoteDismOperations.Instance.PerformAppxWorkloadInstallation(vhdSession.GetMountedPath(), UUPPath, appx);
+                            result = Dism.RemoteDismOperations.Instance.PerformAppxWorkloadInstallation(vhdSession.GetMountedPath(), UUPPath, licenseFolder, appx);
                             if (!result)
                             {
-                                result = Dism.DismOperations.Instance.PerformAppxWorkloadInstallation(vhdSession.GetMountedPath(), UUPPath, appx);
+                                result = Dism.DismOperations.Instance.PerformAppxWorkloadInstallation(vhdSession.GetMountedPath(), UUPPath, licenseFolder, appx);
                             }
                         }
                     }
@@ -266,6 +277,9 @@ namespace MediaCreationLib.BaseEditions
                     progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, "An error occured while running the external tool for appx installation.");
                     goto exit;
                 }
+
+                progressCallback?.Invoke(Common.ProcessPhase.IntegratingWinRE, true, 0, "Integrating WinRE");
+                File.Copy(InputWindowsREPath, Path.Combine(vhdSession.GetMountedPath(), "Windows", "System32", "Recovery", "Winre.wim"), true);
 
                 result = Constants.imagingInterface.CaptureImage(
                     OutputInstallImage, 
@@ -325,28 +339,6 @@ namespace MediaCreationLib.BaseEditions
                 goto exit;
             }
 
-            void callback2(string Operation, int ProgressPercentage, bool IsIndeterminate)
-            {
-                progressCallback?.Invoke(Common.ProcessPhase.IntegratingWinRE, IsIndeterminate, ProgressPercentage, Operation);
-            }
-
-            //
-            // Integrate the WinRE image into the installation image
-            //
-            progressCallback?.Invoke(Common.ProcessPhase.IntegratingWinRE, true, 0, "");
-
-            result = Constants.imagingInterface.AddFileToImage(
-                OutputInstallImage,
-                wim.IMAGE.Count,
-                InputWindowsREPath,
-                Path.Combine("Windows", "System32", "Recovery", "Winre.wim"),
-                callback2);
-            if (!result)
-            {
-                progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, "CreateBaseEdition -> AddFileToImage failed");
-                goto exit;
-            }
-
         exit:
             return result;
         }
@@ -368,61 +360,92 @@ namespace MediaCreationLib.BaseEditions
                 goto exit;
             }
 
-            progressCallback?.Invoke(Common.ProcessPhase.PreparingFiles, true, 0, "Converting Reference Cabinets");
+            string unpackedFODEsd = tempManager.GetTempPath();
+            Directory.CreateDirectory(unpackedFODEsd);
 
-            int counter = 0;
+            int progressPercentage = 0;
             int total = referencePackagesToConvert.Count;
-            foreach (string file in referencePackagesToConvert)
+            ParallelLoopResult parallelResult = Parallel.ForEach(referencePackagesToConvert, (file, parallel) =>
             {
-                int progressoffset = (int)Math.Round((double)counter / total * 100);
                 int progressScale = (int)Math.Round((double)1 / total * 100);
-
-                string refesd = ConvertCABToESD(Path.Combine(UUPPath, file), progressCallback, progressoffset, progressScale, tempManager);
-                if (string.IsNullOrEmpty(refesd))
+                string fileName = Path.GetFileName(file);
+                progressCallback?.Invoke(Common.ProcessPhase.PreparingFiles, false, progressPercentage, $"Unpacking {fileName}");
+                try
                 {
-                    progressCallback?.Invoke(Common.ProcessPhase.ReadingMetadata, true, 0, "CreateBaseEdition -> Reference ESD creation from Cabinet files failed");
-                    goto exit;
+                    CabinetExtractor.ExtractCabinet(file, Path.Combine(unpackedFODEsd, fileName));
                 }
-                ReferencePackages.Add(refesd);
-                counter++;
+                catch { result = false; }
+                progressPercentage += progressScale;
+
+                if (!result)
+                {
+                    parallel.Break();
+                }
+            });
+
+            if (!parallelResult.IsCompleted)
+            {
+                progressCallback?.Invoke(Common.ProcessPhase.ReadingMetadata, true, 0, "CreateBaseEdition -> Reference ESD creation from Cabinet files failed - Cab extraction");
+                result = false;
+                goto exit;
             }
+
+            Dictionary<string, List<string>> iniSections = new Dictionary<string, List<string>>();
+
+            foreach (string referencePackageToConvert in referencePackagesToConvert)
+            {
+                string fileName = Path.GetFileName(referencePackageToConvert);
+                string extractionPath = Path.Combine(unpackedFODEsd, fileName);
+                string metadata = Path.Combine(extractionPath, "$filehashes$.dat");
+
+                FileIniDataParser parser = new();
+                IniData data = parser.ReadFile(metadata);
+
+                foreach (SectionData section in data.Sections)
+                {
+                    if (!iniSections.ContainsKey(section.SectionName))
+                    {
+                        iniSections.Add(section.SectionName, new List<string>());
+                    }
+
+                    foreach (KeyData element in section.Keys)
+                    {
+                        iniSections[section.SectionName].Add($"{fileName}\\{element.KeyName}={element.Value}");
+                    }
+                }
+            }
+
+            string iniContent = "";
+            foreach (KeyValuePair<string, List<string>> element in iniSections)
+            {
+                iniContent += $"[{element.Key}]\n\n";
+                foreach (string el in element.Value)
+                {
+                    iniContent += $"{el}\n";
+                }
+                iniContent += "\n";
+            }
+
+            File.WriteAllText(Path.Combine(unpackedFODEsd, "$filehashes$.dat"), iniContent);
+
+            string esdFilePath = tempManager.GetTempPath();
+
+            progressCallback?.Invoke(Common.ProcessPhase.PreparingFiles, false, progressPercentage, $"Creating {esdFilePath}");
+
+            result = Constants.imagingInterface.CaptureImage(esdFilePath, "Metadata ESD", null, null, unpackedFODEsd, compressionType: WimCompressionType.None, PreserveACL: false, tempManager: tempManager);
+
+            Directory.Delete(unpackedFODEsd, true);
+
+            if (!result)
+            {
+                progressCallback?.Invoke(Common.ProcessPhase.ReadingMetadata, true, 0, "CreateBaseEdition -> Reference ESD creation from Cabinet files failed - WIM creation");
+                goto exit;
+            }
+
+            ReferencePackages.Add(esdFilePath);
 
         exit:
             return (result, BaseESD, ReferencePackages);
-        }
-
-        private static string ConvertCABToESD(string cabFilePath, ProgressCallback progressCallback, int progressoffset, int progressscale, TempManager.TempManager tempManager)
-        {
-            string esdFilePath = Path.ChangeExtension(cabFilePath, "esd");
-            if (File.Exists(esdFilePath))
-            {
-                return esdFilePath;
-            }
-
-            progressCallback?.Invoke(Common.ProcessPhase.PreparingFiles, false, progressoffset, "Unpacking...");
-
-            string tmp = tempManager.GetTempPath();
-
-            string tempExtractionPath = Path.Combine(tmp, "Package");
-            int progressScaleHalf = progressscale / 2;
-
-            void ProgressCallback(int percent, string file)
-            {
-                progressCallback?.Invoke(Common.ProcessPhase.PreparingFiles, false, progressoffset + (int)Math.Round((double)percent / 100 * progressScaleHalf), "Unpacking " + file + "...");
-            }
-
-            CabinetExtractor.ExtractCabinet(cabFilePath, tempExtractionPath, ProgressCallback);
-
-            void callback(string Operation, int ProgressPercentage, bool IsIndeterminate)
-            {
-                progressCallback?.Invoke(Common.ProcessPhase.PreparingFiles, IsIndeterminate, progressoffset + progressScaleHalf + (int)Math.Round((double)ProgressPercentage / 100 * progressScaleHalf), Operation);
-            }
-
-            bool result = Constants.imagingInterface.CaptureImage(esdFilePath, "Metadata ESD", null, null, tempExtractionPath, tempManager, compressionType: WimCompressionType.None, PreserveACL: false, progressCallback: callback);
-
-            Directory.Delete(tmp, true);
-
-            return !result ? null : esdFilePath;
         }
     }
 }

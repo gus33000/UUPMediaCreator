@@ -57,6 +57,7 @@ namespace MediaCreationLib
             progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, $"Applying {targetEdition.PlannedEdition.EditionName} - {targetEdition.PlannedEdition.AvailabilityType}");
 
             bool result = true;
+            string vhdPath = null;
             switch (targetEdition.PlannedEdition.AvailabilityType)
             {
                 case AvailabilityType.Canonical:
@@ -74,6 +75,8 @@ namespace MediaCreationLib
                                     targetEdition.PlannedEdition.AppXInstallWorkloads,
                                     CompositionDatabases,
                                     tempManager,
+                                    true,
+                                    out vhdPath,
                                     progressCallback);
                         }
                         else
@@ -183,33 +186,34 @@ namespace MediaCreationLib
                     }
             }
 
-            if (targetEdition.DestructiveTargets.Count > 0 || targetEdition.NonDestructiveTargets.Count > 0)
+            if ((targetEdition.DestructiveTargets.Count > 0 || targetEdition.NonDestructiveTargets.Count > 0) && !edition.Equals(targetEdition.PlannedEdition.EditionName, StringComparison.InvariantCultureIgnoreCase))
             {
-                string vhdpath = null;
-
-                using (VirtualHardDiskLib.VirtualDiskSession vhdSession = new(tempManager, delete: false))
+                if (vhdPath == null)
                 {
-                    // Apply WIM
-                    Constants.imagingInterface.GetWIMInformation(InstallWIMFilePath, out WIMInformationXML.WIM wiminfo);
-
-                    int index = int.Parse(wiminfo.IMAGE.First(x => x.WINDOWS.EDITIONID.Equals(targetEdition.PlannedEdition.EditionName, StringComparison.InvariantCultureIgnoreCase)).INDEX);
-
-                    void callback(string Operation, int ProgressPercentage, bool IsIndeterminate)
+                    using (VirtualHardDiskLib.VirtualDiskSession vhdSession = new(tempManager, delete: false))
                     {
-                        progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, IsIndeterminate, ProgressPercentage, Operation);
-                    }
-                    result = Constants.imagingInterface.ApplyImage(InstallWIMFilePath, index, vhdSession.GetMountedPath(), progressCallback: callback);
-                    if (!result)
-                    {
-                        goto exit;
-                    }
+                        // Apply WIM
+                        Constants.imagingInterface.GetWIMInformation(InstallWIMFilePath, out WIMInformationXML.WIM wiminfo);
 
-                    vhdpath = vhdSession.VirtualDiskPath;
+                        int index = int.Parse(wiminfo.IMAGE.First(x => x.WINDOWS.EDITIONID.Equals(targetEdition.PlannedEdition.EditionName, StringComparison.InvariantCultureIgnoreCase)).INDEX);
+
+                        void callback(string Operation, int ProgressPercentage, bool IsIndeterminate)
+                        {
+                            progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, IsIndeterminate, ProgressPercentage, Operation);
+                        }
+                        result = Constants.imagingInterface.ApplyImage(InstallWIMFilePath, index, vhdSession.GetMountedPath(), progressCallback: callback);
+                        if (!result)
+                        {
+                            goto exit;
+                        }
+
+                        vhdPath = vhdSession.VirtualDiskPath;
+                    }
                 }
 
                 if (targetEdition.NonDestructiveTargets.Count > 0 && (string.IsNullOrEmpty(edition) || (!string.IsNullOrEmpty(edition) && targetEdition.NonDestructiveTargets.Any(x => IsRightPath(x, edition)))))
                 {
-                    string newvhd = VirtualHardDiskLib.VHDUtilities.CreateDiffDisk(vhdpath, tempManager);
+                    string newvhd = VirtualHardDiskLib.VHDUtilities.CreateDiffDisk(vhdPath, tempManager);
 
                     progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, "Mounting VHD");
 
@@ -232,7 +236,7 @@ namespace MediaCreationLib
                             CompositionDatabases,
                             tempManager,
                             VHDMountPath: vhdSession.GetMountedPath(),
-                            CurrentBackupVHD: vhdpath,
+                            CurrentBackupVHD: vhdPath,
                             progressCallback: progressCallback);
 
                         if (!result)
@@ -261,7 +265,7 @@ namespace MediaCreationLib
                             CompressionType,
                             CompositionDatabases,
                             tempManager,
-                            CurrentBackupVHD: vhdpath,
+                            CurrentBackupVHD: vhdPath,
                             progressCallback: progressCallback);
 
                         if (!result)
@@ -271,7 +275,7 @@ namespace MediaCreationLib
                     }
                 }
 
-                File.Delete(vhdpath);
+                File.Delete(vhdPath);
             }
 
         exit:

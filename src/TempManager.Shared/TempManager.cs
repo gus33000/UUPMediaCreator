@@ -45,14 +45,19 @@ namespace TempManager
             }
         }
 
+        private object obj = new();
+
         public string GetTempPath()
         {
-            string filename = $"{DateTimeOffset.Now.ToUnixTimeSeconds()}{i}";
-            string fullpath = Path.Combine(Temp, Path.GetFileName(filename));
-            i++;
-            
-            tempPaths.Add(fullpath);
-            return fullpath;
+            lock (obj)
+            {
+                string filename = $"{DateTimeOffset.Now.ToUnixTimeSeconds()}{i}";
+                string fullpath = Path.Combine(Temp, Path.GetFileName(filename));
+                i++;
+
+                tempPaths.Add(fullpath);
+                return fullpath;
+            }
         }
 
         public void Dispose()
