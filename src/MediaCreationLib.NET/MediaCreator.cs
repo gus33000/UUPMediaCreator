@@ -186,7 +186,7 @@ namespace MediaCreationLib
                     }
             }
 
-            if ((targetEdition.DestructiveTargets.Count > 0 || targetEdition.NonDestructiveTargets.Count > 0) && !edition.Equals(targetEdition.PlannedEdition.EditionName, StringComparison.InvariantCultureIgnoreCase))
+            if ((targetEdition.DestructiveTargets.Count > 0 || targetEdition.NonDestructiveTargets.Count > 0) && edition?.Equals(targetEdition.PlannedEdition.EditionName, StringComparison.InvariantCultureIgnoreCase) != true)
             {
                 if (vhdPath == null)
                 {
