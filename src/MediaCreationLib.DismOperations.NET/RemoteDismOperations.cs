@@ -29,6 +29,26 @@ namespace MediaCreationLib.Dism
     {
         public static readonly RemoteDismOperations Instance = new();
 
+        private static void CopyFolder(string sourceFolder, string destFolder)
+        {
+            if (!Directory.Exists(destFolder))
+                Directory.CreateDirectory(destFolder);
+            string[] files = Directory.GetFiles(sourceFolder);
+            foreach (string file in files)
+            {
+                string name = Path.GetFileName(file);
+                string dest = Path.Combine(destFolder, name);
+                File.Copy(file, dest);
+            }
+            string[] folders = Directory.GetDirectories(sourceFolder);
+            foreach (string folder in folders)
+            {
+                string name = Path.GetFileName(folder);
+                string dest = Path.Combine(destFolder, name);
+                CopyFolder(folder, dest);
+            }
+        }
+
         private static string DismBrokerInstalledLocation;
 
         private static void SetupDismBroker()
@@ -38,6 +58,7 @@ namespace MediaCreationLib.Dism
                 return;
             }
 
+            bool shouldCopyDirectory = true;
             string parentDirectory = PathUtils.GetParentExecutableDirectory();
             string toolpath = Path.Combine(parentDirectory, "UUPMediaConverterDismBroker", "UUPMediaConverterDismBroker.exe");
 
@@ -51,6 +72,7 @@ namespace MediaCreationLib.Dism
             {
                 parentDirectory = PathUtils.GetExecutableDirectory();
                 toolpath = Path.Combine(parentDirectory, "UUPMediaConverterDismBroker.exe");
+                shouldCopyDirectory = false;
             }
 
             if (!File.Exists(toolpath))
@@ -60,7 +82,14 @@ namespace MediaCreationLib.Dism
 
             string dst = Path.Combine(Path.GetTempPath(), "UUPMediaConverterDismBroker");
             Directory.CreateDirectory(dst);
-            File.Copy(toolpath, Path.Combine(dst, "UUPMediaConverterDismBroker.exe"), true);
+            if (shouldCopyDirectory)
+            {
+                CopyFolder(toolpath.Replace(@"\UUPMediaConverterDismBroker.exe", ""), dst);
+            }
+            else
+            {
+                File.Copy(toolpath, Path.Combine(dst, "UUPMediaConverterDismBroker.exe"), true);
+            }
             toolpath = Path.Combine(dst, "UUPMediaConverterDismBroker.exe");
 
             DismBrokerInstalledLocation = toolpath;
