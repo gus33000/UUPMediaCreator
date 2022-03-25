@@ -38,7 +38,7 @@ namespace MediaCreationLib.Dism
             {
                 string name = Path.GetFileName(file);
                 string dest = Path.Combine(destFolder, name);
-                File.Copy(file, dest);
+                File.Copy(file, dest, true);
             }
             string[] folders = Directory.GetDirectories(sourceFolder);
             foreach (string folder in folders)
