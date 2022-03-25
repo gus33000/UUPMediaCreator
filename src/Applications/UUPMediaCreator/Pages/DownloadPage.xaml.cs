@@ -44,7 +44,15 @@ namespace UUPMediaCreator.UWP.Pages
             {
                 StorageFolder tmp = await ApplicationData.Current.TemporaryFolder.CreateFolderAsync($"{DateTime.Now.Ticks}");
 
-                App.ConversionPlan.TmpOutputFolder = await UpdateUtils.ProcessUpdateAsync(App.ConversionPlan.UpdateData, tmp.Path, App.ConversionPlan.MachineType, this, App.ConversionPlan.Language, App.ConversionPlan.Edition, UseAutomaticDownloadFolder: false).ConfigureAwait(false);
+                App.ConversionPlan.TmpOutputFolder = await UpdateUtils.ProcessUpdateAsync(
+                    App.ConversionPlan.UpdateData, 
+                    tmp.Path, 
+                    App.ConversionPlan.MachineType, 
+                    this, 
+                    App.ConversionPlan.Language, 
+                    App.ConversionPlan.Edition, 
+                    UseAutomaticDownloadFolder: false,
+                    downloadThreads: 1);
 
                 await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () => Frame.Navigate(typeof(BuildingISOPage)));
             });
@@ -67,8 +75,6 @@ namespace UUPMediaCreator.UWP.Pages
             return $"{dblSByte:0.##}{suffix[i]}";
         }
 
-        int previous = -1;
-
         public async void Report(GeneralDownloadProgress e)
         {
             foreach (FileDownloadStatus status in e.DownloadedStatus)
@@ -80,29 +86,45 @@ namespace UUPMediaCreator.UWP.Pages
 
                 mutex.WaitOne();
 
-                files[status.File.FileName] = status.FileStatus;
+                bool shouldReport = !files.ContainsKey(status.File.FileName) || files[status.File.FileName] != status.FileStatus;
 
-                if (e.NumFilesDownloadedSuccessfully == previous)
+                if (!shouldReport)
                 {
                     mutex.ReleaseMutex();
-                    return;
+                    continue;
                 }
 
-                previous = e.NumFilesDownloadedSuccessfully;
+                files[status.File.FileName] = status.FileStatus;
 
                 mutex.ReleaseMutex();
 
-                uint progress = (uint)Math.Round((double)status.DownloadedBytes / status.File.FileSize * 100);
+                string msg = "U";
+
+                switch (status.FileStatus)
+                {
+                    case FileStatus.Completed:
+                        msg = "Completed";
+                        break;
+                    case FileStatus.Downloading:
+                        msg = "Downloading";
+                        break;
+                    case FileStatus.Expired:
+                        msg = "Expired";
+                        break;
+                    case FileStatus.Failed:
+                        msg = "Failed";
+                        break;
+                    case FileStatus.Verifying:
+                        msg = "Verifying";
+                        break;
+                }
 
                 await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
                 {
-                    if (ProgressBar.Value != e.NumFilesDownloadedSuccessfully || ProgressBar.IsIndeterminate == true)
-                    {
-                        ProgressBar.IsIndeterminate = false;
-                        ProgressBar.Value = e.NumFilesDownloadedSuccessfully;
-                        StatusText.Text = $"{progress}%";
-                        ProgressBar.Maximum = e.NumFiles;
-                    }
+                    ProgressBar.IsIndeterminate = false;
+                    ProgressBar.Value = status.DownloadedBytes;
+                    StatusText.Text = $"{e.NumFilesDownloadedSuccessfully}/{e.NumFiles} - {msg} - {status.File.FileName} ({FormatBytes(status.File.FileSize)})";
+                    ProgressBar.Maximum = status.File.FileSize;
                 });
             }
         }

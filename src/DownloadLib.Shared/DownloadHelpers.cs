@@ -385,7 +385,7 @@ namespace DownloadLib
             return (payloadItems, bannedPayloadItems);
         }
 
-        public static async Task<string> ProcessUpdateAsync(UpdateData update, string pOutputFolder, MachineType MachineType, IProgress<GeneralDownloadProgress> generalDownloadProgress, string Language = "", string Edition = "", bool WriteMetadata = true, bool UseAutomaticDownloadFolder = true)
+        public static async Task<string> ProcessUpdateAsync(UpdateData update, string pOutputFolder, MachineType MachineType, IProgress<GeneralDownloadProgress> generalDownloadProgress, string Language = "", string Edition = "", bool WriteMetadata = true, bool UseAutomaticDownloadFolder = true, int downloadThreads = 4)
         {
             string buildstr = "";
             IEnumerable<string> languages = null;
@@ -449,7 +449,7 @@ namespace DownloadLib
                     }
                 }
 
-                using HttpDownloader helperDl = new(OutputFolder);
+                using HttpDownloader helperDl = new(OutputFolder, downloadThreads);
                 filesToDownload = update.Xml.Files.File.AsParallel().Where(x => !IsFileBanned(x, bannedPayloadItems));
 
                 returnCode = 0;
