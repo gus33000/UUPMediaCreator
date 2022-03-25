@@ -113,7 +113,12 @@ namespace MediaCreationLib.Dism
             string tempLog = Path.GetTempFileName();
             DismApi.Initialize(DismLogLevel.LogErrorsWarningsInfo, tempLog);
 
-            DismSession session = DismApi.OpenOfflineSession(ospath);
+            DismSession session;
+            try
+            {
+                session = DismApi.OpenOfflineSession(ospath);
+            }
+            catch { return false; }
 
             try
             {
