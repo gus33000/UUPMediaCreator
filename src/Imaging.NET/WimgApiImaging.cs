@@ -102,6 +102,14 @@ namespace Imaging
 
                             break;
                         }
+                    case WimMessageType.Error:
+                        {
+                            WimMessageError errorMessage = (WimMessageError)message;
+
+                            progressCallback?.Invoke("[ERROR] Win32ErrorCode: 0x" + errorMessage.Win32ErrorCode.ToString("X"), 0, true);
+                            progressCallback?.Invoke("[ERROR] Path: " + errorMessage.Path, 0, true);
+                            break;
+                        }
                 }
 
                 return WimMessageResult.Success;
@@ -148,8 +156,10 @@ namespace Imaging
                 {
                     WimgApi.ApplyImage(wimImageHandle, OutputDirectory, !PreserveACL ? (WimApplyImageOptions.DisableFileAcl | WimApplyImageOptions.DisableDirectoryAcl) : WimApplyImageOptions.None);
                 }
-                catch
+                catch (Exception e)
                 {
+                    progressCallback?.Invoke("[EXCEPTION] Message: " + e.Message, 0, true);
+                    progressCallback?.Invoke("[EXCEPTION] StackTrace: " + e.StackTrace, 0, true);
                     return false;
                 }
                 finally
@@ -291,8 +301,10 @@ namespace Imaging
                 {
                     WimgApi.ExportImage(wimImageHandle, dstWimHandle, WimExportImageOptions.AllowDuplicates);
                 }
-                catch
+                catch (Exception e)
                 {
+                    progressCallback?.Invoke("[EXCEPTION] Message: " + e.Message, 0, true);
+                    progressCallback?.Invoke("[EXCEPTION] StackTrace: " + e.StackTrace, 0, true);
                     return false;
                 }
                 finally
