@@ -504,7 +504,7 @@
       <Version>2.8.0-prerelease.220118001</Version>
     </PackageReference>
     <PackageReference Include="System.Text.Json">
-      <Version>6.0.2</Version>
+      <Version>6.0.3</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
