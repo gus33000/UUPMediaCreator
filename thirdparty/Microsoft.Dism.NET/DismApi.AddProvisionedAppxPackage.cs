@@ -27,7 +27,7 @@ namespace Microsoft.Dism
                 null,
                 string.IsNullOrEmpty(licensePath) ? null : new List<string> { licensePath },
                 customDataPath,
-                null,
+                "all",
                 stubPackageOption);
         }
 
