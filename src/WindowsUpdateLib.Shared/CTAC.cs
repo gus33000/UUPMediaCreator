@@ -456,7 +456,15 @@ namespace WindowsUpdateLib
             Products = "";
             if (!IsStore)
             {
+                //TODO: BSP support
+                //DeviceAttributes = "E:IsContainerMgrInstalled=1&FlightRing=External&TelemetryLevel=3&HidOverGattReg=C:\\WINDOWS\\System32\\DriverStore\\FileRepository\\hidbthle.inf_amd64_0fc6b7cd4ccbc55c\\Microsoft.Bluetooth.Profiles.HidOverGatt.dll&AppVer=10.0.20207.1000&IsAutopilotRegistered=0&ProcessorIdentifier=GenuineIntel Family 23 Model 1 Stepping 1&OEMModel=System Product Name&ProcessorManufacturer=GenuineIntel&InstallDate=1577722757&OEMModelBaseBoard=CROSSHAIR VI HERO&BranchReadinessLevel=CB&DataExpDateEpoch_20H1=0&IsCloudDomainJoined=0&Bios=2019&DchuAmdGrfxVen=4098&IsDeviceRetailDemo=0&FlightingBranchName=&OSUILocale=en-US&DeviceFamily=Windows.Desktop&UpgEx_20H1=Green&WuClientVer=10.0.20207.1000&IsFlightingEnabled=1&OSSkuId=48&GStatus_20H1=2&App=WU_OS&CurrentBranch=CB&InstallLanguage=en-US&OEMName_Uncleaned=System manufacturer&InstallationType=Client&AttrDataVer=98&IsEdgeWithChromiumInstalled=1&TimestampEpochString_20H1=1593425114&OSVersion=10.0.20207.1000&TencentType=1&FlightContent=Mainline&Steam=URL%3Asteam%20protocol&Free=8to16&TencentReg=79 d0 01 d7 9f 54 d5 01&FirmwareVersion=7704&DchuAmdGrfxExists=1&SdbVer_20H1=2340&OSArchitecture=ARM64&DefaultUserRegion=244&UpdateManagementGroup=2";
                 Products = $"PN={ReportingPFN}.{MachineType}&Branch={CurrentBranch}&PrimaryOSProduct=1&Repairable=1&V={ReportingVersion};";
+                //Products = "PN=Adobe.Flash.arm64&Repairable=1&V=10.0.22000.1000;PN=Client.OS.rs2.arm64&Branch=rs_prerelease&PrimaryOSProduct=1&Repairable=1&V=10.0.22000.1000;PN=Microsoft.Edge.Stable.arm64&Repairable=1&V=0.0.0.0;PN=Microsoft.NETFX.arm64&V=2018.12.2.0;PN=Windows.Appraiser.arm64&Repairable=1&V=10.0.20206.1000;PN=Windows.AppraiserData.arm64&Repairable=1&V=10.0.20206.1000;PN=Windows.EmergencyUpdate.arm64&Repairable=1&V=10.0.20206.1000;PN=Windows.ManagementOOBE.arm64&IsWindowsManagementOOBE=1&Repairable=1&V=10.0.20206.1000;PN=Windows.OOBE.arm64&IsWindowsOOBE=1&Repairable=1&V=10.0.20206.1000;PN=Windows.UpdateStackPackage.arm64&Name=Update Stack Package&Repairable=1&V=10.0.20206.1000;PN=DefenderPlatform.arm64&V=4.18.2008.9;PN=DefenderSignature.arm64&V=1.323.698.0;PN=Hammer.arm64&Source=UpdateOrchestrator&V=0.0.0.0;PN=MSRT.arm64&Source=UpdateOrchestrator&V=0.0.0.0;PN=SedimentPack.arm64&Source=UpdateOrchestrator&V=0.0.0.0;PN={3965430d-4784-573d-b86e-0abbdaa12e41}_arm64&V=0.0.0.0&PN={a7271695-80b5-56b3-8e50-56c6ce883b07}_arm64&V=1.0.0.0&Source=SMBIOS;";
+
+                //Products = Products.Replace("a7271695-80b5-56b3-8e50-56c6ce883b07", "1dc8ec42-9eeb-51b1-9490-0cb33bd7d23a");
+                //Products = Products.Replace("a7271695-80b5-56b3-8e50-56c6ce883b07", "95d8ecf9-e4aa-5ef8-be03-c531d372b3d0");
+                //Products = Products.Replace("a7271695-80b5-56b3-8e50-56c6ce883b07", "7e7007ac-603c-55ef-bb77-3548784b9578");
+                //Products = Products.Replace("a7271695-80b5-56b3-8e50-56c6ce883b07", "82e2ebed-8ade-5aec-ad6f-d040ef549d29");
             }
 
             this.SyncCurrentVersionOnly = SyncCurrentVersionOnly;
