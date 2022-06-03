@@ -504,7 +504,7 @@
       <Version>7.1.2</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.UI.Xaml">
-      <Version>2.8.0-prerelease.220413001</Version>
+      <Version>2.8.0-prerelease.220601001</Version>
     </PackageReference>
     <PackageReference Include="System.Text.Json">
       <Version>6.0.4</Version>
