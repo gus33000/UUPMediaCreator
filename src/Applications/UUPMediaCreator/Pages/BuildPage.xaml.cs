@@ -53,7 +53,7 @@ namespace UUPMediaCreator.UWP.Pages
             WizardPage.NextEnabled = false;
             _ = ThreadPool.RunAsync(async (IAsyncAction operation) =>
             {
-                BuildFetcher.AvailableBuild[] updates = await BuildFetcher.GetAvailableBuildsAsync(App.ConversionPlan.MachineType).ConfigureAwait(false);
+                BuildFetcher.AvailableBuild[] updates = await BuildFetcher.GetAvailableBuildsAsync(App.ConversionPlan.MachineType);
 
                 await CoreApplication.MainView.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
                 {

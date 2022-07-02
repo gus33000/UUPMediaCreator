@@ -71,9 +71,9 @@ namespace WindowsUpdateLib
             using CryptoStream cs = new(ms, dec, CryptoStreamMode.Read);
 
 #if NET5_0_OR_GREATER
-            await cs.CopyToAsync(to, cancellationToken).ConfigureAwait(false);
+            await cs.CopyToAsync(to, cancellationToken);
 #else
-            await cs.CopyToAsync(to).ConfigureAwait(false);
+            await cs.CopyToAsync(to);
 #endif
         }
 
@@ -83,14 +83,14 @@ namespace WindowsUpdateLib
             int readBytes;
             byte[] buffer = new byte[esrp.EncryptionBufferSize];
 #if NET5_0_OR_GREATER
-            while ((readBytes = await encryptedFile.ReadAsync(buffer.AsMemory(0, buffer.Length), cancellationToken).ConfigureAwait(false)) > 0)
+            while ((readBytes = await encryptedFile.ReadAsync(buffer.AsMemory(0, buffer.Length), cancellationToken)) > 0)
 #else
-            while ((readBytes = await encryptedFile.ReadAsync(buffer, 0, buffer.Length, cancellationToken).ConfigureAwait(false)) > 0)
+            while ((readBytes = await encryptedFile.ReadAsync(buffer, 0, buffer.Length, cancellationToken)) > 0)
 #endif
             {
                 bool needsPaddingMode = encryptedSize == (ulong)encryptedFile.Position;
                 long previousSumBlockLength = encryptedFile.Position - readBytes;
-                await DecryptBufferToStreamAsync(buffer, decryptedFile, readBytes, previousSumBlockLength, needsPaddingMode, cancellationToken).ConfigureAwait(false);
+                await DecryptBufferToStreamAsync(buffer, decryptedFile, readBytes, previousSumBlockLength, needsPaddingMode, cancellationToken);
 
                 cancellationToken.ThrowIfCancellationRequested();
             }
@@ -101,7 +101,7 @@ namespace WindowsUpdateLib
         {
             using FileStream encryptedFile = File.OpenRead(encryptedFilePath);
             using FileStream decryptedFile = File.OpenWrite(decryptedFilePath);
-            await DecryptStreamFullAsync(encryptedFile, decryptedFile, (ulong)encryptedFile.Length, cancellationToken).ConfigureAwait(false);
+            await DecryptStreamFullAsync(encryptedFile, decryptedFile, (ulong)encryptedFile.Length, cancellationToken);
         }
 
         public void Dispose()

@@ -130,10 +130,10 @@ namespace DownloadLib
         }
 
         public async Task<bool> DownloadAsync(List<UUPFile> Files, IProgress<GeneralDownloadProgress> generalDownloadProgress, CancellationToken cancellationToken = default)
-            => await ParallelQueue(Files, DownloadFile, generalDownloadProgress, DownloadThreads, cancellationToken).ConfigureAwait(false);
+            => await ParallelQueue(Files, DownloadFile, generalDownloadProgress, DownloadThreads, cancellationToken);
 
         public async Task<bool> DownloadAsync(UUPFile File, IProgress<FileDownloadStatus> downloadProgress = null, CancellationToken cancellationToken = default)
-            => await DownloadFile(File, downloadProgress, cancellationToken).ConfigureAwait(false);
+            => await DownloadFile(File, downloadProgress, cancellationToken);
 
         private static async ValueTask<bool> ParallelQueue(List<UUPFile> items, Func<UUPFile, IProgress<FileDownloadStatus>, CancellationToken, ValueTask<bool>> func,
             IProgress<GeneralDownloadProgress> generalProgress, int threads, CancellationToken cancellationToken)
@@ -170,11 +170,11 @@ namespace DownloadLib
                         generalProgress?.Report(generalDownloadProgress);
                     };
 
-                    workingSlots[freeSlotIndex] = Task.Run(async () => await func(item, progress, cancellationToken).ConfigureAwait(false));
+                    workingSlots[freeSlotIndex] = Task.Run(async () => await func(item, progress, cancellationToken));
                 }
                 else
                 {
-                    await Task.WhenAny(workingSlots.Where(t => t != null)).ConfigureAwait(false);
+                    await Task.WhenAny(workingSlots.Where(t => t != null));
 
                     for (int i = 0; i < workingSlots.Length; i++)
                     {
@@ -204,7 +204,7 @@ namespace DownloadLib
         }
 
         private async ValueTask<bool> DownloadFile(UUPFile downloadFile, IProgress<FileDownloadStatus> progress, CancellationToken cancellationToken)
-            => await HttpDownload(DownloadFolderPath, downloadFile, _hc, VerifyFiles, progress, cancellationToken: cancellationToken).ConfigureAwait(false);
+            => await HttpDownload(DownloadFolderPath, downloadFile, _hc, VerifyFiles, progress, cancellationToken: cancellationToken);
 
         private async static ValueTask<bool> HttpDownload(string basePath, UUPFile downloadFile, HttpClient httpClient, bool verifyFiles,
             IProgress<FileDownloadStatus> downloadProgress = null, int bufferSize = 65_536, CancellationToken cancellationToken = default)
@@ -310,7 +310,7 @@ namespace DownloadLib
                     {
                         FileStream fileStreamToHash = File.Open(filePath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite);
                         totalBytesRead = fileStreamToHash.Length;
-                        bool hashResult = await HashWithProgress(fileStreamToHash).ConfigureAwait(false);
+                        bool hashResult = await HashWithProgress(fileStreamToHash);
                         fileStreamToHash.Dispose();
 
                         if (hashResult)
@@ -354,7 +354,7 @@ namespace DownloadLib
                 streamToWriteTo.Seek(totalBytesRead, SeekOrigin.Begin);
 
                 using HttpRequestMessage httpRequestMessageHead = new(HttpMethod.Head, new Uri(downloadFile.WUFile.DownloadUrl));
-                using HttpResponseMessage response = await httpClient.SendAsync(httpRequestMessageHead, HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                using HttpResponseMessage response = await httpClient.SendAsync(httpRequestMessageHead, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
 
                 //Technically the  server reports both content-length and Accept-Ranges.
                 long? contentLength = response.Content.Headers.ContentLength;
@@ -377,16 +377,16 @@ namespace DownloadLib
                     //TODO: add download reporting for this
                     //TODO: may throw an exception if the server suddently closes the connection (e.g. file expired.)
 
-                    using HttpResponseMessage fullFileResp = await httpClient.GetAsync(downloadFile.WUFile.DownloadUrl, cancellationToken).ConfigureAwait(false);
-                    using Stream streamToReadFrom = await fullFileResp.Content.ReadAsStreamAsync().ConfigureAwait(false);
+                    using HttpResponseMessage fullFileResp = await httpClient.GetAsync(downloadFile.WUFile.DownloadUrl, cancellationToken);
+                    using Stream streamToReadFrom = await fullFileResp.Content.ReadAsStreamAsync();
 
                     if (esrpDecrypter != null)
                     {
-                        await esrpDecrypter.DecryptStreamFullAsync(streamToReadFrom, streamToWriteTo, (ulong)contentLength.Value, cancellationToken).ConfigureAwait(false);
+                        await esrpDecrypter.DecryptStreamFullAsync(streamToReadFrom, streamToWriteTo, (ulong)contentLength.Value, cancellationToken);
                     }
                     else
                     {
-                        await streamToReadFrom.CopyToAsync(streamToWriteTo).ConfigureAwait(false);
+                        await streamToReadFrom.CopyToAsync(streamToWriteTo);
                     }
 
                     downloadProgress?.Report(new FileDownloadStatus(downloadFile)
@@ -398,7 +398,7 @@ namespace DownloadLib
                     //just an assumption 
 
                     streamToWriteTo.Seek(0, SeekOrigin.Begin);
-                    return await HashWithProgress(streamToWriteTo).ConfigureAwait(false);
+                    return await HashWithProgress(streamToWriteTo);
                 }
 
                 while (currRange < contentLength.Value)
@@ -411,7 +411,7 @@ namespace DownloadLib
 
                     //Create request for range and send it, return asap (we just need the header to see if the status code is ok)
                     using HttpRequestMessage requestMessageRange = CreateRequestHeaderForRange(HttpMethod.Get, downloadFile.WUFile.DownloadUrl, currRange, currRange + chunk);
-                    using HttpResponseMessage filePartResp = await httpClient.SendAsync(requestMessageRange, HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    using HttpResponseMessage filePartResp = await httpClient.SendAsync(requestMessageRange, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
 
                     //increment to the next range
                     currRange += chunk + 1;
@@ -420,7 +420,7 @@ namespace DownloadLib
                     if (filePartResp.IsSuccessStatusCode)
                     {
                         //get the underlying stream
-                        using Stream streamToReadFrom = await filePartResp.Content.ReadAsStreamAsync().ConfigureAwait(false);
+                        using Stream streamToReadFrom = await filePartResp.Content.ReadAsStreamAsync();
 
                         int bytesRead;
                         byte[] buffer = new byte[blockBufferSize];
@@ -428,7 +428,7 @@ namespace DownloadLib
                         //read the content
                         //TODO: it may throw an exception (stream closed because file expired?)
                         //In that case we would wrap into another try catch and try to read the reason behind this
-                        while ((bytesRead = await streamToReadFrom.ReadAsync(buffer, 0, buffer.Length, cancellationToken).ConfigureAwait(false)) > 0)
+                        while ((bytesRead = await streamToReadFrom.ReadAsync(buffer, 0, buffer.Length, cancellationToken)) > 0)
                         {
                             totalBytesRead += bytesRead;
 
@@ -449,7 +449,7 @@ namespace DownloadLib
                                     bool needsPadding = totalBytesRead == contentLength.Value;
                                     long previousSumBlockLength = blockBufferSize * blockCount;
                                     await esrpDecrypter.DecryptBufferToStreamAsync(backBuffer, streamToWriteTo, backBufferLength,
-                                                previousSumBlockLength, needsPadding, cancellationToken).ConfigureAwait(false);
+                                                previousSumBlockLength, needsPadding, cancellationToken);
 
                                     //if there is still data in buffer, copy the remaining one into the backbuffer
                                     if (diff < 0)
@@ -469,7 +469,7 @@ namespace DownloadLib
                             else
                             {
                                 //simply write to the file
-                                await streamToWriteTo.WriteAsync(buffer, 0, bytesRead, cancellationToken).ConfigureAwait(false);
+                                await streamToWriteTo.WriteAsync(buffer, 0, bytesRead, cancellationToken);
                             }
 
                             //report progress
@@ -509,13 +509,13 @@ namespace DownloadLib
                 if (esrpDecrypter != null && backBufferLength > 0)
                 {
                     await esrpDecrypter.DecryptBufferToStreamAsync(backBuffer, streamToWriteTo, backBufferLength,
-                                            blockBufferSize * blockCount, true, cancellationToken).ConfigureAwait(false);
+                                            blockBufferSize * blockCount, true, cancellationToken);
                 }
 
                 if (verifyFiles)
                 {
                     streamToWriteTo.Seek(0, SeekOrigin.Begin);
-                    bool hashResult = await HashWithProgress(streamToWriteTo).ConfigureAwait(false);
+                    bool hashResult = await HashWithProgress(streamToWriteTo);
 
                     if (hashResult)
                     {
@@ -574,11 +574,11 @@ namespace DownloadLib
                 {
                     case "sha1":
                         hashMatches = await IsDownloadedFileValidSHA1(strm, downloadFile.Hash,
-                                                        progressHashedBytes, cancellationToken).ConfigureAwait(false);
+                                                        progressHashedBytes, cancellationToken);
                         break;
                     case "sha256":
                         hashMatches = await IsDownloadedFileValidSHA256(strm, downloadFile.Hash,
-                                                        progressHashedBytes, cancellationToken).ConfigureAwait(false);
+                                                        progressHashedBytes, cancellationToken);
                         break;
                 }
 
@@ -610,14 +610,14 @@ namespace DownloadLib
         private static async ValueTask<bool> IsDownloadedFileValidSHA256(Stream fileStream, string base64Hash, IProgress<long> progress = null, CancellationToken cancellationToken = default)
         {
             using SHA256 hashAlgo = SHA256.Create();
-            byte[] hashByte = await ComputeHashAsyncT(hashAlgo, fileStream, progress, cancellationToken: cancellationToken).ConfigureAwait(false);
+            byte[] hashByte = await ComputeHashAsyncT(hashAlgo, fileStream, progress, cancellationToken: cancellationToken);
             return ByteArraySpanCompare(Convert.FromBase64String(base64Hash), hashByte);
         }
 
         private static async ValueTask<bool> IsDownloadedFileValidSHA1(Stream fileStream, string base64Hash, IProgress<long> progress = null, CancellationToken cancellationToken = default)
         {
             using SHA1 hashAlgo = SHA1.Create();
-            byte[] hashByte = await ComputeHashAsyncT(hashAlgo, fileStream, progress, cancellationToken: cancellationToken).ConfigureAwait(false);
+            byte[] hashByte = await ComputeHashAsyncT(hashAlgo, fileStream, progress, cancellationToken: cancellationToken);
             return ByteArraySpanCompare(Convert.FromBase64String(base64Hash), hashByte);
         }
 
@@ -630,9 +630,9 @@ namespace DownloadLib
             byte[] buffer = new byte[bufSizeEffective];
             using MemoryStream ms = new(buffer);
             using CryptoStream cs = new(ms, hashAlgorithm, CryptoStreamMode.Write);
-            while ((readBytes = await fileStream.ReadAsync(buffer, 0, buffer.Length, cancellationToken).ConfigureAwait(false)) > 0)
+            while ((readBytes = await fileStream.ReadAsync(buffer, 0, buffer.Length, cancellationToken)) > 0)
             {
-                await cs.WriteAsync(buffer, 0, readBytes, cancellationToken).ConfigureAwait(false);
+                await cs.WriteAsync(buffer, 0, readBytes, cancellationToken);
                 ms.Position = 0;
                 totalBytesRead += readBytes;
                 progress?.Report(totalBytesRead);

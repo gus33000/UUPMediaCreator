@@ -55,7 +55,7 @@ namespace UUPMediaCreator.UWP.Pages
             SelectionGrid.Visibility = Visibility.Collapsed;
             _ = ThreadPool.RunAsync(async (IAsyncAction operation) =>
             {
-                BuildFetcher.AvailableEdition[] editions = await BuildFetcher.GetAvailableEditions(App.ConversionPlan.UpdateData, App.ConversionPlan.Language).ConfigureAwait(false);
+                BuildFetcher.AvailableEdition[] editions = await BuildFetcher.GetAvailableEditions(App.ConversionPlan.UpdateData, App.ConversionPlan.Language);
 
                 await CoreApplication.MainView.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
                 {

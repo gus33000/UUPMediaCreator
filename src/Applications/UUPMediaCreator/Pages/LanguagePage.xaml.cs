@@ -55,7 +55,7 @@ namespace UUPMediaCreator.UWP.Pages
             SelectionGrid.Visibility = Visibility.Collapsed;
             _ = ThreadPool.RunAsync(async (IAsyncAction operation) =>
             {
-                BuildFetcher.AvailableBuildLanguages[] updates = await BuildFetcher.GetAvailableBuildLanguagesAsync(App.ConversionPlan.UpdateData).ConfigureAwait(false);
+                BuildFetcher.AvailableBuildLanguages[] updates = await BuildFetcher.GetAvailableBuildLanguagesAsync(App.ConversionPlan.UpdateData);
 
                 await CoreApplication.MainView.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
                 {

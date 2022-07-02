@@ -71,8 +71,8 @@ namespace WindowsUpdateLib
             req.Headers.Pragma.Add(new System.Net.Http.Headers.NameValueHeaderValue("no-cache"));
             req.Headers.Connection.Add("keep-alive");
 
-            HttpResponseMessage response = (await httpClient.SendAsync(req).ConfigureAwait(false)).EnsureSuccessStatusCode();
-            string resultString = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+            HttpResponseMessage response = (await httpClient.SendAsync(req)).EnsureSuccessStatusCode();
+            string resultString = await response.Content.ReadAsStringAsync();
             return resultString;
         }
 
@@ -216,7 +216,7 @@ namespace WindowsUpdateLib
 
             string message = SerializeSOAPEnvelope(envelope);
 
-            string response = await PostToWindowsUpdateAsync("GetCookie", message, false).ConfigureAwait(false);
+            string response = await PostToWindowsUpdateAsync("GetCookie", message, false);
 
             CSOAPCommon.Envelope renvelope = DeserializeSOAPEnvelope(response);
 
@@ -261,7 +261,7 @@ namespace WindowsUpdateLib
 
             string message = SerializeSOAPEnvelope(envelope);
 
-            string response = await PostToWindowsUpdateAsync("GetCookie", message, false).ConfigureAwait(false);
+            string response = await PostToWindowsUpdateAsync("GetCookie", message, false);
 
             CSOAPCommon.Envelope renvelope = DeserializeSOAPEnvelope(response);
 
@@ -303,7 +303,7 @@ namespace WindowsUpdateLib
 
             string message = SerializeSOAPEnvelope(envelope);
 
-            string response = await PostToWindowsUpdateAsync("GetExtendedUpdateInfo2", message, true).ConfigureAwait(false);
+            string response = await PostToWindowsUpdateAsync("GetExtendedUpdateInfo2", message, true);
 
             CSOAPCommon.Envelope renvelope = DeserializeSOAPEnvelope(response);
 
@@ -386,7 +386,7 @@ namespace WindowsUpdateLib
 
             string message = SerializeSOAPEnvelope(envelope);
 
-            string response = await PostToWindowsUpdateAsync("SyncUpdates", message, false).ConfigureAwait(false);
+            string response = await PostToWindowsUpdateAsync("SyncUpdates", message, false);
 
             CSOAPCommon.Envelope renvelope = DeserializeSOAPEnvelope(response);
 
@@ -399,7 +399,7 @@ namespace WindowsUpdateLib
 
         public static async Task<IEnumerable<UpdateData>> GetUpdates(string[] categoryIds, CTAC ctac, string token, FileExchangeV3UpdateFilter filter = FileExchangeV3UpdateFilter.Application) // Or ProductRelease
         {
-            (CGetCookieResponse.GetCookieResponse cookie, string cookieresp) = await GetCookie().ConfigureAwait(false);
+            (CGetCookieResponse.GetCookieResponse cookie, string cookieresp) = await GetCookie();
 
             HashSet<string> InstalledNonLeafUpdateIDs = new();
             HashSet<string> OtherCachedUpdateIDs = new();
@@ -413,7 +413,7 @@ namespace WindowsUpdateLib
             //
             while (true)
             {
-                (CSyncUpdatesResponse.SyncUpdatesResponse, string) result = await SyncUpdates(cookie.GetCookieResult, token, InstalledNonLeafUpdateIDs, OtherCachedUpdateIDs, categoryIds ?? Array.Empty<string>(), ctac).ConfigureAwait(false);
+                (CSyncUpdatesResponse.SyncUpdatesResponse, string) result = await SyncUpdates(cookie.GetCookieResult, token, InstalledNonLeafUpdateIDs, OtherCachedUpdateIDs, categoryIds ?? Array.Empty<string>(), ctac);
 
                 // Refresh the cookie
                 cookie.GetCookieResult.EncryptedData = result.Item1.SyncUpdatesResult.NewCookie.EncryptedData;
@@ -506,7 +506,7 @@ namespace WindowsUpdateLib
 
         public static async Task<FileExchangeV3FileDownloadInformation> GetFileUrl(UpdateData updateData, string fileDigest, string token = null)
         {
-            (CGetExtendedUpdateInfo2Response.GetExtendedUpdateInfo2Response, string) result = await GetExtendedUpdateInfo2(token, updateData.Xml.UpdateIdentity.UpdateID, updateData.Xml.UpdateIdentity.RevisionNumber, updateData.CTAC).ConfigureAwait(false);
+            (CGetExtendedUpdateInfo2Response.GetExtendedUpdateInfo2Response, string) result = await GetExtendedUpdateInfo2(token, updateData.Xml.UpdateIdentity.UpdateID, updateData.Xml.UpdateIdentity.RevisionNumber, updateData.CTAC);
 
             if (updateData.Xml?.Files?.File?.FirstOrDefault(x => x.AdditionalDigest?.Text == fileDigest) is CExtendedUpdateInfoXml.File file)
             {
@@ -529,7 +529,7 @@ namespace WindowsUpdateLib
 
         public static async Task<IEnumerable<FileExchangeV3FileDownloadInformation>> GetFileUrls(UpdateData updateData, string token = null)
         {
-            (CGetExtendedUpdateInfo2Response.GetExtendedUpdateInfo2Response, string) result = await GetExtendedUpdateInfo2(token, updateData.Xml.UpdateIdentity.UpdateID, updateData.Xml.UpdateIdentity.RevisionNumber, updateData.CTAC).ConfigureAwait(false);
+            (CGetExtendedUpdateInfo2Response.GetExtendedUpdateInfo2Response, string) result = await GetExtendedUpdateInfo2(token, updateData.Xml.UpdateIdentity.UpdateID, updateData.Xml.UpdateIdentity.RevisionNumber, updateData.CTAC);
 
             updateData.GEI2Response = result.Item2;
 
@@ -623,7 +623,7 @@ namespace WindowsUpdateLib
             try
             {
                 using EsrpDecryptor esrp = new(EsrpDecryptionInformation);
-                await esrp.DecryptFileAsync(InputFile, OutputFile).ConfigureAwait(false);
+                await esrp.DecryptFileAsync(InputFile, OutputFile);
                 return true;
             }
             catch { }

@@ -38,16 +38,16 @@ namespace UUPDownload
 
         public static async Task<EditionPlanningWithLanguage> GetTargetedPlanAsync(this UpdateData update, string LanguageCode)
         {
-            HashSet<CompDBXmlClass.CompDB> compDBs = await update.GetCompDBsAsync().ConfigureAwait(false);
+            HashSet<CompDBXmlClass.CompDB> compDBs = await update.GetCompDBsAsync();
             CompDBXmlClass.Package editionPackPkg = compDBs.GetEditionPackFromCompDBs();
 
-            string editionPkg = await update.DownloadFileFromDigestAsync(editionPackPkg.Payload.PayloadItem.First(x => !x.Path.EndsWith(".psf")).PayloadHash).ConfigureAwait(false);
-            return await update.GetTargetedPlanAsync(LanguageCode, editionPkg).ConfigureAwait(false);
+            string editionPkg = await update.DownloadFileFromDigestAsync(editionPackPkg.Payload.PayloadItem.First(x => !x.Path.EndsWith(".psf")).PayloadHash);
+            return await update.GetTargetedPlanAsync(LanguageCode, editionPkg);
         }
 
         public static async Task<EditionPlanningWithLanguage> GetTargetedPlanAsync(this UpdateData update, string LanguageCode, string editionPkg)
         {
-            HashSet<CompDBXmlClass.CompDB> compDBs = await update.GetCompDBsAsync().ConfigureAwait(false);
+            HashSet<CompDBXmlClass.CompDB> compDBs = await update.GetCompDBsAsync();
             if (string.IsNullOrEmpty(editionPkg))
             {
                 return null;

@@ -188,10 +188,10 @@ namespace UUPDownload.DownloadRequest
             string token = string.Empty;
             if (!string.IsNullOrEmpty(Mail) && !string.IsNullOrEmpty(Password))
             {
-                token = await MBIHelper.GenerateMicrosoftAccountTokenAsync(Mail, Password).ConfigureAwait(false);
+                token = await MBIHelper.GenerateMicrosoftAccountTokenAsync(Mail, Password);
             }
 
-            IEnumerable<UpdateData> data = await FE3Handler.GetUpdates(null, ctac, token, FileExchangeV3UpdateFilter.ProductRelease).ConfigureAwait(false);
+            IEnumerable<UpdateData> data = await FE3Handler.GetUpdates(null, ctac, token, FileExchangeV3UpdateFilter.ProductRelease);
             //data = data.Select(x => UpdateUtils.TrimDeltasFromUpdateData(x));
 
             if (!data.Any())
@@ -205,7 +205,7 @@ namespace UUPDownload.DownloadRequest
                     Logging.Log("Title: " + update.Xml.LocalizedProperties.Title);
                     Logging.Log("Description: " + update.Xml.LocalizedProperties.Description);
 
-                    await ProcessUpdateAsync(update, OutputFolder, MachineType, Language, Edition, true).ConfigureAwait(false);
+                    await ProcessUpdateAsync(update, OutputFolder, MachineType, Language, Edition, true);
                 }
             }
             Logging.Log("Completed.");
@@ -222,11 +222,11 @@ namespace UUPDownload.DownloadRequest
 
             Logging.Log("Gathering update metadata...");
 
-            HashSet<CompDBXmlClass.CompDB> compDBs = await update.GetCompDBsAsync().ConfigureAwait(false);
+            HashSet<CompDBXmlClass.CompDB> compDBs = await update.GetCompDBsAsync();
 
             await Task.WhenAll(
-                Task.Run(async () => buildstr = await update.GetBuildStringAsync().ConfigureAwait(false)),
-                Task.Run(async () => languages = await update.GetAvailableLanguagesAsync().ConfigureAwait(false))).ConfigureAwait(false);
+                Task.Run(async () => buildstr = await update.GetBuildStringAsync()),
+                Task.Run(async () => languages = await update.GetAvailableLanguagesAsync()));
 
             buildstr ??= "";
 
@@ -293,8 +293,8 @@ namespace UUPDownload.DownloadRequest
                 CompDBXmlClass.Package editionPackPkg = compDBs.GetEditionPackFromCompDBs();
                 if (editionPackPkg != null)
                 {
-                    string editionPkg = await update.DownloadFileFromDigestAsync(editionPackPkg.Payload.PayloadItem.First(x => !x.Path.EndsWith(".psf")).PayloadHash).ConfigureAwait(false);
-                    BuildTargets.EditionPlanningWithLanguage[] plans = await Task.WhenAll(languages.Select(x => update.GetTargetedPlanAsync(x, editionPkg))).ConfigureAwait(false);
+                    string editionPkg = await update.DownloadFileFromDigestAsync(editionPackPkg.Payload.PayloadItem.First(x => !x.Path.EndsWith(".psf")).PayloadHash);
+                    BuildTargets.EditionPlanningWithLanguage[] plans = await Task.WhenAll(languages.Select(x => update.GetTargetedPlanAsync(x, editionPkg)));
 
                     foreach (BuildTargets.EditionPlanningWithLanguage plan in plans)
                     {
@@ -305,7 +305,7 @@ namespace UUPDownload.DownloadRequest
                 }
             }
 
-            await DownloadLib.UpdateUtils.ProcessUpdateAsync(update, pOutputFolder, MachineType, new ReportProgress(), Language, Edition, WriteMetadata).ConfigureAwait(false);
+            await DownloadLib.UpdateUtils.ProcessUpdateAsync(update, pOutputFolder, MachineType, new ReportProgress(), Language, Edition, WriteMetadata);
         }
     }
 }

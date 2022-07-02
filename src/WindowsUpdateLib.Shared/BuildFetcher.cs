@@ -96,7 +96,7 @@ namespace WindowsUpdateLib
         {
             List<AvailableBuild> availableBuilds = new();
 
-            IEnumerable<UpdateData> updates = await GetUpdates(machineType).ConfigureAwait(false);
+            IEnumerable<UpdateData> updates = await GetUpdates(machineType);
 
             foreach (UpdateData update in updates)
             {
@@ -108,7 +108,7 @@ namespace WindowsUpdateLib
                     Created = update.UpdateInfo.Deployment.LastChangeTime
                 };
 
-                string BuildStr = await update.GetBuildStringAsync().ConfigureAwait(false);
+                string BuildStr = await update.GetBuildStringAsync();
                 if (!string.IsNullOrEmpty(BuildStr))
                 {
                     availableBuild.Title += $" ({BuildStr})";
@@ -123,7 +123,7 @@ namespace WindowsUpdateLib
 
         public static async Task<AvailableBuildLanguages[]> GetAvailableBuildLanguagesAsync(UpdateData UpdateData)
         {
-            List<AvailableBuildLanguages> availableBuildLanguages = (await UpdateData.GetAvailableLanguagesAsync().ConfigureAwait(false)).Select(lang =>
+            List<AvailableBuildLanguages> availableBuildLanguages = (await UpdateData.GetAvailableLanguagesAsync()).Select(lang =>
             {
                 CultureInfo boundlanguageobject = CultureInfo.GetCultureInfoByIetfLanguageTag(lang);
 
@@ -160,7 +160,7 @@ namespace WindowsUpdateLib
 
                 if (string.IsNullOrEmpty(UpdateData.CachedMetadata))
                 {
-                    FileExchangeV3FileDownloadInformation fileDownloadInfo = await FE3Handler.GetFileUrl(UpdateData, metadataCabs[0].Digest).ConfigureAwait(false);
+                    FileExchangeV3FileDownloadInformation fileDownloadInfo = await FE3Handler.GetFileUrl(UpdateData, metadataCabs[0].Digest);
                     if (fileDownloadInfo == null)
                     {
                         goto exit;
@@ -170,11 +170,11 @@ namespace WindowsUpdateLib
 
                     // Download the file
                     WebClient client = new();
-                    await client.DownloadFileTaskAsync(new Uri(fileDownloadInfo.DownloadUrl), metadataCabTemp).ConfigureAwait(false);
+                    await client.DownloadFileTaskAsync(new Uri(fileDownloadInfo.DownloadUrl), metadataCabTemp);
 
                     if (fileDownloadInfo.IsEncrypted)
                     {
-                        if (!await fileDownloadInfo.DecryptAsync(metadataCabTemp, metadataCabTemp + ".decrypted").ConfigureAwait(false))
+                        if (!await fileDownloadInfo.DecryptAsync(metadataCabTemp, metadataCabTemp + ".decrypted"))
                         {
                             goto exit;
                         }
@@ -340,7 +340,7 @@ namespace WindowsUpdateLib
                 tasks.Add(GetUpdatesFor(ctac));
             }
 
-            IEnumerable<UpdateData>[] datas = await Task.WhenAll(tasks).ConfigureAwait(false);
+            IEnumerable<UpdateData>[] datas = await Task.WhenAll(tasks);
             foreach (IEnumerable<UpdateData> data in datas)
             {
                 AddUpdatesIfNotPresentAlready(updates, data);

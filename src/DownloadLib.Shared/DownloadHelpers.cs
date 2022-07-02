@@ -490,11 +490,11 @@ namespace DownloadLib
             int returnCode = 0;
             IEnumerable<CExtendedUpdateInfoXml.File> filesToDownload = null;
 
-            HashSet<CompDBXmlClass.CompDB> compDBs = await update.GetCompDBsAsync().ConfigureAwait(false);
+            HashSet<CompDBXmlClass.CompDB> compDBs = await update.GetCompDBsAsync();
 
             await Task.WhenAll(
-                Task.Run(async () => buildstr = await update.GetBuildStringAsync().ConfigureAwait(false)),
-                Task.Run(async () => languages = await update.GetAvailableLanguagesAsync().ConfigureAwait(false))).ConfigureAwait(false);
+                Task.Run(async () => buildstr = await update.GetBuildStringAsync()),
+                Task.Run(async () => languages = await update.GetAvailableLanguagesAsync()));
 
             if (buildstr == null)
             {
@@ -525,7 +525,7 @@ namespace DownloadLib
 
             do
             {
-                IEnumerable<FileExchangeV3FileDownloadInformation> fileUrls = await FE3Handler.GetFileUrls(update).ConfigureAwait(false);
+                IEnumerable<FileExchangeV3FileDownloadInformation> fileUrls = await FE3Handler.GetFileUrls(update);
 
                 if (fileUrls == null)
                 {
@@ -567,7 +567,7 @@ namespace DownloadLib
                         boundFile.Item1.AdditionalDigest.Algorithm);
                 });
 
-                returnCode = await helperDl.DownloadAsync(fileList.ToList(), generalDownloadProgress).ConfigureAwait(false) ? 0 : -1;
+                returnCode = await helperDl.DownloadAsync(fileList.ToList(), generalDownloadProgress) ? 0 : -1;
 
                 if (returnCode != 0)
                 {
