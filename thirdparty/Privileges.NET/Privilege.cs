@@ -2,12 +2,11 @@ using System;
 using System.Collections.Specialized;
 using System.Runtime.InteropServices;
 using System.Threading;
+using Luid = Privileges.NativeMethods.LUID;
+using Win32Exception = System.ComponentModel.Win32Exception;
 
-namespace PrivilegeClass
+namespace Privileges
 {
-    using Luid = NativeMethods.LUID;
-    using Win32Exception = System.ComponentModel.Win32Exception;
-
     public delegate void PrivilegedCallback(object state);
 
     public sealed class Privilege : IDisposable
@@ -23,7 +22,6 @@ namespace PrivilegeClass
 
         #region Private members
 
-        private bool needToRevert = false;
         private bool initialState = false;
         private bool stateWasChanged = false;
         private Luid luid;
@@ -156,7 +154,6 @@ namespace PrivilegeClass
         private sealed class TlsContents : IDisposable
         {
             private bool disposed = false;
-            private int referenceCount = 1;
             private IntPtr threadHandle = IntPtr.Zero;
 
             private static IntPtr processHandle = IntPtr.Zero;
@@ -199,7 +196,7 @@ namespace PrivilegeClass
                         NativeMethods.GetCurrentThread(),
                         TokenAccessLevels.Query | TokenAccessLevels.AdjustPrivileges,
                         true,
-                        ref this.threadHandle))
+                        ref threadHandle))
                     {
                         if (success)
                         {
@@ -220,7 +217,7 @@ namespace PrivilegeClass
                                     IntPtr.Zero,
                                     SecurityImpersonationLevel.Impersonation,
                                     TokenType.Impersonation,
-                                    ref this.threadHandle))
+                                    ref threadHandle))
                                 {
                                     error = Marshal.GetLastWin32Error();
                                     success = false;
@@ -231,7 +228,7 @@ namespace PrivilegeClass
                             {
                                 if (!NativeMethods.SetThreadToken(
                                     IntPtr.Zero,
-                                    this.threadHandle))
+                                    threadHandle))
                                 {
                                     error = Marshal.GetLastWin32Error();
                                     success = false;
@@ -244,7 +241,7 @@ namespace PrivilegeClass
                                 // This thread is now impersonating; it needs to be reverted to its original state
                                 //
 
-                                this.IsImpersonating = true;
+                                IsImpersonating = true;
                             }
                         }
                         else
@@ -269,8 +266,8 @@ namespace PrivilegeClass
                 {
                     throw new OutOfMemoryException();
                 }
-                else if (error == NativeMethods.ERROR_ACCESS_DENIED ||
-                    error == NativeMethods.ERROR_CANT_OPEN_ANONYMOUS)
+                else if (error is NativeMethods.ERROR_ACCESS_DENIED or
+                    NativeMethods.ERROR_CANT_OPEN_ANONYMOUS)
                 {
                     throw new UnauthorizedAccessException("The caller does not have the rights to perform the operation");
                 }
@@ -282,7 +279,7 @@ namespace PrivilegeClass
 
             ~TlsContents()
             {
-                if (!this.disposed)
+                if (!disposed)
                 {
                     Dispose(false);
                 }
@@ -300,23 +297,23 @@ namespace PrivilegeClass
 
             private void Dispose(bool disposing)
             {
-                if (this.disposed)
+                if (disposed)
                 {
                     return;
                 }
 
-                if (this.threadHandle != IntPtr.Zero)
+                if (threadHandle != IntPtr.Zero)
                 {
-                    NativeMethods.CloseHandle(this.threadHandle);
-                    this.threadHandle = IntPtr.Zero;
+                    _ = NativeMethods.CloseHandle(threadHandle);
+                    threadHandle = IntPtr.Zero;
                 }
 
-                if (this.IsImpersonating)
+                if (IsImpersonating)
                 {
-                    NativeMethods.RevertToSelf();
+                    _ = NativeMethods.RevertToSelf();
                 }
 
-                this.disposed = true;
+                disposed = true;
             }
 
             #endregion IDisposable implementation
@@ -325,12 +322,12 @@ namespace PrivilegeClass
 
             public void IncrementReferenceCount()
             {
-                this.referenceCount++;
+                ReferenceCountValue++;
             }
 
             public int DecrementReferenceCount()
             {
-                int result = --this.referenceCount;
+                int result = --ReferenceCountValue;
 
                 if (result == 0)
                 {
@@ -340,19 +337,13 @@ namespace PrivilegeClass
                 return result;
             }
 
-            public int ReferenceCountValue
-            {
-                get { return this.referenceCount; }
-            }
+            public int ReferenceCountValue { get; private set; } = 1;
 
             #endregion Reference-counting
 
             #region Properties
 
-            public IntPtr ThreadHandle
-            {
-                get { return this.threadHandle; }
-            }
+            public IntPtr ThreadHandle => threadHandle;
 
             public bool IsImpersonating { get; } = false;
 
@@ -370,7 +361,7 @@ namespace PrivilegeClass
                 throw new ArgumentNullException(nameof(privilegeName));
             }
 
-            this.luid = LuidFromPrivilege(privilegeName);
+            luid = LuidFromPrivilege(privilegeName);
         }
 
         #endregion Constructor
@@ -379,12 +370,12 @@ namespace PrivilegeClass
 
         public void Enable()
         {
-            this.ToggleState(true);
+            ToggleState(true);
         }
 
         public void Disable()
         {
-            this.ToggleState(false);
+            ToggleState(false);
         }
 
         public void Revert()
@@ -395,12 +386,12 @@ namespace PrivilegeClass
             // All privilege operations must take place on the same thread
             //
 
-            if (!this.currentThread.Equals(Thread.CurrentThread))
+            if (!currentThread.Equals(Thread.CurrentThread))
             {
                 throw new InvalidOperationException("Operation must take place on the thread that created the object");
             }
 
-            if (!this.NeedToRevert)
+            if (!NeedToRevert)
             {
                 return;
             }
@@ -414,19 +405,21 @@ namespace PrivilegeClass
                 // on this Revert, since doing the latter obliterates the thread token anyway
                 //
 
-                if (this.stateWasChanged &&
-                    (this.tlsContents.ReferenceCountValue > 1 ||
-                    !this.tlsContents.IsImpersonating))
+                if (stateWasChanged &&
+                    (tlsContents.ReferenceCountValue > 1 ||
+                    !tlsContents.IsImpersonating))
                 {
-                    NativeMethods.TOKEN_PRIVILEGE newState = new();
-                    newState.PrivilegeCount = 1;
-                    newState.Privilege.Luid = this.luid;
-                    newState.Privilege.Attributes = (this.initialState ? NativeMethods.SE_PRIVILEGE_ENABLED : NativeMethods.SE_PRIVILEGE_DISABLED);
+                    NativeMethods.TOKEN_PRIVILEGE newState = new()
+                    {
+                        PrivilegeCount = 1
+                    };
+                    newState.Privilege.Luid = luid;
+                    newState.Privilege.Attributes = initialState ? NativeMethods.SE_PRIVILEGE_ENABLED : NativeMethods.SE_PRIVILEGE_DISABLED;
                     NativeMethods.TOKEN_PRIVILEGE previousState = new();
                     uint previousSize = 0;
 
                     if (!NativeMethods.AdjustTokenPrivileges(
-                        this.tlsContents.ThreadHandle,
+                        tlsContents.ThreadHandle,
                         false,
                         ref newState,
                         (uint)Marshal.SizeOf(previousState),
@@ -442,7 +435,7 @@ namespace PrivilegeClass
             {
                 if (success)
                 {
-                    this.Reset();
+                    Reset();
                 }
             }
 
@@ -460,10 +453,7 @@ namespace PrivilegeClass
             }
         }
 
-        public bool NeedToRevert
-        {
-            get { return this.needToRevert; }
-        }
+        public bool NeedToRevert { get; private set; } = false;
 
         public static void RunWithPrivilege(string privilege, bool enabled, PrivilegedCallback callback, object state)
         {
@@ -510,7 +500,7 @@ namespace PrivilegeClass
             // All privilege operations must take place on the same thread
             //
 
-            if (!this.currentThread.Equals(Thread.CurrentThread))
+            if (!currentThread.Equals(Thread.CurrentThread))
             {
                 throw new InvalidOperationException("Operation must take place on the thread that created the object");
             }
@@ -519,7 +509,7 @@ namespace PrivilegeClass
             // This privilege was already altered and needs to be reverted before it can be altered again
             //
 
-            if (this.NeedToRevert)
+            if (NeedToRevert)
             {
                 throw new InvalidOperationException("Must revert the privilege prior to attempting this operation");
             }
@@ -530,21 +520,23 @@ namespace PrivilegeClass
                 // Retrieve TLS state
                 //
 
-                this.tlsContents = Thread.GetData(tlsSlot) as TlsContents;
+                tlsContents = Thread.GetData(tlsSlot) as TlsContents;
 
-                if (this.tlsContents == null)
+                if (tlsContents == null)
                 {
-                    this.tlsContents = new TlsContents();
-                    Thread.SetData(tlsSlot, this.tlsContents);
+                    tlsContents = new TlsContents();
+                    Thread.SetData(tlsSlot, tlsContents);
                 }
                 else
                 {
-                    this.tlsContents.IncrementReferenceCount();
+                    tlsContents.IncrementReferenceCount();
                 }
 
-                NativeMethods.TOKEN_PRIVILEGE newState = new();
-                newState.PrivilegeCount = 1;
-                newState.Privilege.Luid = this.luid;
+                NativeMethods.TOKEN_PRIVILEGE newState = new()
+                {
+                    PrivilegeCount = 1
+                };
+                newState.Privilege.Luid = luid;
                 newState.Privilege.Attributes = enable ? NativeMethods.SE_PRIVILEGE_ENABLED : NativeMethods.SE_PRIVILEGE_DISABLED;
 
                 NativeMethods.TOKEN_PRIVILEGE previousState = new();
@@ -555,7 +547,7 @@ namespace PrivilegeClass
                 //
 
                 if (!NativeMethods.AdjustTokenPrivileges(
-                    this.tlsContents.ThreadHandle,
+                    tlsContents.ThreadHandle,
                     false,
                     ref newState,
                     (uint)Marshal.SizeOf(previousState),
@@ -574,39 +566,39 @@ namespace PrivilegeClass
                     // This is the initial state that revert will have to go back to
                     //
 
-                    this.initialState = ((previousState.Privilege.Attributes & NativeMethods.SE_PRIVILEGE_ENABLED) != 0);
+                    initialState = (previousState.Privilege.Attributes & NativeMethods.SE_PRIVILEGE_ENABLED) != 0;
 
                     //
                     // Remember whether state has changed at all
                     //
 
-                    this.stateWasChanged = (this.initialState != enable);
+                    stateWasChanged = initialState != enable;
 
                     //
                     // If we had to impersonate, or if the privilege state changed we'll need to revert
                     //
 
-                    this.needToRevert = this.tlsContents.IsImpersonating || this.stateWasChanged;
+                    NeedToRevert = tlsContents.IsImpersonating || stateWasChanged;
                 }
             }
             finally
             {
-                if (!this.needToRevert)
+                if (!NeedToRevert)
                 {
-                    this.Reset();
+                    Reset();
                 }
             }
 
             if (error == NativeMethods.ERROR_NOT_ALL_ASSIGNED)
             {
-                throw new PrivilegeNotHeldException(privileges[this.luid] as string);
+                throw new PrivilegeNotHeldException(privileges[luid] as string);
             }
             if (error == NativeMethods.ERROR_NOT_ENOUGH_MEMORY)
             {
                 throw new OutOfMemoryException();
             }
-            else if (error == NativeMethods.ERROR_ACCESS_DENIED ||
-                error == NativeMethods.ERROR_CANT_OPEN_ANONYMOUS)
+            else if (error is NativeMethods.ERROR_ACCESS_DENIED or
+                NativeMethods.ERROR_CANT_OPEN_ANONYMOUS)
             {
                 throw new UnauthorizedAccessException("The caller does not have the right to change the privilege");
             }
@@ -618,15 +610,15 @@ namespace PrivilegeClass
 
         private void Reset()
         {
-            this.stateWasChanged = false;
-            this.initialState = false;
-            this.needToRevert = false;
+            stateWasChanged = false;
+            initialState = false;
+            NeedToRevert = false;
 
-            if (this.tlsContents != null)
+            if (tlsContents != null)
             {
-                if (this.tlsContents.DecrementReferenceCount() == 0)
+                if (tlsContents.DecrementReferenceCount() == 0)
                 {
-                    this.tlsContents = null;
+                    tlsContents = null;
                     Thread.SetData(tlsSlot, null);
                 }
             }

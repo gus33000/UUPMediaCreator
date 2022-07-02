@@ -20,7 +20,7 @@ namespace Imaging
 
         public bool CaptureImage(string wimFile, string imageName, string imageDescription, string imageFlag, string InputDirectory, TempManager.TempManager tempManager, string imageDisplayName = null, string imageDisplayDescription = null, WimCompressionType compressionType = WimCompressionType.Lzx, IImaging.ProgressCallback progressCallback = null, int UpdateFrom = -1, bool PreserveACL = true)
         {
-            return WimgApi.CaptureImage(wimFile, imageName, imageDescription, imageFlag, InputDirectory, tempManager, imageDisplayName = null, imageDisplayDescription = null, compressionType, progressCallback, UpdateFrom, PreserveACL) || 
+            return WimgApi.CaptureImage(wimFile, imageName, imageDescription, imageFlag, InputDirectory, tempManager, imageDisplayName = null, imageDisplayDescription = null, compressionType, progressCallback, UpdateFrom, PreserveACL) ||
                 WimLib.CaptureImage(wimFile, imageName, imageDescription, imageFlag, InputDirectory, tempManager, imageDisplayName = null, imageDisplayDescription = null, compressionType, progressCallback, UpdateFrom, PreserveACL);
         }
 

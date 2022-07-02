@@ -14,7 +14,7 @@ namespace MediaCreationLib.Planning.Applications
             return $"AppX: {AppXPath}\n" +
                    $"License: {LicensePath}\n" +
                    $"Stub Package Option: {StubPackageOption}\n" +
-                   $"Dependencies: \n" + 
+                   $"Dependencies: \n" +
                    string.Join("\n\t", DependenciesPath);
         }
     }

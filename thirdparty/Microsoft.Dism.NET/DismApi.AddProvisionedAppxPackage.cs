@@ -2,6 +2,7 @@
 //
 // Licensed under the MIT license.
 
+using Microsoft.Dism;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 

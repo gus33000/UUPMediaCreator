@@ -28,12 +28,12 @@ namespace UUPMediaCreator.UWP.Pages
     {
         public AdditionalUpdatePage()
         {
-            this.InitializeComponent();
+            InitializeComponent();
         }
 
         private void WizardPage_NextClicked(object sender, RoutedEventArgs e)
         {
-            Frame.Navigate(typeof(WIMTypePage));
+            _ = Frame.Navigate(typeof(WIMTypePage));
         }
 
         private void WizardPage_BackClicked(object sender, RoutedEventArgs e)

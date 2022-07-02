@@ -40,7 +40,7 @@ namespace UUPMediaCreator.UWP.Pages
     {
         public BuildPage()
         {
-            this.InitializeComponent();
+            InitializeComponent();
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -74,7 +74,7 @@ namespace UUPMediaCreator.UWP.Pages
         {
             App.ConversionPlan.UpdateData = (dataGrid.SelectedItem as BuildFetcher.AvailableBuild)?.UpdateData;
             App.ConversionPlan.BuildString = (dataGrid.SelectedItem as BuildFetcher.AvailableBuild)?.BuildString;
-            Frame.Navigate(typeof(LanguagePage));
+            _ = Frame.Navigate(typeof(LanguagePage));
         }
 
         private void WizardPage_BackClicked(object sender, RoutedEventArgs e)

@@ -19,6 +19,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+using MediaCreationLib;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -144,7 +145,7 @@ namespace UUPMediaConverter
                     Logging.Log(SubOperation, severity: Logging.LoggingLevel.Error);
                     if (Debugger.IsAttached)
                     {
-                        Console.ReadLine();
+                        _ = Console.ReadLine();
                     }
 
                     return;
@@ -155,7 +156,7 @@ namespace UUPMediaConverter
 
             try
             {
-                MediaCreationLib.MediaCreator.CreateISOMedia(
+                MediaCreator.CreateISOMedia(
                     opt.ISOPath,
                     opt.UUPPath,
                     opt.Edition,
@@ -176,7 +177,7 @@ namespace UUPMediaConverter
                 }
                 if (Debugger.IsAttached)
                 {
-                    Console.ReadLine();
+                    _ = Console.ReadLine();
                 }
                 return 1;
             }
@@ -202,22 +203,13 @@ namespace UUPMediaConverter
 
         public static OSPlatform GetOperatingSystem()
         {
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-            {
-                return OSPlatform.OSX;
-            }
-
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-            {
-                return OSPlatform.Linux;
-            }
-
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            {
-                return OSPlatform.Windows;
-            }
-
-            return RuntimeInformation.IsOSPlatform(OSPlatform.FreeBSD)
+            return RuntimeInformation.IsOSPlatform(OSPlatform.OSX)
+                ? OSPlatform.OSX
+                : RuntimeInformation.IsOSPlatform(OSPlatform.Linux)
+                ? OSPlatform.Linux
+                : RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
+                ? OSPlatform.Windows
+                : RuntimeInformation.IsOSPlatform(OSPlatform.FreeBSD)
                 ? OSPlatform.FreeBSD
                 : throw new Exception("Cannot determine operating system!");
         }

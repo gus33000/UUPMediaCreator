@@ -124,8 +124,8 @@ namespace UUPMediaCreator
         /// </summary>
         public App()
         {
-            this.InitializeComponent();
-            this.Suspending += OnSuspending;
+            InitializeComponent();
+            Suspending += OnSuspending;
             ApplicationView.PreferredLaunchViewSize = new Size(800, 600);
             ApplicationView.PreferredLaunchWindowingMode = Windows.UI.ViewManagement.ApplicationViewWindowingMode.PreferredLaunchViewSize;
         }
@@ -152,7 +152,7 @@ namespace UUPMediaCreator
                 // parameter
                 if (Connection != null)
                 {
-                    rootFrame.Navigate(typeof(WelcomePage));
+                    _ = rootFrame.Navigate(typeof(WelcomePage));
 
                     SystemNavigationManagerPreview mgr = SystemNavigationManagerPreview.GetForCurrentView();
                     mgr.CloseRequested += SystemNavigationManager_CloseRequested;
@@ -178,9 +178,11 @@ namespace UUPMediaCreator
             {
                 if (Connection != null)
                 {
-                    ValueSet message = new();
-                    message.Add("InterCommunication", JsonSerializer.Serialize(new Common.InterCommunication() { InterCommunicationType = InterCommunicationType.Exit }));
-                    await Connection.SendMessageAsync(message);
+                    ValueSet message = new()
+                    {
+                        { "InterCommunication", JsonSerializer.Serialize(new Common.InterCommunication() { InterCommunicationType = InterCommunicationType.Exit }) }
+                    };
+                    _ = await Connection.SendMessageAsync(message);
                 }
                 e.Handled = false;
                 deferral.Complete();
@@ -192,7 +194,7 @@ namespace UUPMediaCreator
         /// will be used such as when the application is launched to open a specific file.
         /// </summary>
         /// <param name="e">Details about the launch request and process.</param>
-        protected async override void OnLaunched(LaunchActivatedEventArgs e)
+        protected override async void OnLaunched(LaunchActivatedEventArgs e)
         {
             if (Connection == null)
             {

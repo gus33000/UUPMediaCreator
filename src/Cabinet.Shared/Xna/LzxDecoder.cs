@@ -45,10 +45,10 @@
 #endregion
 
 using System;
+using System.IO;
+
 namespace Microsoft.Xna.Framework
 {
-    using System.IO;
-
     internal class LzxDecoder
     {
         internal uint[] position_base = null;
@@ -62,7 +62,7 @@ namespace Microsoft.Xna.Framework
             int posn_slots;
 
             // setup proper exception
-            if (window < 15 || window > 21)
+            if (window is < 15 or > 21)
             {
                 throw new UnsupportedWindowSizeRange();
             }
@@ -106,18 +106,7 @@ namespace Microsoft.Xna.Framework
             }
 
             /* calculate required position slots */
-            if (window == 20)
-            {
-                posn_slots = 42;
-            }
-            else if (window == 21)
-            {
-                posn_slots = 50;
-            }
-            else
-            {
-                posn_slots = window << 1;
-            }
+            posn_slots = window == 20 ? 42 : window == 21 ? 50 : window << 1;
 
             m_state.R0 = m_state.R1 = m_state.R2 = 1;
             m_state.main_elements = (ushort)(LzxConstants.NUM_CHARS + (posn_slots << 3));
@@ -193,7 +182,7 @@ namespace Microsoft.Xna.Framework
                     {
                         if ((m_state.block_length & 1) == 1)
                         {
-                            inData.ReadByte(); /* realign bitstream to word */
+                            _ = inData.ReadByte(); /* realign bitstream to word */
                         }
 
                         bitbuf.InitBitStream();
@@ -207,8 +196,8 @@ namespace Microsoft.Xna.Framework
                     switch (m_state.block_type)
                     {
                         case LzxConstants.BLOCKTYPE.ALIGNED:
-                            for (i = 0, j = 0; i < 8; i++) { j = bitbuf.ReadBits(3); m_state.ALIGNED_len[i] = (byte)j; }
-                            MakeDecodeTable(LzxConstants.ALIGNED_MAXSYMBOLS, LzxConstants.ALIGNED_TABLEBITS,
+                            for (i = 0; i < 8; i++) { j = bitbuf.ReadBits(3); m_state.ALIGNED_len[i] = (byte)j; }
+                            _ = MakeDecodeTable(LzxConstants.ALIGNED_MAXSYMBOLS, LzxConstants.ALIGNED_TABLEBITS,
                                             m_state.ALIGNED_len, m_state.ALIGNED_table);
                             /* rest of aligned header is same as verbatim */
                             goto case LzxConstants.BLOCKTYPE.VERBATIM;
@@ -216,7 +205,7 @@ namespace Microsoft.Xna.Framework
                         case LzxConstants.BLOCKTYPE.VERBATIM:
                             ReadLengths(m_state.MAINTREE_len, 0, 256, bitbuf);
                             ReadLengths(m_state.MAINTREE_len, 256, m_state.main_elements, bitbuf);
-                            MakeDecodeTable(LzxConstants.MAINTREE_MAXSYMBOLS, LzxConstants.MAINTREE_TABLEBITS,
+                            _ = MakeDecodeTable(LzxConstants.MAINTREE_MAXSYMBOLS, LzxConstants.MAINTREE_TABLEBITS,
                                             m_state.MAINTREE_len, m_state.MAINTREE_table);
                             if (m_state.MAINTREE_len[0xE8] != 0)
                             {
@@ -224,7 +213,7 @@ namespace Microsoft.Xna.Framework
                             }
 
                             ReadLengths(m_state.LENGTH_len, 0, LzxConstants.NUM_SECONDARY_LENGTHS, bitbuf);
-                            MakeDecodeTable(LzxConstants.LENGTH_MAXSYMBOLS, LzxConstants.LENGTH_TABLEBITS,
+                            _ = MakeDecodeTable(LzxConstants.LENGTH_MAXSYMBOLS, LzxConstants.LENGTH_TABLEBITS,
                                             m_state.LENGTH_len, m_state.LENGTH_table);
                             break;
 
@@ -233,16 +222,16 @@ namespace Microsoft.Xna.Framework
                             bitbuf.EnsureBits(16); /* get up to 16 pad bits into the buffer */
                             if (bitbuf.GetBitsLeft() > 16)
                             {
-                                inData.Seek(-2, SeekOrigin.Current); /* and align the bitstream! */
+                                _ = inData.Seek(-2, SeekOrigin.Current); /* and align the bitstream! */
                             }
 
                             byte hi, mh, ml, lo;
                             lo = (byte)inData.ReadByte(); ml = (byte)inData.ReadByte(); mh = (byte)inData.ReadByte(); hi = (byte)inData.ReadByte();
-                            R0 = (uint)(lo | ml << 8 | mh << 16 | hi << 24);
+                            R0 = (uint)(lo | (ml << 8) | (mh << 16) | (hi << 24));
                             lo = (byte)inData.ReadByte(); ml = (byte)inData.ReadByte(); mh = (byte)inData.ReadByte(); hi = (byte)inData.ReadByte();
-                            R1 = (uint)(lo | ml << 8 | mh << 16 | hi << 24);
+                            R1 = (uint)(lo | (ml << 8) | (mh << 16) | (hi << 24));
                             lo = (byte)inData.ReadByte(); ml = (byte)inData.ReadByte(); mh = (byte)inData.ReadByte(); hi = (byte)inData.ReadByte();
-                            R2 = (uint)(lo | ml << 8 | mh << 16 | hi << 24);
+                            R2 = (uint)(lo | (ml << 8) | (mh << 16) | (hi << 24));
                             break;
 
                         default:
@@ -425,7 +414,7 @@ namespace Microsoft.Xna.Framework
                                             /* verbatim and aligned bits */
                                             extra -= 3;
                                             verbatim_bits = (int)bitbuf.ReadBits((byte)extra);
-                                            match_offset += (verbatim_bits << 3);
+                                            match_offset += verbatim_bits << 3;
                                             aligned_bits = (int)ReadHuffSym(m_state.ALIGNED_table, m_state.ALIGNED_len,
                                                                        LzxConstants.ALIGNED_MAXSYMBOLS, LzxConstants.ALIGNED_TABLEBITS,
                                                                        bitbuf);
@@ -512,7 +501,7 @@ namespace Microsoft.Xna.Framework
                             }
 
                             byte[] temp_buffer = new byte[this_run];
-                            inData.Read(temp_buffer, 0, this_run);
+                            _ = inData.Read(temp_buffer, 0, this_run);
                             temp_buffer.CopyTo(window, window_posn);
                             window_posn += (uint)this_run;
                             break;
@@ -556,7 +545,7 @@ namespace Microsoft.Xna.Framework
                     int curpos = m_state.intel_curpos;
                     int abs_off, rel_off;
                     long posbak = outData.Position;
-                    outData.Seek(0 - outLen, SeekOrigin.Current);
+                    _ = outData.Seek(0 - outLen, SeekOrigin.Current);
                     int dataend = (int)outData.Position + outLen - 10;
                     while (outData.Position < dataend)
                     {
@@ -565,7 +554,7 @@ namespace Microsoft.Xna.Framework
                         if ((abs_off >= 0 - curpos) && abs_off < m_state.intel_filesize)
                         {
                             rel_off = (abs_off >= 0) ? abs_off - curpos : abs_off + m_state.intel_filesize;
-                            outData.Seek(-4, SeekOrigin.Current);
+                            _ = outData.Seek(-4, SeekOrigin.Current);
                             outData.WriteByte((byte)rel_off);
                             outData.WriteByte((byte)(rel_off >> 8));
                             outData.WriteByte((byte)(rel_off >> 16));
@@ -573,7 +562,7 @@ namespace Microsoft.Xna.Framework
                         }
                         curpos += 5;
                     }
-                    outData.Seek(posbak, SeekOrigin.Begin);
+                    _ = outData.Seek(posbak, SeekOrigin.Begin);
                     m_state.intel_curpos += outLen;
                 }
                 return -1;
@@ -652,7 +641,7 @@ namespace Microsoft.Xna.Framework
                                 {
                                     table[next_symbol << 1] = 0;
                                     table[(next_symbol << 1) + 1] = 0;
-                                    table[leaf] = (ushort)(next_symbol++);
+                                    table[leaf] = (ushort)next_symbol++;
                                 }
                                 /* follow the path and select either left or right for next bit */
                                 leaf = (uint)(table[leaf] << 1);
@@ -705,7 +694,7 @@ namespace Microsoft.Xna.Framework
                 y = bitbuf.ReadBits(4);
                 m_state.PRETREE_len[x] = (byte)y;
             }
-            MakeDecodeTable(LzxConstants.PRETREE_MAXSYMBOLS, LzxConstants.PRETREE_TABLEBITS,
+            _ = MakeDecodeTable(LzxConstants.PRETREE_MAXSYMBOLS, LzxConstants.PRETREE_TABLEBITS,
                             m_state.PRETREE_len, m_state.PRETREE_table);
 
             for (x = first; x < last;)
@@ -802,7 +791,7 @@ namespace Microsoft.Xna.Framework
                 {
                     int lo = (byte)byteStream.ReadByte();
                     int hi = (byte)byteStream.ReadByte();
-                    int amount2shift = (sizeof(uint) * 8) - 16 - bitsleft;
+                    _ = (sizeof(uint) * 8) - 16 - bitsleft;
                     buffer |= (uint)(((hi << 8) | lo) << ((sizeof(uint) * 8) - 16 - bitsleft));
                     bitsleft += 16;
                 }

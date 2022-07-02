@@ -4,11 +4,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("MediaCreationLib.DismOperations.NET")]
+[assembly: AssemblyTitle("MediaCreationLib.DismOperations")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("MediaCreationLib.DismOperations.NET")]
+[assembly: AssemblyProduct("MediaCreationLib.DismOperations")]
 [assembly: AssemblyCopyright("Copyright © Gustave Monce and Contributors")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

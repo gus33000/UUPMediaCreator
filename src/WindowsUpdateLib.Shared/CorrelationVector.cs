@@ -162,7 +162,7 @@ namespace WindowsUpdateLib
             if (IsValid(vector))
             {
                 int lastDot = vector.LastIndexOf(".");
-                baseVector = vector.Substring(0, lastDot);
+                baseVector = vector[..lastDot];
                 currentVector = int.Parse(vector[(lastDot + 1)..]);
                 isInitialized = true;
             }

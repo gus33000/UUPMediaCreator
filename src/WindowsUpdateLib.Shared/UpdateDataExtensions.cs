@@ -71,7 +71,7 @@ namespace WindowsUpdateLib
             return await FE3Handler.GetFileUrl(update, Digest);
         }
 
-        public async static Task<string> GetBuildStringAsync(this UpdateData update)
+        public static async Task<string> GetBuildStringAsync(this UpdateData update)
         {
             string result = null;
 
@@ -185,7 +185,7 @@ namespace WindowsUpdateLib
 
         private static int IndexOf(byte[] searchIn, byte[] searchFor, int offset = 0)
         {
-            if ((searchIn != null) && (searchIn != null))
+            if (searchIn is not null and not null)
             {
                 if (searchFor.Length > searchIn.Length)
                 {
@@ -231,7 +231,7 @@ namespace WindowsUpdateLib
             {
                 if (file.PatchingType.Equals("metadata", StringComparison.InvariantCultureIgnoreCase))
                 {
-                    metadataCabs.Add(file);
+                    _ = metadataCabs.Add(file);
                 }
             }
 
@@ -278,7 +278,7 @@ namespace WindowsUpdateLib
                 {
                     string tmp = Path.GetTempFileName();
                     File.Delete(tmp);
-                    Directory.CreateDirectory(tmp);
+                    _ = Directory.CreateDirectory(tmp);
 
                     CabinetExtractor.ExtractCabinet(update.CachedMetadata, tmp);
 
@@ -288,7 +288,7 @@ namespace WindowsUpdateLib
                         {
                             byte[] xmlfile = CabinetExtractor.ExtractCabinetFile(file, CabinetExtractor.EnumCabinetFiles(file).First().FileName);
                             using Stream xmlstream = new MemoryStream(xmlfile);
-                            neutralCompDB.Add(CompDBXmlClass.DeserializeCompDB(xmlstream));
+                            _ = neutralCompDB.Add(CompDBXmlClass.DeserializeCompDB(xmlstream));
                         }
                         catch { }
                     }
@@ -327,7 +327,7 @@ namespace WindowsUpdateLib
 
                         byte[] xmlfile = CabinetExtractor.ExtractCabinetFile(update.CachedMetadata, CabinetExtractor.EnumCabinetFiles(update.CachedMetadata).First().FileName);
                         using Stream xmlstream = new MemoryStream(xmlfile);
-                        neutralCompDB.Add(CompDBXmlClass.DeserializeCompDB(xmlstream));
+                        _ = neutralCompDB.Add(CompDBXmlClass.DeserializeCompDB(xmlstream));
                     }
                     catch { }
                 }

@@ -28,7 +28,7 @@ namespace UUPMediaCreator.UWP.Pages
     {
         public WIMTypePage()
         {
-            this.InitializeComponent();
+            InitializeComponent();
         }
 
         private void WizardPage_NextClicked(object sender, RoutedEventArgs e)
@@ -45,7 +45,7 @@ namespace UUPMediaCreator.UWP.Pages
             {
                 App.ConversionPlan.InstallationWIMMediumType = InstallationWIMMediumType.XPRESS;
             }
-            Frame.Navigate(typeof(RecapPage));
+            _ = Frame.Navigate(typeof(RecapPage));
         }
 
         private void WizardPage_BackClicked(object sender, RoutedEventArgs e)

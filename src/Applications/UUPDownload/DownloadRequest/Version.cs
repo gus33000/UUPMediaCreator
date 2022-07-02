@@ -36,9 +36,8 @@ namespace UUPDownload.DownloadRequest
 
         public override bool Equals(object obj)
         {
-            if (obj is Version ver)
-                return MajorVersion == ver.MajorVersion && MinorVersion == ver.MinorVersion && Build == ver.Build && Revision == ver.Revision;
-            return false;
+            return obj is Version ver
+&& MajorVersion == ver.MajorVersion && MinorVersion == ver.MinorVersion && Build == ver.Build && Revision == ver.Revision;
         }
 
         public override string ToString()
@@ -48,35 +47,29 @@ namespace UUPDownload.DownloadRequest
 
         public override int GetHashCode()
         {
-            return MajorVersion.GetHashCode() ^ MinorVersion.GetHashCode() ^ Build.GetHashCode() + Revision.GetHashCode();
+            return MajorVersion.GetHashCode() ^ MinorVersion.GetHashCode() ^ (Build.GetHashCode() + Revision.GetHashCode());
         }
 
         public bool GreaterOrEqualThan(object obj)
         {
-            if (obj is Version ver)
-                return MajorVersion >= ver.MajorVersion && MinorVersion >= ver.MinorVersion && Build >= ver.Build && Revision >= ver.Revision;
-            return false;
+            return obj is Version ver
+&& MajorVersion >= ver.MajorVersion && MinorVersion >= ver.MinorVersion && Build >= ver.Build && Revision >= ver.Revision;
         }
 
         public bool GreaterThan(object obj)
         {
-            if (obj is Version ver)
-                return !Equals(ver) && GreaterOrEqualThan(obj);
-            return false;
+            return obj is Version ver && !Equals(ver) && GreaterOrEqualThan(obj);
         }
 
         public bool LessOrEqualThan(object obj)
         {
-            if (obj is Version ver)
-                return MajorVersion <= ver.MajorVersion && MinorVersion <= ver.MinorVersion && Build <= ver.Build && Revision <= ver.Revision;
-            return false;
+            return obj is Version ver
+&& MajorVersion <= ver.MajorVersion && MinorVersion <= ver.MinorVersion && Build <= ver.Build && Revision <= ver.Revision;
         }
 
         public bool LessThan(object obj)
         {
-            if (obj is Version ver)
-                return !Equals(ver) && LessOrEqualThan(obj);
-            return false;
+            return obj is Version ver && !Equals(ver) && LessOrEqualThan(obj);
         }
     }
 }

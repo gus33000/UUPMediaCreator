@@ -2,6 +2,7 @@
 //
 // Licensed under the MIT license.
 
+using Microsoft.Wim;
 using System;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
@@ -45,7 +46,7 @@ namespace Microsoft.Wim
                     }
 
                     // Re-allocate the buffer to the correct size
-                    Marshal.ReAllocHGlobal(mountInfoPtr, (IntPtr)returnLength);
+                    _ = Marshal.ReAllocHGlobal(mountInfoPtr, (IntPtr)returnLength);
 
                     // Call the native function a second time so it can fill buffer with a struct
                     if (!WimgApi.NativeMethods.WIMGetMountedImageInfoFromHandle(imageHandle, WimMountInfo.MountInfoLevel, mountInfoPtr, returnLength, out returnLength))

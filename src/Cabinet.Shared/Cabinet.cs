@@ -150,7 +150,7 @@ namespace Cabinet
         public Cabinet(Stream Stream)
         {
             InputStream = Stream;
-            InputStream.Seek(0, SeekOrigin.Begin);
+            _ = InputStream.Seek(0, SeekOrigin.Begin);
 
             cabinetHeader = ReadHeader(InputStream);
             volumes = ReadVolumes(InputStream);
@@ -163,7 +163,7 @@ namespace Cabinet
                 volume.BlockMap = BuildBlockMap(i, volume.DataMap);
             }
 
-            InputStream.Seek(0, SeekOrigin.Begin);
+            _ = InputStream.Seek(0, SeekOrigin.Begin);
         }
 
         public IReadOnlyCollection<CabinetFile> Files => files.Select(x => new CabinetFile(x)).ToList();
@@ -171,7 +171,6 @@ namespace Cabinet
         #region Reading Metadata
         private CabinetHeader ReadHeader(Stream cabinetStream)
         {
-            ushort cbCFHeader = 0;
             byte cbCFFolder = 0;
             byte cbCFData = 0;
             byte[] AdditionalData = Array.Empty<byte>();
@@ -187,7 +186,7 @@ namespace Cabinet
 
             if ((header.flags & CFHEADER.Options.ReservePresent) != 0)
             {
-                cbCFHeader = cabinetBinaryReader.ReadUInt16();
+                ushort cbCFHeader = cabinetBinaryReader.ReadUInt16();
                 cbCFFolder = cabinetBinaryReader.ReadByte();
                 cbCFData = cabinetBinaryReader.ReadByte();
                 AdditionalData = cabinetBinaryReader.ReadBytes(cbCFHeader);
@@ -231,16 +230,16 @@ namespace Cabinet
                     AdditionalApplicationData = cabinetHeader.VolumeAdditionalApplicationDataSize > 0 ? cabinetBinaryReader.ReadBytes(cabinetHeader.VolumeAdditionalApplicationDataSize) : Array.Empty<byte>()
                 };
 
-                if (volume.CabinetFileVolume.typeCompress != CFFOLDER.CFTYPECOMPRESS.TYPE_LZX &&
-                    volume.CabinetFileVolume.typeCompress != CFFOLDER.CFTYPECOMPRESS.TYPE_MSZIP &&
-                    volume.CabinetFileVolume.typeCompress != CFFOLDER.CFTYPECOMPRESS.TYPE_NONE)
+                if (volume.CabinetFileVolume.typeCompress is not CFFOLDER.CFTYPECOMPRESS.TYPE_LZX and
+                    not CFFOLDER.CFTYPECOMPRESS.TYPE_MSZIP and
+                    not CFFOLDER.CFTYPECOMPRESS.TYPE_NONE)
                 {
                     throw new Exception("Unsupported Cabinet: Only LZX, MSZip and Store is currently supported");
                 }
 
                 if (volume.CabinetFileVolume.typeCompress == CFFOLDER.CFTYPECOMPRESS.TYPE_LZX)
                 {
-                    if (volume.CabinetFileVolume.typeCompressOption < 15 || volume.CabinetFileVolume.typeCompressOption > 21)
+                    if (volume.CabinetFileVolume.typeCompressOption is < 15 or > 21)
                     {
                         throw new Exception("Unsupported Cabinet: LZX variable does not fall in supported ranges");
                     }
@@ -266,16 +265,7 @@ namespace Cabinet
             {
                 CFFILE file = cabinetBinaryReader.BaseStream.ReadStruct<CFFILE>();
 
-                string name;
-                if (file.IsFileNameUTF8())
-                {
-                    name = cabinetBinaryReader.BaseStream.ReadUTF8tring();
-                }
-                else
-                {
-                    name = cabinetBinaryReader.BaseStream.ReadString();
-                }
-
+                string name = file.IsFileNameUTF8() ? cabinetBinaryReader.BaseStream.ReadUTF8tring() : cabinetBinaryReader.BaseStream.ReadString();
                 files.Add(new CabinetVolumeFile()
                 {
                     CabinetFileVolumeFile = file,
@@ -293,15 +283,15 @@ namespace Cabinet
 
             // Build Data Map
             using BinaryReader cabinetBinaryReader = new(InputStream, System.Text.Encoding.UTF8, true);
-            InputStream.Seek(volume.CabinetFileVolume.firstDataBlockOffset, SeekOrigin.Begin);
+            _ = InputStream.Seek(volume.CabinetFileVolume.firstDataBlockOffset, SeekOrigin.Begin);
 
             int offset = 0;
             for (int i = 0; i < volume.CabinetFileVolume.dataBlockCount; i++)
             {
                 CFDATA CabinetData = cabinetBinaryReader.BaseStream.ReadStruct<CFDATA>();
-                cabinetBinaryReader.BaseStream.Seek(cabinetHeader.DataAdditionalApplicationDataSize, SeekOrigin.Current);
+                _ = cabinetBinaryReader.BaseStream.Seek(cabinetHeader.DataAdditionalApplicationDataSize, SeekOrigin.Current);
                 datas.Add((CabinetData, (int)cabinetBinaryReader.BaseStream.Position, offset, offset + CabinetData.cbUncomp - 1, i));
-                cabinetBinaryReader.BaseStream.Seek(CabinetData.cbData, SeekOrigin.Current);
+                _ = cabinetBinaryReader.BaseStream.Seek(CabinetData.cbData, SeekOrigin.Current);
                 offset += CabinetData.cbUncomp;
             }
 
@@ -345,7 +335,7 @@ namespace Cabinet
                 string destination = Path.Combine(OutputDirectory, file.FileName);
                 if (!Directory.Exists(Path.GetDirectoryName(destination)))
                 {
-                    Directory.CreateDirectory(Path.GetDirectoryName(destination));
+                    _ = Directory.CreateDirectory(Path.GetDirectoryName(destination));
                 }
 
                 if (File.Exists(destination))
@@ -379,7 +369,7 @@ namespace Cabinet
                 {
                     (CFDATA dataStruct, int dataOffsetCabinet, int beginFolderOffset, int endFolderOffset, int index) = volume.DataMap[i];
 
-                    cabinetBinaryReader.BaseStream.Seek(dataOffsetCabinet, SeekOrigin.Begin);
+                    _ = cabinetBinaryReader.BaseStream.Seek(dataOffsetCabinet, SeekOrigin.Begin);
 
                     byte[] uncompressedDataBlock = new byte[dataStruct.cbUncomp];
                     byte[] compressedDataBlock = null;
@@ -443,7 +433,7 @@ namespace Cabinet
                                 string destination = Path.Combine(OutputDirectory, file.FileName);
                                 using (FileStream uncompressedDataStream = File.Open(destination, FileMode.OpenOrCreate))
                                 {
-                                    uncompressedDataStream.Seek(0, SeekOrigin.End);
+                                    _ = uncompressedDataStream.Seek(0, SeekOrigin.End);
                                     uncompressedDataStream.Write(uncompressedDataBlock, start, count);
                                 }
 
@@ -479,7 +469,7 @@ namespace Cabinet
 
             byte[] destination = new byte[file.CabinetFileVolumeFile.cbFile];
             using MemoryStream uncompressedDataStream = new(destination);
-            uncompressedDataStream.Seek(0, SeekOrigin.Begin);
+            _ = uncompressedDataStream.Seek(0, SeekOrigin.Begin);
 
             // Do the extraction
             CabinetVolume volume = volumes.ElementAt(volumeIndex);
@@ -504,7 +494,7 @@ namespace Cabinet
             {
                 (CFDATA dataStruct, int dataOffsetCabinet, int beginFolderOffset, int endFolderOffset, int index) = volume.DataMap[i];
 
-                cabinetBinaryReader.BaseStream.Seek(dataOffsetCabinet, SeekOrigin.Begin);
+                _ = cabinetBinaryReader.BaseStream.Seek(dataOffsetCabinet, SeekOrigin.Begin);
 
                 byte[] uncompressedDataBlock = new byte[dataStruct.cbUncomp];
                 byte[] compressedDataBlock = null;
@@ -571,7 +561,7 @@ namespace Cabinet
             {
                 case CFFOLDER.CFTYPECOMPRESS.TYPE_LZX:
                     {
-                        lzx.Decompress(compressedDataBlockStream, (int)compressedDataBlockStream.Length, uncompressedDataBlockStream, (int)uncompressedDataBlockStream.Length);
+                        _ = lzx.Decompress(compressedDataBlockStream, (int)compressedDataBlockStream.Length, uncompressedDataBlockStream, (int)uncompressedDataBlockStream.Length);
                         break;
                     }
 

@@ -38,10 +38,14 @@ namespace CompDB
             foreach (CompDBXmlClass.CompDB compDB in compDBs)
             {
                 if (compDB.Type != "Build")
+                {
                     continue;
+                }
 
                 if (compDB.Name?.Contains("Desktop_FOD") == true)
+                {
                     continue;
+                }
 
                 //
                 // Newer style compdbs have a tag attribute, make use of it.
@@ -89,7 +93,7 @@ namespace CompDB
                         compDB.Tags.Tag.Find(x => x.Name.Equals("Language", StringComparison.InvariantCultureIgnoreCase))?.Value?.Equals(LanguageCode, StringComparison.InvariantCultureIgnoreCase) == true &&
                         compDB.Tags.Tag.Any(x => x.Name.Equals("Edition", StringComparison.InvariantCultureIgnoreCase)))
                     {
-                        filteredCompDBs.Add(compDB);
+                        _ = filteredCompDBs.Add(compDB);
                     }
                 }
                 //
@@ -99,7 +103,7 @@ namespace CompDB
                         x.Type?.Contains("DesktopMedia", StringComparison.InvariantCultureIgnoreCase) == true &&
                         x.FeatureID?.Contains(LanguageCode, StringComparison.InvariantCultureIgnoreCase) == true) != null)
                 {
-                    filteredCompDBs.Add(compDB);
+                    _ = filteredCompDBs.Add(compDB);
                 }
             }
 
@@ -123,7 +127,7 @@ namespace CompDB
                         compDB.Tags.Tag.Find(x => x.Name.Equals("UpdateType", StringComparison.InvariantCultureIgnoreCase))?.Value?.Equals("Canonical", StringComparison.InvariantCultureIgnoreCase) == true &&
                         compDB.Tags.Tag.Any(x => x.Name.Equals("Edition", StringComparison.InvariantCultureIgnoreCase)))
                     {
-                        filteredCompDBs.Add(compDB);
+                        _ = filteredCompDBs.Add(compDB);
                     }
                 }
                 //
@@ -132,7 +136,7 @@ namespace CompDB
                 else if (compDB.Features?.Feature?.FirstOrDefault(x =>
                         x.Type?.Contains("DesktopMedia", StringComparison.InvariantCultureIgnoreCase) == true) != null)
                 {
-                    filteredCompDBs.Add(compDB);
+                    _ = filteredCompDBs.Add(compDB);
                 }
             }
 
@@ -187,7 +191,7 @@ namespace CompDB
                             continue;
                         }
 
-                        pkgs.Add(pkg);
+                        _ = pkgs.Add(pkg);
                     }
                 }
             }

@@ -82,12 +82,12 @@ namespace MediaCreationLib.Planning.Applications
                     if (!preferStub)
                     {
                         preinstalledApps[depAppId] = new DeploymentProperties();
-                        depsForApp.Add(depAppId);
+                        _ = depsForApp.Add(depAppId);
                     }
                     else if (depAppId.StartsWith("Microsoft.VCLibs.140.00_"))
                     {
                         preinstalledApps[depAppId] = new DeploymentProperties();
-                        depsForApp.Add(depAppId);
+                        _ = depsForApp.Add(depAppId);
                         break;
                     }
                 }
@@ -123,7 +123,7 @@ namespace MediaCreationLib.Planning.Applications
                     string LicenseDirectory = Path.Combine(repositoryPath, "Licenses");
                     if (!Directory.Exists(LicenseDirectory))
                     {
-                        Directory.CreateDirectory(LicenseDirectory);
+                        _ = Directory.CreateDirectory(LicenseDirectory);
                     }
                     File.WriteAllText(Path.Combine(LicenseDirectory, appFeatureId + "_License.xml"), licenseData);
                 }
@@ -178,7 +178,7 @@ namespace MediaCreationLib.Planning.Applications
 
                 foreach (string pid in deployProps.PackageIDs)
                 {
-                    allPackageIDs.Add(pid);
+                    _ = allPackageIDs.Add(pid);
                 }
             }
 
@@ -205,8 +205,10 @@ namespace MediaCreationLib.Planning.Applications
             foreach (KeyValuePair<string, DeploymentProperties> deployKvp in preinstalledApps.Where(x => !x.Value.IsFramework))
             {
                 DeploymentProperties deployProps = deployKvp.Value;
-                AppxInstallWorkload workload = new();
-                workload.AppXPath = packageHashDict[deployProps.MainPackageID].Path;
+                AppxInstallWorkload workload = new()
+                {
+                    AppXPath = packageHashDict[deployProps.MainPackageID].Path
+                };
 
                 if (deployProps.Dependencies != null)
                 {
@@ -235,7 +237,7 @@ namespace MediaCreationLib.Planning.Applications
             return workloads.ToArray();
         }
 
-        private static Dictionary<string, string[]> languageMap = new()
+        private static readonly Dictionary<string, string[]> languageMap = new()
         {
             { "af-za", new[] { "af", "af-za" } },
             { "af", new[] { "af" } },
@@ -530,7 +532,7 @@ namespace MediaCreationLib.Planning.Applications
 
                 foreach (string pid in deployProps.PackageIDs)
                 {
-                    allPackageIDs.Add(pid);
+                    _ = allPackageIDs.Add(pid);
                 }
             }
 

@@ -3,7 +3,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace MediaCreationLib
+namespace Microsoft.Dism.Reference
 {
     public enum LogLevel
     {
@@ -162,7 +162,7 @@ namespace MediaCreationLib
             ImageIdentifier ImageIdentifier,
             uint MountFlags,
             SafeWaitHandle CancelHandle,
-            DismInterop.ProgressCallback Progress,
+            ProgressCallback Progress,
             IntPtr UserData
         );
 
@@ -174,7 +174,7 @@ namespace MediaCreationLib
             [MarshalAs(UnmanagedType.LPWStr)] string MountPath,
             uint UnmountFlags,
             SafeWaitHandle CancelHandle,
-            DismInterop.ProgressCallback Progress,
+            ProgressCallback Progress,
             IntPtr UserData
         );
 
@@ -182,7 +182,7 @@ namespace MediaCreationLib
         public static extern int DismRemountImage([MarshalAs(UnmanagedType.LPWStr)] string MountPath);
 
         [DllImport("dismapi.dll")]
-        public static extern int DismCommitImage(uint Session, uint Flags, SafeWaitHandle CancelHandle, DismInterop.ProgressCallback Progress, IntPtr UserData);
+        public static extern int DismCommitImage(uint Session, uint Flags, SafeWaitHandle CancelHandle, ProgressCallback Progress, IntPtr UserData);
 
         [DllImport("dismapi.dll")]
         public static extern int DismGetImageInfo([MarshalAs(UnmanagedType.LPWStr)] string ImageFilePath, out IntPtr ImageInfoBufPtr, out uint ImageInfoCount);
@@ -200,10 +200,10 @@ namespace MediaCreationLib
         public static extern int DismGetLastErrorMessage(out IntPtr ErrorMessage);
 
         [DllImport("dismapi.dll")]
-        public static extern int DismCheckImageHealth(uint Session, bool ScanImage, SafeWaitHandle CancelHandle, DismInterop.ProgressCallback Progress, IntPtr UserData, out ImageHealthState ImageHealth);
+        public static extern int DismCheckImageHealth(uint Session, bool ScanImage, SafeWaitHandle CancelHandle, ProgressCallback Progress, IntPtr UserData, out ImageHealthState ImageHealth);
 
         [DllImport("dismapi.dll")]
-        public static extern int DismRestoreImageHealth(uint Session, [MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.LPWStr, SizeParamIndex = 2)] string[] SourcePaths, uint SourcePathCount, bool LimitAccess, SafeWaitHandle CancelHandle, DismInterop.ProgressCallback Progress, IntPtr UserData);
+        public static extern int DismRestoreImageHealth(uint Session, [MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.LPWStr, SizeParamIndex = 2)] string[] SourcePaths, uint SourcePathCount, bool LimitAccess, SafeWaitHandle CancelHandle, ProgressCallback Progress, IntPtr UserData);
 
         [DllImport("dismapi.dll")]
         public static extern int DismAddPackage(
@@ -212,18 +212,18 @@ namespace MediaCreationLib
             bool IgnoreCheck,
             bool PreventPending,
             SafeWaitHandle CancelHandle,
-            DismInterop.ProgressCallback Progress,
+            ProgressCallback Progress,
             IntPtr UserData
         );
 
         [DllImport("dismapi.dll")]
-        public static extern int DismRemovePackage(uint Session, [MarshalAs(UnmanagedType.LPWStr)] string Identifier, PackageIdentifier PackageIdentifier, SafeWaitHandle CancelHandle, DismInterop.ProgressCallback Progress, IntPtr UserData);
+        public static extern int DismRemovePackage(uint Session, [MarshalAs(UnmanagedType.LPWStr)] string Identifier, PackageIdentifier PackageIdentifier, SafeWaitHandle CancelHandle, ProgressCallback Progress, IntPtr UserData);
 
         [DllImport("dismapi.dll")]
-        public static extern int DismEnableFeature(uint Session, [MarshalAs(UnmanagedType.LPWStr)] string FeatureName, [MarshalAs(UnmanagedType.LPWStr)] string Identifier, PackageIdentifier PackageIdentifier, bool LimitAccess, [MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.LPWStr, SizeParamIndex = 6)] string[] SourcePaths, uint SourcePathCount, bool EnableAll, SafeWaitHandle CancelHandle, DismInterop.ProgressCallback Progress, IntPtr UserData);
+        public static extern int DismEnableFeature(uint Session, [MarshalAs(UnmanagedType.LPWStr)] string FeatureName, [MarshalAs(UnmanagedType.LPWStr)] string Identifier, PackageIdentifier PackageIdentifier, bool LimitAccess, [MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.LPWStr, SizeParamIndex = 6)] string[] SourcePaths, uint SourcePathCount, bool EnableAll, SafeWaitHandle CancelHandle, ProgressCallback Progress, IntPtr UserData);
 
         [DllImport("dismapi.dll")]
-        public static extern int DismDisableFeature(uint Session, [MarshalAs(UnmanagedType.LPWStr)] string FeatureName, [MarshalAs(UnmanagedType.LPWStr)] string PackageName, bool RemovePayload, SafeWaitHandle CancelHandle, DismInterop.ProgressCallback Progress, IntPtr UserData);
+        public static extern int DismDisableFeature(uint Session, [MarshalAs(UnmanagedType.LPWStr)] string FeatureName, [MarshalAs(UnmanagedType.LPWStr)] string PackageName, bool RemovePayload, SafeWaitHandle CancelHandle, ProgressCallback Progress, IntPtr UserData);
 
         [DllImport("dismapi.dll")]
         public static extern int DismGetPackages(uint Session, out IntPtr PackageBufPtr, out uint PackageCount);
@@ -256,13 +256,13 @@ namespace MediaCreationLib
         public static extern int DismGetDriverInfo(uint Session, [MarshalAs(UnmanagedType.LPWStr)] string DriverPath, out IntPtr DriverBufPtr, out uint DriverCount, out IntPtr DriverPackageBufPtr);
 
         [DllImport("dismapi.dll")]
-        public static extern int _DismExportDriver(uint Session, [MarshalAs(UnmanagedType.LPWStr)] string Destination, SafeWaitHandle CancelHandle, DismInterop.ProgressCallback Progress, IntPtr UserData);
+        public static extern int _DismExportDriver(uint Session, [MarshalAs(UnmanagedType.LPWStr)] string Destination, SafeWaitHandle CancelHandle, ProgressCallback Progress, IntPtr UserData);
 
         [DllImport("dismapi.dll")]
         public static extern int _DismGetOsInfo(uint Session, out IntPtr BufPtr);
 
         [DllImport("dismapi.dll")]
-        public static extern int _DismSetEdition(uint Session, [MarshalAs(UnmanagedType.LPWStr)] string EditionID, [MarshalAs(UnmanagedType.LPWStr)] string ProductKey, SafeWaitHandle CancelHandle, DismInterop.ProgressCallback Progress, IntPtr UserData);
+        public static extern int _DismSetEdition(uint Session, [MarshalAs(UnmanagedType.LPWStr)] string EditionID, [MarshalAs(UnmanagedType.LPWStr)] string ProductKey, SafeWaitHandle CancelHandle, ProgressCallback Progress, IntPtr UserData);
 
         [DllImport("dismapi.dll")]
         public static extern int _DismSetProductKey(uint Session, [MarshalAs(UnmanagedType.LPWStr)] string ProductKey);
@@ -280,7 +280,7 @@ namespace MediaCreationLib
         public static extern int _DismGetVirtualEditions(uint Session, [MarshalAs(UnmanagedType.LPWStr)] string CompositionEditionId, out IntPtr EditionIdStringBuf, out uint EditionIdCount);
 
         [DllImport("dismapi.dll")]
-        public static extern int _DismOptimizeImage(uint Session, uint Flags, SafeWaitHandle CancelHandle, DismInterop.ProgressCallback Progress, IntPtr UserData);
+        public static extern int _DismOptimizeImage(uint Session, uint Flags, SafeWaitHandle CancelHandle, ProgressCallback Progress, IntPtr UserData);
 
         [DllImport("dismapi.dll")]
         public static extern int _DismAddProvisionedAppxPackage(uint Session, [MarshalAs(UnmanagedType.LPWStr)] string AppPath, [MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.LPWStr, SizeParamIndex = 3)] string[] DependencyPackages, uint DependencyPackageCount, [MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.LPWStr, SizeParamIndex = 5)] string[] OptionalPackages, uint OptionalPackageCount, [MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.LPWStr, SizeParamIndex = 7)] string[] LicensePaths, uint LicensePathCount, bool SkipLicense, [MarshalAs(UnmanagedType.LPWStr)] string CustomDataPath, [MarshalAs(UnmanagedType.LPWStr)] string Regions, StubPackageOption stubPackageOption);
@@ -301,19 +301,19 @@ namespace MediaCreationLib
         public static extern int _DismOptimizeProvisionedAppxPackages(uint Session);
 
         [DllImport("dismapi.dll")]
-        public static extern int _DismExportSource(uint Session, [MarshalAs(UnmanagedType.LPWStr)] string RecipeFile, [MarshalAs(UnmanagedType.LPWStr)] string SourcePath, [MarshalAs(UnmanagedType.LPWStr)] string TargetPath, SafeWaitHandle CancelHandle, DismInterop.ProgressCallback Progress, IntPtr UserData);
+        public static extern int _DismExportSource(uint Session, [MarshalAs(UnmanagedType.LPWStr)] string RecipeFile, [MarshalAs(UnmanagedType.LPWStr)] string SourcePath, [MarshalAs(UnmanagedType.LPWStr)] string TargetPath, SafeWaitHandle CancelHandle, ProgressCallback Progress, IntPtr UserData);
 
         [DllImport("dismapi.dll")]
-        public static extern int _DismExportSourceEx(uint Session, [MarshalAs(UnmanagedType.LPWStr)] string RecipeFile, [MarshalAs(UnmanagedType.LPWStr)] string SourcePath, [MarshalAs(UnmanagedType.LPWStr)] string TargetPath, SafeWaitHandle CancelHandle, DismInterop.ProgressCallback Progress, IntPtr UserData);
+        public static extern int _DismExportSourceEx(uint Session, [MarshalAs(UnmanagedType.LPWStr)] string RecipeFile, [MarshalAs(UnmanagedType.LPWStr)] string SourcePath, [MarshalAs(UnmanagedType.LPWStr)] string TargetPath, SafeWaitHandle CancelHandle, ProgressCallback Progress, IntPtr UserData);
 
         [DllImport("dismapi.dll")]
-        public static extern int DismAddCapability(uint Session, [MarshalAs(UnmanagedType.LPWStr)] string FeatureName, bool LimitAccess, [MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.LPWStr, SizeParamIndex = 5)] string[] SourcePaths, uint SourcePathCount, SafeWaitHandle CancelHandle, DismInterop.ProgressCallback Progress, IntPtr UserData);
+        public static extern int DismAddCapability(uint Session, [MarshalAs(UnmanagedType.LPWStr)] string FeatureName, bool LimitAccess, [MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.LPWStr, SizeParamIndex = 5)] string[] SourcePaths, uint SourcePathCount, SafeWaitHandle CancelHandle, ProgressCallback Progress, IntPtr UserData);
 
         [DllImport("dismapi.dll")]
-        public static extern int _DismAddCapabilityEx(uint Session, [MarshalAs(UnmanagedType.LPWStr)] string RecipeFile, bool LimitAccess, [MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.LPWStr, SizeParamIndex = 5)] string[] SourcePaths, uint SourcePathCount, SafeWaitHandle CancelHandle, DismInterop.ProgressCallback Progress, IntPtr UserData);
+        public static extern int _DismAddCapabilityEx(uint Session, [MarshalAs(UnmanagedType.LPWStr)] string RecipeFile, bool LimitAccess, [MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.LPWStr, SizeParamIndex = 5)] string[] SourcePaths, uint SourcePathCount, SafeWaitHandle CancelHandle, ProgressCallback Progress, IntPtr UserData);
 
         [DllImport("dismapi.dll")]
-        public static extern int DismRemoveCapability(uint Session, [MarshalAs(UnmanagedType.LPWStr)] string FeatureName, SafeWaitHandle CancelHandle, DismInterop.ProgressCallback Progress, IntPtr UserData);
+        public static extern int DismRemoveCapability(uint Session, [MarshalAs(UnmanagedType.LPWStr)] string FeatureName, SafeWaitHandle CancelHandle, ProgressCallback Progress, IntPtr UserData);
 
         [DllImport("dismapi.dll")]
         public static extern int DismGetCapabilities(uint Session, out IntPtr CapabilityBufPtr, out uint CapabilityCount);
@@ -337,10 +337,10 @@ namespace MediaCreationLib
         public static extern int _DismGetNonRemovableAppsPolicy(uint Session, out IntPtr PackageFamilyBufPtr, out uint PackageFamilyCount);
 
         [DllImport("dismapi.dll")]
-        public static extern int _DismApplyCustomDataImage([MarshalAs(UnmanagedType.LPWStr)] string CustomDataImage, [MarshalAs(UnmanagedType.LPWStr)] string ImagePath, uint Flags, SafeWaitHandle CancelHandle, DismInterop.ProgressCallback Progress, IntPtr UserData);
+        public static extern int _DismApplyCustomDataImage([MarshalAs(UnmanagedType.LPWStr)] string CustomDataImage, [MarshalAs(UnmanagedType.LPWStr)] string ImagePath, uint Flags, SafeWaitHandle CancelHandle, ProgressCallback Progress, IntPtr UserData);
 
         [DllImport("dismapi.dll")]
-        public static extern int _DismCleanImage(uint Session, uint Type, uint Flags, SafeWaitHandle CancelHandle, DismInterop.ProgressCallback Progress, IntPtr UserData);
+        public static extern int _DismCleanImage(uint Session, uint Type, uint Flags, SafeWaitHandle CancelHandle, ProgressCallback Progress, IntPtr UserData);
 
         [DllImport("dismapi.dll")]
         public static extern int _DismGetRegistryMountPoint(uint Session, DismRegistryHive RegistryHive, out IntPtr RegistryMountPointDismString);
@@ -379,13 +379,13 @@ namespace MediaCreationLib
         public static extern bool LookupPrivilegeValue([MarshalAs(UnmanagedType.LPWStr)] string SystemName, [MarshalAs(UnmanagedType.LPWStr)] string Name, out long Luid);
 
         [DllImport("Advapi32.dll", CallingConvention = CallingConvention.StdCall, SetLastError = true)]
-        public static extern bool AdjustTokenPrivileges(IntPtr TokenHandle, bool DisableAllPrivileges, ref DismInterop.TOKEN_PRIVILEGES NewState, uint BufferLength, IntPtr PreviousState, IntPtr ReturnLength);
+        public static extern bool AdjustTokenPrivileges(IntPtr TokenHandle, bool DisableAllPrivileges, ref TOKEN_PRIVILEGES NewState, uint BufferLength, IntPtr PreviousState, IntPtr ReturnLength);
 
         [DllImport("Advapi32.dll", CallingConvention = CallingConvention.StdCall, EntryPoint = "InitiateSystemShutdownExW", SetLastError = true)]
         public static extern bool InitiateSystemShutdownEx([MarshalAs(UnmanagedType.LPWStr)] string MachineName, [MarshalAs(UnmanagedType.LPWStr)] string Message, uint Timeout, [MarshalAs(UnmanagedType.Bool)] bool ForceAppsClosed, [MarshalAs(UnmanagedType.Bool)] bool RebootAfterShutdown, uint Reason);
 
         [DllImport("ntdll.dll", SetLastError = true)]
-        public static extern long RtlGetVersion(ref DismInterop.RTL_OSVERSIONINFOEXW osVersionInfo);
+        public static extern long RtlGetVersion(ref RTL_OSVERSIONINFOEXW osVersionInfo);
 
         public static string DismOnlineImage = "DISM_{53BFAE52-B167-4E2F-A258-0A37B57FF845}";
 
@@ -525,7 +525,7 @@ namespace MediaCreationLib
 
             public ReleaseType ReleaseType;
 
-            public DismInterop.SYSTEMTIME InstallTime;
+            public SYSTEMTIME InstallTime;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -569,7 +569,7 @@ namespace MediaCreationLib
 
             public ReleaseType ReleaseType;
 
-            public DismInterop.SYSTEMTIME InstallTime;
+            public SYSTEMTIME InstallTime;
 
             public bool Applicable;
 
@@ -579,7 +579,7 @@ namespace MediaCreationLib
             [MarshalAs(UnmanagedType.LPWStr)]
             public string Company;
 
-            public DismInterop.SYSTEMTIME CreationTime;
+            public SYSTEMTIME CreationTime;
 
             [MarshalAs(UnmanagedType.LPWStr)]
             public string DisplayName;
@@ -593,7 +593,7 @@ namespace MediaCreationLib
             [MarshalAs(UnmanagedType.LPWStr)]
             public string InstallPackageName;
 
-            public DismInterop.SYSTEMTIME LastUpdateTime;
+            public SYSTEMTIME LastUpdateTime;
 
             [MarshalAs(UnmanagedType.LPWStr)]
             public string ProductName;
@@ -683,9 +683,9 @@ namespace MediaCreationLib
 
             public uint FileCount;
 
-            public DismInterop.SYSTEMTIME CreatedTime;
+            public SYSTEMTIME CreatedTime;
 
-            public DismInterop.SYSTEMTIME ModifiedTime;
+            public SYSTEMTIME ModifiedTime;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -793,7 +793,7 @@ namespace MediaCreationLib
             [MarshalAs(UnmanagedType.LPWStr)]
             public string ProviderName;
 
-            public DismInterop.SYSTEMTIME Date;
+            public SYSTEMTIME Date;
 
             public uint MajorVersion;
 

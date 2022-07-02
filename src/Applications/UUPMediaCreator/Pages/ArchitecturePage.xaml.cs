@@ -33,7 +33,7 @@ namespace UUPMediaCreator.UWP.Pages
     {
         public ArchitecturePage()
         {
-            this.InitializeComponent();
+            InitializeComponent();
         }
 
         private void WizardPage_NextClicked(object sender, RoutedEventArgs e)
@@ -50,7 +50,7 @@ namespace UUPMediaCreator.UWP.Pages
             {
                 App.ConversionPlan.MachineType = WindowsUpdateLib.MachineType.x86;
             }
-            Frame.Navigate(typeof(BuildPage));
+            _ = Frame.Navigate(typeof(BuildPage));
         }
 
         private void WizardPage_BackClicked(object sender, RoutedEventArgs e)

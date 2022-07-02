@@ -21,6 +21,7 @@
  */
 using ManagedWimLib;
 using Microsoft.Wim;
+using Microsoft.Wim;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -668,7 +669,7 @@ namespace Imaging
                     fsentries.Add(dentry.FileName);
                     return 0;
                 }
-                wim.IterateDirTree(imageIndex, path, IterateDirTreeFlags.Children, IterateDirTreeCallback);
+                _ = wim.IterateDirTree(imageIndex, path, IterateDirTreeFlags.Children, IterateDirTreeCallback);
             }
             catch
             {

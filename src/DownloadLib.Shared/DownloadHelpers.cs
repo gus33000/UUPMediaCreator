@@ -44,7 +44,7 @@ namespace DownloadLib
             }
             else if (!payloadItems.Any() && filename.Contains('_') && !filename.StartsWith("_") && (!filename.Contains('-') || filename.IndexOf('-') > filename.IndexOf('_')))
             {
-                filename = filename.Substring(0, filename.IndexOf('_')) + Path.DirectorySeparatorChar + filename[(filename.IndexOf('_') + 1)..];
+                filename = filename[..filename.IndexOf('_')] + Path.DirectorySeparatorChar + filename[(filename.IndexOf('_') + 1)..];
                 return filename.TrimStart(Path.DirectorySeparatorChar);
             }
             return filename;
@@ -100,7 +100,7 @@ namespace DownloadLib
 
                 if (IsDiff)
                 {
-                    discardedCompDBs.Add(cdb);
+                    _ = discardedCompDBs.Add(cdb);
                 }
                 else
                 {
@@ -117,7 +117,7 @@ namespace DownloadLib
                         // Get everything
                         case (false, false):
                             {
-                                selectedCompDBs.Add(cdb);
+                                _ = selectedCompDBs.Add(cdb);
                                 break;
                             }
                         // Get edition
@@ -125,12 +125,12 @@ namespace DownloadLib
                             {
                                 if ((!hasEdition || editionMatching) && !IsNeutral)
                                 {
-                                    specificCompDBs.Add(cdb);
-                                    selectedCompDBs.Add(cdb);
+                                    _ = specificCompDBs.Add(cdb);
+                                    _ = selectedCompDBs.Add(cdb);
                                 }
                                 else
                                 {
-                                    discardedCompDBs.Add(cdb);
+                                    _ = discardedCompDBs.Add(cdb);
                                 }
                                 break;
                             }
@@ -139,12 +139,12 @@ namespace DownloadLib
                             {
                                 if (!hasLang || langMatching)
                                 {
-                                    specificCompDBs.Add(cdb);
-                                    selectedCompDBs.Add(cdb);
+                                    _ = specificCompDBs.Add(cdb);
+                                    _ = selectedCompDBs.Add(cdb);
                                 }
                                 else
                                 {
-                                    discardedCompDBs.Add(cdb);
+                                    _ = discardedCompDBs.Add(cdb);
                                 }
                                 break;
                             }
@@ -153,12 +153,12 @@ namespace DownloadLib
                             {
                                 if (((!hasEdition && !hasLang) || (!hasEdition && hasLang && langMatching) || (!hasLang && hasEdition && editionMatching) || (hasEdition && hasLang && langMatching && editionMatching)) && !IsNeutral)
                                 {
-                                    specificCompDBs.Add(cdb);
-                                    selectedCompDBs.Add(cdb);
+                                    _ = specificCompDBs.Add(cdb);
+                                    _ = selectedCompDBs.Add(cdb);
                                 }
                                 else
                                 {
-                                    discardedCompDBs.Add(cdb);
+                                    _ = discardedCompDBs.Add(cdb);
                                 }
                                 break;
                             }
@@ -206,14 +206,9 @@ namespace DownloadLib
 
                         foreach (CompDBXmlClass.PayloadItem item in pkg.Payload.PayloadItem)
                         {
-                            if (item.PayloadType.Equals("Diff", StringComparison.InvariantCultureIgnoreCase))
-                            {
-                                bannedPayloadItems.Add(item);
-                            }
-                            else
-                            {
-                                payloadItems.Add(item);
-                            }
+                            _ = item.PayloadType.Equals("Diff", StringComparison.InvariantCultureIgnoreCase)
+                                ? bannedPayloadItems.Add(item)
+                                : payloadItems.Add(item);
                         }
                     }
 
@@ -228,14 +223,9 @@ namespace DownloadLib
 
                             foreach (CompDBXmlClass.PayloadItem item in pkg.Payload.PayloadItem)
                             {
-                                if (item.PayloadType.Equals("Diff", StringComparison.InvariantCultureIgnoreCase))
-                                {
-                                    bannedPayloadItems.Add(item);
-                                }
-                                else
-                                {
-                                    payloadItems.Add(item);
-                                }
+                                _ = item.PayloadType.Equals("Diff", StringComparison.InvariantCultureIgnoreCase)
+                                    ? bannedPayloadItems.Add(item)
+                                    : payloadItems.Add(item);
                             }
                         }
                     }
@@ -257,7 +247,7 @@ namespace DownloadLib
 
                         foreach (CompDBXmlClass.PayloadItem item in pkg.Payload.PayloadItem)
                         {
-                            bannedPayloadItems.Add(item);
+                            _ = bannedPayloadItems.Add(item);
                         }
                     }
 
@@ -272,7 +262,7 @@ namespace DownloadLib
 
                             foreach (CompDBXmlClass.PayloadItem item in pkg.Payload.PayloadItem)
                             {
-                                bannedPayloadItems.Add(item);
+                                _ = bannedPayloadItems.Add(item);
                             }
                         }
                     }
@@ -280,7 +270,7 @@ namespace DownloadLib
 
                 if (AppCompDB != null)
                 {
-                    List<string> payloadHashesToKeep = new List<string>();
+                    List<string> payloadHashesToKeep = new();
 
                     switch (!string.IsNullOrEmpty(Language), !string.IsNullOrEmpty(Edition))
                     {
@@ -302,7 +292,7 @@ namespace DownloadLib
                                         }
                                     }
                                 }
-                                
+
                                 if (AppCompDB.AppX?.AppXPackages?.Package != null)
                                 {
                                     foreach (CompDBXmlClass.AppxPackage pkg in AppCompDB.AppX.AppXPackages.Package)
@@ -326,7 +316,8 @@ namespace DownloadLib
                         // Get edition
                         case (false, true):
                             {
-                                foreach (CompDBXmlClass.CompDB cdb in compDBs.GetEditionCompDBs().Where(cdb => {
+                                foreach (CompDBXmlClass.CompDB cdb in compDBs.GetEditionCompDBs().Where(cdb =>
+                                {
                                     bool hasEdition = cdb.Tags?.Tag?.Any(x => x.Name.Equals("Edition", StringComparison.InvariantCultureIgnoreCase)) == true;
 
                                     bool editionMatching = cdb.Tags?.Tag?.Any(x => x.Name.Equals("Edition", StringComparison.InvariantCultureIgnoreCase) && x.Value.Equals(Edition, StringComparison.InvariantCultureIgnoreCase)) == true;
@@ -346,7 +337,8 @@ namespace DownloadLib
                         // Get language
                         case (true, false):
                             {
-                                foreach (CompDBXmlClass.CompDB cdb in compDBs.GetEditionCompDBs().Where(cdb => {
+                                foreach (CompDBXmlClass.CompDB cdb in compDBs.GetEditionCompDBs().Where(cdb =>
+                                {
                                     bool hasLang = cdb.Tags?.Tag?.Any(x => x.Name.Equals("Language", StringComparison.InvariantCultureIgnoreCase)) == true;
 
                                     bool langMatching = cdb.Tags?.Tag?.Any(x => x.Name.Equals("Language", StringComparison.InvariantCultureIgnoreCase) && x.Value.Equals(Language, StringComparison.InvariantCultureIgnoreCase)) == true;
@@ -366,7 +358,8 @@ namespace DownloadLib
                         // Get edition + language
                         case (true, true):
                             {
-                                foreach (CompDBXmlClass.CompDB cdb in compDBs.GetEditionCompDBs().Where(cdb => {
+                                foreach (CompDBXmlClass.CompDB cdb in compDBs.GetEditionCompDBs().Where(cdb =>
+                                {
                                     bool hasLang = cdb.Tags?.Tag?.Any(x => x.Name.Equals("Language", StringComparison.InvariantCultureIgnoreCase)) == true;
                                     bool hasEdition = cdb.Tags?.Tag?.Any(x => x.Name.Equals("Edition", StringComparison.InvariantCultureIgnoreCase)) == true;
 
@@ -396,14 +389,7 @@ namespace DownloadLib
 
                         foreach (CompDBXmlClass.PayloadItem item in pkg.Payload.PayloadItem)
                         {
-                            if (payloadHashesToKeep.Any(x => x == item.PayloadHash))
-                            {
-                                payloadItems.Add(item);
-                            }
-                            else
-                            {
-                                bannedPayloadItems.Add(item);
-                            }
+                            _ = payloadHashesToKeep.Any(x => x == item.PayloadHash) ? payloadItems.Add(item) : bannedPayloadItems.Add(item);
                         }
                     }
 
@@ -418,14 +404,7 @@ namespace DownloadLib
 
                             foreach (CompDBXmlClass.PayloadItem item in pkg.Payload.PayloadItem)
                             {
-                                if (payloadHashesToKeep.Any(x => x == item.PayloadHash))
-                                {
-                                    payloadItems.Add(item);
-                                }
-                                else
-                                {
-                                    bannedPayloadItems.Add(item);
-                                }
+                                _ = payloadHashesToKeep.Any(x => x == item.PayloadHash) ? payloadItems.Add(item) : bannedPayloadItems.Add(item);
                             }
                         }
                     }
@@ -455,7 +434,7 @@ namespace DownloadLib
 
                                 foreach (CompDBXmlClass.PayloadItem item in pkg.Payload.PayloadItem)
                                 {
-                                    bannedPayloadItems.RemoveWhere(x => x.PayloadHash == item.PayloadHash);
+                                    _ = bannedPayloadItems.RemoveWhere(x => x.PayloadHash == item.PayloadHash);
                                 }
                             }
 
@@ -470,7 +449,7 @@ namespace DownloadLib
 
                                     foreach (CompDBXmlClass.PayloadItem item in pkg.Payload.PayloadItem)
                                     {
-                                        bannedPayloadItems.RemoveWhere(x => x.PayloadHash == item.PayloadHash);
+                                        _ = bannedPayloadItems.RemoveWhere(x => x.PayloadHash == item.PayloadHash);
                                     }
                                 }
                             }
@@ -534,7 +513,7 @@ namespace DownloadLib
 
                 if (!Directory.Exists(OutputFolder))
                 {
-                    Directory.CreateDirectory(OutputFolder);
+                    _ = Directory.CreateDirectory(OutputFolder);
 
                     string tmpname = update.Xml.LocalizedProperties.Title + " (" + MachineType.ToString() + ").uupmcreplay";
                     illegalCharacters = new Regex(@"[\\/:*?""<>|]");

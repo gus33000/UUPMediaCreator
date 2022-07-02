@@ -30,7 +30,7 @@ namespace Cabinet
         {
             int sz = Marshal.SizeOf(typeof(T));
             byte[] buffer = new byte[sz];
-            stream.Read(buffer, 0, sz);
+            _ = stream.Read(buffer, 0, sz);
             GCHandle pinnedBuffer = GCHandle.Alloc(buffer, GCHandleType.Pinned);
             T structure = (T)Marshal.PtrToStructure(
                 pinnedBuffer.AddrOfPinnedObject(), typeof(T));
@@ -64,7 +64,7 @@ namespace Cabinet
             {
                 nameBuffer[j] = (byte)stream.ReadByte();
                 nameBuffer[j + 1] = (byte)stream.ReadByte();
-                stream.Seek(-1, SeekOrigin.Current);
+                _ = stream.Seek(-1, SeekOrigin.Current);
                 if (nameBuffer[j] == 0 && nameBuffer[j + 1] == 0)
                 {
                     break;

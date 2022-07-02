@@ -19,7 +19,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-using PrivilegeClass;
+using Privileges;
 using System;
 using System.IO;
 using System.Security.AccessControl;
@@ -45,7 +45,7 @@ namespace MediaCreationLib.Utils
                 new DirectoryInfo(path).SetAccessControl(directorySecurity);
                 ownershipTaken = true;
             }
-            catch (PrivilegeClass.PrivilegeNotHeldException e)
+            catch (Privileges.PrivilegeNotHeldException e)
             {
                 Console.WriteLine("Failed to assign privileges. " + e.ToString());
             }
@@ -84,7 +84,7 @@ namespace MediaCreationLib.Utils
 
                 new DirectoryInfo(path).SetAccessControl(directorySecurity);
             }
-            catch (PrivilegeClass.PrivilegeNotHeldException e)
+            catch (Privileges.PrivilegeNotHeldException e)
             {
                 Console.WriteLine("Failed to assign privileges. " + e.ToString());
             }
@@ -110,7 +110,7 @@ namespace MediaCreationLib.Utils
                 new FileInfo(path).SetAccessControl(fileSecurity);
                 ownershipTaken = true;
             }
-            catch (PrivilegeClass.PrivilegeNotHeldException e)
+            catch (Privileges.PrivilegeNotHeldException e)
             {
                 Console.WriteLine("Failed to assign privileges. " + e.ToString());
             }
@@ -139,7 +139,7 @@ namespace MediaCreationLib.Utils
 
                 new FileInfo(path).SetAccessControl(fileSecurity);
             }
-            catch (PrivilegeClass.PrivilegeNotHeldException e)
+            catch (Privileges.PrivilegeNotHeldException e)
             {
                 Console.WriteLine("Failed to assign privileges. " + e.ToString());
             }

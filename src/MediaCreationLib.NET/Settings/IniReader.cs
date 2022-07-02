@@ -1,5 +1,6 @@
 ﻿using IniParser;
 using IniParser.Model;
+using MediaCreationLib.DismOperations;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -8,7 +9,10 @@ namespace MediaCreationLib.Settings
 {
     public static class IniReader
     {
-        private static IniData GetData() => GetIniData();
+        private static IniData GetData()
+        {
+            return GetIniData();
+        }
 
         private static IniData GetIniData()
         {

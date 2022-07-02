@@ -19,11 +19,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-using System.IO;
-using System.Diagnostics;
 using MediaCreationLib.Planning.Applications;
+using System.Diagnostics;
+using System.IO;
 
-namespace MediaCreationLib.Dism
+namespace MediaCreationLib.DismOperations
 {
     public class RemoteDismOperations : IDismOperations
     {
@@ -32,7 +32,10 @@ namespace MediaCreationLib.Dism
         private static void CopyFolder(string sourceFolder, string destFolder)
         {
             if (!Directory.Exists(destFolder))
-                Directory.CreateDirectory(destFolder);
+            {
+                _ = Directory.CreateDirectory(destFolder);
+            }
+
             string[] files = Directory.GetFiles(sourceFolder);
             foreach (string file in files)
             {
@@ -81,7 +84,7 @@ namespace MediaCreationLib.Dism
             }
 
             string dst = Path.Combine(Path.GetTempPath(), "UUPMediaConverterDismBroker");
-            Directory.CreateDirectory(dst);
+            _ = Directory.CreateDirectory(dst);
             if (shouldCopyDirectory)
             {
                 CopyFolder(toolpath.Replace(@"\UUPMediaConverterDismBroker.exe", ""), dst);
@@ -104,16 +107,18 @@ namespace MediaCreationLib.Dism
                 return false;
             }
 
-            Process proc = new();
-            proc.StartInfo = new ProcessStartInfo("cmd.exe", $"/c \"\"{DismBrokerInstalledLocation}\" /InstallAppXWorkload \"{ospath}\" \"{repositoryPath}\" \"{licenseFolder}\" \"{System.Text.Json.JsonSerializer.Serialize(workload).Replace("\"", "\"\"")}\"\"")
+            Process proc = new()
             {
-                UseShellExecute = false,
-                WindowStyle = ProcessWindowStyle.Hidden,
-                RedirectStandardOutput = true,
-                CreateNoWindow = true
+                StartInfo = new ProcessStartInfo("cmd.exe", $"/c \"\"{DismBrokerInstalledLocation}\" /InstallAppXWorkload \"{ospath}\" \"{repositoryPath}\" \"{licenseFolder}\" \"{System.Text.Json.JsonSerializer.Serialize(workload).Replace("\"", "\"\"")}\"\"")
+                {
+                    UseShellExecute = false,
+                    WindowStyle = ProcessWindowStyle.Hidden,
+                    RedirectStandardOutput = true,
+                    CreateNoWindow = true
+                }
             };
 
-            proc.Start();
+            _ = proc.Start();
             proc.BeginOutputReadLine();
             proc.WaitForExit();
             return proc.ExitCode == 0;
@@ -139,7 +144,7 @@ namespace MediaCreationLib.Dism
                 CreateNoWindow = true
             };
 
-            proc.OutputDataReceived += (object sender, DataReceivedEventArgs e) =>
+            proc.OutputDataReceived += (sender, e) =>
             {
                 if (e.Data?.Contains(",") == true)
                 {
@@ -147,7 +152,7 @@ namespace MediaCreationLib.Dism
                     progressCallback?.Invoke(false, percent, e.Data.Split(',')[1]);
                 }
             };
-            proc.Start();
+            _ = proc.Start();
             proc.BeginOutputReadLine();
             proc.WaitForExit();
             if (proc.ExitCode != 0)
@@ -172,16 +177,18 @@ namespace MediaCreationLib.Dism
                 return false;
             }
 
-            Process proc = new();
-            proc.StartInfo = new ProcessStartInfo("cmd.exe", $"/c \"\"{DismBrokerInstalledLocation}\" /PECompUninst \"{ospath}\"\"")
+            Process proc = new()
             {
-                UseShellExecute = false,
-                WindowStyle = ProcessWindowStyle.Hidden,
-                RedirectStandardOutput = true,
-                CreateNoWindow = true
+                StartInfo = new ProcessStartInfo("cmd.exe", $"/c \"\"{DismBrokerInstalledLocation}\" /PECompUninst \"{ospath}\"\"")
+                {
+                    UseShellExecute = false,
+                    WindowStyle = ProcessWindowStyle.Hidden,
+                    RedirectStandardOutput = true,
+                    CreateNoWindow = true
+                }
             };
 
-            proc.OutputDataReceived += (object sender, DataReceivedEventArgs e) =>
+            proc.OutputDataReceived += (sender, e) =>
             {
                 if (e.Data?.Contains(",") == true)
                 {
@@ -189,7 +196,7 @@ namespace MediaCreationLib.Dism
                     progressCallback?.Invoke(false, percent, e.Data.Split(',')[1]);
                 }
             };
-            proc.Start();
+            _ = proc.Start();
             proc.BeginOutputReadLine();
             proc.WaitForExit();
             if (proc.ExitCode != 0)

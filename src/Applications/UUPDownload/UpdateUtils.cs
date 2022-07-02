@@ -40,7 +40,7 @@ namespace UUPDownload
             }
             else if (!payloadItems.Any() && filename.Contains("_") && !filename.StartsWith("_") && (!filename.Contains('-') || filename.IndexOf('-') > filename.IndexOf('_')))
             {
-                filename = filename.Substring(0, filename.IndexOf('_')) + Path.DirectorySeparatorChar + filename[(filename.IndexOf('_') + 1)..];
+                filename = filename[..filename.IndexOf('_')] + Path.DirectorySeparatorChar + filename[(filename.IndexOf('_') + 1)..];
                 return filename.TrimStart(Path.DirectorySeparatorChar);
             }
             return filename;

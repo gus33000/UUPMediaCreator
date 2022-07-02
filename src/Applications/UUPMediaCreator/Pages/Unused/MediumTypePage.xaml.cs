@@ -33,7 +33,7 @@ namespace UUPMediaCreator.UWP.Pages
     {
         public MediumTypePage()
         {
-            this.InitializeComponent();
+            InitializeComponent();
         }
 
         private void WizardPage_NextClicked(object sender, RoutedEventArgs e)
@@ -41,7 +41,7 @@ namespace UUPMediaCreator.UWP.Pages
             if (InstallMediumRadioButton.IsChecked.Value)
             {
                 App.ConversionPlan.MediumType = MediumType.WindowsInstallationMedium;
-                Frame.Navigate(typeof(LanguagePage));
+                _ = Frame.Navigate(typeof(LanguagePage));
             }
             /*else if (LanguageMediumRadioButton.IsChecked.Value)
             {

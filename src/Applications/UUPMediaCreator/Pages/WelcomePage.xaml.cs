@@ -39,7 +39,7 @@ namespace UUPMediaCreator.UWP.Pages
     {
         public WelcomePage()
         {
-            this.InitializeComponent();
+            InitializeComponent();
         }
 
         public async Task<bool> IsBrokerElevated()
@@ -66,7 +66,7 @@ namespace UUPMediaCreator.UWP.Pages
         public void WizardPage_NextClicked(object sender, RoutedEventArgs e)
         {
             //Frame.Navigate(typeof(BuildingISOPage));
-            Frame.Navigate(typeof(ArchitecturePage));
+            _ = Frame.Navigate(typeof(ArchitecturePage));
         }
 
         private async void Page_Loaded(object sender, RoutedEventArgs e)

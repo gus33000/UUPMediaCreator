@@ -46,7 +46,7 @@ namespace Cabinet
         /// at least for most people it seems
         /// TODO: Multi part
         /// TODO: CheckSum
-        /// Relevant Documentation that might help at 20% only: https://interoperability.blob.core.windows.net/files/Archive_Exchange/%5bMS-CAB%5d.pdf
+        /// Relevant Documentation that might help at 20% only: https://interoperability.blob.core.windows/files/Archive_Exchange/%5bMS-CAB%5d.pdf
         /// </summary>
         /// <param name="InputFile">Input cabinet file</param>
         /// <param name="OutputDirectory">Output directory</param>
@@ -64,7 +64,7 @@ namespace Cabinet
         /// at least for most people it seems
         /// TODO: Multi part
         /// TODO: CheckSum
-        /// Relevant Documentation that might help at 20% only: https://interoperability.blob.core.windows.net/files/Archive_Exchange/%5bMS-CAB%5d.pdf
+        /// Relevant Documentation that might help at 20% only: https://interoperability.blob.core.windows/files/Archive_Exchange/%5bMS-CAB%5d.pdf
         /// </summary>
         /// <param name="InputFile">Input cabinet file</param>
         /// <param name="OutputDirectory">Output directory</param>
@@ -98,7 +98,7 @@ namespace Cabinet
         /// at least for most people it seems
         /// TODO: Multi part
         /// TODO: CheckSum
-        /// Relevant Documentation that might help at 20% only: https://interoperability.blob.core.windows.net/files/Archive_Exchange/%5bMS-CAB%5d.pdf
+        /// Relevant Documentation that might help at 20% only: https://interoperability.blob.core.windows/files/Archive_Exchange/%5bMS-CAB%5d.pdf
         /// </summary>
         /// <param name="InputFile">Input cabinet file</param>
         /// <param name="OutputDirectory">Output directory</param>

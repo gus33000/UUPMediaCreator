@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.CompilerServices;
 
-namespace ICSharpCode.SharpZipLib.Checksum
+namespace Privileges.Checksum
 {
     /// <summary>
     /// CRC-32 with unreversed data and reversed output
@@ -81,17 +81,12 @@ namespace ICSharpCode.SharpZipLib.Checksum
         /// Returns the CRC data checksum computed so far.
         /// </summary>
         /// <remarks>Reversed Out = true</remarks>
-        public long Value
-        {
-            get
-            {
+        public long Value =>
                 // Technically, the output should be:
                 //return (long)(~checkValue ^ crcXor);
                 // but x ^ 0 = x, so there is no point in adding
                 // the XOR operation
-                return (long)(~checkValue);
-            }
-        }
+                ~checkValue;
 
         /// <summary>
         /// Updates the checksum with the int bval.

@@ -20,7 +20,6 @@
  * SOFTWARE.
  */
 using Imaging;
-using MediaCreationLib.Dism;
 using MediaCreationLib.Settings;
 using Microsoft.Wim;
 using System;
@@ -76,14 +75,7 @@ namespace MediaCreationLib
                     }
                     else
                     {
-                        if ((i == 0) || (j == 0))
-                        {
-                            num[i, j] = 1;
-                        }
-                        else
-                        {
-                            num[i, j] = 1 + num[i - 1, j - 1];
-                        }
+                        num[i, j] = i == 0 || j == 0 ? 1 : 1 + num[i - 1, j - 1];
 
                         if (num[i, j] > maxlen)
                         {
@@ -91,13 +83,13 @@ namespace MediaCreationLib
                             int thisSubsBegin = i - num[i, j] + 1;
                             if (lastSubsBegin == thisSubsBegin)
                             {//if the current LCS is the same as the last time this block ran
-                                sequenceBuilder.Append(str1[i]);
+                                _ = sequenceBuilder.Append(str1[i]);
                             }
                             else //this block resets the string builder if a different LCS is found
                             {
                                 lastSubsBegin = thisSubsBegin;
                                 sequenceBuilder.Length = 0; //clear it
-                                sequenceBuilder.Append(str1[lastSubsBegin..(i + 1)]);
+                                _ = sequenceBuilder.Append(str1[lastSubsBegin..(i + 1)]);
                             }
                         }
                     }
@@ -118,7 +110,7 @@ namespace MediaCreationLib
         {
             bool result = true;
 
-            string SourceEdition = DismOperations.Instance.GetCurrentEdition(MountedImagePath);
+            string SourceEdition = DismOperations.DismOperations.Instance.GetCurrentEdition(MountedImagePath);
 
             result = Constants.imagingInterface.GetWIMInformation(OutputInstallImage, out WIMInformationXML.WIM wiminfo);
             if (!result)
@@ -150,7 +142,7 @@ namespace MediaCreationLib
                 progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, IsIndeterminate, ProgressInPercentage, SubOperation);
             }
 
-            DismOperations.Instance.SetTargetEdition(MountedImagePath, EditionID, callback);
+            DismOperations.DismOperations.Instance.SetTargetEdition(MountedImagePath, EditionID, callback);
 
             void callback2(string Operation, int ProgressPercentage, bool IsIndeterminate)
             {
@@ -160,14 +152,7 @@ namespace MediaCreationLib
             string replaceStr = LongestCommonSubstring(new string[] { srcimage.DISPLAYNAME, SourceEdition });
             string replaceStr2 = LongestCommonSubstring(new string[] { EditionID, SourceEdition });
 
-            if (!string.IsNullOrEmpty(replaceStr2))
-            {
-                replaceStr2 = EditionID.Replace(replaceStr2, "");
-            }
-            else
-            {
-                replaceStr2 = EditionID;
-            }
+            replaceStr2 = !string.IsNullOrEmpty(replaceStr2) ? EditionID.Replace(replaceStr2, "") : EditionID;
 
             string name;
             string description;

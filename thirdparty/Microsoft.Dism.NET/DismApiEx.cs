@@ -58,6 +58,7 @@
  only support the system-specific architecture of the system it's running on.
 */
 
+using Microsoft.Dism;
 using System;
 
 namespace Microsoft.Dism

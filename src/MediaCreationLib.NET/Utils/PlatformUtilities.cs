@@ -29,22 +29,13 @@ namespace MediaCreationLib.Utils
 
         private static OSPlatform GetOperatingSystem()
         {
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-            {
-                return OSPlatform.OSX;
-            }
-
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-            {
-                return OSPlatform.Linux;
-            }
-
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            {
-                return OSPlatform.Windows;
-            }
-
-            return RuntimeInformation.IsOSPlatform(OSPlatform.FreeBSD)
+            return RuntimeInformation.IsOSPlatform(OSPlatform.OSX)
+                ? OSPlatform.OSX
+                : RuntimeInformation.IsOSPlatform(OSPlatform.Linux)
+                ? OSPlatform.Linux
+                : RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
+                ? OSPlatform.Windows
+                : RuntimeInformation.IsOSPlatform(OSPlatform.FreeBSD)
                 ? OSPlatform.FreeBSD
                 : throw new Exception("Cannot determine operating system!");
         }

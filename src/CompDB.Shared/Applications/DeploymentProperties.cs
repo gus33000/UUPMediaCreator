@@ -47,11 +47,11 @@ namespace MediaCreationLib.Planning.Applications
                 switch (package.PackageType)
                 {
                     case "MSIXBundlePackage":
-                        PackageIDs.Add(packageId);
+                        _ = PackageIDs.Add(packageId);
                         MainPackageID = packageId;
                         break;
                     case "MSIXFrameworkPackage":
-                        PackageIDs.Add(packageId);
+                        _ = PackageIDs.Add(packageId);
                         break;
                     case "StubMSIXResourcePackage":
                         if (PreferStub)
@@ -63,7 +63,7 @@ namespace MediaCreationLib.Planning.Applications
                     case "StubMSIXMainPackage":
                         if (PreferStub)
                         {
-                            PackageIDs.Add(packageId);
+                            _ = PackageIDs.Add(packageId);
                         }
 
                         break;
@@ -77,7 +77,7 @@ namespace MediaCreationLib.Planning.Applications
                     case "MSIXMainPackage":
                         if (!PreferStub)
                         {
-                            PackageIDs.Add(packageId);
+                            _ = PackageIDs.Add(packageId);
                         }
 
                         break;
@@ -112,7 +112,7 @@ namespace MediaCreationLib.Planning.Applications
                     string pickedScale = scaleDictionary[bestCandidate];
                     if (pickedScale != null)
                     {
-                        PackageIDs.Add(pickedScale);
+                        _ = PackageIDs.Add(pickedScale);
                     }
                 }
             }
@@ -135,7 +135,7 @@ namespace MediaCreationLib.Planning.Applications
                 case ResourceType.Language:
                     if (applicableLanguageTags.Any(x => resourceInfo.Item2 == x))
                     {
-                        PackageIDs.Add(packageId);
+                        _ = PackageIDs.Add(packageId);
                     }
 
                     break;
@@ -149,14 +149,14 @@ namespace MediaCreationLib.Planning.Applications
         {
             int lastUnderscore = packageId.LastIndexOf('_');
             int prevUnderscore = packageId.LastIndexOf('_', lastUnderscore - 1) + 1;
-            string resourceType = packageId.Substring(prevUnderscore, lastUnderscore - prevUnderscore);
+            string resourceType = packageId[prevUnderscore..lastUnderscore];
             int typeDot = resourceType.IndexOf('.');
             if (typeDot != -1)
             {
                 typeDot++;
                 int typeDash = resourceType.IndexOf('-');
-                string resourceVariant = resourceType.Substring(typeDash + 1);
-                resourceType = resourceType.Substring(typeDot, typeDash - typeDot);
+                string resourceVariant = resourceType[(typeDash + 1)..];
+                resourceType = resourceType[typeDot..typeDash];
                 return resourceType switch
                 {
                     "language" => (ResourceType.Language, resourceVariant),

@@ -1,6 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
 
-namespace ICSharpCode.SharpZipLib.Checksum
+namespace Privileges.Checksum
 {
     internal static class CrcUtilities
     {
@@ -25,7 +25,7 @@ namespace ICSharpCode.SharpZipLib.Checksum
         internal static uint[] GenerateSlicingLookupTable(uint polynomial, bool isReversed)
         {
             uint[] table = new uint[256 * SlicingDegree];
-            uint one = isReversed ? 1 : (1U << 31);
+            uint one = isReversed ? 1 : 1U << 31;
 
             for (int i = 0; i < 256; i++)
             {
@@ -34,14 +34,7 @@ namespace ICSharpCode.SharpZipLib.Checksum
                 {
                     for (int k = 0; k < 8; k++)
                     {
-                        if (isReversed)
-                        {
-                            res = (res & one) == 1 ? polynomial ^ (res >> 1) : res >> 1;
-                        }
-                        else
-                        {
-                            res = (res & one) != 0 ? polynomial ^ (res << 1) : res << 1;
-                        }
+                        res = isReversed ? (res & one) == 1 ? polynomial ^ (res >> 1) : res >> 1 : (res & one) != 0 ? polynomial ^ (res << 1) : res << 1;
                     }
 
                     table[(256 * j) + i] = res;

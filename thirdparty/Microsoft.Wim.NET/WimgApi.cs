@@ -2,6 +2,7 @@
 //
 // Licensed under the MIT license.
 
+using Microsoft.Wim;
 using System.Runtime.InteropServices;
 
 namespace Microsoft.Wim

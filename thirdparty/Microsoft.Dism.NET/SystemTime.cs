@@ -74,7 +74,7 @@ namespace Microsoft.Dism
         public WORD Milliseconds;
 
         /// <summary>
-        /// Converts a <see cref="System.DateTime" /> to a <see cref="SystemTime" />.
+        /// Converts a <see cref="DateTime" /> to a <see cref="SystemTime" />.
         /// </summary>
         /// <param name="dateTime">The time to convert.</param>
         public static implicit operator SystemTime(DateTime dateTime)
@@ -95,7 +95,7 @@ namespace Microsoft.Dism
         }
 
         /// <summary>
-        /// Converts a <see cref="SystemTime" /> to a <see cref="System.DateTime" />
+        /// Converts a <see cref="SystemTime" /> to a <see cref="DateTime" />
         /// </summary>
         /// <param name="systemTime">The time to convert.</param>
         public static implicit operator DateTime(SystemTime systemTime)

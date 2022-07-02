@@ -5,11 +5,11 @@ namespace MediaCreationLib.Installer
 {
     internal static class InstallerLogger
     {
-        private static Common.ProcessPhase Phase = Common.ProcessPhase.CreatingWindowsInstaller;
+        private static readonly Common.ProcessPhase Phase = Common.ProcessPhase.CreatingWindowsInstaller;
 
         internal static IImaging.ProgressCallback GetImagingCallback(this ProgressCallback progressCallback)
         {
-            return (string Operation, int ProgressPercentage, bool IsIndeterminate) => progressCallback?.Invoke(Phase, IsIndeterminate, ProgressPercentage, Operation);
+            return (Operation, ProgressPercentage, IsIndeterminate) => progressCallback?.Invoke(Phase, IsIndeterminate, ProgressPercentage, Operation);
         }
 
         internal static void Log(this ProgressCallback progressCallback, string Operation)

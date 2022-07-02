@@ -51,7 +51,7 @@ namespace VirtualHardDiskLib
 
             BiosPartitionTable table = BiosPartitionTable.Initialize(disk, WellKnownPartitionType.WindowsNtfs);
             PartitionInfo ntfsPartition = table.Partitions[0];
-            NtfsFileSystem.Format(ntfsPartition.Open(), "Windows UUP Medium", Geometry.FromCapacity(diskSize), ntfsPartition.FirstSector, ntfsPartition.SectorCount);
+            _ = NtfsFileSystem.Format(ntfsPartition.Open(), "Windows UUP Medium", Geometry.FromCapacity(diskSize), ntfsPartition.FirstSector, ntfsPartition.SectorCount);
 
             return tempVhd;
         }
@@ -106,7 +106,7 @@ namespace VirtualHardDiskLib
             int num = _findVhdPhysicalDriveNumber(handle);
 
             // close handle to disk
-            NativeMethods.CloseHandle(handle);
+            _ = NativeMethods.CloseHandle(handle);
 
             return num;
         }
@@ -147,7 +147,7 @@ namespace VirtualHardDiskLib
             }
 
             // close handle to disk
-            NativeMethods.CloseHandle(handle);
+            _ = NativeMethods.CloseHandle(handle);
         }
 
         private static int _findVhdPhysicalDriveNumber(IntPtr vhdHandle)
@@ -184,7 +184,7 @@ namespace VirtualHardDiskLib
                     continue;
                 }
 
-                NativeMethods.DeviceIoControl(volumeHandle, NativeMethods.IO_CONTROL_CODE.STORAGE_DEVICE_NUMBER, IntPtr.Zero, 0,
+                _ = NativeMethods.DeviceIoControl(volumeHandle, NativeMethods.IO_CONTROL_CODE.STORAGE_DEVICE_NUMBER, IntPtr.Zero, 0,
                     ref deviceNumber, (uint)Marshal.SizeOf(deviceNumber), ref bytesReturned, IntPtr.Zero);
 
                 if (deviceNumber.deviceNumber == vhdPhysicalDrive)
@@ -193,7 +193,7 @@ namespace VirtualHardDiskLib
                     break;
                 }
             } while (NativeMethods.FindNextVolume(findVolumeHandle, volumeName, volumeName.Capacity));
-            NativeMethods.FindVolumeClose(findVolumeHandle);
+            _ = NativeMethods.FindVolumeClose(findVolumeHandle);
             return found ? volumeName.ToString() : ""; //when It returns "" then the error occurs
         }
 

@@ -20,7 +20,6 @@
  * SOFTWARE.
  */
 using CompDB;
-using MediaCreationLib.NET;
 using MediaCreationLib.Utils;
 using Microsoft.Wim;
 using System.Collections.Generic;

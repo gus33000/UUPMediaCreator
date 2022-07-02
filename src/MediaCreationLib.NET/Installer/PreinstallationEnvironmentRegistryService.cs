@@ -113,8 +113,8 @@ namespace MediaCreationLib.Installer
                     FileMode.Open,
                     FileAccess.ReadWrite
                 ), DiscUtils.Streams.Ownership.Dispose);
-                hive.Root.OpenSubKey("ControlSet001").CreateSubKey("CI").SetValue("UMCIDisabled", 1, DiscUtils.Registry.RegistryValueType.Dword);
-                hive.Root.OpenSubKey(@"ControlSet001\Control\CI").SetValue("UMCIAuditMode", 1, DiscUtils.Registry.RegistryValueType.Dword);
+                hive.Root.OpenSubKey("ControlSet001").CreateSubKey("CI").SetValue("UMCIDisabled", 1, RegistryValueType.Dword);
+                hive.Root.OpenSubKey(@"ControlSet001\Control\CI").SetValue("UMCIAuditMode", 1, RegistryValueType.Dword);
             }
             catch
             {
@@ -234,8 +234,8 @@ namespace MediaCreationLib.Installer
                 if (PlatformUtilities.OperatingSystem == OSPlatform.Windows)
                 {
                     RegistryKey ockey = winpekey.OpenSubKey("OC");
-                    ockey.CreateSubKey("Microsoft-WinPE-Setup");
-                    ockey.CreateSubKey("Microsoft-WinPE-Setup-Client");
+                    _ = ockey.CreateSubKey("Microsoft-WinPE-Setup");
+                    _ = ockey.CreateSubKey("Microsoft-WinPE-Setup-Client");
                 }
             }
             catch

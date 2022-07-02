@@ -89,12 +89,12 @@ namespace Cabinet
         [Flags]
         internal enum CFFILEATTRIBUTES : ushort
         {
-            A_RDONLY = (1 << 1),
-            A_HIDDEN = (1 << 2),
-            A_SYSTEM = (1 << 3),
-            A_ARCH = (1 << 6),
-            A_EXEC = (1 << 7),
-            A_NAME_IS_UTF = (1 << 8),
+            A_RDONLY = 1 << 1,
+            A_HIDDEN = 1 << 2,
+            A_SYSTEM = 1 << 3,
+            A_ARCH = 1 << 6,
+            A_EXEC = 1 << 7,
+            A_NAME_IS_UTF = 1 << 8,
         }
 
         internal DateTime GetDateTime()

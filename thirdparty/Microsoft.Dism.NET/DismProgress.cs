@@ -111,7 +111,7 @@ namespace Microsoft.Dism
             if (Cancel)
             {
                 // Signal the event
-                _eventHandle.Set();
+                _ = _eventHandle.Set();
             }
         }
     }

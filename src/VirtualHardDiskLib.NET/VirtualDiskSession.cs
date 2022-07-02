@@ -37,14 +37,7 @@ namespace VirtualHardDiskLib
             DriveLetter = GetNextAvailableDriveLetter();
 
             this.delete = delete;
-            if (string.IsNullOrEmpty(existingVHD))
-            {
-                VirtualDiskPath = VHDUtilities.CreateVirtualDisk(tempManager, sizeInGB);
-            }
-            else
-            {
-                VirtualDiskPath = existingVHD;
-            }
+            VirtualDiskPath = string.IsNullOrEmpty(existingVHD) ? VHDUtilities.CreateVirtualDisk(tempManager, sizeInGB) : existingVHD;
             DiskId = VHDUtilities.MountVirtualDisk(VirtualDiskPath);
             VHDUtilities.AttachDriveLetterToDiskAndPartitionId(DiskId, 1, DriveLetter);
         }

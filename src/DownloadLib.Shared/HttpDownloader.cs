@@ -62,7 +62,7 @@ namespace DownloadLib
         public UUPFile File;
         public FileDownloadStatus(UUPFile file)
         {
-            this.File = file;
+            File = file;
         }
     }
 
@@ -130,10 +130,14 @@ namespace DownloadLib
         }
 
         public async Task<bool> DownloadAsync(List<UUPFile> Files, IProgress<GeneralDownloadProgress> generalDownloadProgress, CancellationToken cancellationToken = default)
-            => await ParallelQueue(Files, DownloadFile, generalDownloadProgress, DownloadThreads, cancellationToken);
+        {
+            return await ParallelQueue(Files, DownloadFile, generalDownloadProgress, DownloadThreads, cancellationToken);
+        }
 
         public async Task<bool> DownloadAsync(UUPFile File, IProgress<FileDownloadStatus> downloadProgress = null, CancellationToken cancellationToken = default)
-            => await DownloadFile(File, downloadProgress, cancellationToken);
+        {
+            return await DownloadFile(File, downloadProgress, cancellationToken);
+        }
 
         private static async ValueTask<bool> ParallelQueue(List<UUPFile> items, Func<UUPFile, IProgress<FileDownloadStatus>, CancellationToken, ValueTask<bool>> func,
             IProgress<GeneralDownloadProgress> generalProgress, int threads, CancellationToken cancellationToken)
@@ -174,7 +178,7 @@ namespace DownloadLib
                 }
                 else
                 {
-                    await Task.WhenAny(workingSlots.Where(t => t != null));
+                    _ = await Task.WhenAny(workingSlots.Where(t => t != null));
 
                     for (int i = 0; i < workingSlots.Length; i++)
                     {
@@ -204,9 +208,11 @@ namespace DownloadLib
         }
 
         private async ValueTask<bool> DownloadFile(UUPFile downloadFile, IProgress<FileDownloadStatus> progress, CancellationToken cancellationToken)
-            => await HttpDownload(DownloadFolderPath, downloadFile, _hc, VerifyFiles, progress, cancellationToken: cancellationToken);
+        {
+            return await HttpDownload(DownloadFolderPath, downloadFile, _hc, VerifyFiles, progress, cancellationToken: cancellationToken);
+        }
 
-        private async static ValueTask<bool> HttpDownload(string basePath, UUPFile downloadFile, HttpClient httpClient, bool verifyFiles,
+        private static async ValueTask<bool> HttpDownload(string basePath, UUPFile downloadFile, HttpClient httpClient, bool verifyFiles,
             IProgress<FileDownloadStatus> downloadProgress = null, int bufferSize = 65_536, CancellationToken cancellationToken = default)
         {
             long currRange = 0;
@@ -276,7 +282,7 @@ namespace DownloadLib
                         //Imagine if it crashed during decryption. We can only take the good part, 
                         //so we need to set the position to the last good block.
                         //This will round the last good block for us (until proven otherwise).
-                        currRange = (tmpFileInfo.Length / esrp.EncryptionBufferSize) * esrp.EncryptionBufferSize;
+                        currRange = tmpFileInfo.Length / esrp.EncryptionBufferSize * esrp.EncryptionBufferSize;
                         totalBytesRead = currRange;
 
                         if (currRange > downloadFile.FileSize)
@@ -333,25 +339,25 @@ namespace DownloadLib
                     }
                     else
                     {*/
-                        //At your own risk lol
-                        FileInfo fileInfo = new(filePath);
-                        downloadProgress?.Report(new FileDownloadStatus(downloadFile)
-                        {
-                            DownloadedBytes = fileInfo.Length,
-                            FileStatus = FileStatus.Completed
-                        });
-                        return true;
+                    //At your own risk lol
+                    FileInfo fileInfo = new(filePath);
+                    downloadProgress?.Report(new FileDownloadStatus(downloadFile)
+                    {
+                        DownloadedBytes = fileInfo.Length,
+                        FileStatus = FileStatus.Completed
+                    });
+                    return true;
                     //}
                 }
 
                 //Before we need to create a directory.
-                Directory.CreateDirectory(Path.GetDirectoryName(filePath));
+                _ = Directory.CreateDirectory(Path.GetDirectoryName(filePath));
 
                 //Open the file as stream.
                 using FileStream streamToWriteTo = File.Open(tempFilePath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.Read);
 
                 //Set the seek position to current range position (via totalBytesRead or currRange). This is needed.
-                streamToWriteTo.Seek(totalBytesRead, SeekOrigin.Begin);
+                _ = streamToWriteTo.Seek(totalBytesRead, SeekOrigin.Begin);
 
                 using HttpRequestMessage httpRequestMessageHead = new(HttpMethod.Head, new Uri(downloadFile.WUFile.DownloadUrl));
                 using HttpResponseMessage response = await httpClient.SendAsync(httpRequestMessageHead, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
@@ -366,7 +372,7 @@ namespace DownloadLib
                     //We don't have a way to download from a specific range, hence we set the position to 0
                     //and download everything from scratch... Sadly.
                     //TODO
-                    streamToWriteTo.Seek(0, SeekOrigin.Begin);
+                    _ = streamToWriteTo.Seek(0, SeekOrigin.Begin);
 
                     downloadProgress?.Report(new FileDownloadStatus(downloadFile)
                     {
@@ -397,7 +403,7 @@ namespace DownloadLib
 
                     //just an assumption 
 
-                    streamToWriteTo.Seek(0, SeekOrigin.Begin);
+                    _ = streamToWriteTo.Seek(0, SeekOrigin.Begin);
                     return await HashWithProgress(streamToWriteTo);
                 }
 
@@ -482,9 +488,9 @@ namespace DownloadLib
                     }
                     else
                     {
-                        if (filePartResp.StatusCode == HttpStatusCode.Forbidden ||
-                            filePartResp.StatusCode == HttpStatusCode.NotFound ||
-                            filePartResp.StatusCode == HttpStatusCode.Unauthorized)
+                        if (filePartResp.StatusCode is HttpStatusCode.Forbidden or
+                            HttpStatusCode.NotFound or
+                            HttpStatusCode.Unauthorized)
                         {
                             //The url is expired.
                             //Report that is expired and return false
@@ -514,7 +520,7 @@ namespace DownloadLib
 
                 if (verifyFiles)
                 {
-                    streamToWriteTo.Seek(0, SeekOrigin.Begin);
+                    _ = streamToWriteTo.Seek(0, SeekOrigin.Begin);
                     bool hashResult = await HashWithProgress(streamToWriteTo);
 
                     if (hashResult)
@@ -643,7 +649,9 @@ namespace DownloadLib
         }
 
         private static bool ByteArraySpanCompare(ReadOnlySpan<byte> a1, ReadOnlySpan<byte> a2)
-            => a1.SequenceEqual(a2);
+        {
+            return a1.SequenceEqual(a2);
+        }
 
         private static void GetFreeSlotIndex<T>(T[] array, out int firstFreeTaskIndex)
         {

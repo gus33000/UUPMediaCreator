@@ -5,7 +5,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
-namespace Microsoft.Marketplace.StoreEdgeFd
+namespace Microsoft.StoreServices.DisplayCatalog
 {
     public enum AlternateIdTypes
     {

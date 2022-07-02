@@ -1,4 +1,5 @@
 ﻿using Microsoft.Wim;
+using Microsoft.Wim;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -29,7 +30,7 @@ namespace Imaging
             return false;
         }
 
-        private string[] ExclusionList = new[]
+        private readonly string[] ExclusionList = new[]
         {
             "$ntfs.log",
             "hiberfil.sys",
@@ -140,7 +141,7 @@ namespace Imaging
 
                 // Register a method to be called while actions are performed by WIMGAPi for this .wim file
                 //
-                WimgApi.RegisterMessageCallback(wimHandle, callback2);
+                _ = WimgApi.RegisterMessageCallback(wimHandle, callback2);
 
                 using WimHandle wimImageHandle = WimgApi.LoadImage(wimHandle, imageIndex);
 
@@ -154,7 +155,7 @@ namespace Imaging
 
                 try
                 {
-                    WimgApi.ApplyImage(wimImageHandle, OutputDirectory, !PreserveACL ? (WimApplyImageOptions.DisableFileAcl | WimApplyImageOptions.DisableDirectoryAcl) : WimApplyImageOptions.None);
+                    WimgApi.ApplyImage(wimImageHandle, OutputDirectory, !PreserveACL ? WimApplyImageOptions.DisableFileAcl | WimApplyImageOptions.DisableDirectoryAcl : WimApplyImageOptions.None);
                 }
                 catch (Exception e)
                 {
@@ -270,7 +271,7 @@ namespace Imaging
 
                 // Register a method to be called while actions are performed by WIMGAPi for this .wim file
                 //
-                WimgApi.RegisterMessageCallback(wimHandle, callback2);
+                _ = WimgApi.RegisterMessageCallback(wimHandle, callback2);
 
                 using WimHandle wimImageHandle = WimgApi.LoadImage(wimHandle, imageIndex);
 
@@ -295,7 +296,7 @@ namespace Imaging
 
                 // Register a method to be called while actions are performed by WIMGAPi for this .wim file
                 //
-                WimgApi.RegisterMessageCallback(dstWimHandle, callback2);
+                _ = WimgApi.RegisterMessageCallback(dstWimHandle, callback2);
 
                 try
                 {

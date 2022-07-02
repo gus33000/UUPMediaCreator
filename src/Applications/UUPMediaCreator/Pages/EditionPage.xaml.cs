@@ -40,7 +40,7 @@ namespace UUPMediaCreator.UWP.Pages
     {
         public EditionPage()
         {
-            this.InitializeComponent();
+            InitializeComponent();
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -76,7 +76,7 @@ namespace UUPMediaCreator.UWP.Pages
         {
             App.ConversionPlan.Edition = (dataGrid.SelectedItem as BuildFetcher.AvailableEdition)?.Edition;
             //Frame.Navigate(typeof(AdditionalUpdatePage));
-            Frame.Navigate(typeof(WIMTypePage));
+            _ = Frame.Navigate(typeof(WIMTypePage));
         }
 
         private void WizardPage_BackClicked(object sender, RoutedEventArgs e)

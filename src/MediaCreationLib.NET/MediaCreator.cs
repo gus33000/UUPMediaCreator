@@ -25,13 +25,14 @@ using MediaCreationLib.BaseEditions;
 using MediaCreationLib.BootlegEditions;
 using MediaCreationLib.CDImage;
 using MediaCreationLib.Installer;
-using MediaCreationLib.Planning.NET;
 using MediaCreationLib.Utils;
+using MediaCreationLib.Planning;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UUPMediaCreator.InterCommunication;
+using VirtualHardDiskLib;
 
 namespace MediaCreationLib
 {
@@ -121,10 +122,10 @@ namespace MediaCreationLib
                     }
                 case AvailabilityType.EditionUpgrade:
                     {
-                        string newvhd = VirtualHardDiskLib.VHDUtilities.CreateDiffDisk(CurrentBackupVHD, tempManager);
+                        string newvhd = VHDUtilities.CreateDiffDisk(CurrentBackupVHD, tempManager);
 
                         progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, "Mounting VHD");
-                        using VirtualHardDiskLib.VirtualDiskSession vhdSession = new(tempManager, existingVHD: newvhd);
+                        using VirtualDiskSession vhdSession = new(tempManager, existingVHD: newvhd);
                         VHDMountPath = vhdSession.GetMountedPath();
 
                         result = UUPMediaCreator.CreateUpgradedEditionFromMountedImage(
@@ -162,10 +163,10 @@ namespace MediaCreationLib
                         }
                         else
                         {
-                            string newvhd = VirtualHardDiskLib.VHDUtilities.CreateDiffDisk(CurrentBackupVHD, tempManager);
+                            string newvhd = VHDUtilities.CreateDiffDisk(CurrentBackupVHD, tempManager);
 
                             progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, "Mounting VHD");
-                            using VirtualHardDiskLib.VirtualDiskSession vhdSession = new(tempManager, existingVHD: newvhd);
+                            using VirtualDiskSession vhdSession = new(tempManager, existingVHD: newvhd);
                             VHDMountPath = vhdSession.GetMountedPath();
 
                             result = BootlegEditionCreator.CreateHackedEditionFromMountedImage(
@@ -190,34 +191,32 @@ namespace MediaCreationLib
             {
                 if (vhdPath == null)
                 {
-                    using (VirtualHardDiskLib.VirtualDiskSession vhdSession = new(tempManager, delete: false))
+                    using VirtualDiskSession vhdSession = new(tempManager, delete: false);
+                    // Apply WIM
+                    _ = Constants.imagingInterface.GetWIMInformation(InstallWIMFilePath, out WIMInformationXML.WIM wiminfo);
+
+                    int index = int.Parse(wiminfo.IMAGE.First(x => x.WINDOWS.EDITIONID.Equals(targetEdition.PlannedEdition.EditionName, StringComparison.InvariantCultureIgnoreCase)).INDEX);
+
+                    void callback(string Operation, int ProgressPercentage, bool IsIndeterminate)
                     {
-                        // Apply WIM
-                        Constants.imagingInterface.GetWIMInformation(InstallWIMFilePath, out WIMInformationXML.WIM wiminfo);
-
-                        int index = int.Parse(wiminfo.IMAGE.First(x => x.WINDOWS.EDITIONID.Equals(targetEdition.PlannedEdition.EditionName, StringComparison.InvariantCultureIgnoreCase)).INDEX);
-
-                        void callback(string Operation, int ProgressPercentage, bool IsIndeterminate)
-                        {
-                            progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, IsIndeterminate, ProgressPercentage, Operation);
-                        }
-                        result = Constants.imagingInterface.ApplyImage(InstallWIMFilePath, index, vhdSession.GetMountedPath(), progressCallback: callback);
-                        if (!result)
-                        {
-                            goto exit;
-                        }
-
-                        vhdPath = vhdSession.VirtualDiskPath;
+                        progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, IsIndeterminate, ProgressPercentage, Operation);
                     }
+                    result = Constants.imagingInterface.ApplyImage(InstallWIMFilePath, index, vhdSession.GetMountedPath(), progressCallback: callback);
+                    if (!result)
+                    {
+                        goto exit;
+                    }
+
+                    vhdPath = vhdSession.VirtualDiskPath;
                 }
 
                 if (targetEdition.NonDestructiveTargets.Count > 0 && (string.IsNullOrEmpty(edition) || (!string.IsNullOrEmpty(edition) && targetEdition.NonDestructiveTargets.Any(x => IsRightPath(x, edition)))))
                 {
-                    string newvhd = VirtualHardDiskLib.VHDUtilities.CreateDiffDisk(vhdPath, tempManager);
+                    string newvhd = VHDUtilities.CreateDiffDisk(vhdPath, tempManager);
 
                     progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, "Mounting VHD");
 
-                    using VirtualHardDiskLib.VirtualDiskSession vhdSession = new(tempManager, existingVHD: newvhd);
+                    using VirtualDiskSession vhdSession = new(tempManager, existingVHD: newvhd);
                     foreach (EditionTarget ed in targetEdition.NonDestructiveTargets)
                     {
                         if (!string.IsNullOrEmpty(edition) && !IsRightPath(ed, edition))
@@ -299,7 +298,7 @@ namespace MediaCreationLib
             //
             IEnumerable<CompDBXmlClass.CompDB> filteredCompositionDatabases = CompositionDatabases.GetEditionCompDBsForLanguage(LanguageCode).Where(x =>
             {
-                (bool success, HashSet<string> missingfiles) = FileLocator.VerifyFilesAreAvailableForCompDB(x, UUPPath);
+                (bool success, HashSet<string> missingfiles) = Planning.FileLocator.VerifyFilesAreAvailableForCompDB(x, UUPPath);
                 return success;
             });
 
@@ -334,14 +333,14 @@ namespace MediaCreationLib
                 bool result = true;
                 string BaseESD = null;
 
-                (result, BaseESD) = NET.FileLocator.LocateFilesForSetupMediaCreation(UUPPath, LanguageCode, CompositionDatabases, progressCallback);
+                (result, BaseESD) = FileLocator.LocateFilesForSetupMediaCreation(UUPPath, LanguageCode, CompositionDatabases, progressCallback);
                 if (result)
                 {
                     EditionPack = BaseESD;
                 }
             }
 
-            return ConversionPlanBuilder.GetTargetedPlan(UUPPath, CompositionDatabases, EditionPack, LanguageCode, PlatformUtilities.RunsAsAdministrator, out EditionTargets, tempManager, (string msg) => progressCallback?.Invoke(Common.ProcessPhase.ReadingMetadata, true, 0, msg));
+            return ConversionPlanBuilder.GetTargetedPlan(UUPPath, CompositionDatabases, EditionPack, LanguageCode, PlatformUtilities.RunsAsAdministrator, out EditionTargets, tempManager, (msg) => progressCallback?.Invoke(Common.ProcessPhase.ReadingMetadata, true, 0, msg));
         }
 
         public static bool IsRightPath(EditionTarget editionTarget, string edition)
@@ -387,7 +386,7 @@ namespace MediaCreationLib
 
             try
             {
-                List<CompDBXmlClass.CompDB> CompositionDatabases = FileLocator.GetCompDBsFromUUPFiles(UUPPath, tempManager);
+                List<CompDBXmlClass.CompDB> CompositionDatabases = Planning.FileLocator.GetCompDBsFromUUPFiles(UUPPath, tempManager);
 
                 result = GetTargetedPlan(UUPPath, LanguageCode, CompositionDatabases, out List<EditionTarget> editionTargets, tempManager, progressCallback);
                 if (!result)
@@ -407,7 +406,7 @@ namespace MediaCreationLib
                 progressCallback?.Invoke(Common.ProcessPhase.ReadingMetadata, true, 0, "Enumerating files");
 
                 string temp = tempManager.GetTempPath();
-                Directory.CreateDirectory(temp);
+                _ = Directory.CreateDirectory(temp);
 
                 string WinREWIMFilePath = Path.Combine(temp, "Winre.wim");
                 string MediaRootPath = Path.Combine(temp, "MediaRoot");

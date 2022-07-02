@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.CompilerServices;
 
-namespace ICSharpCode.SharpZipLib.Checksum
+namespace Privileges.Checksum
 {
     /// <summary>
     /// CRC-32 with reversed data and unreversed output
@@ -64,7 +64,7 @@ namespace ICSharpCode.SharpZipLib.Checksum
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static uint ComputeCrc32(uint oldCrc, byte bval)
         {
-            return (uint)(Crc32.crcTable[(oldCrc ^ bval) & 0xFF] ^ (oldCrc >> 8));
+            return crcTable[(oldCrc ^ bval) & 0xFF] ^ (oldCrc >> 8);
         }
 
         /// <summary>
@@ -87,13 +87,7 @@ namespace ICSharpCode.SharpZipLib.Checksum
         /// Returns the CRC data checksum computed so far.
         /// </summary>
         /// <remarks>Reversed Out = false</remarks>
-        public long Value
-        {
-            get
-            {
-                return (long)(checkValue ^ crcXor);
-            }
-        }
+        public long Value => checkValue ^ crcXor;
 
         /// <summary>
         /// Updates the checksum with the int bval.

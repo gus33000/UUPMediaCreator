@@ -40,7 +40,7 @@ namespace UUPMediaCreator.UWP.Pages
     {
         public LanguagePage()
         {
-            this.InitializeComponent();
+            InitializeComponent();
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -77,7 +77,7 @@ namespace UUPMediaCreator.UWP.Pages
             App.ConversionPlan.Language = (dataGrid.SelectedItem as BuildFetcher.AvailableBuildLanguages)?.LanguageCode;
             App.ConversionPlan.LanguageTitle = (dataGrid.SelectedItem as BuildFetcher.AvailableBuildLanguages)?.Title;
             App.ConversionPlan.FlagUri = (dataGrid.SelectedItem as BuildFetcher.AvailableBuildLanguages)?.FlagUri;
-            Frame.Navigate(typeof(EditionPage));
+            _ = Frame.Navigate(typeof(EditionPage));
         }
 
         private void WizardPage_BackClicked(object sender, RoutedEventArgs e)

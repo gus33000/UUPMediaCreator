@@ -33,7 +33,7 @@ namespace UUPMediaCreator.UWP.Pages
     {
         public DownloadPage()
         {
-            this.InitializeComponent();
+            InitializeComponent();
         }
 
         private void DownloadPage_Loaded(object sender, RoutedEventArgs e)
@@ -45,12 +45,12 @@ namespace UUPMediaCreator.UWP.Pages
                 StorageFolder tmp = await ApplicationData.Current.TemporaryFolder.CreateFolderAsync($"{DateTime.Now.Ticks}");
 
                 App.ConversionPlan.TmpOutputFolder = await UpdateUtils.ProcessUpdateAsync(
-                    App.ConversionPlan.UpdateData, 
-                    tmp.Path, 
-                    App.ConversionPlan.MachineType, 
-                    this, 
-                    App.ConversionPlan.Language, 
-                    App.ConversionPlan.Edition, 
+                    App.ConversionPlan.UpdateData,
+                    tmp.Path,
+                    App.ConversionPlan.MachineType,
+                    this,
+                    App.ConversionPlan.Language,
+                    App.ConversionPlan.Edition,
                     UseAutomaticDownloadFolder: false,
                     downloadThreads: 1);
 
@@ -84,7 +84,7 @@ namespace UUPMediaCreator.UWP.Pages
                     continue;
                 }
 
-                mutex.WaitOne();
+                _ = mutex.WaitOne();
 
                 bool shouldReport = !files.ContainsKey(status.File.FileName) || files[status.File.FileName] != status.FileStatus;
 

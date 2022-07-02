@@ -19,15 +19,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-using MediaCreationLib.Dism;
-using System;
+using MediaCreationLib.DismOperations;
 using MediaCreationLib.Planning.Applications;
+using System;
 
-namespace UUPMediaCreator.DismBroker
+namespace UUPMediaConverterDismBroker
 {
     internal static class Program
     {
-        static void callback(bool IsIndeterminate, int Percentage, string Operation)
+        private static void callback(bool IsIndeterminate, int Percentage, string Operation)
         {
             if (!IsIndeterminate)
             {
@@ -53,7 +53,7 @@ namespace UUPMediaCreator.DismBroker
                                 return 2;
                             }
 
-                            DismOperations.Instance.UninstallPEComponents(args[1], callback);
+                            _ = DismOperations.Instance.UninstallPEComponents(args[1], callback);
                             break;
                         }
                     case "/SetTargetEdition":

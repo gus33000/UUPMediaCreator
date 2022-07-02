@@ -45,7 +45,7 @@ namespace TempManager
             }
         }
 
-        private object obj = new();
+        private readonly object obj = new();
 
         public string GetTempPath()
         {
@@ -68,7 +68,7 @@ namespace TempManager
 
         protected virtual void Dispose(bool disposing)
         {
-            if (!this.disposed)
+            if (!disposed)
             {
                 // If disposing equals true, dispose all managed
                 // and unmanaged resources.

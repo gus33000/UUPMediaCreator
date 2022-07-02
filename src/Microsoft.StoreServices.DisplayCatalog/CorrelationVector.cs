@@ -26,7 +26,7 @@ using System;
 // Released under the MIT License (as of 2020-11-04)
 //
 
-namespace Microsoft.Marketplace.StoreEdgeFd
+namespace Microsoft.StoreServices.DisplayCatalog
 {
     internal class CorrelationVector
     {
@@ -162,7 +162,7 @@ namespace Microsoft.Marketplace.StoreEdgeFd
             if (IsValid(vector))
             {
                 int lastDot = vector.LastIndexOf(".");
-                baseVector = vector.Substring(0, lastDot);
+                baseVector = vector[..lastDot];
                 currentVector = int.Parse(vector[(lastDot + 1)..]);
                 isInitialized = true;
             }

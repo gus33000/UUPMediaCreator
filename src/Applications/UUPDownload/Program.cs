@@ -61,7 +61,7 @@ namespace UUPDownload
                 }
                 if (Debugger.IsAttached)
                 {
-                    Console.ReadLine();
+                    _ = Console.ReadLine();
                 }
 
                 return 1;

@@ -185,13 +185,13 @@ namespace Microsoft.Wim
             }
 
             // Remove the callback from the list
-            _registeredCallbacksByHandle[wimHandle].Remove(messageCallback);
+            _ = _registeredCallbacksByHandle[wimHandle].Remove(messageCallback);
 
             // See if the dictionary for the wimHandle is now empty
             if (_registeredCallbacksByHandle[wimHandle].Count == 0)
             {
                 // Remove the wimHandle dictionary item
-                _registeredCallbacksByHandle.Remove(wimHandle);
+                _ = _registeredCallbacksByHandle.Remove(wimHandle);
             }
 
             return true;
@@ -218,7 +218,7 @@ namespace Microsoft.Wim
             }
 
             // Remove the callback from the list
-            _registeredCallbacksGlobal.Remove(messageCallback);
+            _ = _registeredCallbacksGlobal.Remove(messageCallback);
 
             return true;
         }
@@ -244,7 +244,7 @@ namespace Microsoft.Wim
             }
 
             // Remove the wimHandle from the list
-            _registeredCallbacksByHandle.Remove(wimHandle);
+            _ = _registeredCallbacksByHandle.Remove(wimHandle);
 
             return true;
         }

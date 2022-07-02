@@ -60,7 +60,7 @@ namespace WindowsUpdateLib
                     break;
                 }
 
-                originalString = originalString.Substring(0, startIndex) + newValue + originalString[(startIndex + oldValue.Length)..];
+                originalString = originalString[..startIndex] + newValue + originalString[(startIndex + oldValue.Length)..];
 
                 startIndex += newValue.Length;
             }

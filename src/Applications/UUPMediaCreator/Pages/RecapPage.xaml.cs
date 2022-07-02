@@ -31,7 +31,7 @@ namespace UUPMediaCreator.UWP.Pages
     {
         public RecapPage()
         {
-            this.InitializeComponent();
+            InitializeComponent();
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -49,7 +49,7 @@ namespace UUPMediaCreator.UWP.Pages
 
         private void WizardPage_NextClicked(object sender, RoutedEventArgs e)
         {
-            Frame.Navigate(typeof(DownloadPage));
+            _ = Frame.Navigate(typeof(DownloadPage));
         }
 
         private void WizardPage_BackClicked(object sender, RoutedEventArgs e)

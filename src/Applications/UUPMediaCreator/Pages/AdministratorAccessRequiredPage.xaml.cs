@@ -28,7 +28,7 @@ namespace UUPMediaCreator.UWP.Pages
     {
         public AdministratorAccessRequiredPage()
         {
-            this.InitializeComponent();
+            InitializeComponent();
         }
 
         private void WizardPage_NextClicked(object sender, RoutedEventArgs e)

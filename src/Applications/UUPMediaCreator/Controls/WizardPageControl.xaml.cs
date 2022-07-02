@@ -72,32 +72,32 @@ namespace UUPMediaCreator.UWP
 
         public string Title
         {
-            get { return (string)GetValue(TitleProperty); }
-            set { SetValue(TitleProperty, value); }
+            get => (string)GetValue(TitleProperty);
+            set => SetValue(TitleProperty, value);
         }
 
         public string Subtitle
         {
-            get { return (string)GetValue(SubtitleProperty); }
-            set { SetValue(SubtitleProperty, value); }
+            get => (string)GetValue(SubtitleProperty);
+            set => SetValue(SubtitleProperty, value);
         }
 
         public string Glyph
         {
-            get { return (string)GetValue(GlyphProperty); }
-            set { SetValue(GlyphProperty, value); }
+            get => (string)GetValue(GlyphProperty);
+            set => SetValue(GlyphProperty, value);
         }
 
         public bool BackEnabled
         {
-            get { return (bool)GetValue(BackEnabledProperty); }
-            set { SetValue(BackEnabledProperty, value); }
+            get => (bool)GetValue(BackEnabledProperty);
+            set => SetValue(BackEnabledProperty, value);
         }
 
         public bool NextEnabled
         {
-            get { return (bool)GetValue(NextEnabledProperty); }
-            set { SetValue(NextEnabledProperty, value); }
+            get => (bool)GetValue(NextEnabledProperty);
+            set => SetValue(NextEnabledProperty, value);
         }
 
         private static void OnChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -106,7 +106,7 @@ namespace UUPMediaCreator.UWP
 
         public WizardPageControl()
         {
-            this.InitializeComponent();
+            InitializeComponent();
         }
 
         private void NextButton_Click(object sender, RoutedEventArgs e)

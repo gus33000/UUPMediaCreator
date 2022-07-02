@@ -32,7 +32,7 @@ namespace MediaCreationLib.BootlegEditions
         {
             string content = File.ReadAllText(manifestPath);
             Assembly assembly = Deserialize(content);
-            assembly.Package.Update.RemoveAll(x => x.Name.Contains("Not-Supported-On-LTSB"));
+            _ = assembly.Package.Update.RemoveAll(x => x.Name.Contains("Not-Supported-On-LTSB"));
             File.WriteAllText(manifestPath, Serialize(assembly));
         }
 
@@ -40,7 +40,7 @@ namespace MediaCreationLib.BootlegEditions
         {
             string content = File.ReadAllText(manifestPath);
             Assembly assembly = Deserialize(content);
-            assembly.Package.Update.RemoveAll(x => x.Name.Contains(v, System.StringComparison.CurrentCultureIgnoreCase));
+            _ = assembly.Package.Update.RemoveAll(x => x.Name.Contains(v, System.StringComparison.CurrentCultureIgnoreCase));
             File.WriteAllText(manifestPath, Serialize(assembly));
         }
 

@@ -2,6 +2,7 @@
 //
 // Licensed under the MIT license.
 
+using Microsoft.Wim;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -42,7 +43,7 @@ namespace Microsoft.Wim
         public static WimMountInfoCollection GetMountedImageInfo()
         {
             // Call the native function first to get the necessary buffer size
-            WimgApi.NativeMethods.WIMGetMountedImageInfo(WimMountInfo.MountInfoLevel, out DWORD imageCount, IntPtr.Zero, 0, out DWORD returnLength);
+            _ = WimgApi.NativeMethods.WIMGetMountedImageInfo(WimMountInfo.MountInfoLevel, out _, IntPtr.Zero, 0, out DWORD returnLength);
 
             switch (Marshal.GetLastWin32Error())
             {
@@ -71,7 +72,7 @@ namespace Microsoft.Wim
             try
             {
                 // Call the native function a second time so it can fill the array of pointers
-                if (!WimgApi.NativeMethods.WIMGetMountedImageInfo(WimMountInfo.MountInfoLevel, out imageCount, mountInfoPtr, returnLength, out returnLength))
+                if (!WimgApi.NativeMethods.WIMGetMountedImageInfo(WimMountInfo.MountInfoLevel, out uint imageCount, mountInfoPtr, returnLength, out returnLength))
                 {
                     // Throw a Win32Exception based on the last error code
                     throw new Win32Exception();

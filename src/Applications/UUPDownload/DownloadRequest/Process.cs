@@ -110,7 +110,7 @@ namespace UUPDownload.DownloadRequest
                 .Equals("Canonical", StringComparison.InvariantCultureIgnoreCase) == true)
                 .Where(x => x.AppX != null)
                 .FirstOrDefault();
-            
+
             if (canonicalCompdb != null)
             {
                 foreach (string appxFile in appxFiles)
@@ -118,10 +118,8 @@ namespace UUPDownload.DownloadRequest
                     string payloadHash;
                     using (FileStream fileStream = File.OpenRead(appxFile))
                     {
-                        using (SHA256 sha = SHA256.Create())
-                        {
-                            payloadHash = Convert.ToBase64String(sha.ComputeHash(fileStream));
-                        }
+                        using SHA256 sha = SHA256.Create();
+                        payloadHash = Convert.ToBase64String(sha.ComputeHash(fileStream));
                     }
 
                     CompDBXmlClass.AppxPackage package = canonicalCompdb.AppX.AppXPackages.Package.Where(p => p.Payload.PayloadItem.FirstOrDefault().PayloadHash == payloadHash).FirstOrDefault();
@@ -135,7 +133,7 @@ namespace UUPDownload.DownloadRequest
                         if (!Directory.Exists(appxFolder))
                         {
                             Logging.Log($"Creating {appxFolder}");
-                            Directory.CreateDirectory(appxFolder);
+                            _ = Directory.CreateDirectory(appxFolder);
                         }
 
                         string appxPath = Path.Combine(appxRoot, package.Payload.PayloadItem.FirstOrDefault().Path);
@@ -152,7 +150,7 @@ namespace UUPDownload.DownloadRequest
                         if (!Directory.Exists(appxFolder))
                         {
                             Logging.Log($"Creating {appxFolder}");
-                            Directory.CreateDirectory(appxFolder);
+                            _ = Directory.CreateDirectory(appxFolder);
                         }
 
                         string appxPath = Path.Combine(appxRoot, package.Payload.PayloadItem.FirstOrDefault().Path);
@@ -211,7 +209,7 @@ namespace UUPDownload.DownloadRequest
             Logging.Log("Completed.");
             if (Debugger.IsAttached)
             {
-                Console.ReadLine();
+                _ = Console.ReadLine();
             }
         }
 
@@ -247,8 +245,7 @@ namespace UUPDownload.DownloadRequest
                 {
                     if (compDB.TargetOSVersion != null)
                     {
-                        Version currentVer = null;
-                        if (Version.TryParse(compDB.TargetOSVersion, out currentVer))
+                        if (Version.TryParse(compDB.TargetOSVersion, out Version currentVer))
                         {
                             if (currentHighest == null || (currentVer != null && currentVer.GreaterThan(currentHighest)))
                             {
@@ -305,7 +302,7 @@ namespace UUPDownload.DownloadRequest
                 }
             }
 
-            await DownloadLib.UpdateUtils.ProcessUpdateAsync(update, pOutputFolder, MachineType, new ReportProgress(), Language, Edition, WriteMetadata);
+            _ = await DownloadLib.UpdateUtils.ProcessUpdateAsync(update, pOutputFolder, MachineType, new ReportProgress(), Language, Edition, WriteMetadata);
         }
     }
 }

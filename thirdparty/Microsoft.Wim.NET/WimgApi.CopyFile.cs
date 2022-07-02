@@ -2,6 +2,7 @@
 //
 // Licensed under the MIT license.
 
+using Microsoft.Wim;
 using System;
 using System.ComponentModel;
 using System.Runtime.InteropServices;

@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace PrivilegeClass
+namespace Privileges
 {
     [Serializable]
     public sealed class PrivilegeNotHeldException : UnauthorizedAccessException, ISerializable
@@ -14,19 +14,19 @@ namespace PrivilegeClass
         public PrivilegeNotHeldException(string privilege)
             : base(string.Format("The {0} privilege is not held by the caller.", privilege))
         {
-            this.PrivilegeName = privilege;
+            PrivilegeName = privilege;
         }
 
         public PrivilegeNotHeldException(string privilege, Exception inner)
             : base(string.Format("The {0} privilege is not held by the caller.", privilege), inner)
         {
-            this.PrivilegeName = privilege;
+            PrivilegeName = privilege;
         }
 
         private PrivilegeNotHeldException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
-            this.PrivilegeName = info.GetString("PrivilegeName");
+            PrivilegeName = info.GetString("PrivilegeName");
         }
 
         public string PrivilegeName { get; } = null;
@@ -40,7 +40,7 @@ namespace PrivilegeClass
 
             base.GetObjectData(info, context);
 
-            info.AddValue("PrivilegeName", this.PrivilegeName, typeof(string));
+            info.AddValue("PrivilegeName", PrivilegeName, typeof(string));
         }
     }
 }

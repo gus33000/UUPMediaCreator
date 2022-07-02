@@ -33,12 +33,12 @@ namespace UUPMediaCreator.UWP.Pages
     {
         public EndPage()
         {
-            this.InitializeComponent();
+            InitializeComponent();
         }
 
         public void WizardPage_NextClicked(object sender, RoutedEventArgs e)
         {
-            Frame.Navigate(typeof(WelcomePage));
+            _ = Frame.Navigate(typeof(WelcomePage));
         }
     }
 }

@@ -29,7 +29,7 @@ namespace UUPDownload
 {
     public static class FeatureManifestService
     {
-        const int MAXIMUM_CANDIDATE_CAB_SIZE = 1024 * 48; // Feature manifest cabinets have not been observed to be larger than 48KiB
+        private const int MAXIMUM_CANDIDATE_CAB_SIZE = 1024 * 48; // Feature manifest cabinets have not been observed to be larger than 48KiB
 
         public static IDictionary<string, string> GetAppxPackageLicenseFileMapFromCabs(IList<string> cabPaths)
         {
@@ -37,12 +37,16 @@ namespace UUPDownload
             foreach (string cabPath in cabPaths)
             {
                 if (new FileInfo(cabPath).Length > MAXIMUM_CANDIDATE_CAB_SIZE)
+                {
                     continue;
+                }
 
                 foreach (CabinetFile file in CabinetExtractor.EnumCabinetFiles(cabPath))
                 {
                     if (!Path.GetExtension(file.FileName).Equals(".xml", StringComparison.OrdinalIgnoreCase))
+                    {
                         continue;
+                    }
 
                     try
                     {

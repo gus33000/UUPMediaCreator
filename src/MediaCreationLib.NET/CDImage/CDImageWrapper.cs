@@ -44,19 +44,22 @@ namespace MediaCreationLib.CDImage
                 string timestamp = creationtime.ToString("MM/dd/yyyy,hh:mm:ss");
 
                 ProcessStartInfo processStartInfo = new(cdimagepath,
-                    $"\"-bootdata:2#p0,e,b{cdroot}\\boot\\etfsboot.com#pEF,e,b{cdroot}\\efi\\Microsoft\\boot\\efisys.bin\" -o -h -m -u2 -udfver102 -t{timestamp} -l{volumelabel}  \"{cdroot}\" \"{isopath}\"");
+                    $"\"-bootdata:2#p0,e,b{cdroot}\\boot\\etfsboot.com#pEF,e,b{cdroot}\\efi\\Microsoft\\boot\\efisys.bin\" -o -h -m -u2 -udfver102 -t{timestamp} -l{volumelabel}  \"{cdroot}\" \"{isopath}\"")
+                {
+                    UseShellExecute = false,
+                    WindowStyle = ProcessWindowStyle.Hidden,
+                    RedirectStandardError = true,
+                    CreateNoWindow = true
+                };
 
-                processStartInfo.UseShellExecute = false;
-                processStartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-                processStartInfo.RedirectStandardError = true;
-                processStartInfo.CreateNoWindow = true;
-
-                Process process = new();
-                process.StartInfo = processStartInfo;
+                Process process = new()
+                {
+                    StartInfo = processStartInfo
+                };
 
                 try
                 {
-                    process.ErrorDataReceived += (object sender, DataReceivedEventArgs e) =>
+                    process.ErrorDataReceived += (sender, e) =>
                     {
                         if (e.Data?.Contains("%") == true)
                         {
@@ -64,7 +67,7 @@ namespace MediaCreationLib.CDImage
                             progressCallback?.Invoke($"Building {isopath}", percent, false);
                         }
                     };
-                    process.Start();
+                    _ = process.Start();
                     process.BeginErrorReadLine();
                     process.WaitForExit();
                     return process.ExitCode == 0;
@@ -83,19 +86,22 @@ namespace MediaCreationLib.CDImage
                     string cmdline = $"-b \"boot/etfsboot.com\" --no-emul-boot --eltorito-alt-boot -b \"efi/microsoft/boot/efisys.bin\" --no-emul-boot --udf --hide \"*\" -V \"{volumelabel}\" -o \"{isopath}\" {cdroot}";
 
                     ProcessStartInfo processStartInfo = new("mkisofs",
-                        cmdline);
+                        cmdline)
+                    {
+                        UseShellExecute = false,
+                        WindowStyle = ProcessWindowStyle.Hidden,
+                        RedirectStandardError = true,
+                        CreateNoWindow = true
+                    };
 
-                    processStartInfo.UseShellExecute = false;
-                    processStartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-                    processStartInfo.RedirectStandardError = true;
-                    processStartInfo.CreateNoWindow = true;
-
-                    Process process = new();
-                    process.StartInfo = processStartInfo;
+                    Process process = new()
+                    {
+                        StartInfo = processStartInfo
+                    };
 
                     try
                     {
-                        process.ErrorDataReceived += (object sender, DataReceivedEventArgs e) =>
+                        process.ErrorDataReceived += (sender, e) =>
                         {
                             if (e.Data?.Contains("%") == true)
                             {
@@ -103,7 +109,7 @@ namespace MediaCreationLib.CDImage
                                 progressCallback?.Invoke($"Building {isopath}", percent, false);
                             }
                         };
-                        process.Start();
+                        _ = process.Start();
                         process.BeginErrorReadLine();
                         process.WaitForExit();
                         return process.ExitCode == 0;

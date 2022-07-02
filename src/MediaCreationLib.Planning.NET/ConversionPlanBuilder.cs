@@ -21,15 +21,15 @@
  */
 using CompDB;
 using Imaging;
+using MediaCreationLib.Planning.Applications;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using MediaCreationLib.Planning.Applications;
 
 #nullable enable
 
-namespace MediaCreationLib.Planning.NET
+namespace MediaCreationLib.Planning
 {
     public class EditionTarget
     {
@@ -57,7 +57,7 @@ namespace MediaCreationLib.Planning.NET
     {
         public delegate void ProgressCallback(string SubOperation);
 
-        private static WimImaging imagingInterface = new();
+        private static readonly WimImaging imagingInterface = new();
 
         private static EditionTarget BuildTarget(
             PlannedEdition edition,
@@ -106,7 +106,7 @@ namespace MediaCreationLib.Planning.NET
                                     //
                                     // Remove it from the list of editions that can be targeted, as we are targeting it here so it doesn't get picked up again
                                     //
-                                    availableEditionsByDowngradingInPriority.Remove(planedition);
+                                    _ = availableEditionsByDowngradingInPriority.Remove(planedition);
 
                                     //
                                     // Add the edition
@@ -281,9 +281,9 @@ namespace MediaCreationLib.Planning.NET
             //
             CompDBXmlClass.CompDB? neutralCompDB = compDBs.GetNeutralCompDB();
 
-            if (neutralCompDB != null && 
+            if (neutralCompDB != null &&
                 neutralCompDB.Features.Feature.FirstOrDefault(x => x.FeatureID == "BaseNeutral")?
-                .Packages.Package 
+                .Packages.Package
                 is List<CompDBXmlClass.Package> packages)
             {
                 IEnumerable<CompDBXmlClass.Package>? editionSpecificPackages = packages.Where(x => x.ID.Count(y => y == '-') == 4 && x.ID.Contains("microsoft-windows-editionspecific", StringComparison.InvariantCultureIgnoreCase));
@@ -392,9 +392,11 @@ namespace MediaCreationLib.Planning.NET
 
         public static List<string> PrintEditionTarget(EditionTarget editionTarget, int padding = 0)
         {
-            List<string> lines = new();
-            lines.Add($"-> Name: {editionTarget.PlannedEdition.EditionName}, Availability: {editionTarget.PlannedEdition.AvailabilityType}");
-            
+            List<string> lines = new()
+            {
+                $"-> Name: {editionTarget.PlannedEdition.EditionName}, Availability: {editionTarget.PlannedEdition.AvailabilityType}"
+            };
+
             if (editionTarget.PlannedEdition.AppXInstallWorkloads?.Length > 0)
             {
                 lines.Add($"-> Apps: ");
@@ -498,14 +500,9 @@ namespace MediaCreationLib.Planning.NET
                     edition.AppXInstallWorkloads = AppxSelectionEngine.GetAppxInstallationWorkloads(compDB, AppCompDB);
                 }
 
-                if (compDB.Tags != null)
-                {
-                    edition.EditionName = compDB.Tags.Tag.First(x => x.Name.Equals("Edition", StringComparison.InvariantCultureIgnoreCase)).Value;
-                }
-                else
-                {
-                    edition.EditionName = compDB.Features.Feature[0].FeatureID.Split('_')[0];
-                }
+                edition.EditionName = compDB.Tags != null
+                    ? compDB.Tags.Tag.First(x => x.Name.Equals("Edition", StringComparison.InvariantCultureIgnoreCase)).Value
+                    : compDB.Features.Feature[0].FeatureID.Split('_')[0];
 
                 return edition;
             }).OrderBy(x => x.EditionName);

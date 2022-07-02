@@ -32,7 +32,7 @@ namespace UUPMediaCreator.UWP.Pages
     {
         public FODPage()
         {
-            this.InitializeComponent();
+            InitializeComponent();
         }
     }
 }

@@ -33,7 +33,7 @@ namespace UUPMediaCreator.UWP.Pages
     {
         public InstallMediumTypePage()
         {
-            this.InitializeComponent();
+            InitializeComponent();
         }
 
         private void WizardPage_NextClicked(object sender, RoutedEventArgs e)
@@ -41,7 +41,7 @@ namespace UUPMediaCreator.UWP.Pages
             if (ISO.IsChecked.Value)
             {
                 App.ConversionPlan.InstallationMediumType = InstallationMediumType.ISO;
-                Frame.Navigate(typeof(AdditionalUpdatePage));
+                _ = Frame.Navigate(typeof(AdditionalUpdatePage));
             }
             /*else if (InstallWindowsImage.IsChecked.Value)
             {

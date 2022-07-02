@@ -19,6 +19,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+using MediaCreationLib;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -56,7 +57,7 @@ namespace UUPMediaCreator.Broker
                 appServiceExit = new(false);
                 InitializeAppServiceConnection();
 
-                appServiceExit.WaitOne();
+                _ = appServiceExit.WaitOne();
             }
             finally
             {
@@ -85,7 +86,7 @@ namespace UUPMediaCreator.Broker
                         elevatedProcess.StartInfo.UseShellExecute = true;
                         elevatedProcess.StartInfo.FileName = Environment.ProcessPath;
                         elevatedProcess.StartInfo.Arguments = "elevate";
-                        elevatedProcess.Start();
+                        _ = elevatedProcess.Start();
                     }
                     return false;
                 }
@@ -99,7 +100,7 @@ namespace UUPMediaCreator.Broker
 
         private static void OnUnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
-            Exception exception = e.ExceptionObject as Exception;
+            _ = e.ExceptionObject as Exception;
             // Log error
         }
 
@@ -138,7 +139,7 @@ namespace UUPMediaCreator.Broker
             connection.ServiceClosed -= OnServiceClosed;
             connection.RequestReceived -= OnConnectionRequestReceived;
             connection = null;
-            appServiceExit?.Set();
+            _ = (appServiceExit?.Set());
         }
 
         private static async void OnConnectionRequestReceived(AppServiceConnection sender, AppServiceRequestReceivedEventArgs arguments)
@@ -179,7 +180,7 @@ namespace UUPMediaCreator.Broker
                             {
                                 { "InterCommunication", "" }
                             };
-                            await arguments.Request.SendResponseAsync(val);
+                            _ = await arguments.Request.SendResponseAsync(val);
                         });
 
                         thread.Start();
@@ -187,7 +188,7 @@ namespace UUPMediaCreator.Broker
 
                         deferral.Complete();
 
-                        appServiceExit?.Set();
+                        _ = (appServiceExit?.Set());
                         break;
                     }
 
@@ -199,7 +200,7 @@ namespace UUPMediaCreator.Broker
                             {
                                 { "InterCommunication", IsAdministrator() }
                             };
-                            await arguments.Request.SendResponseAsync(val);
+                            _ = await arguments.Request.SendResponseAsync(val);
                         });
 
                         thread.Start();
@@ -211,7 +212,7 @@ namespace UUPMediaCreator.Broker
 
                 case Common.InterCommunicationType.StartISOConversionProcess:
                     {
-                        async void callback(Common.ProcessPhase phase, bool IsIndeterminate, int ProgressInPercentage, string SubOperation)
+                        static async void callback(Common.ProcessPhase phase, bool IsIndeterminate, int ProgressInPercentage, string SubOperation)
                         {
                             Common.ISOConversionProgress prog = new()
                             {
@@ -228,14 +229,14 @@ namespace UUPMediaCreator.Broker
                                 { "InterCommunication", JsonSerializer.Serialize(comm) }
                             };
 
-                            await connection.SendMessageAsync(val);
+                            _ = await connection.SendMessageAsync(val);
                         }
 
                         Thread thread = new(async () =>
                         {
                             try
                             {
-                                MediaCreationLib.MediaCreator.CreateISOMedia(
+                                MediaCreator.CreateISOMedia(
                                         interCommunication.ISOConversion.ISOPath,
                                         interCommunication.ISOConversion.UUPPath,
                                         interCommunication.ISOConversion.Edition,
@@ -261,7 +262,7 @@ namespace UUPMediaCreator.Broker
                                     { "InterCommunication", JsonSerializer.Serialize(comm) }
                                 };
 
-                                await connection.SendMessageAsync(val);
+                                _ = await connection.SendMessageAsync(val);
                             }
                         });
 

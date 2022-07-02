@@ -39,7 +39,7 @@ namespace UUPMediaCreator.UWP.Pages
 
         public BuildingISOPage()
         {
-            this.InitializeComponent();
+            InitializeComponent();
             coreWindow = CoreWindow.GetForCurrentThread();
 
             App.Connection.RequestReceived += Connection_RequestReceived;
@@ -78,7 +78,7 @@ namespace UUPMediaCreator.UWP.Pages
                 { "InterCommunication", JsonSerializer.Serialize(comm) }
             };
 
-            await App.Connection.SendMessageAsync(val);
+            _ = await App.Connection.SendMessageAsync(val);
         }
 
         private ProcessPhase lastPhase;
@@ -230,7 +230,9 @@ namespace UUPMediaCreator.UWP.Pages
 
                                             // cleanup
                                             if (App.ConversionPlan.TmpOutputFolder != null)
+                                            {
                                                 Directory.Delete(App.ConversionPlan.TmpOutputFolder, true);
+                                            }
 
                                             break;
                                         }
@@ -242,7 +244,7 @@ namespace UUPMediaCreator.UWP.Pages
                                     //Directory.Delete(App.ConversionPlan.TmpOutputFolder, true);
 
                                     // Move to finish page when done, for now, welcome page
-                                    Frame.Navigate(typeof(EndPage));
+                                    _ = Frame.Navigate(typeof(EndPage));
                                     return;
                                 }
 

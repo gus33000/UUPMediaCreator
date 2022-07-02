@@ -74,7 +74,7 @@ namespace UUPDownload.Downloading
 
         public void Report(GeneralDownloadProgress e)
         {
-            mutex.WaitOne();
+            _ = mutex.WaitOne();
 
             foreach (FileDownloadStatus status in e.DownloadedStatus)
             {

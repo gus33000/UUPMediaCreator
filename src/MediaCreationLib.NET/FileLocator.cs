@@ -29,7 +29,7 @@ using UUPMediaCreator.InterCommunication;
 
 #nullable enable
 
-namespace MediaCreationLib.NET
+namespace MediaCreationLib
 {
     internal static class FileLocator
     {
@@ -39,12 +39,12 @@ namespace MediaCreationLib.NET
 
             foreach (CompDBXmlClass.CompDB compDB in CompositionDatabases)
             {
-                (bool succeeded, HashSet<string> missingFiles) = Planning.NET.FileLocator.VerifyFilesAreAvailableForCompDB(compDB, UUPPath);
+                (bool succeeded, HashSet<string> missingFiles) = Planning.FileLocator.VerifyFilesAreAvailableForCompDB(compDB, UUPPath);
                 foreach (string? missingFile in missingFiles)
                 {
                     if (!missingPackages.Contains(missingFile))
                     {
-                        missingPackages.Add(missingFile);
+                        _ = missingPackages.Add(missingFile);
                     }
                 }
             }
@@ -209,11 +209,11 @@ namespace MediaCreationLib.NET
 
                 if (file.EndsWith(".esd", StringComparison.InvariantCultureIgnoreCase))
                 {
-                    ReferencePackages.Add(Path.Combine(UUPPath, file));
+                    _ = ReferencePackages.Add(Path.Combine(UUPPath, file));
                 }
                 else if (file.EndsWith(".cab", StringComparison.InvariantCultureIgnoreCase))
                 {
-                    referencePackagesToConvert.Add(Path.Combine(UUPPath, file));
+                    _ = referencePackagesToConvert.Add(Path.Combine(UUPPath, file));
                 }
             }
 

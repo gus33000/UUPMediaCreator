@@ -1,6 +1,6 @@
 using System;
 
-namespace ICSharpCode.SharpZipLib.Checksum
+namespace Privileges.Checksum
 {
     /// <summary>
     /// <para>
@@ -51,8 +51,8 @@ namespace ICSharpCode.SharpZipLib.Checksum
     ///    checksum of zero.)"
     /// </para>
     /// </summary>
-    /// <see cref="ICSharpCode.SharpZipLib.Zip.Compression.Streams.InflaterInputStream"/>
-    /// <see cref="ICSharpCode.SharpZipLib.Zip.Compression.Streams.DeflaterOutputStream"/>
+    /// <see cref="SharpZipLib.Zip.Compression.Streams.InflaterInputStream"/>
+    /// <see cref="SharpZipLib.Zip.Compression.Streams.DeflaterOutputStream"/>
     public sealed class Adler32 : IChecksum
     {
         #region Instance Fields
@@ -88,13 +88,7 @@ namespace ICSharpCode.SharpZipLib.Checksum
         /// <summary>
         /// Returns the Adler32 data checksum computed so far.
         /// </summary>
-        public long Value
-        {
-            get
-            {
-                return checkValue;
-            }
-        }
+        public long Value => checkValue;
 
         /// <summary>
         /// Updates the checksum with the byte b.

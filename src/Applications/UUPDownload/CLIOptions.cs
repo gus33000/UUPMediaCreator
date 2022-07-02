@@ -90,10 +90,10 @@ namespace UUPDownload
 
         [Option('l', "language", HelpText = "The language to get. Must be used with the edition parameter. Omit either of these to download everything. Example: en-US", Required = false, Default = "")]
         public string Language { get; set; }
-        
+
         [Option("fixup", HelpText = @"Applies a fixup to files in output folder. Example: Appx", Required = false)]
         public Fixup? Fixup { get; set; }
-        
+
         [Option("appxroot", HelpText = @"The folder containing the appx files for use with the Appx fixup", Required = false)]
         public string AppxRoot { get; set; }
 

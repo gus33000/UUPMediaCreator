@@ -67,7 +67,7 @@ namespace WindowsUpdateLib
             req.Headers.Add("MS-CV", MSCV);
             req.Headers.Add("SOAPAction", Constants.Action + method);
             req.Headers.Add("User-agent", Constants.UserAgent);
-            req.Headers.TryAddWithoutValidation("Cache-Control", "no-cache");
+            _ = req.Headers.TryAddWithoutValidation("Cache-Control", "no-cache");
             req.Headers.Pragma.Add(new System.Net.Http.Headers.NameValueHeaderValue("no-cache"));
             req.Headers.Connection.Add("keep-alive");
 
@@ -426,11 +426,11 @@ namespace WindowsUpdateLib
 
                 foreach (CSOAPCommon.Update update in result.Item1.SyncUpdatesResult.ExtendedUpdateInfo.Updates.Update)
                 {
-                    InstalledNonLeafUpdateIDs.Add(update.ID);
-                    OtherCachedUpdateIDs.Add(update.ID);
+                    _ = InstalledNonLeafUpdateIDs.Add(update.ID);
+                    _ = OtherCachedUpdateIDs.Add(update.ID);
                 }
 
-                responses.Add(result);
+                _ = responses.Add(result);
             }
 
             HashSet<UpdateData> updateDatas = new();
@@ -479,7 +479,7 @@ namespace WindowsUpdateLib
 
                     data.SyncUpdatesResponse = response.Item2;
 
-                    updateDatas.Add(data);
+                    _ = updateDatas.Add(data);
                 }
             }
 
@@ -492,7 +492,7 @@ namespace WindowsUpdateLib
                     if (updateData.Xml.ExtendedProperties.ContentType == filter.ToString() && updateData.Xml.Files != null)
                     {
                         updateData.CTAC = ctac;
-                        relevantUpdateDatas.Add(updateData);
+                        _ = relevantUpdateDatas.Add(updateData);
                     }
                 }
             }
@@ -550,13 +550,7 @@ namespace WindowsUpdateLib
     {
         public string DownloadUrl { get; }
 
-        public bool IsEncrypted
-        {
-            get
-            {
-                return EsrpDecryptionInformation != null;
-            }
-        }
+        public bool IsEncrypted => EsrpDecryptionInformation != null;
 
         public DateTime ExpirationDate
         {
@@ -573,21 +567,9 @@ namespace WindowsUpdateLib
             }
         }
 
-        public bool IsDownloadable
-        {
-            get
-            {
-                return ExpirationDate > DateTime.Now;
-            }
-        }
+        public bool IsDownloadable => ExpirationDate > DateTime.Now;
 
-        public TimeSpan TimeLeft
-        {
-            get
-            {
-                return IsDownloadable ? DateTime.Now - ExpirationDate : new TimeSpan(0);
-            }
-        }
+        public TimeSpan TimeLeft => IsDownloadable ? DateTime.Now - ExpirationDate : new TimeSpan(0);
 
         public EsrpDecryptionInformation EsrpDecryptionInformation { get; set; } = null;
 

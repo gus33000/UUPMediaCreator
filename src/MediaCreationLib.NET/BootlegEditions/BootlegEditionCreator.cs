@@ -23,7 +23,6 @@ using Cabinet;
 using Imaging;
 using IniParser;
 using IniParser.Model;
-using MediaCreationLib.Dism;
 using MediaCreationLib.Settings;
 using Microsoft.Wim;
 using System;
@@ -253,7 +252,7 @@ namespace MediaCreationLib.BootlegEditions
             progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, "Serial: " + serial);
 
             progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, "Getting current edition");
-            string SourceEdition = DismOperations.Instance.GetCurrentEdition(MountedImagePath);
+            string SourceEdition = DismOperations.DismOperations.Instance.GetCurrentEdition(MountedImagePath);
             progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, "Current edition is: " + SourceEdition);
 
             progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, "Getting wim info for: " + OutputInstallImage);
@@ -313,10 +312,10 @@ namespace MediaCreationLib.BootlegEditions
             progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, "Has edition pack: " + HasEditionPack);
 
             string TemporaryFolder = tempManager.GetTempPath();
-            Directory.CreateDirectory(TemporaryFolder);
+            _ = Directory.CreateDirectory(TemporaryFolder);
 
             string SxSFolder = Path.Combine(TemporaryFolder, "SxS");
-            Directory.CreateDirectory(SxSFolder);
+            _ = Directory.CreateDirectory(SxSFolder);
 
             //
             // Build reconstructed edition xml
@@ -362,7 +361,7 @@ namespace MediaCreationLib.BootlegEditions
             if (LPFolder == null)
             {
                 LPFolder = tempManager.GetTempPath();
-                Directory.CreateDirectory(LPFolder);
+                _ = Directory.CreateDirectory(LPFolder);
 
                 string lpfilter1 = $"*fre_client_{languagecode}_lp.cab";
                 System.Collections.Generic.IEnumerable<string> paths = Directory.EnumerateFiles(UUPPath, lpfilter1, SearchOption.AllDirectories);
@@ -559,7 +558,7 @@ namespace MediaCreationLib.BootlegEditions
             // Apply unattend
             //
             progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, "Applying unattend");
-            DismOperations.Instance.ApplyUnattend(MountedImagePath, unattendPath);
+            DismOperations.DismOperations.Instance.ApplyUnattend(MountedImagePath, unattendPath);
 
             //
             // Restore OEMDefaultAssociations
@@ -600,14 +599,14 @@ namespace MediaCreationLib.BootlegEditions
             // Apply edition xml as unattend
             //
             progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, "Applying Edition Unattend XML");
-            DismOperations.Instance.ApplyUnattend(MountedImagePath, desintationEditionXml);
+            DismOperations.DismOperations.Instance.ApplyUnattend(MountedImagePath, desintationEditionXml);
 
             //
             // Install correct product key
             //
             progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, "Installing product key");
 
-            DismOperations.Instance.SetProductKey(MountedImagePath, serial);
+            DismOperations.DismOperations.Instance.SetProductKey(MountedImagePath, serial);
 
             //
             // Application handling

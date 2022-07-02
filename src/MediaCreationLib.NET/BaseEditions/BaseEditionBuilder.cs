@@ -20,18 +20,19 @@
  * SOFTWARE.
  */
 using Cabinet;
+using CompDB;
 using Imaging;
+using IniParser;
+using IniParser.Model;
+using MediaCreationLib.DismOperations;
 using MediaCreationLib.Planning.Applications;
-using MediaCreationLib.NET;
 using Microsoft.Wim;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using UUPMediaCreator.InterCommunication;
-using CompDB;
 using System.Threading.Tasks;
-using IniParser;
-using IniParser.Model;
+using UUPMediaCreator.InterCommunication;
+using VirtualHardDiskLib;
 
 namespace MediaCreationLib.BaseEditions
 {
@@ -217,7 +218,7 @@ namespace MediaCreationLib.BaseEditions
             }
 
             string licenseFolder = tempManager.GetTempPath();
-            Directory.CreateDirectory(licenseFolder);
+            _ = Directory.CreateDirectory(licenseFolder);
 
             //
             // Export License files
@@ -237,7 +238,7 @@ namespace MediaCreationLib.BaseEditions
                 progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, IsIndeterminate, ProgressPercentage, Operation);
             }
 
-            using (VirtualHardDiskLib.VirtualDiskSession vhdSession = new(tempManager, delete: !keepVhd))
+            using (VirtualDiskSession vhdSession = new(tempManager, delete: !keepVhd))
             {
                 vhdPath = vhdSession.VirtualDiskPath;
 
@@ -254,19 +255,19 @@ namespace MediaCreationLib.BaseEditions
                 }
 
                 progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, $"Installing Applications");
-                result = Dism.RemoteDismOperations.Instance.PerformAppxWorkloadsInstallation(vhdSession.GetMountedPath(), UUPPath, licenseFolder, appxWorkloads, customCallback);
+                result = RemoteDismOperations.Instance.PerformAppxWorkloadsInstallation(vhdSession.GetMountedPath(), UUPPath, licenseFolder, appxWorkloads, customCallback);
                 if (!result)
                 {
-                    result = Dism.DismOperations.Instance.PerformAppxWorkloadsInstallation(vhdSession.GetMountedPath(), UUPPath, licenseFolder, appxWorkloads, customCallback);
+                    result = DismOperations.DismOperations.Instance.PerformAppxWorkloadsInstallation(vhdSession.GetMountedPath(), UUPPath, licenseFolder, appxWorkloads, customCallback);
                     if (!result)
                     {
                         foreach (AppxInstallWorkload appx in appxWorkloads)
                         {
                             progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, $"Installing {appx.AppXPath}");
-                            result = Dism.RemoteDismOperations.Instance.PerformAppxWorkloadInstallation(vhdSession.GetMountedPath(), UUPPath, licenseFolder, appx);
+                            result = RemoteDismOperations.Instance.PerformAppxWorkloadInstallation(vhdSession.GetMountedPath(), UUPPath, licenseFolder, appx);
                             if (!result)
                             {
-                                result = Dism.DismOperations.Instance.PerformAppxWorkloadInstallation(vhdSession.GetMountedPath(), UUPPath, licenseFolder, appx);
+                                result = DismOperations.DismOperations.Instance.PerformAppxWorkloadInstallation(vhdSession.GetMountedPath(), UUPPath, licenseFolder, appx);
                             }
                         }
                     }
@@ -282,14 +283,14 @@ namespace MediaCreationLib.BaseEditions
                 File.Copy(InputWindowsREPath, Path.Combine(vhdSession.GetMountedPath(), "Windows", "System32", "Recovery", "Winre.wim"), true);
 
                 result = Constants.imagingInterface.CaptureImage(
-                    OutputInstallImage, 
-                    image.NAME, 
-                    image.DESCRIPTION, 
-                    image.FLAGS, 
-                    vhdSession.GetMountedPath(), 
+                    OutputInstallImage,
+                    image.NAME,
+                    image.DESCRIPTION,
+                    image.FLAGS,
+                    vhdSession.GetMountedPath(),
                     tempManager,
-                    image.DISPLAYNAME, 
-                    image.DISPLAYDESCRIPTION, 
+                    image.DISPLAYNAME,
+                    image.DISPLAYDESCRIPTION,
                     compressionType: compression,
                     progressCallback: callback);
                 if (!result)
@@ -361,7 +362,7 @@ namespace MediaCreationLib.BaseEditions
             }
 
             string unpackedFODEsd = tempManager.GetTempPath();
-            Directory.CreateDirectory(unpackedFODEsd);
+            _ = Directory.CreateDirectory(unpackedFODEsd);
 
             int progressPercentage = 0;
             int total = referencePackagesToConvert.Count;
@@ -390,7 +391,7 @@ namespace MediaCreationLib.BaseEditions
                 goto exit;
             }
 
-            Dictionary<string, List<string>> iniSections = new Dictionary<string, List<string>>();
+            Dictionary<string, List<string>> iniSections = new();
 
             foreach (string referencePackageToConvert in referencePackagesToConvert)
             {
@@ -442,7 +443,7 @@ namespace MediaCreationLib.BaseEditions
                 goto exit;
             }
 
-            ReferencePackages.Add(esdFilePath);
+            _ = ReferencePackages.Add(esdFilePath);
 
         exit:
             return (result, BaseESD, ReferencePackages);

@@ -28,7 +28,7 @@ using System.Linq;
 
 #nullable enable
 
-namespace MediaCreationLib.Planning.NET
+namespace MediaCreationLib.Planning
 {
     public static class FileLocator
     {
@@ -96,7 +96,7 @@ namespace MediaCreationLib.Planning.NET
                 (bool succeeded, string missingFile) = VerifyFileIsAvailableForPackage(pkg, UUPPath);
                 if (!succeeded)
                 {
-                    missingPackages.Add(missingFile);
+                    _ = missingPackages.Add(missingFile);
                 }
             }
 

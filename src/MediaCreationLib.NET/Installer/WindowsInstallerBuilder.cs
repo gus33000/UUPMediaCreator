@@ -20,6 +20,7 @@
  * SOFTWARE.
  */
 using Imaging;
+using MediaCreationLib.DismOperations;
 using MediaCreationLib.Settings;
 using MediaCreationLib.Utils;
 using Microsoft.Wim;
@@ -421,7 +422,7 @@ namespace MediaCreationLib.Installer
             string peshellini = Path.Combine(sys32, "winpeshl.ini");
 
             // Ignore return result
-            Constants.imagingInterface.DeleteFileFromImage(bootwim, 1, peshellini, progressCallback: progressCallback?.GetImagingCallback());
+            _ = Constants.imagingInterface.DeleteFileFromImage(bootwim, 1, peshellini, progressCallback: progressCallback?.GetImagingCallback());
 
             //
             // Cleanup log file from RE conversion phase mentions
@@ -451,7 +452,7 @@ namespace MediaCreationLib.Installer
                             finallines.RemoveAt(finallines.Count - 1);
                             File.WriteAllLines(logfile, finallines);
                             // Ignore return result
-                            Constants.imagingInterface.AddFileToImage(bootwim, 1, logfile, pathinimage, progressCallback: progressCallback?.GetImagingCallback());
+                            _ = Constants.imagingInterface.AddFileToImage(bootwim, 1, logfile, pathinimage, progressCallback: progressCallback?.GetImagingCallback());
                             break;
                         }
                         finallines.Add(line);
@@ -520,10 +521,10 @@ namespace MediaCreationLib.Installer
                     progressCallback?.Invoke(Common.ProcessPhase.CreatingWindowsInstaller, IsIndeterminate, ProgressInPercentage, SubOperation);
                 }
 
-                result = Dism.RemoteDismOperations.Instance.UninstallPEComponents(ospath, customCallback);
+                result = RemoteDismOperations.Instance.UninstallPEComponents(ospath, customCallback);
                 if (!result)
                 {
-                    result = Dism.DismOperations.Instance.UninstallPEComponents(ospath, customCallback);
+                    result = DismOperations.DismOperations.Instance.UninstallPEComponents(ospath, customCallback);
                 }
 
                 if (!result)
@@ -618,7 +619,7 @@ namespace MediaCreationLib.Installer
             //
             if (!Directory.Exists(OutputPath))
             {
-                Directory.CreateDirectory(OutputPath);
+                _ = Directory.CreateDirectory(OutputPath);
             }
 
             //

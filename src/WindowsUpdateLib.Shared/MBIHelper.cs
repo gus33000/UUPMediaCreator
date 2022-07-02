@@ -31,12 +31,12 @@ namespace WindowsUpdateLib.Shared
 {
     public static class MBIHelper
     {
-        public async static Task<string> GenerateMicrosoftAccountTokenAsync(string email, string password)
+        public static async Task<string> GenerateMicrosoftAccountTokenAsync(string email, string password)
         {
             return Convert.ToBase64String(Encoding.Unicode.GetBytes("t=" + await GetBearerTokenForScope(email, password, "service::dcat.update.microsoft.com::MBI_SSL") + "&p="));
         }
 
-        private async static Task<string> GetBearerTokenForScope(string email, string password, string targetscope, string clientId = "ms-app://s-1-15-2-1929064262-2866240470-255121345-2806524548-501211612-2892859406-1685495620/")
+        private static async Task<string> GetBearerTokenForScope(string email, string password, string targetscope, string clientId = "ms-app://s-1-15-2-1929064262-2866240470-255121345-2806524548-501211612-2892859406-1685495620/")
         {
             string retVal = string.Empty;
             email = WebUtility.UrlEncode(email);
@@ -49,7 +49,7 @@ namespace WindowsUpdateLib.Shared
             string PPFT;
             try
             {
-                HttpWebResponse hwresp = (HttpWebResponse)(await hwreq.GetResponseAsync());
+                HttpWebResponse hwresp = (HttpWebResponse)await hwreq.GetResponseAsync();
 
                 foreach (string oCookie in hwresp.Headers["Set-Cookie"].Split(','))
                 {
@@ -68,9 +68,9 @@ namespace WindowsUpdateLib.Shared
                 }
                 PPFT = responsePlain[responsePlain.IndexOf("name=\"PPFT\"")..];
                 PPFT = PPFT[(PPFT.IndexOf("value=") + 7)..];
-                PPFT = PPFT.Substring(0, PPFT.IndexOf('\"'));
+                PPFT = PPFT[..PPFT.IndexOf('\"')];
                 urlPost = responsePlain[(responsePlain.IndexOf("urlPost:") + 9)..];
-                urlPost = urlPost.Substring(0, urlPost.IndexOf('\''));
+                urlPost = urlPost[..urlPost.IndexOf('\'')];
             }
             catch { return string.Empty; }
 
@@ -102,7 +102,7 @@ namespace WindowsUpdateLib.Shared
                         retVal = oLocationBit[(oLocationBit.IndexOf("access_token") + 13)..];
                         if (retVal.Contains("&"))
                         {
-                            retVal = retVal.Substring(0, retVal.IndexOf('&'));
+                            retVal = retVal[..retVal.IndexOf('&')];
                         }
 
                         break;

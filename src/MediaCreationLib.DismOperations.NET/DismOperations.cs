@@ -19,6 +19,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+using MediaCreationLib.Planning.Applications;
+using Microsoft.Dism;
 using Microsoft.Dism;
 using System;
 using System.Collections.Generic;
@@ -26,9 +28,8 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Xml.Linq;
-using MediaCreationLib.Planning.Applications;
 
-namespace MediaCreationLib.Dism
+namespace MediaCreationLib.DismOperations
 {
     public class DismOperations : IDismOperations
     {
@@ -39,17 +40,22 @@ namespace MediaCreationLib.Dism
             XDocument sessDoc = XDocument.Load(Path.Combine(mountDir, @"Windows\servicing\Sessions\Sessions.xml"));
             IEnumerable<XElement> sessions = sessDoc.Element("Sessions").Elements("Session");
             bool dupeFound = false;
-            List<string> pkgsToRemove = new List<string>();
+            List<string> pkgsToRemove = new();
             foreach (XElement test in sessions)
             {
                 bool phasesEmpty = !test.Element("Actions").Elements("Phase").First().Elements().Any();
                 if (phasesEmpty && !dupeFound)
+                {
                     dupeFound = true;
+                }
+
                 if (dupeFound && !phasesEmpty)
                 {
                     string pkgName = test.Element("Tasks").Elements("Phase").First().Element("package").Attribute("id").Value;
                     if (pkgName.Contains("~~"))
+                    {
                         pkgsToRemove.Add(pkgName);
+                    }
                 }
             }
             return pkgsToRemove;
@@ -75,7 +81,7 @@ namespace MediaCreationLib.Dism
                     workload.DependenciesPath?.Select(x => Path.Combine(repositoryPath, x)).ToList() ?? new List<string>(),
                     string.IsNullOrEmpty(workload.LicensePath) ? null : Path.Combine(licenseFolder, workload.LicensePath),
                     null,
-                    string.IsNullOrEmpty(workload.StubPackageOption) ? Microsoft.Dism.StubPackageOption.None : Microsoft.Dism.StubPackageOption.InstallStub); // TODO: proper handling
+                    string.IsNullOrEmpty(workload.StubPackageOption) ? StubPackageOption.None : StubPackageOption.InstallStub); // TODO: proper handling
             }
             catch { result = false; }
 
@@ -133,7 +139,7 @@ namespace MediaCreationLib.Dism
                         workload.DependenciesPath?.Select(x => Path.Combine(repositoryPath, x)).ToList() ?? new List<string>(),
                         string.IsNullOrEmpty(workload.LicensePath) ? null : Path.Combine(licenseFolder, workload.LicensePath),
                         null,
-                        string.IsNullOrEmpty(workload.StubPackageOption) ? Microsoft.Dism.StubPackageOption.None : Microsoft.Dism.StubPackageOption.InstallStub); // TODO: proper handling
+                        string.IsNullOrEmpty(workload.StubPackageOption) ? StubPackageOption.None : StubPackageOption.InstallStub); // TODO: proper handling
                 }
             }
             catch { result = false; }
@@ -230,7 +236,7 @@ namespace MediaCreationLib.Dism
                 string dir = Path.GetDirectoryName(SortDefaultNlsPath);
                 if (!Directory.Exists(dir))
                 {
-                    Directory.CreateDirectory(dir);
+                    _ = Directory.CreateDirectory(dir);
                 }
 
                 File.Move(SortDefaultNlsBackup, SortDefaultNlsPath);
