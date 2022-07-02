@@ -17,9 +17,9 @@
 
 	<Company>IT Dev Team</Company>
 	<Copyright>Copyright © Gustave Monce and Contributors</Copyright>
-	<AssemblyVersion>0.3.1.1</AssemblyVersion>
-	<FileVersion>0.3.1.1</FileVersion>
-	<Version>0.3.1.1</Version>
+	<AssemblyVersion>3.1.1.0</AssemblyVersion>
+	<FileVersion>3.1.1.0</FileVersion>
+	<Version>3.1.1.0</Version>
 	<Product>UUP Media Creator Broker</Product>
   </PropertyGroup>
 
