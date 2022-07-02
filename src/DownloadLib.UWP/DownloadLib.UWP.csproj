@@ -140,10 +140,10 @@
       <Version>1.0.2</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
-      <Version>6.2.13</Version>
+      <Version>6.2.14</Version>
     </PackageReference>
     <PackageReference Include="System.Text.Json">
-      <Version>6.0.4</Version>
+      <Version>[6.0.5]</Version>
     </PackageReference>
   </ItemGroup>
   <Import Project="..\DownloadLib.Shared\DownloadLib.Shared.projitems" Label="Shared" />
