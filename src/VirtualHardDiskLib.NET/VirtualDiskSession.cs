@@ -67,7 +67,7 @@ namespace VirtualHardDiskLib
 
         private static char GetNextAvailableDriveLetter()
         {
-            var allocatedLetters = Directory.GetLogicalDrives().Select(d => d.First());
+            System.Collections.Generic.IEnumerable<char> allocatedLetters = Directory.GetLogicalDrives().Select(d => d.First());
             return "ABCDEFGHIJKLMNOPQRSTUVWXYZ".First(letter => !allocatedLetters.Contains(letter));
         }
     }

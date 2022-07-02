@@ -119,56 +119,73 @@ namespace UUPDownload.DownloadRequest
             }
 
             Logging.Log($"Building appx license map from cabs...");
-            var appxLicenseFileMap = FeatureManifestService.GetAppxPackageLicenseFileMapFromCabs(Directory.GetFiles(cabsRoot, "*.cab", SearchOption.AllDirectories));
-            var appxFiles = Directory.GetFiles(Path.GetFullPath(appxRoot), "appx_*", SearchOption.TopDirectoryOnly);
+            IDictionary<string, string> appxLicenseFileMap = FeatureManifestService.GetAppxPackageLicenseFileMapFromCabs(Directory.GetFiles(cabsRoot, "*.cab", SearchOption.AllDirectories));
+            string[] appxFiles = Directory.GetFiles(Path.GetFullPath(appxRoot), "appx_*", SearchOption.TopDirectoryOnly);
 
             // AppxPackage metadata was not deserialized from compdbs in the past, so
             // this may trigger a retrieval of new compdbs from Microsoft
             if (!update.CompDBs.Any(db => db.AppX != null))
             {
-                update.CompDBs = null;
                 Logging.Log($"Current replay is missing some appx package metadata. Re-downloading compdbs...");
-                var compdbs = await update.GetCompDBsAsync();
+                update.CompDBs = await update.GetCompDBsAsync();
+            }
 
-                var canonicalCompdb = compdbs.Where(c => c.Tags.Tag.Where(t => t.Name == "UpdateType" && t.Value == "Canonical").Any()).FirstOrDefault();
-                if (canonicalCompdb != null)
+            CompDBXmlClass.CompDB canonicalCompdb = update.CompDBs
+                .Where(compDB => compDB.Tags.Tag
+                .Find(x => x.Name
+                .Equals("UpdateType", StringComparison.InvariantCultureIgnoreCase))?.Value?
+                .Equals("Canonical", StringComparison.InvariantCultureIgnoreCase) == true)
+                .Where(x => x.AppX != null)
+                .FirstOrDefault();
+            
+            if (canonicalCompdb != null)
+            {
+                foreach (string appxFile in appxFiles)
                 {
-                    foreach (var appxFile in appxFiles)
+                    string payloadHash;
+                    using (FileStream fileStream = File.OpenRead(appxFile))
                     {
-                        string payloadHash;
-                        using (var fileStream = File.OpenRead(appxFile))
+                        using (SHA256 sha = SHA256.Create())
                         {
-                            using (var sha = SHA256.Create())
-                            {
-                                payloadHash = Convert.ToBase64String(sha.ComputeHash(fileStream));
-                            }
+                            payloadHash = Convert.ToBase64String(sha.ComputeHash(fileStream));
+                        }
+                    }
+
+                    CompDBXmlClass.AppxPackage package = canonicalCompdb.AppX.AppXPackages.Package.Where(p => p.Payload.PayloadItem.FirstOrDefault().PayloadHash == payloadHash).FirstOrDefault();
+                    if (package == null)
+                    {
+                        Logging.Log($"Could not locate package with payload hash {payloadHash}. Skipping.");
+                    }
+                    else
+                    {
+                        string appxFolder = Path.Combine(appxRoot, Path.GetDirectoryName(package.Payload.PayloadItem.FirstOrDefault().Path));
+                        if (!Directory.Exists(appxFolder))
+                        {
+                            Logging.Log($"Creating {appxFolder}");
+                            Directory.CreateDirectory(appxFolder);
                         }
 
-                        var package = canonicalCompdb.AppX.AppXPackages.Package.Where(p => p.Payload.PayloadItem.FirstOrDefault().PayloadHash == payloadHash).FirstOrDefault();
-                        if (package == null)
-                        {
-                            Logging.Log($"Could not locate package with payload hash {payloadHash}. Skipping.");
-                        }
-                        else
-                        {
-                            var appxFolder = Path.Combine(appxRoot, Path.GetDirectoryName(package.Payload.PayloadItem.FirstOrDefault().Path));
-                            if (!Directory.Exists(appxFolder))
-                            {
-                                Logging.Log($"Creating {appxFolder}");
-                                Directory.CreateDirectory(appxFolder);
-                            }
+                        string appxPath = Path.Combine(appxRoot, package.Payload.PayloadItem.FirstOrDefault().Path);
+                        Logging.Log($"Moving {appxFile} to {appxPath}");
+                        File.Move(appxFile, appxPath, true);
+                    }
+                }
 
-                            var appxPath = Path.Combine(appxRoot, package.Payload.PayloadItem.FirstOrDefault().Path);
-                            Logging.Log($"Moving {appxFile} to {appxPath}");
-                            File.Move(appxFile, appxPath, true);
-
-                            if (package.LicenseData != null)
-                            {
-                                var appxLicensePath = Path.Combine(appxFolder, $"{appxLicenseFileMap[Path.GetFileName(appxPath)]}");
-                                Logging.Log($"Writing license to {appxLicensePath}");
-                                File.WriteAllText(appxLicensePath, package.LicenseData);
-                            }
+                foreach (CompDBXmlClass.AppxPackage package in canonicalCompdb.AppX.AppXPackages.Package)
+                {
+                    if (package.LicenseData != null)
+                    {
+                        string appxFolder = Path.Combine(appxRoot, Path.GetDirectoryName(package.Payload.PayloadItem.FirstOrDefault().Path));
+                        if (!Directory.Exists(appxFolder))
+                        {
+                            Logging.Log($"Creating {appxFolder}");
+                            Directory.CreateDirectory(appxFolder);
                         }
+
+                        string appxPath = Path.Combine(appxRoot, package.Payload.PayloadItem.FirstOrDefault().Path);
+                        string appxLicensePath = Path.Combine(appxFolder, $"{appxLicenseFileMap[Path.GetFileName(appxPath)]}");
+                        Logging.Log($"Writing license to {appxLicensePath}");
+                        File.WriteAllText(appxLicensePath, package.LicenseData);
                     }
                 }
             }

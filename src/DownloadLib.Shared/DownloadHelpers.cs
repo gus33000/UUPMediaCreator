@@ -216,6 +216,29 @@ namespace DownloadLib
                             }
                         }
                     }
+
+                    if (cdb.AppX?.AppXPackages?.Package != null)
+                    {
+                        foreach (CompDBXmlClass.AppxPackage pkg in cdb.AppX.AppXPackages.Package)
+                        {
+                            if (pkg.Payload == null)
+                            {
+                                continue;
+                            }
+
+                            foreach (CompDBXmlClass.PayloadItem item in pkg.Payload.PayloadItem)
+                            {
+                                if (item.PayloadType.Equals("Diff", StringComparison.InvariantCultureIgnoreCase))
+                                {
+                                    bannedPayloadItems.Add(item);
+                                }
+                                else
+                                {
+                                    payloadItems.Add(item);
+                                }
+                            }
+                        }
+                    }
                 }
 
                 foreach (CompDBXmlClass.CompDB cdb in discardedCompDBs)
@@ -235,6 +258,22 @@ namespace DownloadLib
                         foreach (CompDBXmlClass.PayloadItem item in pkg.Payload.PayloadItem)
                         {
                             bannedPayloadItems.Add(item);
+                        }
+                    }
+
+                    if (cdb.AppX?.AppXPackages?.Package != null)
+                    {
+                        foreach (CompDBXmlClass.AppxPackage pkg in cdb.AppX.AppXPackages.Package)
+                        {
+                            if (pkg.Payload == null)
+                            {
+                                continue;
+                            }
+
+                            foreach (CompDBXmlClass.PayloadItem item in pkg.Payload.PayloadItem)
+                            {
+                                bannedPayloadItems.Add(item);
+                            }
                         }
                     }
                 }
@@ -263,6 +302,25 @@ namespace DownloadLib
                                         }
                                     }
                                 }
+                                
+                                if (AppCompDB.AppX?.AppXPackages?.Package != null)
+                                {
+                                    foreach (CompDBXmlClass.AppxPackage pkg in AppCompDB.AppX.AppXPackages.Package)
+                                    {
+                                        if (pkg.Payload == null)
+                                        {
+                                            continue;
+                                        }
+
+                                        foreach (CompDBXmlClass.PayloadItem item in pkg.Payload.PayloadItem)
+                                        {
+                                            if (!item.PayloadType.Equals("Diff", StringComparison.InvariantCultureIgnoreCase))
+                                            {
+                                                payloadHashesToKeep.Add(item.PayloadHash);
+                                            }
+                                        }
+                                    }
+                                }
                                 break;
                             }
                         // Get edition
@@ -276,9 +334,9 @@ namespace DownloadLib
                                     return hasEdition && editionMatching;
                                 }))
                                 {
-                                    var appxsToKeep = AppxSelectionEngine.GetAppxFilesToKeep(cdb, AppCompDB);
+                                    PackageProperties[] appxsToKeep = AppxSelectionEngine.GetAppxFilesToKeep(cdb, AppCompDB);
 
-                                    foreach (var appxToKeep in appxsToKeep)
+                                    foreach (PackageProperties appxToKeep in appxsToKeep)
                                     {
                                         payloadHashesToKeep.Add(appxToKeep.SHA256);
                                     }
@@ -296,9 +354,9 @@ namespace DownloadLib
                                     return hasLang && langMatching;
                                 }))
                                 {
-                                    var appxsToKeep = AppxSelectionEngine.GetAppxFilesToKeep(cdb, AppCompDB);
+                                    PackageProperties[] appxsToKeep = AppxSelectionEngine.GetAppxFilesToKeep(cdb, AppCompDB);
 
-                                    foreach (var appxToKeep in appxsToKeep)
+                                    foreach (PackageProperties appxToKeep in appxsToKeep)
                                     {
                                         payloadHashesToKeep.Add(appxToKeep.SHA256);
                                     }
@@ -318,9 +376,9 @@ namespace DownloadLib
                                     return hasEdition && editionMatching && hasLang && langMatching;
                                 }))
                                 {
-                                    var appxsToKeep = AppxSelectionEngine.GetAppxFilesToKeep(cdb, AppCompDB);
+                                    PackageProperties[] appxsToKeep = AppxSelectionEngine.GetAppxFilesToKeep(cdb, AppCompDB);
 
-                                    foreach (var appxToKeep in appxsToKeep)
+                                    foreach (PackageProperties appxToKeep in appxsToKeep)
                                     {
                                         payloadHashesToKeep.Add(appxToKeep.SHA256);
                                     }
@@ -345,6 +403,29 @@ namespace DownloadLib
                             else
                             {
                                 bannedPayloadItems.Add(item);
+                            }
+                        }
+                    }
+
+                    if (AppCompDB.AppX?.AppXPackages?.Package != null)
+                    {
+                        foreach (CompDBXmlClass.AppxPackage pkg in AppCompDB.AppX.AppXPackages.Package)
+                        {
+                            if (pkg.Payload == null)
+                            {
+                                continue;
+                            }
+
+                            foreach (CompDBXmlClass.PayloadItem item in pkg.Payload.PayloadItem)
+                            {
+                                if (payloadHashesToKeep.Any(x => x == item.PayloadHash))
+                                {
+                                    payloadItems.Add(item);
+                                }
+                                else
+                                {
+                                    bannedPayloadItems.Add(item);
+                                }
                             }
                         }
                     }
@@ -375,6 +456,22 @@ namespace DownloadLib
                                 foreach (CompDBXmlClass.PayloadItem item in pkg.Payload.PayloadItem)
                                 {
                                     bannedPayloadItems.RemoveWhere(x => x.PayloadHash == item.PayloadHash);
+                                }
+                            }
+
+                            if (specificCompDB.AppX?.AppXPackages?.Package != null)
+                            {
+                                foreach (CompDBXmlClass.AppxPackage pkg in specificCompDB.AppX.AppXPackages.Package)
+                                {
+                                    if (pkg.Payload == null)
+                                    {
+                                        continue;
+                                    }
+
+                                    foreach (CompDBXmlClass.PayloadItem item in pkg.Payload.PayloadItem)
+                                    {
+                                        bannedPayloadItems.RemoveWhere(x => x.PayloadHash == item.PayloadHash);
+                                    }
                                 }
                             }
                         }

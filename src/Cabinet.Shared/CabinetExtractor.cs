@@ -29,7 +29,7 @@ namespace Cabinet
     {
         public static IReadOnlyCollection<CabinetFile> EnumCabinetFiles(string InputFile)
         {
-            using var strm = File.OpenRead(InputFile);
+            using FileStream strm = File.OpenRead(InputFile);
             Cabinet cabFile = new(strm);
             return EnumCabinetFiles(cabFile);
         }
@@ -52,7 +52,7 @@ namespace Cabinet
         /// <param name="OutputDirectory">Output directory</param>
         public static void ExtractCabinet(string InputFile, string OutputDirectory, Action<int, string> progressCallBack = null)
         {
-            using var strm = File.OpenRead(InputFile);
+            using FileStream strm = File.OpenRead(InputFile);
             Cabinet cabFile = new(strm);
             ExtractCabinet(cabFile, OutputDirectory, progressCallBack);
         }
@@ -75,7 +75,7 @@ namespace Cabinet
 
         public static byte[] ExtractCabinetFile(string InputFile, string FileName)
         {
-            using var strm = File.OpenRead(InputFile);
+            using FileStream strm = File.OpenRead(InputFile);
             Cabinet cabFile = new(strm);
             return ExtractCabinetFile(cabFile, FileName);
         }

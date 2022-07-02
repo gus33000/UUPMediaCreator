@@ -99,7 +99,7 @@ namespace UUPMediaCreator.Broker
 
         private static void OnUnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
-            var exception = e.ExceptionObject as Exception;
+            Exception exception = e.ExceptionObject as Exception;
             // Log error
         }
 

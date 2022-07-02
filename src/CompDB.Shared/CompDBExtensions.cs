@@ -176,7 +176,7 @@ namespace CompDB
                     {
                         CompDBXmlClass.Package pkg = filteredCompDBs.First().Packages.Package.First(x => x.ID == feature.ID);
 
-                        var files = pkg.Payload.PayloadItem.Select(x => x.Path.Replace('\\', Path.DirectorySeparatorChar));
+                        IEnumerable<string> files = pkg.Payload.PayloadItem.Select(x => x.Path.Replace('\\', Path.DirectorySeparatorChar));
 
                         if (files.Any(file => !file.EndsWith(".esd", StringComparison.InvariantCultureIgnoreCase) ||
                             !file.Contains("microsoft-windows-editionspecific", StringComparison.InvariantCultureIgnoreCase) ||
@@ -203,9 +203,9 @@ namespace CompDB
                     }
                     else
                     {
-                        foreach (var minitem in minpkg.Payload.PayloadItem)
+                        foreach (CompDBXmlClass.PayloadItem minitem in minpkg.Payload.PayloadItem)
                         {
-                            foreach (var item in minpkg.Payload.PayloadItem)
+                            foreach (CompDBXmlClass.PayloadItem item in minpkg.Payload.PayloadItem)
                             {
                                 if (ulong.Parse(minitem.PayloadSize) > ulong.Parse(item.PayloadSize))
                                 {

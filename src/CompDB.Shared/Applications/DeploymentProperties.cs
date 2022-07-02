@@ -43,7 +43,7 @@ namespace MediaCreationLib.Planning.Applications
             Dictionary<int, string> scaleDictionary = null;
             foreach (CompDB.CompDBXmlClass.Package package in packageElements)
             {
-                var packageId = package.ID;
+                string packageId = package.ID;
                 switch (package.PackageType)
                 {
                     case "MSIXBundlePackage":
