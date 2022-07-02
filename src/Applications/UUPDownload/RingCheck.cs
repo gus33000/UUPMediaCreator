@@ -52,17 +52,9 @@ namespace UUPDownload
             };
         }
 
-        internal static int ParseOptions(GetBuildsOptions opts)
+        internal static void ParseGetBuildsOptions(GetBuildsOptions opts)
         {
-            try
-            {
-                GetRingBuilds(opts).Wait();
-
-                return 0;
-            }
-            catch { }
-
-            return 1;
+            GetRingBuilds(opts).Wait();
         }
 
         private static async Task GetRingBuilds(GetBuildsOptions opts)

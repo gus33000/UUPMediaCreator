@@ -37,68 +37,41 @@ namespace UUPDownload.DownloadRequest
 {
     public static class Process
     {
-        internal static int ParseOptions(DownloadRequestOptions opts)
+        internal static void ParseDownloadOptions(DownloadRequestOptions opts)
         {
-            try
-            {
-                PerformOperation(opts).Wait();
-            }
-            catch (Exception ex)
-            {
-                Logging.Log("Something happened.", Logging.LoggingLevel.Error);
-                while (ex != null)
-                {
-                    Logging.Log(ex.Message, Logging.LoggingLevel.Error);
-                    Logging.Log(ex.StackTrace, Logging.LoggingLevel.Error);
-                    ex = ex.InnerException;
-                }
-                if (Debugger.IsAttached)
-                {
-                    Console.ReadLine();
-                }
-
-                return 1;
-            }
-
-            return 0;
+            CheckAndDownloadUpdates(
+                opts.ReportingSku,
+                opts.ReportingVersion,
+                opts.MachineType,
+                opts.FlightRing,
+                opts.FlightingBranchName,
+                opts.BranchReadinessLevel,
+                opts.CurrentBranch,
+                opts.ReleaseType,
+                opts.SyncCurrentVersionOnly,
+                opts.ContentType,
+                opts.Mail,
+                opts.Password,
+                opts.OutputFolder,
+                opts.Language,
+                opts.Edition).Wait();
         }
 
-        internal static int ParseReplayOptions(DownloadReplayOptions opts)
+        internal static void ParseReplayOptions(DownloadReplayOptions opts)
         {
-            try
+            UpdateData update = JsonSerializer.Deserialize<UpdateData>(File.ReadAllText(opts.ReplayMetadata));
+
+            Logging.Log("Title: " + update.Xml.LocalizedProperties.Title);
+            Logging.Log("Description: " + update.Xml.LocalizedProperties.Description);
+
+            if (opts.Fixup.HasValue)
             {
-                UpdateData update = JsonSerializer.Deserialize<UpdateData>(File.ReadAllText(opts.ReplayMetadata));
-
-                Logging.Log("Title: " + update.Xml.LocalizedProperties.Title);
-                Logging.Log("Description: " + update.Xml.LocalizedProperties.Description);
-
-                if (opts.Fixup.HasValue)
-                {
-                    ApplyFixUpAsync(update, opts.Fixup.Value, opts.AppxRoot, opts.CabsRoot).Wait();
-                }
-                else
-                {
-                    ProcessUpdateAsync(update, opts.OutputFolder, opts.MachineType, opts.Language, opts.Edition, true).Wait();
-                }
+                ApplyFixUpAsync(update, opts.Fixup.Value, opts.AppxRoot, opts.CabsRoot).Wait();
             }
-            catch (Exception ex)
+            else
             {
-                Logging.Log("Something happened.", Logging.LoggingLevel.Error);
-                while (ex != null)
-                {
-                    Logging.Log(ex.Message, Logging.LoggingLevel.Error);
-                    Logging.Log(ex.StackTrace, Logging.LoggingLevel.Error);
-                    ex = ex.InnerException;
-                }
-                if (Debugger.IsAttached)
-                {
-                    Console.ReadLine();
-                }
-
-                return 1;
+                ProcessUpdateAsync(update, opts.OutputFolder, opts.MachineType, opts.Language, opts.Edition, true).Wait();
             }
-
-            return 0;
         }
 
         private static async Task ApplyFixUpAsync(UpdateData update, Fixup specifiedFixup, string appxRoot, string cabsRoot)
@@ -193,15 +166,29 @@ namespace UUPDownload.DownloadRequest
             Logging.Log($"Appx fixup applied.");
         }
 
-        private static async Task PerformOperation(DownloadRequestOptions o)
+        private static async Task CheckAndDownloadUpdates(OSSkuId ReportingSku,
+                    string ReportingVersion,
+                    MachineType MachineType,
+                    string FlightRing,
+                    string FlightingBranchName,
+                    string BranchReadinessLevel,
+                    string CurrentBranch,
+                    string ReleaseType,
+                    bool SyncCurrentVersionOnly,
+                    string ContentType,
+                    string Mail,
+                    string Password,
+                    string OutputFolder,
+                    string Language,
+                    string Edition)
         {
             Logging.Log("Checking for updates...");
 
-            CTAC ctac = new(o.ReportingSku, o.ReportingVersion, o.MachineType, o.FlightRing, o.FlightingBranchName, o.BranchReadinessLevel, o.CurrentBranch, o.ReleaseType, o.SyncCurrentVersionOnly, ContentType: o.ContentType);
+            CTAC ctac = new(ReportingSku, ReportingVersion, MachineType, FlightRing, FlightingBranchName, BranchReadinessLevel, CurrentBranch, ReleaseType, SyncCurrentVersionOnly, ContentType: ContentType);
             string token = string.Empty;
-            if (!string.IsNullOrEmpty(o.Mail) && !string.IsNullOrEmpty(o.Password))
+            if (!string.IsNullOrEmpty(Mail) && !string.IsNullOrEmpty(Password))
             {
-                token = await MBIHelper.GenerateMicrosoftAccountTokenAsync(o.Mail, o.Password).ConfigureAwait(false);
+                token = await MBIHelper.GenerateMicrosoftAccountTokenAsync(Mail, Password).ConfigureAwait(false);
             }
 
             IEnumerable<UpdateData> data = await FE3Handler.GetUpdates(null, ctac, token, FileExchangeV3UpdateFilter.ProductRelease).ConfigureAwait(false);
@@ -218,7 +205,7 @@ namespace UUPDownload.DownloadRequest
                     Logging.Log("Title: " + update.Xml.LocalizedProperties.Title);
                     Logging.Log("Description: " + update.Xml.LocalizedProperties.Description);
 
-                    await ProcessUpdateAsync(update, o.OutputFolder, o.MachineType, o.Language, o.Edition, true).ConfigureAwait(false);
+                    await ProcessUpdateAsync(update, OutputFolder, MachineType, Language, Edition, true).ConfigureAwait(false);
                 }
             }
             Logging.Log("Completed.");

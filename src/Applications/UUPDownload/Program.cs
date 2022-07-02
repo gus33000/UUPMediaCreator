@@ -20,6 +20,8 @@
  * SOFTWARE.
  */
 using CommandLine;
+using System;
+using System.Diagnostics;
 using System.Net;
 using System.Reflection;
 
@@ -42,6 +44,32 @@ namespace UUPDownload
             Logging.Log("");
         }
 
+        private static int WrapAction(Action a)
+        {
+            try
+            {
+                a();
+            }
+            catch (Exception ex)
+            {
+                Logging.Log("Something happened.", Logging.LoggingLevel.Error);
+                while (ex != null)
+                {
+                    Logging.Log(ex.Message, Logging.LoggingLevel.Error);
+                    Logging.Log(ex.StackTrace, Logging.LoggingLevel.Error);
+                    ex = ex.InnerException;
+                }
+                if (Debugger.IsAttached)
+                {
+                    Console.ReadLine();
+                }
+
+                return 1;
+            }
+
+            return 0;
+        }
+
         private static int Main(string[] args)
         {
             ServicePointManager.DefaultConnectionLimit = int.MaxValue;
@@ -50,17 +78,17 @@ namespace UUPDownload
               (DownloadRequestOptions opts) =>
               {
                   PrintLogo();
-                  return DownloadRequest.Process.ParseOptions(opts);
+                  return WrapAction(() => DownloadRequest.Process.ParseDownloadOptions(opts));
               },
               (DownloadReplayOptions opts) =>
               {
                   PrintLogo();
-                  return DownloadRequest.Process.ParseReplayOptions(opts);
+                  return WrapAction(() => DownloadRequest.Process.ParseReplayOptions(opts));
               },
               (GetBuildsOptions opts) =>
               {
                   PrintLogo();
-                  return RingCheck.ParseOptions(opts);
+                  return WrapAction(() => RingCheck.ParseGetBuildsOptions(opts));
               },
               errs => 1);
         }
