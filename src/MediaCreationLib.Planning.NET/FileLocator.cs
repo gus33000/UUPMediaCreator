@@ -28,7 +28,7 @@ using System.Linq;
 
 #nullable enable
 
-namespace MediaCreationLib.Planning
+namespace MediaCreationLib.Planning.NET
 {
     public static class FileLocator
     {

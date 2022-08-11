@@ -21,7 +21,7 @@
  */
 using System.Collections.Generic;
 
-namespace MediaCreationLib.Planning
+namespace MediaCreationLib.Planning.NET
 {
     internal static class Constants
     {

@@ -23,7 +23,7 @@ using MediaCreationLib.Planning.Applications;
 using System.Diagnostics;
 using System.IO;
 
-namespace MediaCreationLib.DismOperations
+namespace MediaCreationLib.DismOperations.NET
 {
     public class RemoteDismOperations : IDismOperations
     {
@@ -146,7 +146,7 @@ namespace MediaCreationLib.DismOperations
 
             proc.OutputDataReceived += (sender, e) =>
             {
-                if (e.Data?.Contains(",") == true)
+                if (e.Data?.Contains(',') == true)
                 {
                     int percent = int.Parse(e.Data.Split(',')[0]);
                     progressCallback?.Invoke(false, percent, e.Data.Split(',')[1]);
@@ -190,7 +190,7 @@ namespace MediaCreationLib.DismOperations
 
             proc.OutputDataReceived += (sender, e) =>
             {
-                if (e.Data?.Contains(",") == true)
+                if (e.Data?.Contains(',') == true)
                 {
                     int percent = int.Parse(e.Data.Split(',')[0]);
                     progressCallback?.Invoke(false, percent, e.Data.Split(',')[1]);

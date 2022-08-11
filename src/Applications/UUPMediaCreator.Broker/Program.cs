@@ -19,7 +19,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-using MediaCreationLib;
+using MediaCreationLib.NET;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;

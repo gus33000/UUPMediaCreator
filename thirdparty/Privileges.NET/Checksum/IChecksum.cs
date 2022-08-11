@@ -1,6 +1,6 @@
 using System;
 
-namespace Privileges.Checksum
+namespace Privileges.NET.Checksum
 {
     /// <summary>
     /// Interface to compute a data checksum used by checked input/output streams.

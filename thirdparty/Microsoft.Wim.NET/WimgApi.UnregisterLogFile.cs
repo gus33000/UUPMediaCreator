@@ -25,7 +25,7 @@ namespace Microsoft.Wim
             }
 
             // Call the native function
-            if (!WimgApi.NativeMethods.WIMUnregisterLogFile(logFile))
+            if (!NativeMethods.WIMUnregisterLogFile(logFile))
             {
                 // Throw a Win32Exception based on the last error code
                 throw new Win32Exception();

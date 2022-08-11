@@ -1,7 +1,7 @@
-﻿using Imaging;
+﻿using Imaging.NET;
 using UUPMediaCreator.InterCommunication;
 
-namespace MediaCreationLib.Installer
+namespace MediaCreationLib.NET.Installer
 {
     internal static class InstallerLogger
     {

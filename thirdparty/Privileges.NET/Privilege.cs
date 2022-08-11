@@ -2,10 +2,10 @@ using System;
 using System.Collections.Specialized;
 using System.Runtime.InteropServices;
 using System.Threading;
-using Luid = Privileges.NativeMethods.LUID;
+using Luid = Privileges.NET.NativeMethods.LUID;
 using Win32Exception = System.ComponentModel.Win32Exception;
 
-namespace Privileges
+namespace Privileges.NET
 {
     public delegate void PrivilegedCallback(object state);
 

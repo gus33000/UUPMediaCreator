@@ -30,13 +30,13 @@ namespace Microsoft.Wim
             }
 
             // See if the specified index is valid
-            if (imageIndex < 1 || imageIndex > WimgApi.GetImageCount(wimHandle))
+            if (imageIndex < 1 || imageIndex > GetImageCount(wimHandle))
             {
                 throw new IndexOutOfRangeException($"There is no image at index {imageIndex}.");
             }
 
             // Call the native function
-            if (!WimgApi.NativeMethods.WIMSetBootImage(wimHandle, (DWORD)imageIndex))
+            if (!NativeMethods.WIMSetBootImage(wimHandle, (DWORD)imageIndex))
             {
                 // Throw a Win32Exception based on the last error code
                 throw new Win32Exception();

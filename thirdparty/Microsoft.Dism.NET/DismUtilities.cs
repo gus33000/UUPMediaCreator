@@ -64,7 +64,7 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-namespace Microsoft.Dism
+namespace Microsoft.Dism.NET
 {
     /// <summary>
     /// Represents "generational" versions of Deployment Imaging and Servicing Management.

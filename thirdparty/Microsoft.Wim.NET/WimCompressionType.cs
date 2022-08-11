@@ -2,7 +2,7 @@
 //
 // Licensed under the MIT license.
 
-namespace Microsoft.Wim
+namespace Microsoft.Wim.NET
 {
     /// <summary>
     /// Represents the compression mode to be used for a newly created image file.

@@ -23,7 +23,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 
-namespace MediaCreationLib.DismOperations
+namespace MediaCreationLib.DismOperations.NET
 {
     public static class PathUtils
     {

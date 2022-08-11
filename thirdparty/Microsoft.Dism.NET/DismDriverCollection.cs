@@ -5,7 +5,7 @@
 using System;
 using System.Collections.ObjectModel;
 
-namespace Microsoft.Dism
+namespace Microsoft.Dism.NET
 {
     /// <summary>
     /// Represents a collection of <see cref="DismDriver" /> objects.

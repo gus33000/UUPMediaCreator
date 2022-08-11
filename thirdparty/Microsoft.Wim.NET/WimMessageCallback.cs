@@ -2,7 +2,7 @@
 //
 // Licensed under the MIT license.
 
-using Microsoft.Wim;
+using Microsoft.Wim.NET;
 using System;
 
 namespace Microsoft.Wim

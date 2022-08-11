@@ -23,7 +23,7 @@ using System;
 using System.IO;
 using System.Linq;
 
-namespace VirtualHardDiskLib
+namespace VirtualHardDiskLib.NET
 {
     public class VirtualDiskSession : IDisposable
     {

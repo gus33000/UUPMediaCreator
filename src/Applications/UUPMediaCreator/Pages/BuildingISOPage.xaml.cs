@@ -71,7 +71,7 @@ namespace UUPMediaCreator.UWP.Pages
                 IntegrateUpdates = false
             };
 
-            Common.InterCommunication comm = new() { InterCommunicationType = Common.InterCommunicationType.StartISOConversionProcess, ISOConversion = job };
+            Common.InterCommunication comm = new() { InterCommunicationType = InterCommunicationType.StartISOConversionProcess, ISOConversion = job };
 
             ValueSet val = new()
             {
@@ -84,7 +84,7 @@ namespace UUPMediaCreator.UWP.Pages
         private ProcessPhase lastPhase;
 
         private int prevperc = -1;
-        private Common.ProcessPhase prevphase = Common.ProcessPhase.ReadingMetadata;
+        private Common.ProcessPhase prevphase = ProcessPhase.ReadingMetadata;
         private string prevop = "";
 
         private void Log(string msg)
@@ -104,7 +104,7 @@ namespace UUPMediaCreator.UWP.Pages
             prevop = interCommunication.ISOConversionProgress.SubOperation;
             prevperc = interCommunication.ISOConversionProgress.ProgressInPercentage;
 
-            if (interCommunication.ISOConversionProgress.Phase == Common.ProcessPhase.Error)
+            if (interCommunication.ISOConversionProgress.Phase == ProcessPhase.Error)
             {
                 Log("An error occured!");
                 Log(interCommunication.ISOConversionProgress.SubOperation);
@@ -123,7 +123,7 @@ namespace UUPMediaCreator.UWP.Pages
 
                 switch (interCommunication.InterCommunicationType)
                 {
-                    case Common.InterCommunicationType.ReportISOConversionProgress:
+                    case InterCommunicationType.ReportISOConversionProgress:
                         {
                             LogInterComm(interCommunication);
 

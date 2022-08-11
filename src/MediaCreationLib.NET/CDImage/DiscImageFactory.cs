@@ -1,9 +1,9 @@
-﻿using Imaging;
+﻿using Imaging.NET;
 using System;
 using System.IO;
 using UUPMediaCreator.InterCommunication;
 
-namespace MediaCreationLib.CDImage
+namespace MediaCreationLib.NET.CDImage
 {
     public static class DiscImageFactory
     {

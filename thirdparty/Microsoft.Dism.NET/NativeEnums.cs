@@ -5,7 +5,7 @@
 using System;
 
 // ReSharper disable InconsistentNaming
-namespace Microsoft.Dism
+namespace Microsoft.Dism.NET
 {
     public enum StubPackageOption
     {

@@ -89,7 +89,7 @@ namespace Microsoft.Wim
             }
 
             // Call the native function
-            if (!WimgApi.NativeMethods.WIMSetReferenceFile(wimHandle, path, (DWORD)mode | (DWORD)options))
+            if (!NativeMethods.WIMSetReferenceFile(wimHandle, path, (DWORD)mode | (DWORD)options))
             {
                 // Throw a Win32Exception based on the last error code
                 throw new Win32Exception();

@@ -19,7 +19,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-using MediaCreationLib.DismOperations;
+using MediaCreationLib.DismOperations.NET;
 using MediaCreationLib.Planning.Applications;
 using System;
 

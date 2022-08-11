@@ -7,7 +7,7 @@ using System;
 using DWORD = System.UInt32;
 using LARGE_INTEGER = System.UInt64;
 
-namespace Microsoft.Wim
+namespace Microsoft.Wim.NET
 {
     /// <summary>
     /// Specifies a method to call during process of a file copy.

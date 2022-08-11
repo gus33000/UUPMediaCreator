@@ -21,7 +21,7 @@
  */
 using MediaCreationLib.Planning.Applications;
 using Microsoft.Dism;
-using Microsoft.Dism;
+using Microsoft.Dism.NET;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -29,7 +29,7 @@ using System.Linq;
 using System.Threading;
 using System.Xml.Linq;
 
-namespace MediaCreationLib.DismOperations
+namespace MediaCreationLib.DismOperations.NET
 {
     public class DismOperations : IDismOperations
     {

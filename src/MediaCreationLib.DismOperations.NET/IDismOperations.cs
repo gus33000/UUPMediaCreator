@@ -21,7 +21,7 @@
  */
 using MediaCreationLib.Planning.Applications;
 
-namespace MediaCreationLib.DismOperations
+namespace MediaCreationLib.DismOperations.NET
 {
     public delegate void ProgressCallback(bool IsIndeterminate, int ProgressInPercentage, string SubOperation);
 

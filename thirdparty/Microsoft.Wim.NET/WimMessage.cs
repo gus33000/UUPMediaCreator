@@ -5,7 +5,7 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace Microsoft.Wim
+namespace Microsoft.Wim.NET
 {
     /// <summary>
     /// Specifies what the count represents for a <see cref="WimMessageScanning"/> object.

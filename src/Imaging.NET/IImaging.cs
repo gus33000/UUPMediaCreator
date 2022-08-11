@@ -19,10 +19,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-using Microsoft.Wim;
+using Microsoft.Wim.NET;
 using System.Collections.Generic;
 
-namespace Imaging
+namespace Imaging.NET
 {
     public interface IImaging
     {

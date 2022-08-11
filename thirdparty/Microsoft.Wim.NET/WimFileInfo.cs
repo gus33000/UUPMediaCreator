@@ -6,7 +6,7 @@ using System;
 using System.IO;
 using System.Runtime.InteropServices;
 
-namespace Microsoft.Wim
+namespace Microsoft.Wim.NET
 {
     /// <summary>
     /// Provides properties of files contained in a Windows® image (.wim). This class cannot be inherited.

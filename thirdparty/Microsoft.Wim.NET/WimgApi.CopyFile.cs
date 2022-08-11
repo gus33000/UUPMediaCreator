@@ -2,7 +2,7 @@
 //
 // Licensed under the MIT license.
 
-using Microsoft.Wim;
+using Microsoft.Wim.NET;
 using System;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
@@ -47,7 +47,7 @@ namespace Microsoft.Wim
         public static void CopyFile(string sourceFile, string destinationFile, WimCopyFileOptions options)
         {
             // Call an override
-            WimgApi.CopyFile(sourceFile, destinationFile, options, null, null);
+            CopyFile(sourceFile, destinationFile, options, null, null);
         }
 
         /// <summary>
@@ -81,7 +81,7 @@ namespace Microsoft.Wim
             bool cancel = false;
 
             // Call the native function
-            if (!WimgApi.NativeMethods.WIMCopyFile(sourceFile, destinationFile, fileInfoCopyProgress.CopyProgressHandler, IntPtr.Zero, ref cancel, (DWORD)options))
+            if (!NativeMethods.WIMCopyFile(sourceFile, destinationFile, fileInfoCopyProgress.CopyProgressHandler, IntPtr.Zero, ref cancel, (DWORD)options))
             {
                 // Throw a Win32Exception based on the last error code
                 throw new Win32Exception();

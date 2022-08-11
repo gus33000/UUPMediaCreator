@@ -5,7 +5,7 @@
 using Microsoft.Win32.SafeHandles;
 using System;
 
-namespace Microsoft.Dism
+namespace Microsoft.Dism.NET
 {
     /// <summary>
     /// Represents a DismSession handle.

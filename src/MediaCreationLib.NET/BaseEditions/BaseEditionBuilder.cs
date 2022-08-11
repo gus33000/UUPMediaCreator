@@ -21,20 +21,20 @@
  */
 using Cabinet;
 using CompDB;
-using Imaging;
+using Imaging.NET;
 using IniParser;
 using IniParser.Model;
-using MediaCreationLib.DismOperations;
+using MediaCreationLib.DismOperations.NET;
 using MediaCreationLib.Planning.Applications;
-using Microsoft.Wim;
+using Microsoft.Wim.NET;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using UUPMediaCreator.InterCommunication;
-using VirtualHardDiskLib;
+using VirtualHardDiskLib.NET;
 
-namespace MediaCreationLib.BaseEditions
+namespace MediaCreationLib.NET.BaseEditions
 {
     public static class BaseEditionBuilder
     {
@@ -258,7 +258,7 @@ namespace MediaCreationLib.BaseEditions
                 result = RemoteDismOperations.Instance.PerformAppxWorkloadsInstallation(vhdSession.GetMountedPath(), UUPPath, licenseFolder, appxWorkloads, customCallback);
                 if (!result)
                 {
-                    result = DismOperations.DismOperations.Instance.PerformAppxWorkloadsInstallation(vhdSession.GetMountedPath(), UUPPath, licenseFolder, appxWorkloads, customCallback);
+                    result = DismOperations.NET.DismOperations.Instance.PerformAppxWorkloadsInstallation(vhdSession.GetMountedPath(), UUPPath, licenseFolder, appxWorkloads, customCallback);
                     if (!result)
                     {
                         foreach (AppxInstallWorkload appx in appxWorkloads)
@@ -267,7 +267,7 @@ namespace MediaCreationLib.BaseEditions
                             result = RemoteDismOperations.Instance.PerformAppxWorkloadInstallation(vhdSession.GetMountedPath(), UUPPath, licenseFolder, appx);
                             if (!result)
                             {
-                                result = DismOperations.DismOperations.Instance.PerformAppxWorkloadInstallation(vhdSession.GetMountedPath(), UUPPath, licenseFolder, appx);
+                                result = DismOperations.NET.DismOperations.Instance.PerformAppxWorkloadInstallation(vhdSession.GetMountedPath(), UUPPath, licenseFolder, appx);
                             }
                         }
                     }

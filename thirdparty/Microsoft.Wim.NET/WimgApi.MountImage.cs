@@ -74,7 +74,7 @@ namespace Microsoft.Wim
         public static void MountImage(string mountPath, string imagePath, int imageIndex)
         {
             // Call an overload
-            WimgApi.MountImage(mountPath, imagePath, imageIndex, tempPath: null);
+            MountImage(mountPath, imagePath, imageIndex, tempPath: null);
         }
 
         /// <summary>
@@ -122,7 +122,7 @@ namespace Microsoft.Wim
             }
 
             // Call the native function
-            if (!WimgApi.NativeMethods.WIMMountImage(mountPath, imagePath, (DWORD)imageIndex, tempPath))
+            if (!NativeMethods.WIMMountImage(mountPath, imagePath, (DWORD)imageIndex, tempPath))
             {
                 // Throw a Win32Exception based on the last error code
                 throw new Win32Exception();
@@ -160,7 +160,7 @@ namespace Microsoft.Wim
             }
 
             // Call the native function
-            if (!WimgApi.NativeMethods.WIMMountImageHandle(imageHandle, mountPath, (DWORD)options))
+            if (!NativeMethods.WIMMountImageHandle(imageHandle, mountPath, (DWORD)options))
             {
                 // Throw a Win32Exception based on the last error code
                 throw new Win32Exception();

@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Runtime.InteropServices;
 
-namespace Microsoft.Wim
+namespace Microsoft.Wim.NET
 {
     /// <summary>
     /// Represents the current state of a mount point.

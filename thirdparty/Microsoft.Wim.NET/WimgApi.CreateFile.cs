@@ -2,7 +2,7 @@
 //
 // Licensed under the MIT license.
 
-using Microsoft.Wim;
+using Microsoft.Wim.NET;
 using System;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
@@ -129,7 +129,7 @@ namespace Microsoft.Wim
             }
 
             // Call the native function
-            WimHandle wimHandle = WimgApi.NativeMethods.WIMCreateFile(path, (DWORD)desiredAccess, (DWORD)creationDisposition, (DWORD)options, (DWORD)compressionType, out _);
+            WimHandle wimHandle = NativeMethods.WIMCreateFile(path, (DWORD)desiredAccess, (DWORD)creationDisposition, (DWORD)options, (DWORD)compressionType, out _);
 
             // See if the handle returned is valid
             if (wimHandle?.IsInvalid != false)

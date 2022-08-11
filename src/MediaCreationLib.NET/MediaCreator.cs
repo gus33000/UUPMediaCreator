@@ -20,21 +20,21 @@
  * SOFTWARE.
  */
 using CompDB;
-using Imaging;
-using MediaCreationLib.BaseEditions;
-using MediaCreationLib.BootlegEditions;
-using MediaCreationLib.CDImage;
-using MediaCreationLib.Installer;
-using MediaCreationLib.Utils;
-using MediaCreationLib.Planning;
+using Imaging.NET;
+using MediaCreationLib.NET.BaseEditions;
+using MediaCreationLib.NET.BootlegEditions;
+using MediaCreationLib.NET.CDImage;
+using MediaCreationLib.NET.Installer;
+using MediaCreationLib.NET.Utils;
+using MediaCreationLib.Planning.NET;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UUPMediaCreator.InterCommunication;
-using VirtualHardDiskLib;
+using VirtualHardDiskLib.NET;
 
-namespace MediaCreationLib
+namespace MediaCreationLib.NET
 {
     public delegate void ProgressCallback(Common.ProcessPhase phase, bool IsIndeterminate, int ProgressInPercentage, string SubOperation);
 
@@ -298,7 +298,7 @@ namespace MediaCreationLib
             //
             IEnumerable<CompDBXmlClass.CompDB> filteredCompositionDatabases = CompositionDatabases.GetEditionCompDBsForLanguage(LanguageCode).Where(x =>
             {
-                (bool success, HashSet<string> missingfiles) = Planning.FileLocator.VerifyFilesAreAvailableForCompDB(x, UUPPath);
+                (bool success, HashSet<string> missingfiles) = Planning.NET.FileLocator.VerifyFilesAreAvailableForCompDB(x, UUPPath);
                 return success;
             });
 
@@ -386,7 +386,7 @@ namespace MediaCreationLib
 
             try
             {
-                List<CompDBXmlClass.CompDB> CompositionDatabases = Planning.FileLocator.GetCompDBsFromUUPFiles(UUPPath, tempManager);
+                List<CompDBXmlClass.CompDB> CompositionDatabases = Planning.NET.FileLocator.GetCompDBsFromUUPFiles(UUPPath, tempManager);
 
                 result = GetTargetedPlan(UUPPath, LanguageCode, CompositionDatabases, out List<EditionTarget> editionTargets, tempManager, progressCallback);
                 if (!result)

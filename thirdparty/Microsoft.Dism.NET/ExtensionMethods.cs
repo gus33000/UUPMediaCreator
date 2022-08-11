@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
-namespace Microsoft.Dism
+namespace Microsoft.Dism.NET
 {
     /// <summary>
     /// Provides extension methods.

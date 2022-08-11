@@ -62,7 +62,7 @@ namespace Microsoft.Wim
             }
 
             // Call the native function, add the append flag if needed
-            if (!WimgApi.NativeMethods.WIMCommitImageHandle(imageHandle, append ? WimgApi.WIM_COMMIT_FLAG_APPEND : 0 | (DWORD)options, out WimHandle newImageHandle))
+            if (!NativeMethods.WIMCommitImageHandle(imageHandle, append ? WIM_COMMIT_FLAG_APPEND : 0 | (DWORD)options, out WimHandle newImageHandle))
             {
                 // Throw a Win32Exception based on the last error code
                 throw new Win32Exception();

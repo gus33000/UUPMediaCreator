@@ -24,7 +24,7 @@ using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
 
-namespace Imaging
+namespace Imaging.NET
 {
     public static class WIMInformationXML
     {
@@ -202,9 +202,9 @@ namespace Imaging
                 return string.Empty;
             }
 
-            XmlSerializer xmlSerializer = new XmlSerializer(typeof(WIM));
+            XmlSerializer xmlSerializer = new(typeof(WIM));
 
-            using StringWriter stringWriter = new StringWriter();
+            using StringWriter stringWriter = new();
             using XmlWriter xmlWriter = XmlWriter.Create(stringWriter, new XmlWriterSettings
             {
                 Indent = false,
@@ -226,9 +226,9 @@ namespace Imaging
                 return null;
             }
 
-            XmlSerializer xmlSerializer = new XmlSerializer(typeof(WIM));
+            XmlSerializer xmlSerializer = new(typeof(WIM));
 
-            using StringReader stringReader = new StringReader(wim);
+            using StringReader stringReader = new(wim);
             return (WIM)xmlSerializer.Deserialize(stringReader);
         }
 
@@ -239,9 +239,9 @@ namespace Imaging
                 return string.Empty;
             }
 
-            XmlSerializer xmlSerializer = new XmlSerializer(typeof(IMAGE));
+            XmlSerializer xmlSerializer = new(typeof(IMAGE));
 
-            using StringWriter stringWriter = new StringWriter();
+            using StringWriter stringWriter = new();
             using XmlWriter xmlWriter = XmlWriter.Create(stringWriter, new XmlWriterSettings
             {
                 Indent = false,
@@ -263,9 +263,9 @@ namespace Imaging
                 return null;
             }
 
-            XmlSerializer xmlSerializer = new XmlSerializer(typeof(IMAGE));
+            XmlSerializer xmlSerializer = new(typeof(IMAGE));
 
-            using StringReader stringReader = new StringReader(wim);
+            using StringReader stringReader = new(wim);
             return (IMAGE)xmlSerializer.Deserialize(stringReader);
         }
     }

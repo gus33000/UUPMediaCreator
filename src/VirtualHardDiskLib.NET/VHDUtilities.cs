@@ -31,7 +31,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace VirtualHardDiskLib
+namespace VirtualHardDiskLib.NET
 {
     public static class VHDUtilities
     {
@@ -68,13 +68,13 @@ namespace VirtualHardDiskLib
             IntPtr handle = IntPtr.Zero;
 
             // open disk handle
-            NativeMethods.OPEN_VIRTUAL_DISK_PARAMETERS openParameters = new NativeMethods.OPEN_VIRTUAL_DISK_PARAMETERS
+            NativeMethods.OPEN_VIRTUAL_DISK_PARAMETERS openParameters = new()
             {
                 Version = NativeMethods.OPEN_VIRTUAL_DISK_VERSION.OPEN_VIRTUAL_DISK_VERSION_1
             };
             openParameters.Version1.RWDepth = NativeMethods.OPEN_VIRTUAL_DISK_RW_DEPTH_DEFAULT;
 
-            NativeMethods.VIRTUAL_STORAGE_TYPE openStorageType = new NativeMethods.VIRTUAL_STORAGE_TYPE
+            NativeMethods.VIRTUAL_STORAGE_TYPE openStorageType = new()
             {
                 DeviceId = NativeMethods.VIRTUAL_STORAGE_TYPE_DEVICE_VHD,
                 VendorId = NativeMethods.VIRTUAL_STORAGE_TYPE_VENDOR_MICROSOFT
@@ -90,7 +90,7 @@ namespace VirtualHardDiskLib
             }
 
             // attach disk - permanently
-            NativeMethods.ATTACH_VIRTUAL_DISK_PARAMETERS attachParameters = new NativeMethods.ATTACH_VIRTUAL_DISK_PARAMETERS
+            NativeMethods.ATTACH_VIRTUAL_DISK_PARAMETERS attachParameters = new()
             {
                 Version = NativeMethods.ATTACH_VIRTUAL_DISK_VERSION.ATTACH_VIRTUAL_DISK_VERSION_1
             };
@@ -116,13 +116,13 @@ namespace VirtualHardDiskLib
             IntPtr handle = IntPtr.Zero;
 
             // open disk handle
-            NativeMethods.OPEN_VIRTUAL_DISK_PARAMETERS openParameters = new NativeMethods.OPEN_VIRTUAL_DISK_PARAMETERS
+            NativeMethods.OPEN_VIRTUAL_DISK_PARAMETERS openParameters = new()
             {
                 Version = NativeMethods.OPEN_VIRTUAL_DISK_VERSION.OPEN_VIRTUAL_DISK_VERSION_1
             };
             openParameters.Version1.RWDepth = NativeMethods.OPEN_VIRTUAL_DISK_RW_DEPTH_DEFAULT;
 
-            NativeMethods.VIRTUAL_STORAGE_TYPE openStorageType = new NativeMethods.VIRTUAL_STORAGE_TYPE
+            NativeMethods.VIRTUAL_STORAGE_TYPE openStorageType = new()
             {
                 DeviceId = NativeMethods.VIRTUAL_STORAGE_TYPE_DEVICE_VHD,
                 VendorId = NativeMethods.VIRTUAL_STORAGE_TYPE_VENDOR_MICROSOFT
@@ -153,7 +153,7 @@ namespace VirtualHardDiskLib
         private static int _findVhdPhysicalDriveNumber(IntPtr vhdHandle)
         {
             int bufferSize = 260;
-            StringBuilder vhdPhysicalPath = new StringBuilder(bufferSize);
+            StringBuilder vhdPhysicalPath = new(bufferSize);
 
             _ = NativeMethods.GetVirtualDiskPhysicalPath(vhdHandle, ref bufferSize, vhdPhysicalPath);
             _ = int.TryParse(Regex.Match(vhdPhysicalPath.ToString(), @"\d+").Value, out int driveNumber);
@@ -162,10 +162,10 @@ namespace VirtualHardDiskLib
 
         private static string _findVhdVolumePath(int vhdPhysicalDrive)
         {
-            StringBuilder volumeName = new StringBuilder(260);
+            StringBuilder volumeName = new(260);
             IntPtr findVolumeHandle;
             IntPtr volumeHandle;
-            NativeMethods.STORAGE_DEVICE_NUMBER deviceNumber = new NativeMethods.STORAGE_DEVICE_NUMBER();
+            NativeMethods.STORAGE_DEVICE_NUMBER deviceNumber = new();
             uint bytesReturned = 0;
             bool found = false;
 

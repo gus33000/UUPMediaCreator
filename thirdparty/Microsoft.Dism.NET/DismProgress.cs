@@ -6,7 +6,7 @@ using Microsoft.Win32.SafeHandles;
 using System;
 using System.Threading;
 
-namespace Microsoft.Dism
+namespace Microsoft.Dism.NET
 {
     /// <summary>
     /// Represents progress made during time-consuming operations.

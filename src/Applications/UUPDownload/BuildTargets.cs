@@ -20,7 +20,7 @@
  * SOFTWARE.
  */
 using CompDB;
-using MediaCreationLib.Planning;
+using MediaCreationLib.Planning.NET;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;

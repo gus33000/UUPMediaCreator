@@ -475,10 +475,7 @@ namespace DownloadLib
                 Task.Run(async () => buildstr = await update.GetBuildStringAsync()),
                 Task.Run(async () => languages = await update.GetAvailableLanguagesAsync()));
 
-            if (buildstr == null)
-            {
-                buildstr = "";
-            }
+            buildstr ??= "";
 
             if (string.IsNullOrEmpty(buildstr) && update.Xml.LocalizedProperties.Title.Contains("(UUP-CTv2)"))
             {
@@ -540,7 +537,7 @@ namespace DownloadLib
                 {
                     return new UUPFile(
                         boundFile.Item2,
-                        UpdateUtils.GetFilenameForCEUIFile(boundFile.Item1, payloadItems),
+                        GetFilenameForCEUIFile(boundFile.Item1, payloadItems),
                         long.Parse(boundFile.Item1.Size),
                         boundFile.Item1.AdditionalDigest.Text,
                         boundFile.Item1.AdditionalDigest.Algorithm);

@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace Privileges
+namespace Privileges.NET
 {
     [Flags]
     internal enum TokenAccessLevels

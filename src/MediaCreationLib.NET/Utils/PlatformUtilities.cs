@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Security.Principal;
 
-namespace MediaCreationLib.Utils
+namespace MediaCreationLib.NET.Utils
 {
     public static class PlatformUtilities
     {

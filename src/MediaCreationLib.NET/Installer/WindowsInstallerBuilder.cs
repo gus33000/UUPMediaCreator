@@ -19,19 +19,19 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-using Imaging;
-using MediaCreationLib.DismOperations;
-using MediaCreationLib.Settings;
-using MediaCreationLib.Utils;
-using Microsoft.Wim;
+using Imaging.NET;
+using MediaCreationLib.DismOperations.NET;
+using MediaCreationLib.NET.Settings;
+using MediaCreationLib.NET.Utils;
+using Microsoft.Wim.NET;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UUPMediaCreator.InterCommunication;
-using VirtualHardDiskLib;
+using VirtualHardDiskLib.NET;
 
-namespace MediaCreationLib.Installer
+namespace MediaCreationLib.NET.Installer
 {
     public static class WindowsInstallerBuilder
     {
@@ -524,7 +524,7 @@ namespace MediaCreationLib.Installer
                 result = RemoteDismOperations.Instance.UninstallPEComponents(ospath, customCallback);
                 if (!result)
                 {
-                    result = DismOperations.DismOperations.Instance.UninstallPEComponents(ospath, customCallback);
+                    result = DismOperations.NET.DismOperations.Instance.UninstallPEComponents(ospath, customCallback);
                 }
 
                 if (!result)

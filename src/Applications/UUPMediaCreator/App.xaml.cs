@@ -127,7 +127,7 @@ namespace UUPMediaCreator
             InitializeComponent();
             Suspending += OnSuspending;
             ApplicationView.PreferredLaunchViewSize = new Size(800, 600);
-            ApplicationView.PreferredLaunchWindowingMode = Windows.UI.ViewManagement.ApplicationViewWindowingMode.PreferredLaunchViewSize;
+            ApplicationView.PreferredLaunchWindowingMode = ApplicationViewWindowingMode.PreferredLaunchViewSize;
         }
 
         private void ShowMainPage()

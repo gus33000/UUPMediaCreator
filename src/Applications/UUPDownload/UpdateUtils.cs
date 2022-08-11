@@ -38,7 +38,7 @@ namespace UUPDownload
                 CompDBXmlClass.PayloadItem payload = payloadItems.First(x => x.PayloadHash == file2.AdditionalDigest.Text || x.PayloadHash == file2.Digest);
                 return payload.Path.Replace('\\', Path.DirectorySeparatorChar);
             }
-            else if (!payloadItems.Any() && filename.Contains("_") && !filename.StartsWith("_") && (!filename.Contains('-') || filename.IndexOf('-') > filename.IndexOf('_')))
+            else if (!payloadItems.Any() && filename.Contains('_') && !filename.StartsWith("_") && (!filename.Contains('-') || filename.IndexOf('-') > filename.IndexOf('_')))
             {
                 filename = filename[..filename.IndexOf('_')] + Path.DirectorySeparatorChar + filename[(filename.IndexOf('_') + 1)..];
                 return filename.TrimStart(Path.DirectorySeparatorChar);

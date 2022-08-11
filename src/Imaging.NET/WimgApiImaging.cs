@@ -1,11 +1,11 @@
 ﻿using Microsoft.Wim;
-using Microsoft.Wim;
+using Microsoft.Wim.NET;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace Imaging
+namespace Imaging.NET
 {
     public class WimgApiImaging : IImaging
     {
@@ -41,12 +41,9 @@ namespace Imaging
 
         private string[] BuildExclusionList(string WorkingDirectory = null)
         {
-            if (WorkingDirectory == null)
-            {
-                return Array.Empty<string>();
-            }
-
-            return ExclusionList.Select(excludedItem => Path.Combine(WorkingDirectory.EndsWith(":") ? WorkingDirectory + @"\" : WorkingDirectory, excludedItem)).ToArray();
+            return WorkingDirectory == null
+                ? Array.Empty<string>()
+                : ExclusionList.Select(excludedItem => Path.Combine(WorkingDirectory.EndsWith(":") ? WorkingDirectory + @"\" : WorkingDirectory, excludedItem)).ToArray();
         }
 
         private WimMessageCallback GetWimMessageCallback(string title, string WorkingDirectory = null, IImaging.ProgressCallback progressCallback = null)

@@ -48,7 +48,7 @@ namespace Microsoft.Wim
             long partSizeCopy = partSize;
 
             // Call the native function
-            if (!WimgApi.NativeMethods.WIMSplitFile(wimHandle, partPath, ref partSizeCopy, 0))
+            if (!NativeMethods.WIMSplitFile(wimHandle, partPath, ref partSizeCopy, 0))
             {
                 // Throw a Win32Exception based on the last error code
                 throw new Win32Exception();
@@ -81,10 +81,10 @@ namespace Microsoft.Wim
             long partSize = 0;
 
             // Call the WIMSplitFile function which should return false and set partSize to the minimum size needed
-            if (!WimgApi.NativeMethods.WIMSplitFile(wimHandle, partPath, ref partSize, 0))
+            if (!NativeMethods.WIMSplitFile(wimHandle, partPath, ref partSize, 0))
             {
                 // See if the return code was not ERROR_MORE_DATA
-                if (Marshal.GetLastWin32Error() != WimgApi.ERROR_MORE_DATA)
+                if (Marshal.GetLastWin32Error() != ERROR_MORE_DATA)
                 {
                     // Throw a Win32Exception based on the last error code
                     throw new Win32Exception();

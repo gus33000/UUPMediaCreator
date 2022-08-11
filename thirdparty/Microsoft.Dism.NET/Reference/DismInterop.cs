@@ -3,7 +3,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace Microsoft.Dism.Reference
+namespace Microsoft.Dism.NET.Reference
 {
     public enum LogLevel
     {

@@ -19,14 +19,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-using MediaCreationLib.Utils;
+using MediaCreationLib.NET.Utils;
 using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 
-namespace MediaCreationLib.CDImage
+namespace MediaCreationLib.NET.CDImage
 {
     internal static class CDImageWrapper
     {
@@ -61,9 +61,9 @@ namespace MediaCreationLib.CDImage
                 {
                     process.ErrorDataReceived += (sender, e) =>
                     {
-                        if (e.Data?.Contains("%") == true)
+                        if (e.Data?.Contains('%') == true)
                         {
-                            int percent = int.Parse(e.Data.Split(' ').First(x => x.Contains("%")).Replace("%", ""));
+                            int percent = int.Parse(e.Data.Split(' ').First(x => x.Contains('%')).Replace("%", ""));
                             progressCallback?.Invoke($"Building {isopath}", percent, false);
                         }
                     };
@@ -103,9 +103,9 @@ namespace MediaCreationLib.CDImage
                     {
                         process.ErrorDataReceived += (sender, e) =>
                         {
-                            if (e.Data?.Contains("%") == true)
+                            if (e.Data?.Contains('%') == true)
                             {
-                                int percent = (int)Math.Round(double.Parse(e.Data.Split(' ').First(x => x.Contains("%")).Replace("%", "")));
+                                int percent = (int)Math.Round(double.Parse(e.Data.Split(' ').First(x => x.Contains('%')).Replace("%", "")));
                                 progressCallback?.Invoke($"Building {isopath}", percent, false);
                             }
                         };

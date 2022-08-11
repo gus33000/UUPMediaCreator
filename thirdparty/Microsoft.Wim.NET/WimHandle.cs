@@ -20,7 +20,7 @@ namespace Microsoft.Wim
         internal static bool CloseHandle(IntPtr handle)
         {
             // Call the native function
-            if (!WimgApi.NativeMethods.WIMCloseHandle(handle))
+            if (!NativeMethods.WIMCloseHandle(handle))
             {
                 // Throw a Win32Exception based on the last error code
                 throw new Win32Exception();

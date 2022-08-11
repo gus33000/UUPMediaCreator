@@ -20,13 +20,13 @@
  * SOFTWARE.
  */
 using DiscUtils.Registry;
-using MediaCreationLib.Utils;
+using MediaCreationLib.NET.Utils;
 using System;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 
-namespace MediaCreationLib.Installer
+namespace MediaCreationLib.NET.Installer
 {
     internal static class PreinstallationEnvironmentRegistryService
     {

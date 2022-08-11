@@ -78,7 +78,7 @@ namespace Microsoft.Wim
             }
 
             // Call the native function
-            WimHandle imageHandle = WimgApi.NativeMethods.WIMCaptureImage(wimHandle, path, (DWORD)options);
+            WimHandle imageHandle = NativeMethods.WIMCaptureImage(wimHandle, path, (DWORD)options);
 
             // See if the handle returned is valid
             if (imageHandle?.IsInvalid != false)

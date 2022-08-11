@@ -29,7 +29,7 @@ using UUPMediaCreator.InterCommunication;
 
 #nullable enable
 
-namespace MediaCreationLib
+namespace MediaCreationLib.NET
 {
     internal static class FileLocator
     {
@@ -39,7 +39,7 @@ namespace MediaCreationLib
 
             foreach (CompDBXmlClass.CompDB compDB in CompositionDatabases)
             {
-                (bool succeeded, HashSet<string> missingFiles) = Planning.FileLocator.VerifyFilesAreAvailableForCompDB(compDB, UUPPath);
+                (bool succeeded, HashSet<string> missingFiles) = Planning.NET.FileLocator.VerifyFilesAreAvailableForCompDB(compDB, UUPPath);
                 foreach (string? missingFile in missingFiles)
                 {
                     if (!missingPackages.Contains(missingFile))

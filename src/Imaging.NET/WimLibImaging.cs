@@ -21,7 +21,7 @@
  */
 using ManagedWimLib;
 using Microsoft.Wim;
-using Microsoft.Wim;
+using Microsoft.Wim.NET;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -29,7 +29,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 
-namespace Imaging
+namespace Imaging.NET
 {
     public class WimLibImaging : IImaging
     {
@@ -660,7 +660,7 @@ namespace Imaging
 
         public bool EnumerateFiles(string wimFile, int imageIndex, string path, out string[] entries)
         {
-            List<string> fsentries = new List<string>();
+            List<string> fsentries = new();
             try
             {
                 using Wim wim = Wim.OpenWim(wimFile, OpenFlags.None);

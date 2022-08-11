@@ -2,7 +2,7 @@
 //
 // Licensed under the MIT license.
 
-using Microsoft.Wim;
+using Microsoft.Wim.NET;
 using System;
 using System.Globalization;
 using System.IO;
@@ -134,7 +134,7 @@ namespace Microsoft.Wim
         /// <summary>
         /// Contains information retrieved by the WIMGetAttributes function.
         /// </summary>
-        [StructLayout(LayoutKind.Sequential, CharSet = WimgApi.WimgApiCharSet)]
+        [StructLayout(LayoutKind.Sequential, CharSet = WimgApiCharSet)]
         internal struct WIM_INFO
         {
             /// <summary>
@@ -187,7 +187,7 @@ namespace Microsoft.Wim
         /// <summary>
         /// Contains information retrieved by the WIMGetMountedImageInfo function.
         /// </summary>
-        [StructLayout(LayoutKind.Sequential, CharSet = WimgApi.WimgApiCharSet)]
+        [StructLayout(LayoutKind.Sequential, CharSet = WimgApiCharSet)]
         internal struct WIM_MOUNT_INFO_LEVEL0
         {
             /// <summary>
@@ -217,7 +217,7 @@ namespace Microsoft.Wim
         /// <summary>
         /// Contains information retrieved by the WIMGetMountedImageList function.
         /// </summary>
-        [StructLayout(LayoutKind.Sequential, CharSet = WimgApi.WimgApiCharSet, Pack = 4)]
+        [StructLayout(LayoutKind.Sequential, CharSet = WimgApiCharSet, Pack = 4)]
         internal struct WIM_MOUNT_INFO_LEVEL1
         {
             /// <summary>
@@ -246,7 +246,7 @@ namespace Microsoft.Wim
         /// <summary>
         /// Contains information retrieved by the WIMGetMountedImages function.
         /// </summary>
-        [StructLayout(LayoutKind.Sequential, CharSet = WimgApi.WimgApiCharSet, Pack = 4)]
+        [StructLayout(LayoutKind.Sequential, CharSet = WimgApiCharSet, Pack = 4)]
         internal struct WIM_MOUNT_LIST
         {
             /// <summary>

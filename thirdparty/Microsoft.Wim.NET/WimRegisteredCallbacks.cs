@@ -5,7 +5,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Microsoft.Wim
+namespace Microsoft.Wim.NET
 {
     /// <summary>
     /// Represents a collection of registered callbacks.  Callbacks can be registered globally or per <see cref="WimHandle" />.

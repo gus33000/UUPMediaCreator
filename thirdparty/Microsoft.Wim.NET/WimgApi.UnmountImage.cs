@@ -59,7 +59,7 @@ namespace Microsoft.Wim
             }
 
             // Call the native function
-            if (!WimgApi.NativeMethods.WIMUnmountImage(mountPath, imagePath, (DWORD)imageIndex, commitChanges))
+            if (!NativeMethods.WIMUnmountImage(mountPath, imagePath, (DWORD)imageIndex, commitChanges))
             {
                 // Throw a Win32Exception based on the last error code
                 throw new Win32Exception();
@@ -81,7 +81,7 @@ namespace Microsoft.Wim
             }
 
             // Call the native function
-            if (!WimgApi.NativeMethods.WIMUnmountImageHandle(imageHandle, 0))
+            if (!NativeMethods.WIMUnmountImageHandle(imageHandle, 0))
             {
                 // Throw a Win32Exception based on the last error code
                 throw new Win32Exception();

@@ -2,7 +2,7 @@
 //
 // Licensed under the MIT license.
 
-using Microsoft.Dism;
+using Microsoft.Dism.NET;
 using System;
 using System.Linq;
 using System.Runtime.InteropServices;

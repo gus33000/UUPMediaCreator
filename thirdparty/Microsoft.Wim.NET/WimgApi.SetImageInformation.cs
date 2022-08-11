@@ -67,7 +67,7 @@ namespace Microsoft.Wim
             try
             {
                 // Call the native function
-                if (!WimgApi.NativeMethods.WIMSetImageInformation(wimHandle, imageInfoPtr, (DWORD)(imageInfo.Length + 1) * 2))
+                if (!NativeMethods.WIMSetImageInformation(wimHandle, imageInfoPtr, (DWORD)(imageInfo.Length + 1) * 2))
                 {
                     // Throw a Win32Exception based on the last error code
                     throw new Win32Exception();

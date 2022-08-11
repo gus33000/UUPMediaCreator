@@ -85,10 +85,7 @@ namespace MediaCreationLib.Planning.Applications
                         throw new Exception();
                 }
             }
-            if (MainPackageID == null)
-            {
-                MainPackageID = PackageIDs.First();
-            }
+            MainPackageID ??= PackageIDs.First();
 
             if (scaleDictionary != null)
             {
@@ -120,14 +117,11 @@ namespace MediaCreationLib.Planning.Applications
 
         private void HandleResourcePackage(string packageId, IEnumerable<string> applicableLanguageTags, ref Dictionary<int, string> scaleDictionary)
         {
-            if (scaleDictionary == null)
-            {
-                scaleDictionary = new Dictionary<int, string>()
+            scaleDictionary ??= new Dictionary<int, string>()
                 {
                     { 100, null },
                     { 200, null }
                 };
-            }
 
             (ResourceType, string) resourceInfo = GetResourcePackageInfo(packageId);
             switch (resourceInfo.Item1)

@@ -8,7 +8,7 @@ using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 
-namespace Microsoft.Dism
+namespace Microsoft.Dism.NET
 {
     /// <summary>
     /// Represents an exception in the DismApi.
