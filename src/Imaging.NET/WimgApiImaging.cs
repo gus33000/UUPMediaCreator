@@ -39,12 +39,22 @@ namespace Imaging
             "System Volume Information"
         };
 
+        private string[] BuildExclusionList(string WorkingDirectory = null)
+        {
+            if (WorkingDirectory == null)
+            {
+                return Array.Empty<string>();
+            }
+
+            return ExclusionList.Select(excludedItem => Path.Combine(WorkingDirectory.EndsWith(":") ? WorkingDirectory + @"\" : WorkingDirectory, excludedItem)).ToArray();
+        }
+
         private WimMessageCallback GetWimMessageCallback(string title, string WorkingDirectory = null, IImaging.ProgressCallback progressCallback = null)
         {
             int directoriesScanned = 0;
             int filesScanned = 0;
 
-            string[] fittingExclusionList = ExclusionList.Select(excludedItem => Path.Combine(WorkingDirectory.EndsWith(":") ? WorkingDirectory + @"\" : WorkingDirectory, excludedItem)).ToArray();
+            string[] fittingExclusionList = BuildExclusionList(WorkingDirectory);
 
             WimMessageResult callback(WimMessageType messageType, object message, object userData)
             {
