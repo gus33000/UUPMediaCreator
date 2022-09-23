@@ -39,6 +39,7 @@ namespace Microsoft.Dism
         /// <param name="dependencyPackages">Specifies the location of dependency packages.</param>
         /// <param name="licensePath">Specifies the location of the .xml file containing your application license.</param>
         /// <param name="customDataPath">Specifies the location of a custom data file. The custom data file will be renamed custom.data and saved in the app data store.</param>
+        /// <param name="stubPackageOption">Specifies the stub package option.</param>
         /// <exception cref="DismRebootRequiredException">When the operation requires a reboot to complete.</exception>
         public static void AddProvisionedAppxPackage(DismSession session, string appPath, List<string>? dependencyPackages, string? licensePath, string customDataPath, DismStubPackageOption stubPackageOption)
         {
