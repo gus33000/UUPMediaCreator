@@ -45,7 +45,7 @@
 #endregion
 ```
 
-```\Microsoft.Dism.NET``` and ```\Microsoft.Wim.NET``` are licensed under the terms available for https://github.com/jeffkl/ManagedDism & https://github.com/jeffkl/ManagedWimgApi
+```\Microsoft.Dism``` and ```\Microsoft.Wim``` are licensed under the terms available for https://github.com/jeffkl/ManagedDism & https://github.com/jeffkl/ManagedWimgApi
 
 ```
 The MIT License (MIT)

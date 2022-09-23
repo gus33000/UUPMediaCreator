@@ -24,7 +24,7 @@ using Imaging.NET;
 using IniParser;
 using IniParser.Model;
 using MediaCreationLib.NET.Settings;
-using Microsoft.Wim.NET;
+using Microsoft.Wim;
 using System;
 using System.IO;
 using System.Linq;

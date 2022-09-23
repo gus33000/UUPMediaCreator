@@ -21,7 +21,7 @@
  */
 using MediaCreationLib.Planning.Applications;
 using Microsoft.Dism;
-using Microsoft.Dism.NET;
+using Microsoft.Dism;
 using System;
 using System.Collections.Generic;
 using System.IO;

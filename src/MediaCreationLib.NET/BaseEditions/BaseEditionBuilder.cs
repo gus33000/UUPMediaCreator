@@ -26,7 +26,7 @@ using IniParser;
 using IniParser.Model;
 using MediaCreationLib.DismOperations.NET;
 using MediaCreationLib.Planning.Applications;
-using Microsoft.Wim.NET;
+using Microsoft.Wim;
 using System;
 using System.Collections.Generic;
 using System.IO;

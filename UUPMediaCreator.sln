@@ -25,13 +25,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UWP", "UWP", "{715DF7A3-E1E
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MediaCreationLib.NET", "src\MediaCreationLib.NET\MediaCreationLib.NET.csproj", "{464E542C-2E57-46BB-8BEC-4A77E0228A17}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Dism.NET", "thirdparty\Microsoft.Dism.NET\Microsoft.Dism.NET.csproj", "{C3E27D93-4CCE-4EC3-8935-9AED651B233E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Dism", "thirdparty\Microsoft.Dism\Microsoft.Dism.csproj", "{C3E27D93-4CCE-4EC3-8935-9AED651B233E}"
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "CompDB.Shared", "src\CompDB.Shared\CompDB.Shared.shproj", "{113C95B3-1CBB-4B02-8BFE-8A623AD67F84}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VirtualHardDiskLib.NET", "src\VirtualHardDiskLib.NET\VirtualHardDiskLib.NET.csproj", "{6B098DD6-800B-42DF-9309-DB29C64DDD29}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Wim.NET", "thirdparty\Microsoft.Wim.NET\Microsoft.Wim.NET.csproj", "{5E74B6C3-20F3-4ED8-A1E5-98325B77A515}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Wim", "thirdparty\Microsoft.Wim\Microsoft.Wim.csproj", "{5E74B6C3-20F3-4ED8-A1E5-98325B77A515}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Privileges.NET", "thirdparty\Privileges.NET\Privileges.NET.csproj", "{43C8BFCA-DB35-41F6-8602-A3E99BDD8EC6}"
 EndProject

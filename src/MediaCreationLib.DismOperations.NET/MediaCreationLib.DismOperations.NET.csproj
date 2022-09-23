@@ -9,7 +9,7 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\thirdparty\Microsoft.Dism.NET\Microsoft.Dism.NET.csproj" />
+    <ProjectReference Include="..\..\thirdparty\Microsoft.Dism\Microsoft.Dism.csproj" />
     <ProjectReference Include="..\CompDB.NET\CompDB.NET.csproj" />
   </ItemGroup>
   <ItemGroup>

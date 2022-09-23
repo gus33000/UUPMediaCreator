@@ -21,7 +21,7 @@
  */
 using CompDB;
 using MediaCreationLib.NET.Utils;
-using Microsoft.Wim.NET;
+using Microsoft.Wim;
 using System.Collections.Generic;
 using UUPMediaCreator.InterCommunication;
 

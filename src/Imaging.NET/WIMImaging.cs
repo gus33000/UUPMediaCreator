@@ -1,4 +1,4 @@
-﻿using Microsoft.Wim.NET;
+﻿using Microsoft.Wim;
 using System.Collections.Generic;
 
 namespace Imaging.NET

@@ -21,7 +21,7 @@
  */
 using Imaging.NET;
 using MediaCreationLib.NET.Settings;
-using Microsoft.Wim.NET;
+using Microsoft.Wim;
 using System;
 using System.Collections.Generic;
 using System.IO;

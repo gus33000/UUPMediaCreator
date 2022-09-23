@@ -42,7 +42,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\thirdparty\Microsoft.Wim.NET\Microsoft.Wim.NET.csproj" />
+    <ProjectReference Include="..\..\thirdparty\Microsoft.Wim\Microsoft.Wim.csproj" />
     <ProjectReference Include="..\TempManager.NET\TempManager.NET.csproj" />
   </ItemGroup>
   <ItemGroup>
