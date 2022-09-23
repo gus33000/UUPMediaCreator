@@ -5,7 +5,7 @@
 using System;
 using System.Collections.ObjectModel;
 
-namespace Microsoft.Dism.NET
+namespace Microsoft.Dism
 {
     /// <summary>
     /// Represents a collection of <see cref="DismMountedImageInfo" /> objects.

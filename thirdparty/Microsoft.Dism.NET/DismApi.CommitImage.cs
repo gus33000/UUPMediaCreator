@@ -2,7 +2,6 @@
 //
 // Licensed under the MIT license.
 
-using Microsoft.Dism.NET;
 using Microsoft.Win32.SafeHandles;
 using System;
 using System.Runtime.InteropServices;
@@ -19,7 +18,7 @@ namespace Microsoft.Dism
         /// <exception cref="DismException">When a failure occurs.</exception>
         public static void CommitImage(DismSession session, bool discardChanges)
         {
-            CommitImage(session, discardChanges, null);
+            CommitImage(session, discardChanges, progressCallback: null);
         }
 
         /// <summary>
@@ -30,9 +29,9 @@ namespace Microsoft.Dism
         /// <param name="progressCallback">A progress callback method to invoke when progress is made.</param>
         /// <exception cref="DismException">When a failure occurs.</exception>
         /// <exception cref="OperationCanceledException">When the user requested the operation be canceled.</exception>
-        public static void CommitImage(DismSession session, bool discardChanges, Microsoft.Dism.DismProgressCallback progressCallback)
+        public static void CommitImage(DismSession session, bool discardChanges, Microsoft.Dism.DismProgressCallback? progressCallback)
         {
-            CommitImage(session, discardChanges, progressCallback, null);
+            CommitImage(session, discardChanges, progressCallback, userData: null);
         }
 
         /// <summary>
@@ -44,13 +43,13 @@ namespace Microsoft.Dism
         /// <param name="userData">Optional user data to pass to the DismProgressCallback method.</param>
         /// <exception cref="DismException">When a failure occurs.</exception>
         /// <exception cref="OperationCanceledException">When the user requested the operation be canceled.</exception>
-        public static void CommitImage(DismSession session, bool discardChanges, Microsoft.Dism.DismProgressCallback progressCallback, object userData)
+        public static void CommitImage(DismSession session, bool discardChanges, Microsoft.Dism.DismProgressCallback? progressCallback, object? userData)
         {
             // Create the flags
-            uint flags = discardChanges ? DISM_DISCARD_IMAGE : DISM_COMMIT_IMAGE;
+            UInt32 flags = discardChanges ? DISM_DISCARD_IMAGE : DISM_COMMIT_IMAGE;
 
             // Create a DismProgress object to wrap the callback and allow cancellation
-            DismProgress progress = new(progressCallback, userData);
+            DismProgress progress = new DismProgress(progressCallback, userData);
 
             int hresult = NativeMethods.DismCommitImage(session, flags, progress.EventHandle, progress.DismProgressCallbackNative, IntPtr.Zero);
 
@@ -76,7 +75,7 @@ namespace Microsoft.Dism
             /// </remarks>
             [DllImport(DismDllName, CharSet = DismCharacterSet)]
             [return: MarshalAs(UnmanagedType.Error)]
-            public static extern int DismCommitImage(DismSession session, uint flags, SafeWaitHandle cancelEvent, DismProgressCallback progress, IntPtr userData);
+            public static extern int DismCommitImage(DismSession session, UInt32 flags, SafeWaitHandle cancelEvent, DismProgressCallback progress, IntPtr userData);
         }
     }
 }

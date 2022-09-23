@@ -2,7 +2,6 @@
 //
 // Licensed under the MIT license.
 
-using Microsoft.Dism.NET;
 using System;
 using System.Runtime.InteropServices;
 
@@ -54,7 +53,7 @@ namespace Microsoft.Dism
         /// <returns>A <see cref="DismFeatureCollection" /> object containing a collection of <see cref="DismFeature" /> objects.</returns>
         private static DismFeatureCollection GetFeatures(DismSession session, string identifier, DismPackageIdentifier packageIdentifier)
         {
-            int hresult = NativeMethods.DismGetFeatures(session, identifier, packageIdentifier, out IntPtr featurePtr, out uint featureCount);
+            int hresult = NativeMethods.DismGetFeatures(session, identifier, packageIdentifier, out IntPtr featurePtr, out UInt32 featureCount);
 
             try
             {
@@ -86,7 +85,7 @@ namespace Microsoft.Dism
             /// </remarks>
             [DllImport(DismDllName, CharSet = DismCharacterSet)]
             [return: MarshalAs(UnmanagedType.Error)]
-            public static extern int DismGetFeatures(DismSession session, string identifier, DismPackageIdentifier packageIdentifier, out IntPtr feature, out uint count);
+            public static extern int DismGetFeatures(DismSession session, string identifier, DismPackageIdentifier packageIdentifier, out IntPtr feature, out UInt32 count);
         }
     }
 }

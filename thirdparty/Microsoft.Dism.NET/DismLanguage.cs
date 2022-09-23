@@ -24,7 +24,7 @@ namespace Microsoft.Dism
             /// <summary>
             /// A null-terminated Unicode string.
             /// </summary>
-            private string value;
+            private string? _value;
 
             /// <summary>
             /// Initializes a new instance of the <see cref="DismLanguage" /> class.
@@ -37,9 +37,9 @@ namespace Microsoft.Dism
             /// Initializes a new instance of the <see cref="DismLanguage" /> class.
             /// </summary>
             /// <param name="value">The language.</param>
-            public DismLanguage(string value)
+            public DismLanguage(string? value)
             {
-                this.value = value;
+                _value = value;
             }
 
             /// <summary>
@@ -47,9 +47,9 @@ namespace Microsoft.Dism
             /// </summary>
             /// <param name="language">A DismLanguage object to convert.</param>
             /// <returns>The string associated with the DismLanguage</returns>
-            public static implicit operator string(DismLanguage language)
+            public static implicit operator string?(DismLanguage language)
             {
-                return language.value;
+                return language._value;
             }
 
             /// <summary>
@@ -57,11 +57,11 @@ namespace Microsoft.Dism
             /// </summary>
             /// <param name="str">A string to convert.</param>
             /// <returns>A DismLanguage containing the specified string.</returns>
-            public static implicit operator DismLanguage(string str)
+            public static implicit operator DismLanguage(string? str)
             {
                 return new DismLanguage
                 {
-                    value = str,
+                    _value = str,
                 };
             }
         }

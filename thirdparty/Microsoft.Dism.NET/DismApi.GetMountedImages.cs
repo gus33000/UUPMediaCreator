@@ -2,7 +2,6 @@
 //
 // Licensed under the MIT license.
 
-using Microsoft.Dism.NET;
 using System;
 using System.Runtime.InteropServices;
 
@@ -17,7 +16,7 @@ namespace Microsoft.Dism
         /// <exception cref="DismException">When a failure occurs.</exception>
         public static DismMountedImageInfoCollection GetMountedImages()
         {
-            int hresult = NativeMethods.DismGetMountedImageInfo(out IntPtr mountedImageInfoPtr, out uint mountedImageInfoCount);
+            int hresult = NativeMethods.DismGetMountedImageInfo(out IntPtr mountedImageInfoPtr, out UInt32 mountedImageInfoCount);
 
             try
             {
@@ -40,17 +39,18 @@ namespace Microsoft.Dism
             /// <param name="mountedImageInfo">A pointer to the address of an array of DismMountedImageInfo Structure objects.</param>
             /// <param name="count">The number of DismMountedImageInfo structures that are returned.</param>
             /// <returns>Returns S_OK on success.</returns>
-            /// <remarks><para>Only images mounted using the DISM infrastructure will be returned. If a .vhd file is mounted outside of DISM, such as with the DiskPart tool, this call will not return information about that image. You must use the DismMountImage Function to mount the image.</para>
-            /// <para>The array of DismMountedImageInfo structures are allocated by the DISM API on the heap.</para>
-            /// <para>You must call the DismDelete Function, passing the ImageInfo pointer, to free the resources associated with the DismImageInfo structures.</para>
-            /// <para>
+            /// <remarks>Only images mounted using the DISM infrastructure will be returned. If a .vhd file is mounted outside of DISM, such as with the DiskPart tool, this call will not return information about that image. You must use the DismMountImage Function to mount the image.
+            ///
+            /// The array of DismMountedImageInfo structures are allocated by the DISM API on the heap.
+            ///
+            /// You must call the DismDelete Function, passing the ImageInfo pointer, to free the resources associated with the DismImageInfo structures.
+            ///
             /// <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/hh824745.aspx" />
             /// HRESULT WINAPI DismGetMountedImageInfo(_Outptr_result_buffer_(*Count) DismMountedImageInfo** MountedImageInfo, _Out_ UINT* Count);
-            /// </para>
             /// </remarks>
             [DllImport(DismDllName, CharSet = DismCharacterSet)]
             [return: MarshalAs(UnmanagedType.Error)]
-            public static extern int DismGetMountedImageInfo(out IntPtr mountedImageInfo, out uint count);
+            public static extern int DismGetMountedImageInfo(out IntPtr mountedImageInfo, out UInt32 count);
         }
     }
 }

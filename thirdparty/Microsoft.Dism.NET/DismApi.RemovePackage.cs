@@ -2,7 +2,6 @@
 //
 // Licensed under the MIT license.
 
-using Microsoft.Dism.NET;
 using Microsoft.Win32.SafeHandles;
 using System;
 using System.Runtime.InteropServices;
@@ -20,7 +19,7 @@ namespace Microsoft.Dism
         /// <exception cref="DismRebootRequiredException">When the operation requires a reboot to complete.</exception>
         public static void RemovePackageByName(DismSession session, string packageName)
         {
-            RemovePackageByName(session, packageName, null);
+            RemovePackageByName(session, packageName, progressCallback: null);
         }
 
         /// <summary>
@@ -32,9 +31,9 @@ namespace Microsoft.Dism
         /// <exception cref="DismException">When a failure occurs.</exception>
         /// <exception cref="OperationCanceledException">When the user requested the operation be canceled.</exception>
         /// <exception cref="DismRebootRequiredException">When the operation requires a reboot to complete.</exception>
-        public static void RemovePackageByName(DismSession session, string packageName, Dism.DismProgressCallback progressCallback)
+        public static void RemovePackageByName(DismSession session, string packageName, Dism.DismProgressCallback? progressCallback)
         {
-            RemovePackageByName(session, packageName, progressCallback, null);
+            RemovePackageByName(session, packageName, progressCallback, userData: null);
         }
 
         /// <summary>
@@ -47,7 +46,7 @@ namespace Microsoft.Dism
         /// <exception cref="DismException">When a failure occurs.</exception>
         /// <exception cref="OperationCanceledException">When the user requested the operation be canceled.</exception>
         /// <exception cref="DismRebootRequiredException">When the operation requires a reboot to complete.</exception>
-        public static void RemovePackageByName(DismSession session, string packageName, Dism.DismProgressCallback progressCallback, object userData)
+        public static void RemovePackageByName(DismSession session, string packageName, Dism.DismProgressCallback? progressCallback, object? userData)
         {
             RemovePackage(session, packageName, DismPackageIdentifier.Name, progressCallback, userData);
         }
@@ -61,7 +60,7 @@ namespace Microsoft.Dism
         /// <exception cref="DismRebootRequiredException">When the operation requires a reboot to complete.</exception>
         public static void RemovePackageByPath(DismSession session, string packagePath)
         {
-            RemovePackageByPath(session, packagePath, null);
+            RemovePackageByPath(session, packagePath, progressCallback: null);
         }
 
         /// <summary>
@@ -73,9 +72,9 @@ namespace Microsoft.Dism
         /// <exception cref="DismException">When a failure occurs.</exception>
         /// <exception cref="OperationCanceledException">When the user requested the operation be canceled.</exception>
         /// <exception cref="DismRebootRequiredException">When the operation requires a reboot to complete.</exception>
-        public static void RemovePackageByPath(DismSession session, string packagePath, Dism.DismProgressCallback progressCallback)
+        public static void RemovePackageByPath(DismSession session, string packagePath, Dism.DismProgressCallback? progressCallback)
         {
-            RemovePackageByPath(session, packagePath, progressCallback, null);
+            RemovePackageByPath(session, packagePath, progressCallback, userData: null);
         }
 
         /// <summary>
@@ -88,7 +87,7 @@ namespace Microsoft.Dism
         /// <exception cref="DismException">When a failure occurs.</exception>
         /// <exception cref="OperationCanceledException">When the user requested the operation be canceled.</exception>
         /// <exception cref="DismRebootRequiredException">When the operation requires a reboot to complete.</exception>
-        public static void RemovePackageByPath(DismSession session, string packagePath, Dism.DismProgressCallback progressCallback, object userData)
+        public static void RemovePackageByPath(DismSession session, string packagePath, Dism.DismProgressCallback? progressCallback, object? userData)
         {
             RemovePackage(session, packagePath, DismPackageIdentifier.Path, progressCallback, userData);
         }
@@ -101,10 +100,10 @@ namespace Microsoft.Dism
         /// <param name="packageIdentifier">A DismPackageIdentifier Enumeration.</param>
         /// <param name="progressCallback">A progress callback method to invoke when progress is made.</param>
         /// <param name="userData">Optional user data to pass to the DismProgressCallback method.</param>
-        private static void RemovePackage(DismSession session, string identifier, DismPackageIdentifier packageIdentifier, Dism.DismProgressCallback progressCallback, object userData)
+        private static void RemovePackage(DismSession session, string identifier, DismPackageIdentifier packageIdentifier, Dism.DismProgressCallback? progressCallback, object? userData)
         {
             // Create a DismProgress object to wrap the callback and allow cancellation
-            DismProgress progress = new(progressCallback, userData);
+            DismProgress progress = new DismProgress(progressCallback, userData);
 
             int hresult = NativeMethods.DismRemovePackage(session, identifier, packageIdentifier, progress.EventHandle, progress.DismProgressCallbackNative, IntPtr.Zero);
 
@@ -128,7 +127,7 @@ namespace Microsoft.Dism
             /// HRESULT WINAPI DismRemovePackage (_In_ DismSession Session, _In_ PCWSTR Identifier, _In_ DismPackageIdentifier PackageIdentifier, _In_opt_ HANDLE CancelEvent, _In_opt_ DISM_PROGRESS_CALLBACK Progress, _In_opt_ PVOID UserData);
             [DllImport(DismDllName, CharSet = DismCharacterSet)]
             [return: MarshalAs(UnmanagedType.Error)]
-            public static extern int DismRemovePackage(DismSession session, string identifier, DismPackageIdentifier packageIdentifier, SafeWaitHandle cancelEvent, DismProgressCallback progress, IntPtr userData);
+            public static extern int DismRemovePackage(DismSession session, string identifier, DismPackageIdentifier packageIdentifier, SafeWaitHandle cancelEvent, DismProgressCallback? progress, IntPtr userData);
         }
     }
 }

@@ -2,7 +2,6 @@
 //
 // Licensed under the MIT license.
 
-using Microsoft.Dism.NET;
 using System.Runtime.InteropServices;
 
 namespace Microsoft.Dism
@@ -31,11 +30,10 @@ namespace Microsoft.Dism
             /// <param name="unattendFile">A relative or absolute path to the answer file that will be applied to the image.</param>
             /// <param name="singleSession">A Boolean value that specifies whether the packages that are listed in an answer file will be processed in a single session or in multiple sessions.</param>
             /// <returns>Returns S_OK on success.</returns>
-            /// <remarks><para>When you use DISM to apply an answer file to an image, the unattended settings in the offlineServicing configuration pass are applied to the Windows image. For more information, see Unattended Servicing Command-Line Options.</para>
-            /// <para>
+            /// <remarks>When you use DISM to apply an answer file to an image, the unattended settings in the offlineServicing configuration pass are applied to the Windows image. For more information, see Unattended Servicing Command-Line Options.
+            ///
             /// <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/hh825840.aspx" />
             /// HRESULT WINAPI DismApplyUnattend (_In_ DismSession Session, _In_ PCWSTR UnattendFile, _In_ BOOL SingleSession);
-            /// </para>
             /// </remarks>
             [DllImport(DismDllName, CharSet = DismCharacterSet)]
             [return: MarshalAs(UnmanagedType.Error)]

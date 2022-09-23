@@ -4,7 +4,6 @@
 
 using System.Runtime.InteropServices;
 
-// ReSharper disable InconsistentNaming
 namespace Microsoft.Dism
 {
     public static partial class DismApi

@@ -8,7 +8,7 @@ using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 
-namespace Microsoft.Dism.NET
+namespace Microsoft.Dism
 {
     /// <summary>
     /// Represents an exception in the DismApi.
@@ -105,13 +105,13 @@ namespace Microsoft.Dism.NET
             }
 
             // Attempt to get an error message from the DismApi
-            string lastError = DismApi.GetLastErrorMessage();
+            string? lastError = DismApi.GetLastErrorMessage();
 
             // See if the result is not null
             if (!string.IsNullOrEmpty(lastError))
             {
                 // Return a DismException object
-                return new DismException(errorCode, lastError.Trim());
+                return new DismException(errorCode, lastError!.Trim());
             }
 
             // Return an Exception for the HResult
@@ -255,11 +255,6 @@ namespace Microsoft.Dism.NET
         public DismPackageNotApplicableException(string message, Exception innerException)
             : base(message, innerException)
         {
-        }
-
-        private DismPackageNotApplicableException(SerializationInfo serializationInfo, StreamingContext streamingContext)
-        {
-            throw new NotImplementedException();
         }
     }
 

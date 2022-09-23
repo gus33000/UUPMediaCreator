@@ -2,7 +2,6 @@
 //
 // Licensed under the MIT license.
 
-using Microsoft.Dism.NET;
 using System;
 using System.Runtime.InteropServices;
 
@@ -19,7 +18,7 @@ namespace Microsoft.Dism
         /// <exception cref="DismException">When a failure occurs.</exception>
         public static DismDriverCollection GetDriverInfo(DismSession session, string driverPath)
         {
-            int hresult = NativeMethods.DismGetDriverInfo(session, driverPath, out IntPtr driverInfoPtr, out uint driverInfoCount, out IntPtr driverPackagePtr);
+            int hresult = NativeMethods.DismGetDriverInfo(session, driverPath, out IntPtr driverInfoPtr, out UInt32 driverInfoCount, out IntPtr driverPackagePtr);
 
             try
             {
@@ -46,15 +45,14 @@ namespace Microsoft.Dism
             /// <param name="count">The number of DismDriver structures that were returned.</param>
             /// <param name="driverPackage">Optional. A pointer to the address of a DismDriverPackage Structure object.</param>
             /// <returns>Returns S_OK on success.</returns>
-            /// <remarks><para>This function returns information about the .inf file installed on the image. The driver associated with the .inf file may or may not be installed in the image.</para>
-            /// <para>
+            /// <remarks>This function returns information about the .inf file installed on the image. The driver associated with the .inf file may or may not be installed in the image.
+            ///
             /// <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/hh824733.aspx" />
             /// HRESULT WINAPI DismGetDriverInfo (_In_ DismSession Session, _In_ PCWSTR DriverPath, _Outptr_result_buffer_(*Count) DismDriver** Driver, _Out_ UINT* Count, _Out_opt_ DismDriverPackage** DriverPackage);
-            /// </para>
             /// </remarks>
             [DllImport(DismDllName, CharSet = DismCharacterSet)]
             [return: MarshalAs(UnmanagedType.Error)]
-            public static extern int DismGetDriverInfo(DismSession session, string driverPath, out IntPtr driver, out uint count, out IntPtr driverPackage);
+            public static extern int DismGetDriverInfo(DismSession session, string driverPath, out IntPtr driver, out UInt32 count, out IntPtr driverPackage);
         }
     }
 }

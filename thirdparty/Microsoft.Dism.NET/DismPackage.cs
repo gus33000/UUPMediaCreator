@@ -2,7 +2,6 @@
 //
 // Licensed under the MIT license.
 
-using Microsoft.Dism.NET;
 using System;
 using System.Runtime.InteropServices;
 
@@ -91,7 +90,7 @@ namespace Microsoft.Dism
         /// </summary>
         /// <param name="obj">The object to compare with the current object.</param>
         /// <returns>true if the specified <see cref="T:System.Object" /> is equal to the current <see cref="T:System.Object" />; otherwise, false.</returns>
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             return obj != null && Equals(obj as DismPackage);
         }
@@ -101,7 +100,7 @@ namespace Microsoft.Dism
         /// </summary>
         /// <param name="other">The <see cref="DismPackage" /> object to compare with the current object.</param>
         /// <returns>true if the specified <see cref="DismPackage" /> is equal to the current <see cref="DismPackage" />; otherwise, false.</returns>
-        public bool Equals(DismPackage other)
+        public bool Equals(DismPackage? other)
         {
             return other != null
                    && InstallTime == other.InstallTime

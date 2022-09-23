@@ -24,14 +24,14 @@ namespace Microsoft.Dism
             /// <summary>
             /// A null-terminated Unicode string.
             /// </summary>
-            private string value;
+            private string? value;
 
             /// <summary>
             /// Converts a <see cref="DismString" /> class to a <see cref="string" /> object
             /// </summary>
             /// <param name="dismString">The <see cref="DismString" /> object to convert.</param>
             /// <returns>The current <see cref="DismString" /> as a <see cref="string" />.</returns>
-            public static implicit operator string(DismString dismString)
+            public static implicit operator string?(DismString dismString)
             {
                 return dismString.value;
             }
@@ -41,7 +41,7 @@ namespace Microsoft.Dism
             /// </summary>
             /// <param name="str">The string to convert.</param>
             /// <returns>The current <see cref="string" /> as a <see cref="DismString" /> object.</returns>
-            public static implicit operator DismString(string str)
+            public static implicit operator DismString(string? str)
             {
                 return new DismString
                 {

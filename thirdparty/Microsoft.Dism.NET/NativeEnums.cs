@@ -4,17 +4,8 @@
 
 using System;
 
-// ReSharper disable InconsistentNaming
-namespace Microsoft.Dism.NET
+namespace Microsoft.Dism
 {
-    public enum StubPackageOption
-    {
-        None,
-        InstallFull,
-        InstallStub,
-        UserPreference
-    }
-
     /// <summary>
     /// Specifies the signature status of a driver.
     /// </summary>
@@ -157,11 +148,6 @@ namespace Microsoft.Dism.NET
         /// Log file contains errors, warnings, and additional information.
         /// </summary>
         LogErrorsWarningsInfo,
-
-        /// <summary>
-        /// Undocumented.
-        /// </summary>
-        Debug
     }
 
     /// <summary>
@@ -299,11 +285,6 @@ namespace Microsoft.Dism.NET
         Intel = 0,
 
         /// <summary>
-        /// The image contains the ARM architecture.
-        /// </summary>
-        ARM = 5,
-
-        /// <summary>
         /// The image contains the IA64 architecture.
         /// </summary>
         IA64 = 6,
@@ -314,14 +295,19 @@ namespace Microsoft.Dism.NET
         AMD64 = 9,
 
         /// <summary>
-        /// A neutral processor architecture.
+        /// The image contains the ARM architecture.
         /// </summary>
-        Neutral = 11,
+        ARM = 5,
 
         /// <summary>
         /// The image contains the ARM64 architecture.
         /// </summary>
         ARM64 = 12,
+
+        /// <summary>
+        /// A neutral processor architecture.
+        /// </summary>
+        Neutral = 11,
     }
 
     /// <summary>
@@ -428,6 +414,27 @@ namespace Microsoft.Dism.NET
         /// This package or feature always requires a .
         /// </summary>
         Required,
+    }
+
+    /// <summary>
+    /// Specifies the stub package option when adding an app package (.appx).
+    /// </summary>
+    public enum DismStubPackageOption
+    {
+        /// <summary>
+        /// No option is specified.
+        /// </summary>
+        None,
+
+        /// <summary>
+        /// Use full package.
+        /// </summary>
+        InstallFull,
+
+        /// <summary>
+        /// Install stub package.
+        /// </summary>
+        InstallStub,
     }
 
     /// <summary>

@@ -2,7 +2,6 @@
 //
 // Licensed under the MIT license.
 
-using Microsoft.Dism.NET;
 using Microsoft.Win32.SafeHandles;
 using System;
 using System.Runtime.InteropServices;
@@ -20,7 +19,7 @@ namespace Microsoft.Dism
         /// <exception cref="DismException">When a failure occurs.</exception>
         public static DismImageHealthState CheckImageHealth(DismSession session, bool scanImage)
         {
-            return CheckImageHealth(session, scanImage, null);
+            return CheckImageHealth(session, scanImage, progressCallback: null);
         }
 
         /// <summary>
@@ -32,9 +31,9 @@ namespace Microsoft.Dism
         /// <returns>A <see cref="DismImageHealthState" /> indicating the health state of the image.</returns>
         /// <exception cref="DismException">When a failure occurs.</exception>
         /// <exception cref="OperationCanceledException">When the user requested the operation be canceled.</exception>
-        public static DismImageHealthState CheckImageHealth(DismSession session, bool scanImage, Microsoft.Dism.DismProgressCallback progressCallback)
+        public static DismImageHealthState CheckImageHealth(DismSession session, bool scanImage, Microsoft.Dism.DismProgressCallback? progressCallback)
         {
-            return CheckImageHealth(session, scanImage, progressCallback, null);
+            return CheckImageHealth(session, scanImage, progressCallback, userData: null);
         }
 
         /// <summary>
@@ -47,10 +46,10 @@ namespace Microsoft.Dism
         /// <returns>A <see cref="DismImageHealthState" /> indicating the health state of the image.</returns>
         /// <exception cref="DismException">When a failure occurs.</exception>
         /// <exception cref="OperationCanceledException">When the user requested the operation be canceled.</exception>
-        public static DismImageHealthState CheckImageHealth(DismSession session, bool scanImage, Microsoft.Dism.DismProgressCallback progressCallback, object userData)
+        public static DismImageHealthState CheckImageHealth(DismSession session, bool scanImage, Microsoft.Dism.DismProgressCallback? progressCallback, object? userData)
         {
             // Create a DismProgress object to wrap the callback and allow cancellation
-            DismProgress progress = new(progressCallback, userData);
+            DismProgress progress = new DismProgress(progressCallback, userData);
 
             int hresult = NativeMethods.DismCheckImageHealth(session, scanImage, progress.EventHandle, progress.DismProgressCallbackNative, IntPtr.Zero, out DismImageHealthState imageHealthState);
 
@@ -71,11 +70,10 @@ namespace Microsoft.Dism
             /// <param name="userData">Optional. User defined custom data.</param>
             /// <param name="imageHealth">A pointer to the DismImageHealthState Enumeration. The enumeration value is set during this operation.</param>
             /// <returns>Returns S_OK on success.</returns>
-            /// <remarks><para>If ScanImage is set to True, this function will take longer to finish.</para>
-            /// <para>
+            /// <remarks>If ScanImage is set to True, this function will take longer to finish.
+            ///
             /// <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/hh824769.aspx" />
             /// HRESULT WINAPI DismCheckImageHealth(_In_ DismSession Session, _In_ BOOL ScanImage, _In_opt_ HANDLE CancelEvent, _In_opt_ DISM_PROGRESS_CALLBACK Progress, _In_opt_ PVOID UserData, _Out_ DismImageHealthState* ImageHealth);
-            /// </para>
             /// </remarks>
             [DllImport(DismDllName, CharSet = DismCharacterSet)]
             [return: MarshalAs(UnmanagedType.Error)]

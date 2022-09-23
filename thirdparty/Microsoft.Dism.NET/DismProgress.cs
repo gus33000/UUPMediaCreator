@@ -6,7 +6,7 @@ using Microsoft.Win32.SafeHandles;
 using System;
 using System.Threading;
 
-namespace Microsoft.Dism.NET
+namespace Microsoft.Dism
 {
     /// <summary>
     /// Represents progress made during time-consuming operations.
@@ -17,7 +17,7 @@ namespace Microsoft.Dism.NET
         /// <summary>
         /// The users callback method.
         /// </summary>
-        private readonly DismProgressCallback _callback;
+        private readonly DismProgressCallback? _callback;
 
         /// <summary>
         /// An EventWaitHandle used to cancel the operation.
@@ -29,7 +29,7 @@ namespace Microsoft.Dism.NET
         /// </summary>
         /// <param name="callback">A DismProgressCallback to call when progress is made.</param>
         /// <param name="userData">A custom object to pass to the callback.</param>
-        internal DismProgress(DismProgressCallback callback, object userData)
+        internal DismProgress(DismProgressCallback? callback, object? userData)
         {
             // Save the managed callback method
             _callback = callback;
@@ -71,9 +71,10 @@ namespace Microsoft.Dism.NET
         /// <summary>
         /// Gets the user defined object for the callback.
         /// </summary>
-        public object UserData
+        public object? UserData
         {
             get;
+            private set;
         }
 
         /// <summary>
@@ -96,7 +97,7 @@ namespace Microsoft.Dism.NET
         /// <param name="current">The current progress value.</param>
         /// <param name="total">The total progress.</param>
         /// <param name="userData">Any user data associated with the callback.</param>
-        internal void DismProgressCallbackNative(uint current, uint total, IntPtr userData)
+        internal void DismProgressCallbackNative(UInt32 current, UInt32 total, IntPtr userData)
         {
             // Save the current progress
             Current = (int)current;
@@ -111,7 +112,7 @@ namespace Microsoft.Dism.NET
             if (Cancel)
             {
                 // Signal the event
-                _ = _eventHandle.Set();
+                _eventHandle.Set();
             }
         }
     }

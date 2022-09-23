@@ -20,6 +20,7 @@
 
  The versions of tooling as of this writing are:
 
+
  Operating System             Tooling Name        WinPE Version
 
  Windows 7                    WAIK                3.0
@@ -58,7 +59,6 @@
  only support the system-specific architecture of the system it's running on.
 */
 
-using Microsoft.Dism.NET;
 using System;
 
 namespace Microsoft.Dism
@@ -78,7 +78,7 @@ namespace Microsoft.Dism
         /// <exception cref="DismException">When a failure occurs.</exception>
         public static void InitializeEx(DismLogLevel logLevel)
         {
-            InitializeEx(logLevel, null, null, DismUtilities.GetLatestDismGeneration());
+            InitializeEx(logLevel, logFilePath: null, scratchDirectory: null, DismUtilities.GetLatestDismGeneration());
         }
 
         /// <summary>
@@ -88,7 +88,7 @@ namespace Microsoft.Dism
         /// <param name="logFilePath">A relative or absolute path to a log file. All messages generated will be logged to this path. If NULL, the default log path, %windir%\Logs\DISM\dism.log, will be used.</param>
         /// <exception cref="Exception">If an error occurs loading the latest DISM Generational Library.</exception>
         /// <exception cref="DismException">When a failure occurs.</exception>
-        public static void InitializeEx(DismLogLevel logLevel, string logFilePath)
+        public static void InitializeEx(DismLogLevel logLevel, string? logFilePath)
         {
             InitializeEx(logLevel, logFilePath, null, DismUtilities.GetLatestDismGeneration());
         }
@@ -101,7 +101,7 @@ namespace Microsoft.Dism
         /// <param name="scratchDirectory">A relative or absolute path to a scratch directory. DISM API will use this directory for internal operations. If null, the default temp directory, \Windows\%Temp%, will be used.</param>
         /// /// <exception cref="Exception">If an error occurs loading the latest DISM Generational Library.</exception>
         /// <exception cref="DismException">When a failure occurs.</exception>
-        public static void InitializeEx(DismLogLevel logLevel, string logFilePath, string scratchDirectory)
+        public static void InitializeEx(DismLogLevel logLevel, string? logFilePath, string? scratchDirectory)
         {
             InitializeEx(logLevel, logFilePath, scratchDirectory, DismUtilities.GetLatestDismGeneration());
         }
@@ -115,7 +115,7 @@ namespace Microsoft.Dism
         /// <param name="dismGeneration">The DISM Generational Library to be used.</param>
         /// /// <exception cref="Exception">If an error occurs loading the latest DISM Generational Library.</exception>
         /// <exception cref="DismException">When a failure occurs.</exception>
-        public static void InitializeEx(DismLogLevel logLevel, string logFilePath, string scratchDirectory, DismGeneration dismGeneration)
+        public static void InitializeEx(DismLogLevel logLevel, string? logFilePath, string? scratchDirectory, DismGeneration dismGeneration)
         {
             if (CurrentDismGeneration != DismGeneration.NotFound)
             {

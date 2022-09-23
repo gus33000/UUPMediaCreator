@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 
 using WORD = System.UInt16;
 
-namespace Microsoft.Dism.NET
+namespace Microsoft.Dism
 {
     /// <summary>
     /// Specifies a date and time, using individual members for the month, day, year, weekday, hour, minute, second, and millisecond. The time is either in coordinated universal time (UTC) or local time, depending on the function that is being called.
@@ -74,7 +74,7 @@ namespace Microsoft.Dism.NET
         public WORD Milliseconds;
 
         /// <summary>
-        /// Converts a <see cref="DateTime" /> to a <see cref="SystemTime" />.
+        /// Converts a <see cref="System.DateTime" /> to a <see cref="SystemTime" />.
         /// </summary>
         /// <param name="dateTime">The time to convert.</param>
         public static implicit operator SystemTime(DateTime dateTime)
@@ -95,7 +95,7 @@ namespace Microsoft.Dism.NET
         }
 
         /// <summary>
-        /// Converts a <see cref="SystemTime" /> to a <see cref="DateTime" />
+        /// Converts a <see cref="SystemTime" /> to a <see cref="System.DateTime" />
         /// </summary>
         /// <param name="systemTime">The time to convert.</param>
         public static implicit operator DateTime(SystemTime systemTime)

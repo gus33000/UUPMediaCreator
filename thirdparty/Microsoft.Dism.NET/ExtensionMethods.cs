@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
-namespace Microsoft.Dism.NET
+namespace Microsoft.Dism
 {
     /// <summary>
     /// Provides extension methods.
@@ -25,7 +25,7 @@ namespace Microsoft.Dism.NET
         public static List<T> ToList<T, TStruct>(this IntPtr ptr, uint count, Func<TStruct, T> constructor)
             where T : class
         {
-            List<T> list = new((int)count);
+            List<T> list = new List<T>((int)count);
 
             if (ptr != IntPtr.Zero && count > 0)
             {
@@ -36,7 +36,7 @@ namespace Microsoft.Dism.NET
 
                 for (int i = 0; i < count; i++)
                 {
-                    IntPtr currentPtr = new(startPtr + (i * structSize));
+                    IntPtr currentPtr = new IntPtr(startPtr + (i * structSize));
 
                     TStruct structure = currentPtr.ToStructure<TStruct>();
 

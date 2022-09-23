@@ -2,7 +2,6 @@
 //
 // Licensed under the MIT license.
 
-using Microsoft.Dism.NET;
 using Microsoft.Win32.SafeHandles;
 using System;
 using System.Runtime.InteropServices;
@@ -19,7 +18,7 @@ namespace Microsoft.Dism
         /// <exception cref="DismException">When a failure occurs.</exception>
         public static void UnmountImage(string mountPath, bool commitChanges)
         {
-            UnmountImage(mountPath, commitChanges, null);
+            UnmountImage(mountPath, commitChanges, progressCallback: null);
         }
 
         /// <summary>
@@ -30,9 +29,9 @@ namespace Microsoft.Dism
         /// <param name="progressCallback">A progress callback method to invoke when progress is made.</param>
         /// <exception cref="DismException">When a failure occurs.</exception>
         /// <exception cref="OperationCanceledException">When the user requested the operation be canceled.</exception>
-        public static void UnmountImage(string mountPath, bool commitChanges, Dism.DismProgressCallback progressCallback)
+        public static void UnmountImage(string mountPath, bool commitChanges, Dism.DismProgressCallback? progressCallback)
         {
-            UnmountImage(mountPath, commitChanges, progressCallback, null);
+            UnmountImage(mountPath, commitChanges, progressCallback, userData: null);
         }
 
         /// <summary>
@@ -44,13 +43,13 @@ namespace Microsoft.Dism
         /// <param name="userData">Optional user data to pass to the DismProgressCallback method.</param>
         /// <exception cref="DismException">When a failure occurs.</exception>
         /// <exception cref="OperationCanceledException">When the user requested the operation be canceled.</exception>
-        public static void UnmountImage(string mountPath, bool commitChanges, Dism.DismProgressCallback progressCallback, object userData)
+        public static void UnmountImage(string mountPath, bool commitChanges, Dism.DismProgressCallback? progressCallback, object? userData)
         {
             // Determine flags
             uint flags = commitChanges ? DISM_COMMIT_IMAGE : DISM_DISCARD_IMAGE;
 
             // Create a DismProgress object to wrap the callback and allow cancellation
-            DismProgress progress = new(progressCallback, userData);
+            DismProgress progress = new DismProgress(progressCallback, userData);
 
             int hresult = NativeMethods.DismUnmountImage(mountPath, flags, progress.EventHandle, progress.DismProgressCallbackNative, IntPtr.Zero);
 
@@ -68,15 +67,14 @@ namespace Microsoft.Dism
             /// <param name="progress">Optional. A pointer to a client-defined DismProgressCallback Function.</param>
             /// <param name="userData">Optional. User defined custom data.</param>
             /// <returns>Returns OK on success.</returns>
-            /// <remarks><para>After you use the DismCloseSession Function to end every active DISMSession, you can unmount the image using the DismUnmountImage function.</para>
-            /// <para>
+            /// <remarks>After you use the DismCloseSession Function to end every active DISMSession, you can unmount the image using the DismUnmountImage function.
+            ///
             /// <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/hh824802.aspx" />
             /// HRESULT WINAPI DismUnmountImage(_In_ PCWSTR MountPath, _In_ DWORD Flags, _In_opt_ HANDLE CancelEvent, _In_opt_ DISM_PROGRESS_CALLBACK Progress, _In_opt_ PVOID UserData);
-            /// </para>
             /// </remarks>
             [DllImport(DismDllName, CharSet = DismCharacterSet)]
             [return: MarshalAs(UnmanagedType.Error)]
-            public static extern int DismUnmountImage(string mountPath, uint flags, SafeWaitHandle cancelEvent, DismProgressCallback progress, IntPtr userData);
+            public static extern int DismUnmountImage(string mountPath, UInt32 flags, SafeWaitHandle cancelEvent, DismProgressCallback progress, IntPtr userData);
         }
     }
 }

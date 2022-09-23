@@ -2,7 +2,6 @@
 //
 // Licensed under the MIT license.
 
-using Microsoft.Dism.NET;
 using System.Runtime.InteropServices;
 
 namespace Microsoft.Dism
@@ -12,7 +11,7 @@ namespace Microsoft.Dism
         /// <summary>
         /// Used to lock when initializing or shutting down.
         /// </summary>
-        private static readonly object InitializeShutDownLock = new();
+        private static readonly object InitializeShutDownLock = new object();
 
         /// <summary>
         /// Used to keep track if DismApi has been initialized.
@@ -26,7 +25,7 @@ namespace Microsoft.Dism
         /// <exception cref="DismException">When a failure occurs.</exception>
         public static void Initialize(DismLogLevel logLevel)
         {
-            Initialize(logLevel, null);
+            Initialize(logLevel, logFilePath: null);
         }
 
         /// <summary>
@@ -35,9 +34,9 @@ namespace Microsoft.Dism
         /// <param name="logLevel">Indicates the level of logging.</param>
         /// <param name="logFilePath">A relative or absolute path to a log file. All messages generated will be logged to this path. If NULL, the default log path, %windir%\Logs\DISM\dism.log, will be used.</param>
         /// <exception cref="DismException">When a failure occurs.</exception>
-        public static void Initialize(DismLogLevel logLevel, string logFilePath)
+        public static void Initialize(DismLogLevel logLevel, string? logFilePath)
         {
-            Initialize(logLevel, logFilePath, null);
+            Initialize(logLevel, logFilePath, scratchDirectory: null);
         }
 
         /// <summary>
@@ -47,7 +46,7 @@ namespace Microsoft.Dism
         /// <param name="logFilePath">A relative or absolute path to a log file. All messages generated will be logged to this path. If NULL, the default log path, %windir%\Logs\DISM\dism.log, will be used.</param>
         /// <param name="scratchDirectory">A relative or absolute path to a scratch directory. DISM API will use this directory for internal operations. If null, the default temp directory, \Windows\%Temp%, will be used.</param>
         /// <exception cref="DismException">When a failure occurs.</exception>
-        public static void Initialize(DismLogLevel logLevel, string logFilePath, string scratchDirectory)
+        public static void Initialize(DismLogLevel logLevel, string? logFilePath, string? scratchDirectory)
         {
             lock (InitializeShutDownLock)
             {
@@ -70,18 +69,19 @@ namespace Microsoft.Dism
             /// <param name="logLevel">A DismLogLevel Enumeration value, such as DismLogErrorsWarnings.</param>
             /// <param name="logFilePath">Optional. A relative or absolute path to a log file. All messages generated will be logged to this path. If NULL, the default log path, %windir%\Logs\DISM\dism.log, will be used.</param>
             /// <param name="scratchDirectory">Optional. A relative or absolute path to a scratch directory. DISM API will use this directory for internal operations. If NULL, the default temp directory, \Windows\%Temp%, will be used.</param>
-            /// <returns><para>Returns S_OK on success.</para>
-            /// <para>Returns DISMAPI_E_DISMAPI_ALREADY_INITIALIZED if DismInitialize has already been called by the process without a matching call to DismShutdown.</para>
-            /// <para>Returns ERROR_ELEVATION_REQUIRED as an HRESULT if the process is not elevated.</para></returns>
-            /// <remarks><para>The client code must call DismInitialize once per process. DISM API will serialize concurrent calls to DismInitialize. The first call will succeed and the others will fail. For more information, see Using the DISM API.</para>
-            /// <para>
+            /// <returns>Returns S_OK on success.
+            ///
+            /// Returns DISMAPI_E_DISMAPI_ALREADY_INITIALIZED if DismInitialize has already been called by the process without a matching call to DismShutdown.
+            ///
+            /// Returns ERROR_ELEVATION_REQUIRED as an HRESULT if the process is not elevated.</returns>
+            /// <remarks>The client code must call DismInitialize once per process. DISM API will serialize concurrent calls to DismInitialize. The first call will succeed and the others will fail. For more information, see Using the DISM API.
+            ///
             /// <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/hh824803.aspx" />
             /// HRESULT WINAPI DismInitialize(_In_ DismLogLevel LogLevel, _In_opt_ PCWSTR LogFilePath, _In_opt_ PCWSTR ScratchDirectory);
-            /// </para>
             /// </remarks>
             [DllImport(DismDllName, CharSet = DismCharacterSet)]
             [return: MarshalAs(UnmanagedType.Error)]
-            public static extern int DismInitialize(DismLogLevel logLevel, string logFilePath, string scratchDirectory);
+            public static extern int DismInitialize(DismLogLevel logLevel, string? logFilePath, string? scratchDirectory);
         }
     }
 }

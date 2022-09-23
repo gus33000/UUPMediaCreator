@@ -2,8 +2,8 @@
 //
 // Licensed under the MIT license.
 
-using Microsoft.Dism.NET;
 using System;
+using System.Runtime.ConstrainedExecution;
 using System.Runtime.InteropServices;
 
 namespace Microsoft.Dism
@@ -28,13 +28,16 @@ namespace Microsoft.Dism
             /// Closes a DISMSession created by DismOpenSession Function. This function does not unmount the image. To unmount the image, use the DismUnmountImage Function once all sessions are closed.
             /// </summary>
             /// <param name="session">A valid DISM Session. The DISM Session must be associated with an image. You can associate a session with an image by using the DismOpenSession Function.</param>
-            /// <returns><para>Returns S_OK on success.</para>
-            /// <para>If the DISMSession is performing operations on other threads, those operations will complete before the DISMSession is destroyed. If additional operations are invoked by other threads after DismCloseSession is called, but before DismCloseSession returns, those operations will fail and return a DISMAPI_E_INVALID_DISM_SESSION error.</para>
-            /// <para>The DISMSession handle will become invalid after completion of this call. Operations invoked on the DISMSession after completion of DismCloseSession will fail and return the error E_INVALIDARG.</para></returns>
+            /// <returns>Returns S_OK on success.
+            ///
+            /// If the DISMSession is performing operations on other threads, those operations will complete before the DISMSession is destroyed. If additional operations are invoked by other threads after DismCloseSession is called, but before DismCloseSession returns, those operations will fail and return a DISMAPI_E_INVALID_DISM_SESSION error.
+            ///
+            /// The DISMSession handle will become invalid after completion of this call. Operations invoked on the DISMSession after completion of DismCloseSession will fail and return the error E_INVALIDARG.</returns>
             /// <remarks>The DISMSession will be shut down after this call is completed but the image will not be unmounted. To unmount the image, use the DismUnmountImage Function once all sessions are closed.</remarks>
             /// <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/hh825839.aspx" />
             /// HRESULT WINAPI DismCloseSession(_In_ DismSession Session);
             [DllImport(DismDllName, CharSet = DismCharacterSet)]
+            [ReliabilityContract(Consistency.WillNotCorruptState, Cer.MayFail)]
             [return: MarshalAs(UnmanagedType.Error)]
             public static extern int DismCloseSession(IntPtr session);
         }

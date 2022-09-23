@@ -2,7 +2,6 @@
 //
 // Licensed under the MIT license.
 
-using Microsoft.Dism.NET;
 using Microsoft.Win32.SafeHandles;
 using System;
 using System.Runtime.InteropServices;
@@ -23,7 +22,7 @@ namespace Microsoft.Dism
         /// <exception cref="DismPackageNotApplicableException">When the package is not applicable to the specified session.</exception>
         public static void AddPackage(DismSession session, string packagePath, bool ignoreCheck, bool preventPending)
         {
-            AddPackage(session, packagePath, ignoreCheck, preventPending, null);
+            AddPackage(session, packagePath, ignoreCheck, preventPending, progressCallback: null);
         }
 
         /// <summary>
@@ -38,9 +37,9 @@ namespace Microsoft.Dism
         /// <exception cref="OperationCanceledException">When the user requested the operation be canceled.</exception>
         /// <exception cref="DismRebootRequiredException">When the operation requires a reboot to complete.</exception>
         /// <exception cref="DismPackageNotApplicableException">When the package is not applicable to the specified session.</exception>
-        public static void AddPackage(DismSession session, string packagePath, bool ignoreCheck, bool preventPending, Microsoft.Dism.DismProgressCallback progressCallback)
+        public static void AddPackage(DismSession session, string packagePath, bool ignoreCheck, bool preventPending, Microsoft.Dism.DismProgressCallback? progressCallback)
         {
-            AddPackage(session, packagePath, ignoreCheck, preventPending, progressCallback, null);
+            AddPackage(session, packagePath, ignoreCheck, preventPending, progressCallback, userData: null);
         }
 
         /// <summary>
@@ -56,10 +55,10 @@ namespace Microsoft.Dism
         /// <exception cref="OperationCanceledException">When the user requested the operation be canceled.</exception>
         /// <exception cref="DismRebootRequiredException">When the operation requires a reboot to complete.</exception>
         /// <exception cref="DismPackageNotApplicableException">When the package is not applicable to the specified session.</exception>
-        public static void AddPackage(DismSession session, string packagePath, bool ignoreCheck, bool preventPending, Microsoft.Dism.DismProgressCallback progressCallback, object userData)
+        public static void AddPackage(DismSession session, string packagePath, bool ignoreCheck, bool preventPending, Microsoft.Dism.DismProgressCallback? progressCallback, object? userData)
         {
             // Create a DismProgress object to wrap the callback and allow cancellation
-            DismProgress progress = new(progressCallback, userData);
+            DismProgress progress = new DismProgress(progressCallback, userData);
 
             int hresult = NativeMethods.DismAddPackage(session, packagePath, ignoreCheck, preventPending, progress.EventHandle, progress.DismProgressCallbackNative, IntPtr.Zero);
 
@@ -79,12 +78,11 @@ namespace Microsoft.Dism
             /// <param name="progress">Optional. A pointer to a client-defined DismProgressCallback Function.</param>
             /// <param name="userData">Optional. User defined custom data.</param>
             /// <returns>Returns S_OK on success.</returns>
-            /// <remarks><para>Only .cab files can be added to an online image. Either .cab or .msu files can be added to an offline image.</para>
-            /// <para>
+            /// <remarks>Only .cab files can be added to an online image. Either .cab or .msu files can be added to an offline image.
+            ///
             /// This function will return a special error code if the package is not applicable. You can use the DismGetPackageInfo Function to determine if a package is applicable to the target image.
             /// <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/hh824788.aspx" />
             /// HRESULT WINAPI DismAddPackage (_In_ DismSession Session, _In_ PCWSTR PackagePath, _In_ BOOL IgnoreCheck, _In_ BOOL PreventPending _In_opt_ HANDLE CancelEvent, _In_opt_ DISM_PROGRESS_CALLBACK Progress, _In_opt_ PVOID UserData)
-            /// </para>
             /// </remarks>
             [DllImport(DismDllName, CharSet = DismCharacterSet)]
             [return: MarshalAs(UnmanagedType.Error)]

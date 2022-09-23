@@ -2,7 +2,6 @@
 //
 // Licensed under the MIT license.
 
-using Microsoft.Dism.NET;
 using System;
 using System.Runtime.InteropServices;
 
@@ -95,22 +94,22 @@ namespace Microsoft.Dism
             /// <summary>
             /// The major version number of the driver.
             /// </summary>
-            public uint MajorVersion;
+            public UInt32 MajorVersion;
 
             /// <summary>
             /// The minor version number of the driver.
             /// </summary>
-            public uint MinorVersion;
+            public UInt32 MinorVersion;
 
             /// <summary>
             /// The build number of the driver.
             /// </summary>
-            public uint Build;
+            public UInt32 Build;
 
             /// <summary>
             /// The revision number of the driver.
             /// </summary>
-            public uint Revision;
+            public UInt32 Revision;
         }
     }
 
@@ -196,6 +195,7 @@ namespace Microsoft.Dism
         public Version Version
         {
             get;
+            private set;
         }
 
         /// <summary>
@@ -203,7 +203,7 @@ namespace Microsoft.Dism
         /// </summary>
         /// <param name="obj">The object to compare with the current object.</param>
         /// <returns>true if the specified <see cref="T:System.Object" /> is equal to the current <see cref="T:System.Object" />; otherwise, false.</returns>
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             return obj != null && Equals(obj as DismDriverPackage);
         }
@@ -213,7 +213,7 @@ namespace Microsoft.Dism
         /// </summary>
         /// <param name="other">The <see cref="DismDriverPackage" /> object to compare with the current object.</param>
         /// <returns>true if the specified <see cref="DismDriverPackage" /> is equal to the current <see cref="DismDriverPackage" />; otherwise, false.</returns>
-        public bool Equals(DismDriverPackage other)
+        public bool Equals(DismDriverPackage? other)
         {
             return other != null
                    && BootCritical == other.BootCritical

@@ -2,7 +2,6 @@
 //
 // Licensed under the MIT license.
 
-using Microsoft.Dism.NET;
 using System;
 using System.Runtime.InteropServices;
 
@@ -30,17 +29,17 @@ namespace Microsoft.Dism
             /// <summary>
             /// The size of the DismWimCustomizedInfo structure.
             /// </summary>
-            public uint Size;
+            public UInt32 Size;
 
             /// <summary>
             /// The number of directories in the image.
             /// </summary>
-            public uint DirectoryCount;
+            public UInt32 DirectoryCount;
 
             /// <summary>
             /// The number of files in the image.
             /// </summary>
-            public uint FileCount;
+            public UInt32 FileCount;
 
             /// <summary>
             /// The time that the image file was created.
@@ -113,7 +112,7 @@ namespace Microsoft.Dism
         /// </summary>
         /// <param name="obj">The object to compare with the current object.</param>
         /// <returns>true if the specified <see cref="T:System.Object" /> is equal to the current <see cref="T:System.Object" />; otherwise, false.</returns>
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             return obj != null && Equals(obj as DismWimCustomizedInfo);
         }
@@ -123,7 +122,7 @@ namespace Microsoft.Dism
         /// </summary>
         /// <param name="other">The <see cref="DismWimCustomizedInfo" /> object to compare with the current object.</param>
         /// <returns>true if the specified <see cref="DismWimCustomizedInfo" /> is equal to the current <see cref="DismWimCustomizedInfo" />; otherwise, false.</returns>
-        public bool Equals(DismWimCustomizedInfo other)
+        public bool Equals(DismWimCustomizedInfo? other)
         {
             return other != null
                    && CreatedTime == other.CreatedTime

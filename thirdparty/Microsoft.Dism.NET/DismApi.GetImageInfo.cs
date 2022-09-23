@@ -2,7 +2,6 @@
 //
 // Licensed under the MIT license.
 
-using Microsoft.Dism.NET;
 using System;
 using System.Runtime.InteropServices;
 
@@ -18,7 +17,7 @@ namespace Microsoft.Dism
         /// <exception cref="DismException">When a failure occurs.</exception>
         public static DismImageInfoCollection GetImageInfo(string imageFilePath)
         {
-            int hresult = NativeMethods.DismGetImageInfo(imageFilePath, out IntPtr imageInfoPtr, out uint imageInfoCount);
+            int hresult = NativeMethods.DismGetImageInfo(imageFilePath, out IntPtr imageInfoPtr, out UInt32 imageInfoCount);
 
             try
             {
@@ -42,19 +41,17 @@ namespace Microsoft.Dism
             /// <param name="imageInfo">A pointer to the address of an array of DismImageInfo Structure objects.</param>
             /// <param name="count">The number of DismImageInfo structures that are returned.</param>
             /// <returns>S_OK on success.</returns>
-            /// <remarks><para>The array of DismImageInfo structures are allocated by DISM API on the heap.</para>
-            /// <para>
+            /// <remarks>The array of DismImageInfo structures are allocated by DISM API on the heap.
+            ///
             /// Important
             /// You must call the DismDelete Function, passing the ImageInfo pointer, to free the resources associated with the DismImageInfo structures.
-            /// </para>
-            /// <para>
+            ///
             /// <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/hh824767.aspx" />
             /// HRESULT WINAPI DismGetImageInfo(_In_ PCWSTR ImageFilePath, _Outptr_result_buffer_(*Count) DismImageInfo** ImageInfo, _Out_ UINT* Count);
-            /// </para>
             /// </remarks>
             [DllImport(DismDllName, CharSet = DismCharacterSet)]
             [return: MarshalAs(UnmanagedType.Error)]
-            public static extern int DismGetImageInfo(string imageFilePath, out IntPtr imageInfo, out uint count);
+            public static extern int DismGetImageInfo(string imageFilePath, out IntPtr imageInfo, out UInt32 count);
         }
     }
 }

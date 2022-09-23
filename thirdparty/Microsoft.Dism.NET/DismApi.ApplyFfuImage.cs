@@ -2,7 +2,6 @@
 //
 // Licensed under the MIT license.
 
-using Microsoft.Dism.NET;
 using System.Runtime.InteropServices;
 
 namespace Microsoft.Dism
@@ -16,7 +15,7 @@ namespace Microsoft.Dism
         /// <param name="applyPath">The drive to apply the image to, for example \\.\PhysicalDrive0</param>
         public static void ApplyFfuImage(string imagePath, string applyPath)
         {
-            ApplyFfuImage(imagePath, applyPath, null);
+            ApplyFfuImage(imagePath, applyPath, partPath: null);
         }
 
         /// <summary>
@@ -25,9 +24,9 @@ namespace Microsoft.Dism
         /// <param name="imagePath">The path to the .ffu image file to apply.</param>
         /// <param name="applyPath">The drive to apply the image to, for example \\.\PhysicalDrive0</param>
         /// <param name="partPath">An optional pattern for split FFU files that matches the naming convention.</param>
-        public static void ApplyFfuImage(string imagePath, string applyPath, string partPath)
+        public static void ApplyFfuImage(string imagePath, string applyPath, string? partPath)
         {
-            DismUtilities.ThrowIfFail(NativeMethods._DismApplyFfuImage(imagePath, applyPath, partPath));
+            DismUtilities.ThrowIfFail(NativeMethods._DismApplyFfuImage(imagePath, applyPath, partPath!));
         }
 
         internal static partial class NativeMethods

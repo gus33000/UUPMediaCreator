@@ -2,7 +2,6 @@
 //
 // Licensed under the MIT license.
 
-using Microsoft.Dism.NET;
 using System;
 using System.Runtime.InteropServices;
 
@@ -46,7 +45,7 @@ namespace Microsoft.Dism
         /// <returns>A <see cref="DismFeatureCollection" /> object containing a collection of <see cref="DismFeature" /> objects.</returns>
         private static DismFeatureCollection GetFeatureParent(DismSession session, string featureName, string identifier, DismPackageIdentifier packageIdentifier)
         {
-            int hresult = NativeMethods.DismGetFeatureParent(session, featureName, identifier, packageIdentifier, out IntPtr featurePtr, out uint featureCount);
+            int hresult = NativeMethods.DismGetFeatureParent(session, featureName, identifier, packageIdentifier, out IntPtr featurePtr, out UInt32 featureCount);
 
             try
             {
@@ -73,15 +72,14 @@ namespace Microsoft.Dism
             /// <param name="feature">A pointer to the address of an array of DismFeature Structure objects.</param>
             /// <param name="count">The number of DismFeature structures that were returned.</param>
             /// <returns>Returns S_OK on success.</returns>
-            /// <remarks><para>For a feature to be enabled, one or more of its parent features must be enabled. You can use this function to enumerate the parent features and determine which parent needs to be enabled.</para>
-            /// <para>
+            /// <remarks>For a feature to be enabled, one or more of its parent features must be enabled. You can use this function to enumerate the parent features and determine which parent needs to be enabled.
+            ///
             /// <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/hh824798.aspx" />
             /// HRESULT WINAPI DismGetFeatureParent (_In_ DismSession Session, _In_ PCWSTR FeatureName, _In_opt_ PCWSTR Identifier, _In_opt_ DismPackageIdentifier PackageIdentifier, _Outptr_result_buffer_(*Count) DismFeature** Feature, _Out_ UINT* Count);
-            /// </para>
             /// </remarks>
             [DllImport(DismDllName, CharSet = DismCharacterSet)]
             [return: MarshalAs(UnmanagedType.Error)]
-            public static extern int DismGetFeatureParent(DismSession session, string featureName, string identifier, DismPackageIdentifier packageIdentifier, out IntPtr feature, out uint count);
+            public static extern int DismGetFeatureParent(DismSession session, string featureName, string identifier, DismPackageIdentifier packageIdentifier, out IntPtr feature, out UInt32 count);
         }
     }
 }

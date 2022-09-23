@@ -2,7 +2,6 @@
 //
 // Licensed under the MIT license.
 
-using Microsoft.Dism.NET;
 using System;
 using System.Runtime.InteropServices;
 
@@ -14,7 +13,7 @@ namespace Microsoft.Dism
         /// Gets the error message in the current thread immediately after a failure.
         /// </summary>
         /// <returns>An error message if one is found, otherwise null.</returns>
-        public static string GetLastErrorMessage()
+        public static string? GetLastErrorMessage()
         {
             // Allow this method to be overridden by an internal test hook
             if (GetLastErrorMessageTestHook != null)
@@ -30,13 +29,13 @@ namespace Microsoft.Dism
             try
             {
                 // Get a string from the pointer
-                string dismString = errorMessagePtr.ToStructure<DismString>();
+                string? dismString = errorMessagePtr.ToStructure<DismString>();
 
                 // See if the string has a value
                 if (!string.IsNullOrEmpty(dismString))
                 {
                     // Return the trimmed value
-                    return dismString.Trim();
+                    return dismString!.Trim();
                 }
             }
             finally
@@ -56,12 +55,12 @@ namespace Microsoft.Dism
             /// </summary>
             /// <param name="errorMessage">The detailed error message in the current thread.</param>
             /// <returns>Returns OK on success.</returns>
-            /// <remarks><para>You can retrieve a detailed error message immediately after a DISM API failure. The last error message is maintained on a per-thread basis. An error message on a thread will not overwrite the last error message on another thread.</para>
-            /// <para>DismGetLastErrorMessage does not apply to the DismShutdown function, DismDelete function, or the DismGetLastErrorMessage function.</para>
-            /// <para>
+            /// <remarks>You can retrieve a detailed error message immediately after a DISM API failure. The last error message is maintained on a per-thread basis. An error message on a thread will not overwrite the last error message on another thread.
+            ///
+            /// DismGetLastErrorMessage does not apply to the DismShutdown function, DismDelete function, or the DismGetLastErrorMessage function.
+            ///
             /// <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/hh824754.aspx" />
             /// HRESULT WINAPI DismGetLastErrorMessage(_Out_ DismString** ErrorMessage);
-            /// </para>
             /// </remarks>
             [DllImport(DismDllName, CharSet = DismCharacterSet)]
             [return: MarshalAs(UnmanagedType.Error)]

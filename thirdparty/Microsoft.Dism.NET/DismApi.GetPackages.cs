@@ -2,7 +2,6 @@
 //
 // Licensed under the MIT license.
 
-using Microsoft.Dism.NET;
 using System;
 using System.Runtime.InteropServices;
 
@@ -18,7 +17,7 @@ namespace Microsoft.Dism
         /// <exception cref="DismException">When a failure occurs.</exception>
         public static DismPackageCollection GetPackages(DismSession session)
         {
-            int hresult = NativeMethods.DismGetPackages(session, out IntPtr packagePtr, out uint packageCount);
+            int hresult = NativeMethods.DismGetPackages(session, out IntPtr packagePtr, out UInt32 packageCount);
 
             try
             {
@@ -41,17 +40,17 @@ namespace Microsoft.Dism
             /// <param name="dismSession">A valid DISMSession. The DismSession must be associated with an image.</param>
             /// <param name="packageInfo">A pointer to the array of DismPackage Structure objects.</param>
             /// <param name="count">The number of DismPackage structures that are returned.</param>
-            /// <returns><para>Returns S_OK on success.</para>
-            /// <para>Package points to an array of DismPackage Structure objects. You can manipulate this array using normal array notation in order to get information about each package in the image.</para></returns>
-            /// <remarks><para>When you are finished with the Package array, you must remove it by using the DismDelete Function.</para>
-            /// <para>
+            /// <returns>Returns S_OK on success.
+            ///
+            /// Package points to an array of DismPackage Structure objects. You can manipulate this array using normal array notation in order to get information about each package in the image.</returns>
+            /// <remarks>When you are finished with the Package array, you must remove it by using the DismDelete Function.
+            ///
             /// <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/hh824759.aspx" />
             /// HRESULT WINAPI DismGetPackages (_In_ DismSession Session, _Outptr_result_buffer_(*Count) DismPackage** Package, _Out_ UINT* Count);
-            /// </para>
             /// </remarks>
             [DllImport(DismDllName, CharSet = DismCharacterSet)]
             [return: MarshalAs(UnmanagedType.Error)]
-            public static extern int DismGetPackages(DismSession dismSession, out IntPtr packageInfo, out uint count);
+            public static extern int DismGetPackages(DismSession dismSession, out IntPtr packageInfo, out UInt32 count);
         }
     }
 }

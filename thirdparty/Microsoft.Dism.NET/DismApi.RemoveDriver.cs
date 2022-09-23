@@ -2,7 +2,6 @@
 //
 // Licensed under the MIT license.
 
-using Microsoft.Dism.NET;
 using System.Runtime.InteropServices;
 
 namespace Microsoft.Dism
@@ -31,15 +30,13 @@ namespace Microsoft.Dism
             /// <param name="session">A valid DISM Session. The DISM Session must be associated with an image. You can associate a session with an image by using the DismOpenSession Function.</param>
             /// <param name="driverPath">The published file name of the driver that has been added to the image, for example OEM1.inf. You can use the DismGetDrivers Function to get the published name of the driver.</param>
             /// <returns>Returns S_OK on success.</returns>
-            /// <remarks><para>This function only supports offline images.</para>
-            /// <para>
+            /// <remarks>This function only supports offline images.
+            ///
             /// Important
             /// Removing a boot-critical driver can make the offline Windows image unable to boot.
-            /// </para>
-            /// <para>
+            ///
             /// <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/hh824729.aspx" />
             /// HRESULT WINAPI DismRemoveDriver (_In_ DismSession Session, _In_ PCWSTR DriverPath);
-            /// </para>
             /// </remarks>
             [DllImport(DismDllName, CharSet = DismCharacterSet)]
             public static extern int DismRemoveDriver(DismSession session, string driverPath);

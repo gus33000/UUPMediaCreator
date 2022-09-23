@@ -2,7 +2,6 @@
 //
 // Licensed under the MIT license.
 
-using Microsoft.Dism.NET;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -207,12 +206,12 @@ namespace Microsoft.Dism
         /// <summary>
         /// Gets the customized information for the image file. A <see cref="DismWimCustomizedInfo" /> for a WIM file. null for a VHD image.
         /// </summary>
-        public DismWimCustomizedInfo CustomizedInfo { get; }
+        public DismWimCustomizedInfo? CustomizedInfo { get; }
 
         /// <summary>
         /// Gets the default language of the image.
         /// </summary>
-        public CultureInfo DefaultLanguage => _languages.Count == 0 ? null : _languages[DefaultLanguageIndex];
+        public CultureInfo? DefaultLanguage => _languages.Count == 0 ? null : _languages[DefaultLanguageIndex];
 
         /// <summary>
         /// Gets the index number of the default language.
@@ -299,7 +298,7 @@ namespace Microsoft.Dism
         /// </summary>
         /// <param name="obj">The object to compare with the current object.</param>
         /// <returns>true if the specified <see cref="T:System.Object" /> is equal to the current <see cref="T:System.Object" />; otherwise, false.</returns>
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             return obj != null && Equals(obj as DismImageInfo);
         }
@@ -309,7 +308,7 @@ namespace Microsoft.Dism
         /// </summary>
         /// <param name="other">The <see cref="DismImageInfo" /> object to compare with the current object.</param>
         /// <returns>true if the specified <see cref="DismImageInfo" /> is equal to the current <see cref="DismImageInfo" />; otherwise, false.</returns>
-        public bool Equals(DismImageInfo other)
+        public bool Equals(DismImageInfo? other)
         {
             return other != null
                    && Architecture == other.Architecture
@@ -340,7 +339,7 @@ namespace Microsoft.Dism
         {
             return Architecture.GetHashCode()
                    ^ Bootable.GetHashCode()
-                   ^ CustomizedInfo.GetHashCode()
+                   ^ CustomizedInfo?.GetHashCode() ?? 0
                    ^ DefaultLanguageIndex
                    ^ (string.IsNullOrEmpty(EditionId) ? 0 : EditionId.GetHashCode())
                    ^ (string.IsNullOrEmpty(Hal) ? 0 : Hal.GetHashCode())

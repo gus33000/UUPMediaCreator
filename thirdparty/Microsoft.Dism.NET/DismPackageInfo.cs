@@ -2,7 +2,6 @@
 //
 // Licensed under the MIT license.
 
-using Microsoft.Dism.NET;
 using System;
 using System.Runtime.InteropServices;
 
@@ -142,7 +141,7 @@ namespace Microsoft.Dism
             /// <summary>
             /// The number of elements in the CustomProperty array.
             /// </summary>
-            public uint CustomPropertyCount;
+            public UInt32 CustomPropertyCount;
 
             /// <summary>
             /// An array of DismFeature Structure objects representing the features in the package.
@@ -152,7 +151,7 @@ namespace Microsoft.Dism
             /// <summary>
             /// The number of elements in the Feature array.
             /// </summary>
-            public uint FeatureCount;
+            public UInt32 FeatureCount;
         }
     }
 
@@ -294,7 +293,7 @@ namespace Microsoft.Dism
         /// </summary>
         /// <param name="obj">The object to compare with the current object.</param>
         /// <returns>true if the specified <see cref="T:System.Object" /> is equal to the current <see cref="T:System.Object" />; otherwise, false.</returns>
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             return obj != null && Equals(obj as DismPackageInfo);
         }
@@ -304,7 +303,7 @@ namespace Microsoft.Dism
         /// </summary>
         /// <param name="other">The <see cref="DismPackageInfo" /> object to compare with the current object.</param>
         /// <returns>true if the specified <see cref="DismPackageInfo" /> is equal to the current <see cref="DismPackageInfo" />; otherwise, false.</returns>
-        public bool Equals(DismPackageInfo other)
+        public bool Equals(DismPackageInfo? other)
         {
             return other != null
                    && DisplayName == other.DisplayName;

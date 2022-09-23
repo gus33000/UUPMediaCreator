@@ -2,7 +2,6 @@
 //
 // Licensed under the MIT license.
 
-using Microsoft.Dism.NET;
 using System;
 using System.Runtime.InteropServices;
 
@@ -19,7 +18,7 @@ namespace Microsoft.Dism
         /// <exception cref="DismException">When a failure occurs.</exception>
         public static DismDriverPackageCollection GetDrivers(DismSession session, bool allDrivers)
         {
-            int hresult = NativeMethods.DismGetDrivers(session, allDrivers, out IntPtr driverPackagePtr, out uint driverPackageCount);
+            int hresult = NativeMethods.DismGetDrivers(session, allDrivers, out IntPtr driverPackagePtr, out UInt32 driverPackageCount);
 
             try
             {
@@ -50,7 +49,7 @@ namespace Microsoft.Dism
             /// </remarks>
             [DllImport(DismDllName, CharSet = DismCharacterSet)]
             [return: MarshalAs(UnmanagedType.Error)]
-            public static extern int DismGetDrivers(DismSession Session, [MarshalAs(UnmanagedType.Bool)] bool AllDrivers, out IntPtr DriverPackage, out uint Count);
+            public static extern int DismGetDrivers(DismSession Session, [MarshalAs(UnmanagedType.Bool)] bool AllDrivers, out IntPtr DriverPackage, out UInt32 Count);
         }
     }
 }
