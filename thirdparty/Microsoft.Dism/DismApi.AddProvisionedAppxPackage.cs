@@ -37,6 +37,28 @@ namespace Microsoft.Dism
         /// <param name="session">A valid DISM Session.</param>
         /// <param name="appPath">Specifies the location of the app package (.appx) to add to the Windows image.</param>
         /// <param name="dependencyPackages">Specifies the location of dependency packages.</param>
+        /// <param name="licensePath">Specifies the location of the .xml file containing your application license.</param>
+        /// <param name="customDataPath">Specifies the location of a custom data file. The custom data file will be renamed custom.data and saved in the app data store.</param>
+        /// <exception cref="DismRebootRequiredException">When the operation requires a reboot to complete.</exception>
+        public static void AddProvisionedAppxPackage(DismSession session, string appPath, List<string>? dependencyPackages, string? licensePath, string customDataPath, DismStubPackageOption stubPackageOption)
+        {
+            AddProvisionedAppxPackage(
+                session,
+                appPath,
+                dependencyPackages,
+                optionalPackages: null,
+                licensePaths: string.IsNullOrEmpty(licensePath) ? null : new List<string> { licensePath! },
+                customDataPath: customDataPath,
+                regions: null,
+                stubPackageOption: stubPackageOption);
+        }
+
+        /// <summary>
+        /// Adds an app package (.appx) that will install for each new user to a Windows image.
+        /// </summary>
+        /// <param name="session">A valid DISM Session.</param>
+        /// <param name="appPath">Specifies the location of the app package (.appx) to add to the Windows image.</param>
+        /// <param name="dependencyPackages">Specifies the location of dependency packages.</param>
         /// <param name="optionalPackages">Specifies the location of optional packages.</param>
         /// <param name="licensePaths">Specifies the locations of .xml files containing your application licenses.</param>
         /// <param name="customDataPath">Specifies the location of a custom data file. The custom data file will be renamed custom.data and saved in the app data store.</param>
