@@ -81,7 +81,7 @@ namespace MediaCreationLib.DismOperations.NET
                     workload.DependenciesPath?.Select(x => Path.Combine(repositoryPath, x)).ToList() ?? new List<string>(),
                     string.IsNullOrEmpty(workload.LicensePath) ? null : Path.Combine(licenseFolder, workload.LicensePath),
                     null,
-                    string.IsNullOrEmpty(workload.StubPackageOption) ? StubPackageOption.None : StubPackageOption.InstallStub); // TODO: proper handling
+                    string.IsNullOrEmpty(workload.StubPackageOption) ? DismStubPackageOption.None : DismStubPackageOption.InstallStub); // TODO: proper handling
             }
             catch { result = false; }
 
@@ -139,7 +139,7 @@ namespace MediaCreationLib.DismOperations.NET
                         workload.DependenciesPath?.Select(x => Path.Combine(repositoryPath, x)).ToList() ?? new List<string>(),
                         string.IsNullOrEmpty(workload.LicensePath) ? null : Path.Combine(licenseFolder, workload.LicensePath),
                         null,
-                        string.IsNullOrEmpty(workload.StubPackageOption) ? StubPackageOption.None : StubPackageOption.InstallStub); // TODO: proper handling
+                        string.IsNullOrEmpty(workload.StubPackageOption) ? DismStubPackageOption.None : DismStubPackageOption.InstallStub); // TODO: proper handling
                 }
             }
             catch { result = false; }

@@ -47,6 +47,11 @@ namespace Microsoft.Wim
         /// Data integrity information is generated for new files, verified, and updated for existing files.
         /// </summary>
         Verify = WimgApi.WIM_FLAG_VERIFY,
+
+        /// <summary>
+        /// Allow cross-file WIM like ESD.
+        /// </summary>
+        Chunked = WimgApi.WIM_FLAG_CHUNKED,
     }
 
     public static partial class WimgApi
