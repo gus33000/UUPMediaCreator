@@ -2,7 +2,6 @@
 //
 // Licensed under the MIT license.
 
-using Microsoft.Wim.NET;
 using System.Runtime.InteropServices;
 
 namespace Microsoft.Wim
@@ -30,11 +29,11 @@ namespace Microsoft.Wim
         /// <summary>
         /// Used as an object for locking.
         /// </summary>
-        private static readonly object LockObject = new();
+        private static readonly object LockObject = new object();
 
         /// <summary>
         /// An instance of the <see cref="WimRegisteredCallbacks"/> class for keeping track of registered callbacks.
         /// </summary>
-        private static readonly WimRegisteredCallbacks RegisteredCallbacks = new();
+        private static readonly WimRegisteredCallbacks RegisteredCallbacks = new WimRegisteredCallbacks();
     }
 }

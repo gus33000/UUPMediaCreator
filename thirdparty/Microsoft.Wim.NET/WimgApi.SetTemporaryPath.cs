@@ -40,7 +40,7 @@ namespace Microsoft.Wim
             }
 
             // Call the native function
-            if (!NativeMethods.WIMSetTemporaryPath(wimHandle, path))
+            if (!WimgApi.NativeMethods.WIMSetTemporaryPath(wimHandle, path))
             {
                 // Throw a Win32Exception based on the last error code
                 throw new Win32Exception();

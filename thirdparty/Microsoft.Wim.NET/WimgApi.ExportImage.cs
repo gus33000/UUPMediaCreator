@@ -15,24 +15,24 @@ namespace Microsoft.Wim
     public enum WimExportImageOptions : uint
     {
         /// <summary>
-        /// No options are set.
-        /// </summary>
-        None = 0,
-
-        /// <summary>
         /// The image will be exported to the destination .wim file even if it is already stored in that .wim file.
         /// </summary>
         AllowDuplicates = WimgApi.WIM_EXPORT_ALLOW_DUPLICATES,
 
         /// <summary>
-        /// File resources will be exported to the destination .wim file and no image resources or XML information will be included.
-        /// </summary>
-        ResourcesOnly = WimgApi.WIM_EXPORT_ONLY_RESOURCES,
-
-        /// <summary>
         /// Image resources and XML information are exported to the destination .wim file and no supporting file resources are included.
         /// </summary>
         MetadataOnly = WimgApi.WIM_EXPORT_ONLY_METADATA,
+
+        /// <summary>
+        /// No options are set.
+        /// </summary>
+        None = 0,
+
+        /// <summary>
+        /// File resources will be exported to the destination .wim file and no image resources or XML information will be included.
+        /// </summary>
+        ResourcesOnly = WimgApi.WIM_EXPORT_ONLY_RESOURCES,
     }
 
     public static partial class WimgApi
@@ -61,7 +61,7 @@ namespace Microsoft.Wim
             }
 
             // Call the native function
-            if (!NativeMethods.WIMExportImage(imageHandle, wimHandle, (uint)options))
+            if (!WimgApi.NativeMethods.WIMExportImage(imageHandle, wimHandle, (UInt32)options))
             {
                 // Throw a Win32Exception based on the last error code
                 throw new Win32Exception();
@@ -91,7 +91,7 @@ namespace Microsoft.Wim
             /// </remarks>
             [DllImport(WimgApiDllName, CallingConvention = WimgApiCallingConvention, CharSet = WimgApiCharSet, SetLastError = true)]
             [return: MarshalAs(UnmanagedType.Bool)]
-            public static extern bool WIMExportImage(WimHandle hImage, WimHandle hWim, uint dwFlags);
+            public static extern bool WIMExportImage(WimHandle hImage, WimHandle hWim, UInt32 dwFlags);
         }
     }
 }

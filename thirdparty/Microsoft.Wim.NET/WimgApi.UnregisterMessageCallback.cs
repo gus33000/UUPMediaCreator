@@ -37,13 +37,13 @@ namespace Microsoft.Wim
             }
 
             // Establish a lock
-            lock (LockObject)
+            lock (WimgApi.LockObject)
             {
                 // See if wimHandle was not specified but the message callback was
                 if (wimHandle == WimHandle.Null && messageCallback != null)
                 {
                     // See if the message callback is registered
-                    if (!RegisteredCallbacks.IsCallbackRegistered(messageCallback))
+                    if (!WimgApi.RegisteredCallbacks.IsCallbackRegistered(messageCallback))
                     {
                         // Throw an ArgumentOutOfRangeException
                         throw new ArgumentOutOfRangeException(nameof(messageCallback), "Message callback is not registered.");
@@ -54,7 +54,7 @@ namespace Microsoft.Wim
                 if (wimHandle != WimHandle.Null && messageCallback != null)
                 {
                     // See if the callback is registered
-                    if (!RegisteredCallbacks.IsCallbackRegistered(wimHandle, messageCallback))
+                    if (!WimgApi.RegisteredCallbacks.IsCallbackRegistered(wimHandle, messageCallback))
                     {
                         // Throw an ArgumentOutOfRangeException
                         throw new ArgumentOutOfRangeException(nameof(messageCallback), "Message callback is not registered under this handle.");
@@ -63,14 +63,14 @@ namespace Microsoft.Wim
 
                 // See if the message callback is null, meaning the user wants to unregister all callbacks
                 bool success = messageCallback == null
-                    ? NativeMethods.WIMUnregisterMessageCallback(
+                    ? WimgApi.NativeMethods.WIMUnregisterMessageCallback(
                         wimHandle,
                         fpMessageProc: null)
-                    : NativeMethods.WIMUnregisterMessageCallback(
+                    : WimgApi.NativeMethods.WIMUnregisterMessageCallback(
                         wimHandle,
                         wimHandle == WimHandle.Null
-                            ? RegisteredCallbacks.GetNativeCallback(messageCallback)
-                            : RegisteredCallbacks.GetNativeCallback(wimHandle, messageCallback));
+                            ? WimgApi.RegisteredCallbacks.GetNativeCallback(messageCallback)
+                            : WimgApi.RegisteredCallbacks.GetNativeCallback(wimHandle, messageCallback));
 
                 // See if the native call succeeded
                 if (!success)
@@ -83,28 +83,28 @@ namespace Microsoft.Wim
                 if (wimHandle == WimHandle.Null && messageCallback != null)
                 {
                     // Unregister the globally registered callback
-                    _ = RegisteredCallbacks.UnregisterCallback(messageCallback);
+                    WimgApi.RegisteredCallbacks.UnregisterCallback(messageCallback);
                 }
 
                 // See if a single registered callback by handle should be removed
                 if (wimHandle != WimHandle.Null && messageCallback != null)
                 {
                     // Unregister the callback for the handle
-                    _ = RegisteredCallbacks.UnregisterCallback(wimHandle, messageCallback);
+                    WimgApi.RegisteredCallbacks.UnregisterCallback(wimHandle, messageCallback);
                 }
 
                 // See if all registered callbacks for this handle should be removed
                 if (wimHandle != WimHandle.Null && messageCallback == null)
                 {
                     // Unregister all callbacks for this handle
-                    _ = RegisteredCallbacks.UnregisterCallbacks(wimHandle);
+                    WimgApi.RegisteredCallbacks.UnregisterCallbacks(wimHandle);
                 }
 
                 // See if all registered callbacks by handle and all globally registered callbacks should be removed
                 if (wimHandle == WimHandle.Null && messageCallback == null)
                 {
                     // Unregister all callbacks
-                    _ = RegisteredCallbacks.UnregisterCallbacks();
+                    WimgApi.RegisteredCallbacks.UnregisterCallbacks();
                 }
             } // Release lock
         }

@@ -17,14 +17,9 @@ namespace Microsoft.Wim
     public enum WimApplyImageOptions : uint
     {
         /// <summary>
-        /// No options are set.
+        /// Sends a WIM_MSG_FILEINFO message during the apply operation.
         /// </summary>
-        None = 0,
-
-        /// <summary>
-        /// Verifies that files match original data.
-        /// </summary>
-        Verify = WimgApi.WIM_FLAG_VERIFY,
+        FileInfo = WimgApi.WIM_FLAG_FILEINFO,
 
         /// <summary>
         /// Specifies that the image is to be sequentially read for caching or performance purposes.
@@ -37,6 +32,11 @@ namespace Microsoft.Wim
         NoApply = WimgApi.WIM_FLAG_NO_APPLY,
 
         /// <summary>
+        /// No options are set.
+        /// </summary>
+        None = 0,
+
+        /// <summary>
         /// Disables restoring security information for directories.
         /// </summary>
         DisableDirectoryAcl = WimgApi.WIM_FLAG_NO_DIRACL,
@@ -47,14 +47,14 @@ namespace Microsoft.Wim
         DisableFileAcl = WimgApi.WIM_FLAG_NO_FILEACL,
 
         /// <summary>
-        /// Sends a WIM_MSG_FILEINFO message during the apply operation.
-        /// </summary>
-        FileInfo = WimgApi.WIM_FLAG_FILEINFO,
-
-        /// <summary>
         /// Disables automatic path fixups for junctions and symbolic links.
         /// </summary>
         DisableRPFix = WimgApi.WIM_FLAG_NO_RP_FIX,
+
+        /// <summary>
+        /// Verifies that files match original data.
+        /// </summary>
+        Verify = WimgApi.WIM_FLAG_VERIFY,
     }
 
     public static partial class WimgApi
@@ -77,16 +77,19 @@ namespace Microsoft.Wim
             }
 
             // Call the native function
-            if (!NativeMethods.WIMApplyImage(imageHandle, path, (UInt32)options))
+            if (!WimgApi.NativeMethods.WIMApplyImage(imageHandle, path, (UInt32)options))
             {
                 // Get the last error
-                Win32Exception win32Exception = new();
+                Win32Exception win32Exception = new Win32Exception();
 
-                throw win32Exception.NativeErrorCode switch
+                switch (win32Exception.NativeErrorCode)
                 {
-                    ERROR_REQUEST_ABORTED => new OperationCanceledException(win32Exception.Message, win32Exception),// If the operation was aborted, throw an OperationCanceledException exception
-                    _ => win32Exception,
-                };
+                    case WimgApi.ERROR_REQUEST_ABORTED:
+                        // If the operation was aborted, throw an OperationCanceledException exception
+                        throw new OperationCanceledException(win32Exception.Message, win32Exception);
+                    default:
+                        throw win32Exception;
+                }
             }
         }
 

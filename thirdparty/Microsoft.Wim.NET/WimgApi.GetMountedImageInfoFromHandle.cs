@@ -2,7 +2,6 @@
 //
 // Licensed under the MIT license.
 
-using Microsoft.Wim.NET;
 using System;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
@@ -37,7 +36,7 @@ namespace Microsoft.Wim
             try
             {
                 // Call the native function (the buffer may be too small)
-                if (!NativeMethods.WIMGetMountedImageInfoFromHandle(imageHandle, WimMountInfo.MountInfoLevel, mountInfoPtr, (DWORD)mountInfoSize, out DWORD returnLength))
+                if (!WimgApi.NativeMethods.WIMGetMountedImageInfoFromHandle(imageHandle, WimMountInfo.MountInfoLevel, mountInfoPtr, (DWORD)mountInfoSize, out DWORD returnLength))
                 {
                     // See if the return value isn't ERROR_INSUFFICIENT_BUFFER
                     if (Marshal.GetLastWin32Error() != 122)
@@ -46,10 +45,10 @@ namespace Microsoft.Wim
                     }
 
                     // Re-allocate the buffer to the correct size
-                    _ = Marshal.ReAllocHGlobal(mountInfoPtr, (IntPtr)returnLength);
+                    Marshal.ReAllocHGlobal(mountInfoPtr, (IntPtr)returnLength);
 
                     // Call the native function a second time so it can fill buffer with a struct
-                    if (!NativeMethods.WIMGetMountedImageInfoFromHandle(imageHandle, WimMountInfo.MountInfoLevel, mountInfoPtr, returnLength, out returnLength))
+                    if (!WimgApi.NativeMethods.WIMGetMountedImageInfoFromHandle(imageHandle, WimMountInfo.MountInfoLevel, mountInfoPtr, returnLength, out returnLength))
                     {
                         // Throw a Win32Exception based on the last error code
                         throw new Win32Exception();

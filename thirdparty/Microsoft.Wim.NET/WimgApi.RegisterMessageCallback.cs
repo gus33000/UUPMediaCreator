@@ -50,7 +50,7 @@ namespace Microsoft.Wim
         public static int RegisterMessageCallback(WimHandle wimHandle, WimMessageCallback messageCallback)
         {
             // Call an overload
-            return RegisterMessageCallback(wimHandle, messageCallback, null);
+            return WimgApi.RegisterMessageCallback(wimHandle, messageCallback, null);
         }
 
         /// <summary>
@@ -78,20 +78,20 @@ namespace Microsoft.Wim
             }
 
             // Establish a lock
-            lock (LockObject)
+            lock (WimgApi.LockObject)
             {
                 // See if the user wants to register the handler in the global space for all WIMs
                 if (wimHandle == WimHandle.Null)
                 {
                     // See if the callback is already registered
-                    if (RegisteredCallbacks.IsCallbackRegistered(messageCallback))
+                    if (WimgApi.RegisteredCallbacks.IsCallbackRegistered(messageCallback))
                     {
                         // Just exit, the callback is already registered
                         return -1;
                     }
 
                     // Add the callback to the globally registered callbacks
-                    if (!RegisteredCallbacks.RegisterCallback(messageCallback, userData))
+                    if (!WimgApi.RegisteredCallbacks.RegisterCallback(messageCallback, userData))
                     {
                         return -1;
                     }
@@ -99,21 +99,21 @@ namespace Microsoft.Wim
                 else
                 {
                     // See if the message callback is already registered
-                    if (RegisteredCallbacks.IsCallbackRegistered(wimHandle, messageCallback))
+                    if (WimgApi.RegisteredCallbacks.IsCallbackRegistered(wimHandle, messageCallback))
                     {
                         // Just exit, the callback is already registered
                         return -1;
                     }
 
                     // Add the callback to the registered callbacks by handle
-                    _ = RegisteredCallbacks.RegisterCallback(wimHandle, messageCallback, userData);
+                    WimgApi.RegisteredCallbacks.RegisterCallback(wimHandle, messageCallback, userData);
                 }
 
                 // Call the native function
-                DWORD hr = NativeMethods.WIMRegisterMessageCallback(wimHandle, wimHandle == WimHandle.Null ? RegisteredCallbacks.GetNativeCallback(messageCallback) : RegisteredCallbacks.GetNativeCallback(wimHandle, messageCallback), IntPtr.Zero);
+                DWORD hr = WimgApi.NativeMethods.WIMRegisterMessageCallback(wimHandle, wimHandle == WimHandle.Null ? WimgApi.RegisteredCallbacks.GetNativeCallback(messageCallback) : WimgApi.RegisteredCallbacks.GetNativeCallback(wimHandle, messageCallback), IntPtr.Zero);
 
                 // See if the function returned INVALID_CALLBACK_VALUE
-                if (hr == INVALID_CALLBACK_VALUE)
+                if (hr == WimgApi.INVALID_CALLBACK_VALUE)
                 {
                     // Throw a Win32Exception based on the last error code
                     throw new Win32Exception();

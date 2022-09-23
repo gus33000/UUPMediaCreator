@@ -6,6 +6,7 @@ using System;
 using System.ComponentModel;
 using System.IO;
 using System.Runtime.InteropServices;
+
 using DWORD = System.UInt32;
 
 namespace Microsoft.Wim
@@ -38,19 +39,14 @@ namespace Microsoft.Wim
         None = 0,
 
         /// <summary>
-        /// Data integrity information is generated for new files, verified, and updated for existing files.
-        /// </summary>
-        Verify = WimgApi.WIM_FLAG_VERIFY,
-
-        /// <summary>
         /// The .wim file is opened in a mode that enables simultaneous reading and writing.
         /// </summary>
         ShareWrite = WimgApi.WIM_FLAG_SHARE_WRITE,
 
         /// <summary>
-        /// Allow cross-file WIM like ESD.
+        /// Data integrity information is generated for new files, verified, and updated for existing files.
         /// </summary>
-        Chunked = WimgApi.WIM_FLAG_CHUNKED,
+        Verify = WimgApi.WIM_FLAG_VERIFY,
     }
 
     public static partial class WimgApi
@@ -89,7 +85,7 @@ namespace Microsoft.Wim
             }
 
             // Call the native function
-            if (!NativeMethods.WIMSetReferenceFile(wimHandle, path, (DWORD)mode | (DWORD)options))
+            if (!WimgApi.NativeMethods.WIMSetReferenceFile(wimHandle, path, (DWORD)mode | (DWORD)options))
             {
                 // Throw a Win32Exception based on the last error code
                 throw new Win32Exception();

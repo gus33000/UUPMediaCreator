@@ -2,7 +2,6 @@
 //
 // Licensed under the MIT license.
 
-using Microsoft.Wim.NET;
 using System;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
@@ -37,7 +36,7 @@ namespace Microsoft.Wim
             try
             {
                 // Call the native function
-                if (!NativeMethods.WIMGetAttributes(wimHandle, wimInfoPtr, wimInfoSize))
+                if (!WimgApi.NativeMethods.WIMGetAttributes(wimHandle, wimInfoPtr, wimInfoSize))
                 {
                     // Throw a Win32Exception based on the last error code
                     throw new Win32Exception();

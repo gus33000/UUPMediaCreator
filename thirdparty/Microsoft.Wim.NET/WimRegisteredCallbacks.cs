@@ -5,7 +5,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Microsoft.Wim.NET
+namespace Microsoft.Wim
 {
     /// <summary>
     /// Represents a collection of registered callbacks.  Callbacks can be registered globally or per <see cref="WimHandle" />.
@@ -19,12 +19,12 @@ namespace Microsoft.Wim.NET
         /// <summary>
         /// Stores a list of registered callbacks by their WimHandle.
         /// </summary>
-        private readonly Dictionary<WimHandle, Dictionary<WimMessageCallback, WimMessageCallbackWrapper>> _registeredCallbacksByHandle = new();
+        private readonly Dictionary<WimHandle, Dictionary<WimMessageCallback, WimMessageCallbackWrapper>> _registeredCallbacksByHandle = new Dictionary<WimHandle, Dictionary<WimMessageCallback, WimMessageCallbackWrapper>>();
 
         /// <summary>
         /// Stores a list of globally registered callbacks.
         /// </summary>
-        private readonly Dictionary<WimMessageCallback, WimMessageCallbackWrapper> _registeredCallbacksGlobal = new();
+        private readonly Dictionary<WimMessageCallback, WimMessageCallbackWrapper> _registeredCallbacksGlobal = new Dictionary<WimMessageCallback, WimMessageCallbackWrapper>();
 
         /// <summary>
         /// Gets a native callback for passing to the WIMGAPI for the specified registered callback associated with the
@@ -185,13 +185,13 @@ namespace Microsoft.Wim.NET
             }
 
             // Remove the callback from the list
-            _ = _registeredCallbacksByHandle[wimHandle].Remove(messageCallback);
+            _registeredCallbacksByHandle[wimHandle].Remove(messageCallback);
 
             // See if the dictionary for the wimHandle is now empty
             if (_registeredCallbacksByHandle[wimHandle].Count == 0)
             {
                 // Remove the wimHandle dictionary item
-                _ = _registeredCallbacksByHandle.Remove(wimHandle);
+                _registeredCallbacksByHandle.Remove(wimHandle);
             }
 
             return true;
@@ -218,7 +218,7 @@ namespace Microsoft.Wim.NET
             }
 
             // Remove the callback from the list
-            _ = _registeredCallbacksGlobal.Remove(messageCallback);
+            _registeredCallbacksGlobal.Remove(messageCallback);
 
             return true;
         }
@@ -244,7 +244,7 @@ namespace Microsoft.Wim.NET
             }
 
             // Remove the wimHandle from the list
-            _ = _registeredCallbacksByHandle.Remove(wimHandle);
+            _registeredCallbacksByHandle.Remove(wimHandle);
 
             return true;
         }

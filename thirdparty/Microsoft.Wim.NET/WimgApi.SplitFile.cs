@@ -48,7 +48,7 @@ namespace Microsoft.Wim
             long partSizeCopy = partSize;
 
             // Call the native function
-            if (!NativeMethods.WIMSplitFile(wimHandle, partPath, ref partSizeCopy, 0))
+            if (!WimgApi.NativeMethods.WIMSplitFile(wimHandle, partPath, ref partSizeCopy, 0))
             {
                 // Throw a Win32Exception based on the last error code
                 throw new Win32Exception();
@@ -56,7 +56,7 @@ namespace Microsoft.Wim
         }
 
         /// <summary>
-        /// Gets the minimum size needed to create a split WIM.
+        /// Gets the minimum size needed to to create a split WIM.
         /// </summary>
         /// <param name="wimHandle">A <see cref="WimHandle"/> of a .wim file returned by <see cref="CreateFile"/>.</param>
         /// <param name="partPath">The path of the first file piece of the spanned set.</param>
@@ -81,10 +81,10 @@ namespace Microsoft.Wim
             long partSize = 0;
 
             // Call the WIMSplitFile function which should return false and set partSize to the minimum size needed
-            if (!NativeMethods.WIMSplitFile(wimHandle, partPath, ref partSize, 0))
+            if (!WimgApi.NativeMethods.WIMSplitFile(wimHandle, partPath, ref partSize, 0))
             {
                 // See if the return code was not ERROR_MORE_DATA
-                if (Marshal.GetLastWin32Error() != ERROR_MORE_DATA)
+                if (Marshal.GetLastWin32Error() != WimgApi.ERROR_MORE_DATA)
                 {
                     // Throw a Win32Exception based on the last error code
                     throw new Win32Exception();

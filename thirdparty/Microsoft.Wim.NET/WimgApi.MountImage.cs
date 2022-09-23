@@ -18,14 +18,9 @@ namespace Microsoft.Wim
     public enum WimMountImageOptions : uint
     {
         /// <summary>
-        /// No options are set.
+        /// Mounts the image using a faster operation.
         /// </summary>
-        None = 0,
-
-        /// <summary>
-        /// Verifies that files match original data.
-        /// </summary>
-        Verify = WimgApi.WIM_FLAG_VERIFY,
+        Fast = WimgApi.WIM_FLAG_MOUNT_FAST,
 
         /// <summary>
         /// Disables capturing security information for directories.
@@ -43,19 +38,24 @@ namespace Microsoft.Wim
         DisableRPFix = WimgApi.WIM_FLAG_NO_RP_FIX,
 
         /// <summary>
+        /// Mounts the image using a legacy operation.
+        /// </summary>
+        Legacy = WimgApi.WIM_FLAG_MOUNT_LEGACY,
+
+        /// <summary>
+        /// No options are set.
+        /// </summary>
+        None = 0,
+
+        /// <summary>
         /// Mounts the image without the ability to save changes, regardless of WIM access level.
         /// </summary>
         ReadOnly = WimgApi.WIM_FLAG_MOUNT_READONLY,
 
         /// <summary>
-        /// Mounts the image using a faster operation.
+        /// Verifies that files match original data.
         /// </summary>
-        Fast = WimgApi.WIM_FLAG_MOUNT_FAST,
-
-        /// <summary>
-        /// Mounts the image using a legacy operation.
-        /// </summary>
-        Legacy = WimgApi.WIM_FLAG_MOUNT_LEGACY,
+        Verify = WimgApi.WIM_FLAG_VERIFY,
     }
 
     public static partial class WimgApi
@@ -74,7 +74,7 @@ namespace Microsoft.Wim
         public static void MountImage(string mountPath, string imagePath, int imageIndex)
         {
             // Call an overload
-            MountImage(mountPath, imagePath, imageIndex, tempPath: null);
+            WimgApi.MountImage(mountPath, imagePath, imageIndex, tempPath: null);
         }
 
         /// <summary>
@@ -122,7 +122,7 @@ namespace Microsoft.Wim
             }
 
             // Call the native function
-            if (!NativeMethods.WIMMountImage(mountPath, imagePath, (DWORD)imageIndex, tempPath))
+            if (!WimgApi.NativeMethods.WIMMountImage(mountPath, imagePath, (DWORD)imageIndex, tempPath))
             {
                 // Throw a Win32Exception based on the last error code
                 throw new Win32Exception();
@@ -160,7 +160,7 @@ namespace Microsoft.Wim
             }
 
             // Call the native function
-            if (!NativeMethods.WIMMountImageHandle(imageHandle, mountPath, (DWORD)options))
+            if (!WimgApi.NativeMethods.WIMMountImageHandle(imageHandle, mountPath, (DWORD)options))
             {
                 // Throw a Win32Exception based on the last error code
                 throw new Win32Exception();

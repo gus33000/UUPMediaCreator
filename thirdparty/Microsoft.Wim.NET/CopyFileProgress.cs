@@ -7,7 +7,7 @@ using System;
 using DWORD = System.UInt32;
 using LARGE_INTEGER = System.UInt64;
 
-namespace Microsoft.Wim.NET
+namespace Microsoft.Wim
 {
     /// <summary>
     /// Specifies a method to call during process of a file copy.
@@ -152,8 +152,9 @@ namespace Microsoft.Wim.NET
         }
 
         /// <summary>
-        /// <para>A callback method for the native CopyFileEx function.</para>
-        /// <para>http://msdn.microsoft.com/en-us/library/windows/desktop/aa363854(v=vs.85).aspx.</para>
+        /// A callback method for the native CopyFileEx function.
+        ///
+        /// http://msdn.microsoft.com/en-us/library/windows/desktop/aa363854(v=vs.85).aspx.
         /// </summary>
         /// <param name="totalFileSize">The total size of the file, in bytes.</param>
         /// <param name="totalBytesTransferred">The total number of bytes transferred from the source file to the destination file since the copy operation began.</param>
@@ -212,7 +213,7 @@ namespace Microsoft.Wim.NET
                     PercentComplete = percentComplete;
 
                     // Calculate the estimated time remaining in seconds
-                    EstimatedTimeRemaining = TimeSpan.FromSeconds((DateTime.Now - _timeStarted).TotalSeconds / totalBytesTransferred * (totalFileSize - totalBytesTransferred));
+                    EstimatedTimeRemaining = TimeSpan.FromSeconds(((DateTime.Now - _timeStarted).TotalSeconds / totalBytesTransferred) * (totalFileSize - totalBytesTransferred));
 
                     // Execute the user's callback method
                     return _progressCallback(this, _userData);

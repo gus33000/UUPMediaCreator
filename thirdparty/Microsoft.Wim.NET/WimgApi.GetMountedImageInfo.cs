@@ -2,7 +2,6 @@
 //
 // Licensed under the MIT license.
 
-using Microsoft.Wim.NET;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -43,7 +42,7 @@ namespace Microsoft.Wim
         public static WimMountInfoCollection GetMountedImageInfo()
         {
             // Call the native function first to get the necessary buffer size
-            _ = NativeMethods.WIMGetMountedImageInfo(WimMountInfo.MountInfoLevel, out _, IntPtr.Zero, 0, out DWORD returnLength);
+            WimgApi.NativeMethods.WIMGetMountedImageInfo(WimMountInfo.MountInfoLevel, out DWORD imageCount, IntPtr.Zero, 0, out DWORD returnLength);
 
             switch (Marshal.GetLastWin32Error())
             {
@@ -52,7 +51,7 @@ namespace Microsoft.Wim
                     // Return an empty list because there are no images
                     return new WimMountInfoCollection(new List<WimMountInfo>());
 
-                case ERROR_INSUFFICIENT_BUFFER:
+                case WimgApi.ERROR_INSUFFICIENT_BUFFER:
 
                     // Continue on because we now know how much memory is needed
                     break;
@@ -64,7 +63,7 @@ namespace Microsoft.Wim
             }
 
             // Create a collection of WimMountInfo objects
-            List<WimMountInfo> wimMountInfos = new();
+            List<WimMountInfo> wimMountInfos = new List<WimMountInfo>();
 
             // Allocate enough memory for the return array
             IntPtr mountInfoPtr = Marshal.AllocHGlobal((int)returnLength);
@@ -72,7 +71,7 @@ namespace Microsoft.Wim
             try
             {
                 // Call the native function a second time so it can fill the array of pointers
-                if (!NativeMethods.WIMGetMountedImageInfo(WimMountInfo.MountInfoLevel, out uint imageCount, mountInfoPtr, returnLength, out returnLength))
+                if (!WimgApi.NativeMethods.WIMGetMountedImageInfo(WimMountInfo.MountInfoLevel, out imageCount, mountInfoPtr, returnLength, out returnLength))
                 {
                     // Throw a Win32Exception based on the last error code
                     throw new Win32Exception();
@@ -82,7 +81,7 @@ namespace Microsoft.Wim
                 for (int i = 0; i < imageCount; i++)
                 {
                     // Get the current pointer based on the index
-                    IntPtr currentImageInfoPtr = new(mountInfoPtr.ToInt64() + (i * (returnLength / imageCount)));
+                    IntPtr currentImageInfoPtr = new IntPtr(mountInfoPtr.ToInt64() + (i * (returnLength / imageCount)));
 
                     // Read a pointer and add a new WimMountInfo object to the collection
                     wimMountInfos.Add(new WimMountInfo(currentImageInfoPtr));
@@ -124,7 +123,7 @@ namespace Microsoft.Wim
             /// </returns>
             [DllImport(WimgApiDllName, CallingConvention = WimgApiCallingConvention, CharSet = WimgApiCharSet, SetLastError = true)]
             [return: MarshalAs(UnmanagedType.Bool)]
-            public static extern bool WIMGetMountedImageInfo(WimMountedImageInfoLevels fInfoLevelId, out DWORD pdwImageCount, [Out][Optional] IntPtr pMountInfo, DWORD cbMountInfoLength, out DWORD pcbReturnLength);
+            public static extern bool WIMGetMountedImageInfo(WimMountedImageInfoLevels fInfoLevelId, out DWORD pdwImageCount, [Out] [Optional] IntPtr pMountInfo, DWORD cbMountInfoLength, out DWORD pcbReturnLength);
         }
     }
 }

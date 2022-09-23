@@ -30,7 +30,7 @@ namespace Microsoft.Wim
             }
 
             // Call the native function
-            if (!NativeMethods.WIMGetMountedImageHandle(mountPath, readOnly ? WIM_FLAG_MOUNT_READONLY : 0, out WimHandle wimHandle, out imageHandle))
+            if (!WimgApi.NativeMethods.WIMGetMountedImageHandle(mountPath, readOnly ? WimgApi.WIM_FLAG_MOUNT_READONLY : 0, out WimHandle wimHandle, out imageHandle))
             {
                 // Throw a Win32Exception based on the last error code
                 throw new Win32Exception();

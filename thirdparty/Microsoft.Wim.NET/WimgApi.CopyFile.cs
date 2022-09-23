@@ -2,7 +2,6 @@
 //
 // Licensed under the MIT license.
 
-using Microsoft.Wim.NET;
 using System;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
@@ -19,14 +18,14 @@ namespace Microsoft.Wim
     public enum WimCopyFileOptions : uint
     {
         /// <summary>
-        /// No options are set.
-        /// </summary>
-        None = 0,
-
-        /// <summary>
         /// The copy operation fails immediately if the target file already exists.
         /// </summary>
         FailIfExists = 0x00000001,
+
+        /// <summary>
+        /// No options are set.
+        /// </summary>
+        None = 0,
 
         /// <summary>
         /// Automatically retries copy operations in event of failures.
@@ -47,7 +46,7 @@ namespace Microsoft.Wim
         public static void CopyFile(string sourceFile, string destinationFile, WimCopyFileOptions options)
         {
             // Call an override
-            CopyFile(sourceFile, destinationFile, options, null, null);
+            WimgApi.CopyFile(sourceFile, destinationFile, options, null, null);
         }
 
         /// <summary>
@@ -75,13 +74,13 @@ namespace Microsoft.Wim
             }
 
             // Create a CopyFileProgress object
-            CopyFileProgress fileInfoCopyProgress = new(sourceFile, destinationFile, copyFileProgressCallback, userData);
+            CopyFileProgress fileInfoCopyProgress = new CopyFileProgress(sourceFile, destinationFile, copyFileProgressCallback, userData);
 
             // Cancel flag is always false
             bool cancel = false;
 
             // Call the native function
-            if (!NativeMethods.WIMCopyFile(sourceFile, destinationFile, fileInfoCopyProgress.CopyProgressHandler, IntPtr.Zero, ref cancel, (DWORD)options))
+            if (!WimgApi.NativeMethods.WIMCopyFile(sourceFile, destinationFile, fileInfoCopyProgress.CopyProgressHandler, IntPtr.Zero, ref cancel, (DWORD)options))
             {
                 // Throw a Win32Exception based on the last error code
                 throw new Win32Exception();

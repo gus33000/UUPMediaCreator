@@ -18,16 +18,6 @@ namespace Microsoft.Wim
     public enum WimCaptureImageOptions : uint
     {
         /// <summary>
-        /// No options are set.
-        /// </summary>
-        None = 0,
-
-        /// <summary>
-        /// Capture verifies single-instance files byte by byte.
-        /// </summary>
-        Verify = WimgApi.WIM_FLAG_VERIFY,
-
-        /// <summary>
         /// Disables capturing security information for directories.
         /// </summary>
         DisableDirectoryAcl = WimgApi.WIM_FLAG_NO_DIRACL,
@@ -41,6 +31,16 @@ namespace Microsoft.Wim
         /// Disables automatic path fix-ups for junctions and symbolic links.
         /// </summary>
         DisableRPFix = WimgApi.WIM_FLAG_NO_RP_FIX,
+
+        /// <summary>
+        /// No options are set.
+        /// </summary>
+        None = 0,
+
+        /// <summary>
+        /// Capture verifies single-instance files byte by byte.
+        /// </summary>
+        Verify = WimgApi.WIM_FLAG_VERIFY,
     }
 
     public static partial class WimgApi
@@ -78,10 +78,10 @@ namespace Microsoft.Wim
             }
 
             // Call the native function
-            WimHandle imageHandle = NativeMethods.WIMCaptureImage(wimHandle, path, (DWORD)options);
+            WimHandle imageHandle = WimgApi.NativeMethods.WIMCaptureImage(wimHandle, path, (DWORD)options);
 
             // See if the handle returned is valid
-            if (imageHandle?.IsInvalid != false)
+            if (imageHandle == null || imageHandle.IsInvalid)
             {
                 // Throw a Win32Exception which will call GetLastError
                 throw new Win32Exception();

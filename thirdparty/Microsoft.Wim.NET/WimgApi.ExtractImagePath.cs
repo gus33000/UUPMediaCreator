@@ -41,7 +41,7 @@ namespace Microsoft.Wim
             }
 
             // Call the native function
-            if (!NativeMethods.WIMExtractImagePath(imageHandle, sourceFile, destinationFile, 0))
+            if (!WimgApi.NativeMethods.WIMExtractImagePath(imageHandle, sourceFile, destinationFile, 0))
             {
                 // Throw a Win32Exception based on the last error code
                 throw new Win32Exception();

@@ -2,7 +2,6 @@
 //
 // Licensed under the MIT license.
 
-using Microsoft.Wim.NET;
 using System;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
@@ -23,9 +22,9 @@ namespace Microsoft.Wim
         None = 0,
 
         /// <summary>
-        /// Generates data integrity information for new files. Verifies and updates existing files.
+        /// Allow cross-file WIM like ESD.
         /// </summary>
-        Verify = WimgApi.WIM_FLAG_VERIFY,
+        Chunked = WimgApi.WIM_FLAG_CHUNKED,
 
         /// <summary>
         /// Opens the .wim file in a mode that enables simultaneous reading and writing.
@@ -33,9 +32,9 @@ namespace Microsoft.Wim
         ShareWrite = WimgApi.WIM_FLAG_SHARE_WRITE,
 
         /// <summary>
-        /// Allow cross-file WIM like ESD.
+        /// Generates data integrity information for new files. Verifies and updates existing files.
         /// </summary>
-        Chunked = WimgApi.WIM_FLAG_CHUNKED,
+        Verify = WimgApi.WIM_FLAG_VERIFY,
     }
 
     /// <summary>
@@ -44,24 +43,24 @@ namespace Microsoft.Wim
     public enum WimCreationDisposition : uint
     {
         /// <summary>
-        /// Makes a new image file. If the specified file already exists, the function fails.
-        /// </summary>
-        CreateNew = WimgApi.WIM_CREATE_NEW,
-
-        /// <summary>
         /// Makes a new image file. If the file exists, the function overwrites the file.
         /// </summary>
         CreateAlways = WimgApi.WIM_CREATE_ALWAYS,
 
         /// <summary>
-        /// Opens the image file. If the file does not exist, the function fails.
+        /// Makes a new image file. If the specified file already exists, the function fails.
         /// </summary>
-        OpenExisting = WimgApi.WIM_OPEN_EXISTING,
+        CreateNew = WimgApi.WIM_CREATE_NEW,
 
         /// <summary>
         /// Opens the image file if it exists. If the file does not exist and the caller requests <see cref="WimFileAccess.Write"/> access, the function makes the file.
         /// </summary>
         OpenAlways = WimgApi.WIM_OPEN_ALWAYS,
+
+        /// <summary>
+        /// Opens the image file. If the file does not exist, the function fails.
+        /// </summary>
+        OpenExisting = WimgApi.WIM_OPEN_EXISTING,
     }
 
     /// <summary>
@@ -87,24 +86,24 @@ namespace Microsoft.Wim
     public enum WimFileAccess : uint
     {
         /// <summary>
-        /// Specifies query access to the file. An application can query image information without accessing the images.
-        /// </summary>
-        Query = 0,
-
-        /// <summary>
         /// Specifies mount access to the image file.
         /// </summary>
         Mount = WimgApi.WIM_GENERIC_MOUNT,
 
         /// <summary>
-        /// Specifies write access to the image file. Enables images to be captured to the file. Includes WimFileAccess.Read access to enable apply and append operations with existing images.
+        /// Specifies query access to the file. An application can query image information without accessing the images.
         /// </summary>
-        Write = WimgApi.WIM_GENERIC_WRITE,
+        Query = 0,
 
         /// <summary>
         /// Specifies read-only access to the image file. Enables images to be applied from the file. Combine with WimFileAccess.Write for read/write (append) access.
         /// </summary>
         Read = WimgApi.WIM_GENERIC_READ,
+
+        /// <summary>
+        /// Specifies write access to the image file. Enables images to be captured to the file. Includes WimFileAccess.Read access to enable apply and append operations with existing images.
+        /// </summary>
+        Write = WimgApi.WIM_GENERIC_WRITE,
     }
 
     public static partial class WimgApi
@@ -129,10 +128,10 @@ namespace Microsoft.Wim
             }
 
             // Call the native function
-            WimHandle wimHandle = NativeMethods.WIMCreateFile(path, (DWORD)desiredAccess, (DWORD)creationDisposition, (DWORD)options, (DWORD)compressionType, out _);
+            WimHandle wimHandle = WimgApi.NativeMethods.WIMCreateFile(path, (DWORD)desiredAccess, (DWORD)creationDisposition, (DWORD)options, (DWORD)compressionType, out _);
 
             // See if the handle returned is valid
-            if (wimHandle?.IsInvalid != false)
+            if (wimHandle == null || wimHandle.IsInvalid)
             {
                 // Throw a Win32Exception based on the last error code
                 throw new Win32Exception();

@@ -17,16 +17,6 @@ namespace Microsoft.Wim
     public enum WimCommitImageOptions : uint
     {
         /// <summary>
-        /// No options are set.
-        /// </summary>
-        None = 0,
-
-        /// <summary>
-        /// Capture verifies single-instance files byte by byte.
-        /// </summary>
-        Verify = WimgApi.WIM_FLAG_VERIFY,
-
-        /// <summary>
         /// Disables capturing security information for directories.
         /// </summary>
         DisableDirectoryAcl = WimgApi.WIM_FLAG_NO_DIRACL,
@@ -40,6 +30,16 @@ namespace Microsoft.Wim
         /// Disables automatic path repairs for junctions and symbolic links.
         /// </summary>
         DisableRPFix = WimgApi.WIM_FLAG_NO_RP_FIX,
+
+        /// <summary>
+        /// No options are set.
+        /// </summary>
+        None = 0,
+
+        /// <summary>
+        /// Capture verifies single-instance files byte by byte.
+        /// </summary>
+        Verify = WimgApi.WIM_FLAG_VERIFY,
     }
 
     public static partial class WimgApi
@@ -62,7 +62,7 @@ namespace Microsoft.Wim
             }
 
             // Call the native function, add the append flag if needed
-            if (!NativeMethods.WIMCommitImageHandle(imageHandle, append ? WIM_COMMIT_FLAG_APPEND : 0 | (DWORD)options, out WimHandle newImageHandle))
+            if (!WimgApi.NativeMethods.WIMCommitImageHandle(imageHandle, append ? WimgApi.WIM_COMMIT_FLAG_APPEND : 0 | (DWORD)options, out WimHandle newImageHandle))
             {
                 // Throw a Win32Exception based on the last error code
                 throw new Win32Exception();

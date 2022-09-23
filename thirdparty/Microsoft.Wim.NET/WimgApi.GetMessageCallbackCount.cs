@@ -36,7 +36,7 @@ namespace Microsoft.Wim
             }
 
             // Return the value from the native function
-            return (int)NativeMethods.WIMGetMessageCallbackCount(wimHandle);
+            return (int)WimgApi.NativeMethods.WIMGetMessageCallbackCount(wimHandle);
         }
 
         internal static partial class NativeMethods

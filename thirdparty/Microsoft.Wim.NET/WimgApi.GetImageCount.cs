@@ -18,7 +18,7 @@ namespace Microsoft.Wim
         public static int GetImageCount(WimHandle wimHandle)
         {
             // Return the value from the native function
-            return (int)NativeMethods.WIMGetImageCount(wimHandle);
+            return (int)WimgApi.NativeMethods.WIMGetImageCount(wimHandle);
         }
 
         internal static partial class NativeMethods

@@ -5,7 +5,7 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace Microsoft.Wim.NET
+namespace Microsoft.Wim
 {
     /// <summary>
     /// Specifies how a .wim file is treated and what features will be used.
@@ -14,24 +14,24 @@ namespace Microsoft.Wim.NET
     public enum WimInfoAttributes : uint
     {
         /// <summary>
-        /// The .wim file does not have any other attributes set.
-        /// </summary>
-        Normal = WimgApi.WIM_ATTRIBUTE_NORMAL,
-
-        /// <summary>
-        /// The .wim file only contains file resources and no images or metadata.
-        /// </summary>
-        ResourceOnly = WimgApi.WIM_ATTRIBUTE_RESOURCE_ONLY,
-
-        /// <summary>
         /// The .wim file only contains image resources and XML information.
         /// </summary>
         MetadataOnly = WimgApi.WIM_ATTRIBUTE_METADATA_ONLY,
 
         /// <summary>
-        /// The .wim file contains integrity data that can be used by the <see cref="WimgApi.CopyFile(string, string, WimCopyFileOptions)"/> or <see cref="WimgApi.CreateFile"/> method.
+        /// The .wim file does not have any other attributes set.
         /// </summary>
-        VerifyData = WimgApi.WIM_ATTRIBUTE_VERIFY_DATA,
+        Normal = WimgApi.WIM_ATTRIBUTE_NORMAL,
+
+        /// <summary>
+        /// The .wim file is locked and cannot be modified.
+        /// </summary>
+        ReadOnly = WimgApi.WIM_ATTRIBUTE_READONLY,
+
+        /// <summary>
+        /// The .wim file only contains file resources and no images or metadata.
+        /// </summary>
+        ResourceOnly = WimgApi.WIM_ATTRIBUTE_RESOURCE_ONLY,
 
         /// <summary>
         /// The .wim file contains one or more images where symbolic link or junction path fix-up is enabled.
@@ -44,9 +44,9 @@ namespace Microsoft.Wim.NET
         Spanned = WimgApi.WIM_ATTRIBUTE_SPANNED,
 
         /// <summary>
-        /// The .wim file is locked and cannot be modified.
+        /// The .wim file contains integrity data that can be used by the <see cref="WimgApi.CopyFile(string, string, WimCopyFileOptions)"/> or <see cref="WimgApi.CreateFile"/> method.
         /// </summary>
-        ReadOnly = WimgApi.WIM_ATTRIBUTE_READONLY,
+        VerifyData = WimgApi.WIM_ATTRIBUTE_VERIFY_DATA,
     }
 
     /// <summary>

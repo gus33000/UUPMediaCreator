@@ -2,8 +2,8 @@
 //
 // Licensed under the MIT license.
 
-using Microsoft.Wim.NET;
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -24,11 +24,13 @@ namespace Microsoft.Wim
             /// <summary>
             /// The low-order part of the file time.
             /// </summary>
+            [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1307:AccessibleFieldsMustBeginWithUpperCaseLetter", Justification = "Reviewed.")]
             public DWORD dwLowDateTime;
 
             /// <summary>
             /// The high-order part of the file time.
             /// </summary>
+            [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1307:AccessibleFieldsMustBeginWithUpperCaseLetter", Justification = "Reviewed.")]
             public DWORD dwHighDateTime;
 
             /// <summary>
@@ -73,7 +75,7 @@ namespace Microsoft.Wim
             public DateTime ToDateTime()
             {
                 // Convert the file time to a long and then to a DateTime
-                return DateTime.FromFileTimeUtc(((long)dwHighDateTime << 32) | dwLowDateTime);
+                return DateTime.FromFileTimeUtc((long)dwHighDateTime << 32 | dwLowDateTime);
             }
 
             /// <summary>
@@ -134,7 +136,7 @@ namespace Microsoft.Wim
         /// <summary>
         /// Contains information retrieved by the WIMGetAttributes function.
         /// </summary>
-        [StructLayout(LayoutKind.Sequential, CharSet = WimgApiCharSet)]
+        [StructLayout(LayoutKind.Sequential, CharSet = WimgApi.WimgApiCharSet)]
         internal struct WIM_INFO
         {
             /// <summary>
@@ -187,7 +189,7 @@ namespace Microsoft.Wim
         /// <summary>
         /// Contains information retrieved by the WIMGetMountedImageInfo function.
         /// </summary>
-        [StructLayout(LayoutKind.Sequential, CharSet = WimgApiCharSet)]
+        [StructLayout(LayoutKind.Sequential, CharSet = WimgApi.WimgApiCharSet)]
         internal struct WIM_MOUNT_INFO_LEVEL0
         {
             /// <summary>
@@ -217,7 +219,7 @@ namespace Microsoft.Wim
         /// <summary>
         /// Contains information retrieved by the WIMGetMountedImageList function.
         /// </summary>
-        [StructLayout(LayoutKind.Sequential, CharSet = WimgApiCharSet, Pack = 4)]
+        [StructLayout(LayoutKind.Sequential, CharSet = WimgApi.WimgApiCharSet, Pack = 4)]
         internal struct WIM_MOUNT_INFO_LEVEL1
         {
             /// <summary>
@@ -246,7 +248,7 @@ namespace Microsoft.Wim
         /// <summary>
         /// Contains information retrieved by the WIMGetMountedImages function.
         /// </summary>
-        [StructLayout(LayoutKind.Sequential, CharSet = WimgApiCharSet, Pack = 4)]
+        [StructLayout(LayoutKind.Sequential, CharSet = WimgApi.WimgApiCharSet, Pack = 4)]
         internal struct WIM_MOUNT_LIST
         {
             /// <summary>
@@ -285,30 +287,38 @@ namespace Microsoft.Wim
             public FileAttributes FileAttributes;
 
             /// <summary>
-            /// <para>A <see cref="System.Runtime.InteropServices.ComTypes.FILETIME"/> structure that specifies when a file or directory was created.</para>
-            /// <para>If the underlying file system does not support creation time, this member is zero.</para>
+            /// A <see cref="System.Runtime.InteropServices.ComTypes.FILETIME"/> structure that specifies when a file or directory was created.
+            ///
+            /// If the underlying file system does not support creation time, this member is zero.
             /// </summary>
             public FILETIME CreationTime;
 
             /// <summary>
-            /// <para>A <see cref="System.Runtime.InteropServices.ComTypes.FILETIME"/> structure.</para>
-            /// <para>For a file, the structure specifies when the file was last read from, written to, or for executable files, run.</para>
-            /// <para>For a directory, the structure specifies when the directory is created. If the underlying file system does not support last access time, this member is zero.</para>
-            /// <para>On the FAT file system, the specified date for both files and directories is correct, but the time of day is always set to midnight.</para>
+            /// A <see cref="System.Runtime.InteropServices.ComTypes.FILETIME"/> structure.
+            ///
+            /// For a file, the structure specifies when the file was last read from, written to, or for executable files, run.
+            ///
+            /// For a directory, the structure specifies when the directory is created. If the underlying file system does not support last access time, this member is zero.
+            ///
+            /// On the FAT file system, the specified date for both files and directories is correct, but the time of day is always set to midnight.
             /// </summary>
             public FILETIME LastAccessTime;
 
             /// <summary>
-            /// <para>A <see cref="System.Runtime.InteropServices.ComTypes.FILETIME"/> structure.</para>
-            /// <para>For a file, the structure specifies when the file was last written to, truncated, or overwritten, for example, when WriteFile or SetEndOfFile are used. The date and time are not updated when file attributes or security descriptors are changed.</para>
-            /// <para>For a directory, the structure specifies when the directory is created. If the underlying file system does not support last write time, this member is zero.</para>
+            /// A <see cref="System.Runtime.InteropServices.ComTypes.FILETIME"/> structure.
+            ///
+            /// For a file, the structure specifies when the file was last written to, truncated, or overwritten, for example, when WriteFile or SetEndOfFile are used. The date and time are not updated when file attributes or security descriptors are changed.
+            ///
+            /// For a directory, the structure specifies when the directory is created. If the underlying file system does not support last write time, this member is zero.
             /// </summary>
             public FILETIME LastWriteTime;
 
             /// <summary>
-            /// <para>The high-order DWORD value of the file size, in bytes.</para>
-            /// <para>This value is zero unless the file size is greater than MAXDWORD.</para>
-            /// <para>The size of the file is equal to (FileSizeHigh * (MAXDWORD+1)) + FileSizeLow.</para>
+            /// The high-order DWORD value of the file size, in bytes.
+            ///
+            /// This value is zero unless the file size is greater than MAXDWORD.
+            ///
+            /// The size of the file is equal to (FileSizeHigh * (MAXDWORD+1)) + FileSizeLow.
             /// </summary>
             public DWORD FileSizeHigh;
 
@@ -318,8 +328,9 @@ namespace Microsoft.Wim
             public DWORD FileSizeLow;
 
             /// <summary>
-            /// <para>If the FileAttributes member includes the FILE_ATTRIBUTE_REPARSE_POINT attribute, this member specifies the re-parse point tag.</para>
-            /// <para>Otherwise, this value is undefined and should not be used.</para>
+            /// If the FileAttributes member includes the FILE_ATTRIBUTE_REPARSE_POINT attribute, this member specifies the re-parse point tag.
+            ///
+            /// Otherwise, this value is undefined and should not be used.
             /// </summary>
             public DWORD Reserved0;
 
@@ -335,8 +346,9 @@ namespace Microsoft.Wim
             public string FileName;
 
             /// <summary>
-            /// <para>An alternative name for the file.</para>
-            /// <para>This name is in the classic 8.3 file name format.</para>
+            /// An alternative name for the file.
+            ///
+            /// This name is in the classic 8.3 file name format.
             /// </summary>
             [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 14)]
             public string AlternateFileName;

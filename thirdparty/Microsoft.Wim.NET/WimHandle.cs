@@ -5,6 +5,7 @@
 using Microsoft.Win32.SafeHandles;
 using System;
 using System.ComponentModel;
+using System.Runtime.ConstrainedExecution;
 using System.Runtime.InteropServices;
 
 namespace Microsoft.Wim
@@ -20,7 +21,7 @@ namespace Microsoft.Wim
         internal static bool CloseHandle(IntPtr handle)
         {
             // Call the native function
-            if (!NativeMethods.WIMCloseHandle(handle))
+            if (!WimgApi.NativeMethods.WIMCloseHandle(handle))
             {
                 // Throw a Win32Exception based on the last error code
                 throw new Win32Exception();
@@ -65,7 +66,7 @@ namespace Microsoft.Wim
         /// <summary>
         /// Represents a <c>null</c> handle.
         /// </summary>
-        public static readonly WimHandle Null = new();
+        public static readonly WimHandle Null = new WimHandle();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="WimHandle"/> class.
@@ -78,6 +79,7 @@ namespace Microsoft.Wim
         }
 
         /// <inheritdoc cref="SafeHandle.ReleaseHandle"/>
+        [ReliabilityContract(Consistency.WillNotCorruptState, Cer.MayFail)]
         protected override bool ReleaseHandle()
         {
             return !IsInvalid && WimgApi.CloseHandle(handle);
