@@ -18,27 +18,6 @@ namespace Microsoft.Dism
         /// <param name="dependencyPackages">Specifies the location of dependency packages.</param>
         /// <param name="licensePath">Specifies the location of the .xml file containing your application license.</param>
         /// <param name="customDataPath">Specifies the location of a custom data file. The custom data file will be renamed custom.data and saved in the app data store.</param>
-        /// <exception cref="DismRebootRequiredException">When the operation requires a reboot to complete.</exception>
-        public static void AddProvisionedAppxPackage(DismSession session, string appPath, List<string>? dependencyPackages, string? licensePath, string customDataPath)
-        {
-            AddProvisionedAppxPackage(
-                session,
-                appPath,
-                dependencyPackages,
-                optionalPackages: null,
-                licensePaths: string.IsNullOrEmpty(licensePath) ? null : new List<string> { licensePath! },
-                customDataPath: customDataPath,
-                regions: null);
-        }
-
-        /// <summary>
-        /// Adds an app package (.appx) that will install for each new user to a Windows image.
-        /// </summary>
-        /// <param name="session">A valid DISM Session.</param>
-        /// <param name="appPath">Specifies the location of the app package (.appx) to add to the Windows image.</param>
-        /// <param name="dependencyPackages">Specifies the location of dependency packages.</param>
-        /// <param name="licensePath">Specifies the location of the .xml file containing your application license.</param>
-        /// <param name="customDataPath">Specifies the location of a custom data file. The custom data file will be renamed custom.data and saved in the app data store.</param>
         /// <param name="stubPackageOption">Specifies the stub package option.</param>
         /// <exception cref="DismRebootRequiredException">When the operation requires a reboot to complete.</exception>
         public static void AddProvisionedAppxPackage(DismSession session, string appPath, List<string>? dependencyPackages, string? licensePath, string customDataPath, DismStubPackageOption stubPackageOption)
@@ -50,8 +29,29 @@ namespace Microsoft.Dism
                 optionalPackages: null,
                 licensePaths: string.IsNullOrEmpty(licensePath) ? null : new List<string> { licensePath! },
                 customDataPath: customDataPath,
-                regions: null,
+                regions: "all",
                 stubPackageOption: stubPackageOption);
+        }
+
+        /// <summary>
+        /// Adds an app package (.appx) that will install for each new user to a Windows image.
+        /// </summary>
+        /// <param name="session">A valid DISM Session.</param>
+        /// <param name="appPath">Specifies the location of the app package (.appx) to add to the Windows image.</param>
+        /// <param name="dependencyPackages">Specifies the location of dependency packages.</param>
+        /// <param name="licensePath">Specifies the location of the .xml file containing your application license.</param>
+        /// <param name="customDataPath">Specifies the location of a custom data file. The custom data file will be renamed custom.data and saved in the app data store.</param>
+        /// <exception cref="DismRebootRequiredException">When the operation requires a reboot to complete.</exception>
+        public static void AddProvisionedAppxPackage(DismSession session, string appPath, List<string>? dependencyPackages, string? licensePath, string customDataPath)
+        {
+            AddProvisionedAppxPackage(
+                session,
+                appPath,
+                dependencyPackages,
+                optionalPackages: null,
+                licensePaths: string.IsNullOrEmpty(licensePath) ? null : new List<string> { licensePath! },
+                customDataPath: customDataPath,
+                regions: null);
         }
 
         /// <summary>
