@@ -4,7 +4,7 @@
   <a href="./src">Source Code</a> |
   <a href="./docs">Documentation</a> |
   <a href="./thirdparty">Third party libraries</a> |
-  <a href="./releases">Downloads</a>
+  <a href="https://github.com/gus33000/UUPMediaCreator/releases">Downloads</a>
   <br><br>
   <img src="https://github.com/gus33000/UUPMediaCreator/actions/workflows/ci.yml/badge.svg"><img src="https://github.com/gus33000/UUPMediaCreator/actions/workflows/uwp.yml/badge.svg"><br><br>
   <img src="Assets/screenshot.png"><br><br>
