@@ -10,7 +10,7 @@
   <Import Project="..\DownloadLib.Shared\DownloadLib.Shared.projitems" Label="Shared" />
 
   <ItemGroup>
-    <PackageReference Include="System.Text.Json" Version="6.0.6" />
+    <PackageReference Include="System.Text.Json" Version="7.0.0" />
   </ItemGroup>
 
   <ItemGroup>
