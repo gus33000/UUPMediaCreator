@@ -312,7 +312,7 @@ namespace DownloadLib
                 {
                     //If the filename was renamed then the download must have been completed successfully,
                     //we just hash to be sure that the file hasn't been tampered
-                    /*if (verifyFiles)
+                    if (verifyFiles)
                     {
                         FileStream fileStreamToHash = File.Open(filePath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite);
                         totalBytesRead = fileStreamToHash.Length;
@@ -338,16 +338,16 @@ namespace DownloadLib
                         }
                     }
                     else
-                    {*/
-                    //At your own risk lol
-                    FileInfo fileInfo = new(filePath);
-                    downloadProgress?.Report(new FileDownloadStatus(downloadFile)
                     {
-                        DownloadedBytes = fileInfo.Length,
-                        FileStatus = FileStatus.Completed
-                    });
-                    return true;
-                    //}
+                        //At your own risk lol
+                        FileInfo fileInfo = new(filePath);
+                        downloadProgress?.Report(new FileDownloadStatus(downloadFile)
+                        {
+                            DownloadedBytes = fileInfo.Length,
+                            FileStatus = FileStatus.Completed
+                        });
+                        return true;
+                    }
                 }
 
                 //Before we need to create a directory.
