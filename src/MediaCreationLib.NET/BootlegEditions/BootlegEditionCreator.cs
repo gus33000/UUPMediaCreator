@@ -246,6 +246,13 @@ namespace MediaCreationLib.NET.BootlegEditions
             string productinifilepath = Path.Combine(MediaPath, "sources", "product.ini");
 
             FileIniDataParser parser = new();
+
+            parser.Parser.Configuration.AllowDuplicateKeys = true;
+            parser.Parser.Configuration.AllowDuplicateSections = true;
+            parser.Parser.Configuration.AllowKeysWithoutSection = true;
+            parser.Parser.Configuration.OverrideDuplicateKeys = true;
+            parser.Parser.Configuration.ConcatenateDuplicateKeys = false;
+
             IniData data = parser.ReadFile(productinifilepath);
 
             string serial = data["cmi"].First(x => string.Equals(x.KeyName, EditionID, StringComparison.CurrentCultureIgnoreCase)).Value;
