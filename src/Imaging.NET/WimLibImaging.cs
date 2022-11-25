@@ -21,7 +21,6 @@
  */
 using ManagedWimLib;
 using Microsoft.Wim;
-using Microsoft.Wim;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;

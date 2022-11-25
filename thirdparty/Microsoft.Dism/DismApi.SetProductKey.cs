@@ -2,7 +2,6 @@
 //
 // Licensed under the MIT license.
 
-using Microsoft.Dism;
 using System.Runtime.InteropServices;
 
 namespace Microsoft.Dism

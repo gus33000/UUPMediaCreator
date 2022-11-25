@@ -46,7 +46,7 @@ namespace Microsoft.Dism
             /// <summary>
             /// The architecture of the driver.
             /// </summary>
-            public UInt16 Architecture;
+            public ushort Architecture;
 
             /// <summary>
             /// The service name of the driver.

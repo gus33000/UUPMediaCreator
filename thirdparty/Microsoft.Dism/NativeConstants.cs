@@ -1,8 +1,8 @@
-﻿// Copyright (c). All rights reserved.
+﻿
+// Copyright (c). All rights reserved.
 //
 // Licensed under the MIT license.
 
-#pragma warning disable SA1310 // Field names must not contain underscore
 namespace Microsoft.Dism
 {
     public static partial class DismApi
@@ -187,4 +187,3 @@ namespace Microsoft.Dism
         internal const uint CBS_E_NOT_APPLICABLE = 0x800F081E;
     }
 }
-#pragma warning restore SA1310 // Field names must not contain underscore

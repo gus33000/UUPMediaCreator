@@ -40,7 +40,7 @@ namespace Microsoft.Wim
         /// Stores information about an image in the Windows® image (.wim) file.
         /// </summary>
         /// <param name="wimHandle">A <see cref="WimHandle"/> of an image returned by the <see cref="CreateFile"/>, <see cref="LoadImage"/>, or <see cref="CaptureImage"/> methods.</param>
-        /// <param name="imageInfoXml">A <see cref="String"/> object that contains information about the volume image.</param>
+        /// <param name="imageInfoXml">A <see cref="string"/> object that contains information about the volume image.</param>
         /// <exception cref="ArgumentNullException"><paramref name="wimHandle"/> or <paramref name="imageInfoXml"/> is null.</exception>
         /// <exception cref="Win32Exception">The Windows® Imaging API reported a failure.</exception>
         /// <remarks>If the wimHandle parameter is from the <see cref="CreateFile"/> method, then the XML data must be enclosed by &lt;WIM&gt;&lt;/WIM&gt; tags. If the input handle is from the <see cref="LoadImage"/> or <see cref="CaptureImage"/> methods, then the XML data must be enclosed by &lt;IMAGE&gt;&lt;/IMAGE&gt; tags.</remarks>

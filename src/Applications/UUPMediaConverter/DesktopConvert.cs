@@ -189,11 +189,9 @@ namespace UUPMediaConverter
         {
             if (GetOperatingSystem() == OSPlatform.Windows)
             {
-#pragma warning disable CA1416 // Validate platform compatibility
                 WindowsIdentity identity = WindowsIdentity.GetCurrent();
                 WindowsPrincipal principal = new(identity);
                 return principal.IsInRole(WindowsBuiltInRole.Administrator);
-#pragma warning restore CA1416 // Validate platform compatibility
             }
             else
             {

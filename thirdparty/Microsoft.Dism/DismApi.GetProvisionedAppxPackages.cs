@@ -18,7 +18,7 @@ namespace Microsoft.Dism
         /// <exception cref="DismRebootRequiredException">When the operation requires a reboot to complete.</exception>
         public static DismAppxPackageCollection GetProvisionedAppxPackages(DismSession session)
         {
-            int hresult = NativeMethods._DismGetProvisionedAppxPackages(session, out IntPtr appxPackagesPtr, out UInt32 appxPackagesCount);
+            int hresult = NativeMethods._DismGetProvisionedAppxPackages(session, out IntPtr appxPackagesPtr, out uint appxPackagesCount);
 
             try
             {
@@ -43,7 +43,7 @@ namespace Microsoft.Dism
             /// <returns>Returns S_OK on success.</returns>
             [DllImport(DismDllName, CharSet = DismCharacterSet)]
             [return: MarshalAs(UnmanagedType.Error)]
-            public static extern int _DismGetProvisionedAppxPackages(DismSession session, out IntPtr packageBufPtr, out UInt32 packageCount);
+            public static extern int _DismGetProvisionedAppxPackages(DismSession session, out IntPtr packageBufPtr, out uint packageCount);
         }
     }
 }

@@ -61,7 +61,7 @@ namespace Microsoft.Wim
             }
 
             // Call the native function
-            if (!WimgApi.NativeMethods.WIMExportImage(imageHandle, wimHandle, (UInt32)options))
+            if (!WimgApi.NativeMethods.WIMExportImage(imageHandle, wimHandle, (uint)options))
             {
                 // Throw a Win32Exception based on the last error code
                 throw new Win32Exception();
@@ -91,7 +91,7 @@ namespace Microsoft.Wim
             /// </remarks>
             [DllImport(WimgApiDllName, CallingConvention = WimgApiCallingConvention, CharSet = WimgApiCharSet, SetLastError = true)]
             [return: MarshalAs(UnmanagedType.Bool)]
-            public static extern bool WIMExportImage(WimHandle hImage, WimHandle hWim, UInt32 dwFlags);
+            public static extern bool WIMExportImage(WimHandle hImage, WimHandle hWim, uint dwFlags);
         }
     }
 }

@@ -29,17 +29,17 @@ namespace Microsoft.Dism
             /// <summary>
             /// The size of the DismWimCustomizedInfo structure.
             /// </summary>
-            public UInt32 Size;
+            public uint Size;
 
             /// <summary>
             /// The number of directories in the image.
             /// </summary>
-            public UInt32 DirectoryCount;
+            public uint DirectoryCount;
 
             /// <summary>
             /// The number of files in the image.
             /// </summary>
-            public UInt32 FileCount;
+            public uint FileCount;
 
             /// <summary>
             /// The time that the image file was created.

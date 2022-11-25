@@ -11,7 +11,7 @@ namespace Microsoft.Dism
         /// <summary>
         /// Used to lock when initializing or shutting down.
         /// </summary>
-        private static readonly object InitializeShutDownLock = new object();
+        private static readonly object InitializeShutDownLock = new();
 
         /// <summary>
         /// Used to keep track if DismApi has been initialized.

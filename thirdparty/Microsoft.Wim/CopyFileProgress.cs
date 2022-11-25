@@ -213,7 +213,7 @@ namespace Microsoft.Wim
                     PercentComplete = percentComplete;
 
                     // Calculate the estimated time remaining in seconds
-                    EstimatedTimeRemaining = TimeSpan.FromSeconds(((DateTime.Now - _timeStarted).TotalSeconds / totalBytesTransferred) * (totalFileSize - totalBytesTransferred));
+                    EstimatedTimeRemaining = TimeSpan.FromSeconds((DateTime.Now - _timeStarted).TotalSeconds / totalBytesTransferred * (totalFileSize - totalBytesTransferred));
 
                     // Execute the user's callback method
                     return _progressCallback(this, _userData);

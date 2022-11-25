@@ -252,7 +252,7 @@ namespace Microsoft.Wim
             Param1 = Marshal.PtrToStringUni(wParam);
 
             // See if the last character is the path separator
-            if (Param1 != null && Param1[Param1.Length - 1] == System.IO.Path.DirectorySeparatorChar)
+            if (Param1 != null && Param1[^1] == System.IO.Path.DirectorySeparatorChar)
             {
                 // Remove the last character
                 Param1 = Param1.Remove(Param1.Length - 1);

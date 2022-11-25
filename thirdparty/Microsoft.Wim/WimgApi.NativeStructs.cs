@@ -3,7 +3,6 @@
 // Licensed under the MIT license.
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -24,13 +23,11 @@ namespace Microsoft.Wim
             /// <summary>
             /// The low-order part of the file time.
             /// </summary>
-            [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1307:AccessibleFieldsMustBeginWithUpperCaseLetter", Justification = "Reviewed.")]
             public DWORD dwLowDateTime;
 
             /// <summary>
             /// The high-order part of the file time.
             /// </summary>
-            [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1307:AccessibleFieldsMustBeginWithUpperCaseLetter", Justification = "Reviewed.")]
             public DWORD dwHighDateTime;
 
             /// <summary>
@@ -75,7 +72,7 @@ namespace Microsoft.Wim
             public DateTime ToDateTime()
             {
                 // Convert the file time to a long and then to a DateTime
-                return DateTime.FromFileTimeUtc((long)dwHighDateTime << 32 | dwLowDateTime);
+                return DateTime.FromFileTimeUtc(((long)dwHighDateTime << 32) | dwLowDateTime);
             }
 
             /// <summary>

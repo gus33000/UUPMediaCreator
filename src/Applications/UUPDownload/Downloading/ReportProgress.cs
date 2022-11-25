@@ -26,7 +26,7 @@ using System.Threading;
 
 namespace UUPDownload.Downloading
 {
-    public class ReportProgress : IProgress<GeneralDownloadProgress>
+    public class ReportProgress : IProgress<GeneralDownloadProgress>, IDisposable
     {
         private readonly Dictionary<string, FileStatus> files = new();
 
@@ -117,6 +117,11 @@ namespace UUPDownload.Downloading
             }
 
             mutex.ReleaseMutex();
+        }
+
+        public void Dispose()
+        {
+            throw new NotImplementedException();
         }
     }
 }

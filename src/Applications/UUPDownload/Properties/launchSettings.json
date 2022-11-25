@@ -2,7 +2,7 @@
   "profiles": {
     "UUPDownload": {
       "commandName": "Project",
-      "commandLineArgs": "-s Professional -v 10.0.19043.1 -r External -b Dev -c vb_release -t arm64 -l en-us -p Professional"
+      "commandLineArgs": "-s Professional -v 10.0.22621.1 -r External -b Dev -c ni_release -t arm64 -z Test"
     }
   }
 }
