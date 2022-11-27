@@ -28,6 +28,7 @@ using Microsoft.Wim;
 using System;
 using System.IO;
 using System.Linq;
+using System.Text;
 using UUPMediaCreator.InterCommunication;
 
 namespace MediaCreationLib.NET.BootlegEditions
@@ -245,6 +246,11 @@ namespace MediaCreationLib.NET.BootlegEditions
             progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, "Getting serial for " + EditionID);
             string productinifilepath = Path.Combine(MediaPath, "sources", "product.ini");
 
+            // .......How?
+            string productIni = File.ReadAllText(productinifilepath).Replace("=Value=", "=");
+            using Stream productIniStream = new MemoryStream(Encoding.UTF8.GetBytes(productIni));
+            using StreamReader productIniStreamReader = new(productIniStream);
+
             FileIniDataParser parser = new();
 
             parser.Parser.Configuration.AllowDuplicateKeys = true;
@@ -253,7 +259,7 @@ namespace MediaCreationLib.NET.BootlegEditions
             parser.Parser.Configuration.OverrideDuplicateKeys = true;
             parser.Parser.Configuration.ConcatenateDuplicateKeys = false;
 
-            IniData data = parser.ReadFile(productinifilepath);
+            IniData data = parser.ReadData(productIniStreamReader);
 
             string serial = data["cmi"].First(x => string.Equals(x.KeyName, EditionID, StringComparison.CurrentCultureIgnoreCase)).Value;
             progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, "Serial: " + serial);
