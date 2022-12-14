@@ -143,7 +143,7 @@
       <Version>6.2.14</Version>
     </PackageReference>
     <PackageReference Include="System.Text.Json">
-      <Version>7.0.0</Version>
+      <Version>7.0.1</Version>
     </PackageReference>
   </ItemGroup>
   <Import Project="..\DownloadLib.Shared\DownloadLib.Shared.projitems" Label="Shared" />
