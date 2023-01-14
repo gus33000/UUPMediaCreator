@@ -76,6 +76,10 @@ UUPDownload might be a little too complicated to use for some people. For refere
 
 **TIP 2:** You can append ```-l [Language to download]``` to get the files needed only for a specific language
 
+### Important
+
+The ```-v``` is __not__ used to specify which version of Windows you want to download! The parameters used by UUPDownload above are used to tell Windows Update **which** version of Windows you are currently running. Therefore, the ```-v``` parameter is used to tell Windows Update your current version of Windows. You will never get versions lower than the value specified in ```-v``` and some requests may also never get you the version specified in ```-v``` but only newer. If, however, you want to download a very specific version using ```-v``` __then__ you must use the -y option to tell Windows Update you only want this version.
+
 ## Contributing
 
 You are free to contribute to this project, in fact we would welcome any form of help. But please keep in mind the following points if you do:
