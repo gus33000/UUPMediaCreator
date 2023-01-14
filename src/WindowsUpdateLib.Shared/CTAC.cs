@@ -250,8 +250,10 @@ namespace WindowsUpdateLib
         XboxERAOS = 0x000000C3,
         XboxDurangoHostOS = 0x000000C4,
         XboxScarlettHostOS = 0x000000C5,
+        XboxKeystone = 0x000000C6,
         AzureStackHCIServerCore = 0x00000196,
-        TurbineServer = 0x00000197
+        DatacenterServerAzureEdition = 0x00000197,
+        DatacenterServerCoreAzureEdition = 0x00000198
     }
 
     public class CTAC
@@ -358,13 +360,13 @@ namespace WindowsUpdateLib
                                     "HidOverGattReg=C:\\WINDOWS\\System32\\DriverStore\\FileRepository\\hidbthle.inf_amd64_0fc6b7cd4ccbc55c\\Microsoft.Bluetooth.Profiles.HidOverGatt.dll&" +
                                     "AppVer=0.0.0.0&" +
                                     "IsAutopilotRegistered=0&" +
-                                    "ProcessorIdentifier=GenuineIntel Family 23 Model 1 Stepping 1&" +
+                                    "ProcessorIdentifier=Intel64 Family 6 Model 151 Stepping 2&" +
                                     "OEMModel=RM-1085_1045&" +
                                     "ProcessorManufacturer=GenuineIntel&" +
                                     "InstallDate=1577722757&" +
                                     "OEMModelBaseBoard=OEM Board Name&" +
                                     $"BranchReadinessLevel={BranchReadinessLevel}&" +
-                                    "DataExpDateEpoch_20H1=0&" +
+                                    "DataExpDateEpoch_20H1=1593425114&" +
                                     "IsCloudDomainJoined=0&" +
                                     "Bios=2019&" +
                                     "DchuAmdGrfxVen=4098&" +
@@ -382,7 +384,7 @@ namespace WindowsUpdateLib
                                     "InstallLanguage=en-US&" +
                                     "OEMName_Uncleaned=MICROSOFTMDG&" +
                                     $"InstallationType={InstallType}&" +
-                                    "AttrDataVer=125&" +
+                                    "AttrDataVer=177&" +
                                     "IsEdgeWithChromiumInstalled=1&" +
                                     "TimestampEpochString_20H1=1593425114&" +
                                     $"OSVersion={ReportingVersion}&" +
@@ -391,11 +393,11 @@ namespace WindowsUpdateLib
                                     $"FlightContent={content}&" +
                                     "ActivationChannel=Retail&" +
                                     "Steam=URL:steam protocol&" +
-                                    "Free=8to16&" +
+                                    "Free=gt64&" +
                                     "TencentReg=79 d0 01 d7 9f 54 d5 01&" +
                                     "FirmwareVersion=7704&" +
                                     "DchuAmdGrfxExists=1&" +
-                                    "SdbVer_20H1=2340&" +
+                                    "SdbVer_20H1=2000000000&" +
                                     "UpgEx_CO21H2=Green&" +
                                     //$"OSArchitecture={MachineType.ToString().ToUpper()}&" +
                                     $"OSArchitecture=AMD64&" +
@@ -403,9 +405,49 @@ namespace WindowsUpdateLib
                                     $"ReleaseType={ReleaseType}&" +
                                     "UpdateManagementGroup=2&" +
                                     "MobileOperatorCommercialized=000-88&" +
-                                    "PhoneTargetingName=Lumia 950 XL";
+                                    "PhoneTargetingName=Lumia 950 XL&" +
+                                    "AllowInPlaceUpgrade=1&" +
+                                    "AllowUpgradesWithUnsupportedTPMOrCPU=1&" +
+                                    "CloudPBR=1&" +
+                                    "DataExpDateEpoch_19H1=1593425114&" +
+                                    "DataExpDateEpoch_21H1=1593425114&" +
+                                    "DataExpDateEpoch_21H2=1593425114&" +
+                                    "DataExpDateEpoch_CO21H2=1593425114&" +
+                                    "DataExpDateEpoch_CO21H2Setup=1593425114&" +
+                                    "DataVer_RS5=2000000000&" +
+                                    "DUScan=1&" +
+                                    "EKB19H2InstallCount=1&" +
+                                    "EKB19H2InstallTimeEpoch=1255000000&" +
+                                    "GenTelRunTimestamp_19H1=1593425114&" +
+                                    "GStatus_19H1=2&" +
+                                    "GStatus_19H1Setup=2&" +
+                                    "GStatus_20H1Setup=2&" +
+                                    "GStatus_21H2=2&" +
+                                    "GStatus_CO21H2=2&" +
+                                    "GStatus_CO21H2Setup=2&" +
+                                    "GStatus_RS5=2&" +
+                                    "MediaBranch=&" +
+                                    "ProcessorModel=12th Gen Intel(R) Core(TM) i9-12900K&" +
+                                    "SdbVer_19H1=2000000000&" +
+                                    "SecureBootCapable=1&" +
+                                    "TimestampEpochString_19H1=1593425114&" +
+                                    "TimestampEpochString_21H1=1593425114&" +
+                                    "TimestampEpochString_21H2=1593425114&" +
+                                    "TimestampEpochString_CO21H2=1593425114&" +
+                                    "TimestampEpochString_CO21H2Setup=1593425114&" +
+                                    "TPMVersion=2&" +
+                                    "UpdateOfferedDays=0&" +
+                                    "UpgEx_19H1=Green&" +
+                                    "UpgEx_21H1=Green&" +
+                                    "UpgEx_21H2=Green&" +
+                                    "UpgEx_NI22H2=Green&" +
+                                    "UpgEx_RS5=Green&" +
+                                    "UpgradeEligible=1&" +
+                                    "Version_RS5=2000000000&" +
+                                    $"IsRetailOS={FlightRing == "Retail"}&" +
+                                    $"MediaVersion={ReportingVersion}";
 
-            if (ReportingSku is OSSkuId.EnterpriseS or OSSkuId.EnterpriseSN)
+            if (ReportingSku is OSSkuId.EnterpriseS or OSSkuId.EnterpriseSN || ReportingSku.ToString().Contains("Server", StringComparison.InvariantCultureIgnoreCase))
             {
                 DeviceAttributes += "&BlockFeatureUpdates=1";
             }

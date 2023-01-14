@@ -2,7 +2,7 @@
   "profiles": {
     "UUPDownload": {
       "commandName": "Project",
-      "commandLineArgs": "-s Professional -v 10.0.22621.1 -r External -b Dev -c ni_release -t arm64 -z Test"
+      "commandLineArgs": "-s DatacenterServer -v 10.0.20348.1 -r Retail -b Retail -c fe_release -t amd64 -l en-US"
     }
   }
 }

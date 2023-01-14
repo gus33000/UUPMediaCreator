@@ -1289,6 +1289,11 @@ namespace WindowsUpdateLib
 
             [XmlAttribute(AttributeName = "PatchingType")]
             public string PatchingType { get; set; }
+
+            public override string ToString()
+            {
+                return !string.IsNullOrEmpty(FileName) ? (PatchingType + ":" + FileName) : base.ToString();
+            }
         }
 
         [XmlRoot(ElementName = "Files")]
@@ -1306,6 +1311,11 @@ namespace WindowsUpdateLib
 
             [XmlAttribute(AttributeName = "MainPackage")]
             public string MainPackage { get; set; }
+
+            public override string ToString()
+            {
+                return PackageFileName ?? base.ToString();
+            }
         }
     }
     #endregion XML Objects
