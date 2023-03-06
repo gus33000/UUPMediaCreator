@@ -71,7 +71,7 @@ UUPDownload might be a little too complicated to use for some people. For refere
 | Dev (Desktop)             | -s Professional -v 10.0.19043.1 -r External -b Dev -c vb_release -t [your architecture] |
 | Dev (Holographic)         | -s Holographic -v 10.0.19043.1 -r External -b Dev -c vb_release -t [your architecture] |
 | Dev (Team)                | -s PPIPro -v 10.0.19043.1 -r External -b Dev -c vb_release -t [your architecture] |
-| Canary (Desktop)          | -s Professional -v 10.0.22621.1 -r External -b Canary -c ni_release -t [your architecture] |
+| Canary (Desktop)          | -s Professional -v 10.0.22621.1 -r External -b CanaryChannel -c ni_release -t [your architecture] |
 
 **TIP 1:** You can append ```-e [Edition to download]``` to get the files needed only for a specific edition
 
