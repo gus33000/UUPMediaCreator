@@ -498,79 +498,7 @@ namespace WindowsUpdateLib
             Products = "";
             if (!IsStore)
             {
-                //TODO: BSP support
                 Products = $"PN={ReportingPFN}.{MachineType}&Branch={CurrentBranch}&PrimaryOSProduct=1&Repairable=1&V={ReportingVersion};";
-
-                /*DeviceAttributes = "E:IsContainerMgrInstalled=1&" +
-                                    "FlightRing=External&" +
-                                    "TelemetryLevel=3&" +
-                                    "HidOverGattReg=C:\\WINDOWS\\System32\\DriverStore\\FileRepository\\hidbthle.inf_amd64_0fc6b7cd4ccbc55c\\Microsoft.Bluetooth.Profiles.HidOverGatt.dll&" +
-                                    "AppVer=10.0.22624.1000&" +
-                                    "IsAutopilotRegistered=0&" +
-                                    "ProcessorIdentifier=GenuineIntel Family 23 Model 1 Stepping 1&" +
-                                    "OEMModel=System Product Name&" +
-                                    "ProcessorManufacturer=GenuineIntel&" +
-                                    "InstallDate=1577722757&" +
-                                    "OEMModelBaseBoard=CROSSHAIR VI HERO&" +
-                                    "BranchReadinessLevel=CB&" +
-                                    "DataExpDateEpoch_20H1=0&" +
-                                    "IsCloudDomainJoined=0&" +
-                                    "Bios=2019&" +
-                                    "DchuAmdGrfxVen=4098&" +
-                                    "IsDeviceRetailDemo=0&" +
-                                    "FlightingBranchName=&" +
-                                    "OSUILocale=en-US&" +
-                                    "DeviceFamily=Windows.Desktop&" +
-                                    "UpgEx_20H1=Green&" +
-                                    "WuClientVer=10.0.22624.1000&" +
-                                    "IsFlightingEnabled=1&" +
-                                    "OSSkuId=48&" +
-                                    "GStatus_20H1=2&" +
-                                    "App=WU_OS&" +
-                                    "CurrentBranch=CB&" +
-                                    "InstallLanguage=en-US&" +
-                                    "OEMName_Uncleaned=System manufacturer&" +
-                                    "InstallationType=Client&" +
-                                    "AttrDataVer=98&" +
-                                    "IsEdgeWithChromiumInstalled=1&" +
-                                    "TimestampEpochString_20H1=1593425114&" +
-                                    "OSVersion=10.0.22624.1000&" +
-                                    "TencentType=1&" +
-                                    "FlightContent=Mainline&" +
-                                    "Steam=URL%3Asteam%20protocol&" +
-                                    "Free=8to16&" +
-                                    "TencentReg=79 d0 01 d7 9f 54 d5 01&" +
-                                    "FirmwareVersion=7704&" +
-                                    "DchuAmdGrfxExists=1&" +
-                                    "SdbVer_20H1=2340&" +
-                                    "OSArchitecture=ARM64&" +
-                                    "DefaultUserRegion=244&" +
-                                    "UpdateManagementGroup=2";
-
-                Products = "PN=Client.OS.rs2.arm64&Branch=ni_release&PrimaryOSProduct=1&Repairable=1&V=10.0.22624.742;PN={a7271695-80b5-56b3-8e50-56c6ce883b07}_arm64&V=0.0.0.0&Source=SMBIOS;";*/
-
-                // Pro 9 5G
-                //Products = Products.Replace("a7271695-80b5-56b3-8e50-56c6ce883b07", "193e21e0-317c-55e2-9223-4ab7600bba85");
-
-                // Windows Dev Kit 2023
-                //Products = Products.Replace("a7271695-80b5-56b3-8e50-56c6ce883b07", "813677fa-6d11-5756-a44d-dde0f552d3f6");
-
-                //Products = Products.Replace("a7271695-80b5-56b3-8e50-56c6ce883b07", "7d34aa0c-8bc4-54e3-833a-a065c3d3bec4");
-                //Products = Products.Replace("a7271695-80b5-56b3-8e50-56c6ce883b07", "fb5c3077-39d5-5a44-97ce-2d3be5f6bfec");
-                //Products = Products.Replace("a7271695-80b5-56b3-8e50-56c6ce883b07", "82e2ebed-8ade-5aec-ad6f-d040ef549d29");
-                //Products = Products.Replace("a7271695-80b5-56b3-8e50-56c6ce883b07", "149b145b-cd2b-5bfc-b020-675da0db8b47");
-                //Products = Products.Replace("a7271695-80b5-56b3-8e50-56c6ce883b07", "7fd0dfdb-82cf-5e70-8429-6edc7df8a186");
-                // Pro X WiFi
-                //Products = Products.Replace("a7271695-80b5-56b3-8e50-56c6ce883b07", "cdf510a8-d41c-54bf-b2c5-61ba10957019");
-                // Pro X 2
-                //Products = Products.Replace("a7271695-80b5-56b3-8e50-56c6ce883b07", "543c4fc6-a4b0-58fa-a7bc-010641eb42a4");
-                // Pro X Special E
-                //Products = Products.Replace("a7271695-80b5-56b3-8e50-56c6ce883b07", "9b89c669-ab63-5599-99ac-00b1ef2e2806");
-                // Pro X
-                //Products = Products.Replace("a7271695-80b5-56b3-8e50-56c6ce883b07", "1dc8ec42-9eeb-51b1-9490-0cb33bd7d23a");
-                //Products = Products.Replace("a7271695-80b5-56b3-8e50-56c6ce883b07", "95d8ecf9-e4aa-5ef8-be03-c531d372b3d0");
-                //Products = Products.Replace("a7271695-80b5-56b3-8e50-56c6ce883b07", "7e7007ac-603c-55ef-bb77-3548784b9578");
-                //Products = Products.Replace("a7271695-80b5-56b3-8e50-56c6ce883b07", "82e2ebed-8ade-5aec-ad6f-d040ef549d29");
             }
 
             this.SyncCurrentVersionOnly = SyncCurrentVersionOnly;

@@ -198,6 +198,16 @@ namespace UUPDownload.DownloadRequest
             }
             else
             {
+                Logging.Log($"Found {data.Count()} update(s):");
+
+                for (int i = 0; i < data.Count(); i++)
+                {
+                    UpdateData update = data.ElementAt(i);
+
+                    Logging.Log($"{i}: Title: {update.Xml.LocalizedProperties.Title}");
+                    Logging.Log($"{i}: Description: {update.Xml.LocalizedProperties.Description}");
+                }
+
                 foreach (UpdateData update in data)
                 {
                     Logging.Log("Title: " + update.Xml.LocalizedProperties.Title);
