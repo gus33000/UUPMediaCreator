@@ -43,12 +43,13 @@ namespace UUPDownload
                 { new CTAC(osSkuId, "10.0.19041.200", machineType, "Retail", "", "CB", "vb_release", "Production", true, false), "Retail (VB)"},
                 { new CTAC(osSkuId, "10.0.19041.84", machineType, "Retail", "", "CB", "vb_release", "Production", false), "Retail" },
                 { new CTAC(osSkuId, "10.0.19041.200", machineType, "External", "ReleasePreview", "CB", "vb_release", "Production", false, false), "Release Preview"},
-                { new CTAC(osSkuId, "10.0.19041.200", machineType, "External", "Beta", "CB", "vb_release", "Production", false, false), "Beta "},
+                { new CTAC(osSkuId, "10.0.19041.200", machineType, "External", "Beta", "CB", "vb_release", "Production", false, false), "Beta"},
                 { new CTAC(osSkuId, "10.0.19041.200", machineType, "External", "Dev", "CB", "vb_release", "Production", false, false), "Dev"},
                 { new CTAC(osSkuId, "10.0.19041.200", machineType, "RP", "External", "CB", "vb_release", "Production", false, false, "Active"), "Insider Release Preview"},
                 { new CTAC(osSkuId, "10.0.19041.200", machineType, "WIS", "External", "CB", "vb_release", "Production", false, false, "Active"), "Insider Slow"},
                 { new CTAC(osSkuId, "10.0.19041.200", machineType, "WIF", "External", "CB", "vb_release", "Production", false, false, "Active"), "Insider Fast"},
                 { new CTAC(osSkuId, "10.0.19041.200", machineType, "WIF", "External", "CB", "vb_release", "Production", false, false, "Skip"), "Skip Ahead"},
+                { new CTAC(osSkuId, "10.0.19041.200", machineType, "External", "CanaryChannel", "CB", "vb_release", "Production", false, false), "Canary"},
             };
         }
 
@@ -59,7 +60,19 @@ namespace UUPDownload
 
         private static async Task GetRingBuilds(GetBuildsOptions opts)
         {
-            Dictionary<CTAC, string> CTACs = GetRingCTACs(opts.MachineType, opts.ReportingSku);
+            Dictionary<CTAC, string> CTACs = new();
+
+            if (string.IsNullOrWhiteSpace(opts.TargetingAttribute))
+            {
+                CTACs = GetRingCTACs(opts.MachineType, opts.ReportingSku);
+            }
+            else
+            {
+                CTACs = GetRingCTACs(opts.MachineType, opts.ReportingSku)
+                    .Where(c => string.Equals(c.Value, opts.TargetingAttribute, StringComparison.Ordinal))
+                    .ToDictionary(c => c.Key, c => c.Value);
+            }
+
             foreach (KeyValuePair<CTAC, string> CTAC in CTACs)
             {
                 CTAC ctac = CTAC.Key;
