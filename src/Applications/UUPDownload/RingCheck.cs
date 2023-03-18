@@ -43,7 +43,7 @@ namespace UUPDownload
                 { new CTAC(osSkuId, "10.0.19041.200", machineType, "Retail", "", "CB", "vb_release", "Production", true, false), "Retail (VB)"},
                 { new CTAC(osSkuId, "10.0.19041.84", machineType, "Retail", "", "CB", "vb_release", "Production", false), "Retail" },
                 { new CTAC(osSkuId, "10.0.19041.200", machineType, "External", "ReleasePreview", "CB", "vb_release", "Production", false, false), "Release Preview"},
-                { new CTAC(osSkuId, "10.0.19041.200", machineType, "External", "Beta", "CB", "vb_release", "Production", false, false), "Beta "},
+                { new CTAC(osSkuId, "10.0.19041.200", machineType, "External", "Beta", "CB", "vb_release", "Production", false, false), "Beta"},
                 { new CTAC(osSkuId, "10.0.19041.200", machineType, "External", "Dev", "CB", "vb_release", "Production", false, false), "Dev"},
                 { new CTAC(osSkuId, "10.0.19041.200", machineType, "RP", "External", "CB", "vb_release", "Production", false, false, "Active"), "Insider Release Preview"},
                 { new CTAC(osSkuId, "10.0.19041.200", machineType, "WIS", "External", "CB", "vb_release", "Production", false, false, "Active"), "Insider Slow"},
