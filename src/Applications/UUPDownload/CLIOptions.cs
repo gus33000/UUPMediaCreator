@@ -115,5 +115,8 @@ namespace UUPDownload
 
         [Option('p', "password", HelpText = "Password for the Windows Insider account to use to generate authorization tokens (If 2FA, must be generated app password) (Optional)", Required = false, Default = "")]
         public string Password { get; set; }
+
+        [Option("preview-targeting-attribute", HelpText = "The name of the set of targeting attributes to use. (Optional, Preview)", Required = false, Default = "")]
+        public string TargetingAttribute { get; set; }
     }
 }

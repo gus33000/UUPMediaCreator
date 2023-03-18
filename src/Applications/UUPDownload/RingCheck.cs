@@ -60,7 +60,19 @@ namespace UUPDownload
 
         private static async Task GetRingBuilds(GetBuildsOptions opts)
         {
-            Dictionary<CTAC, string> CTACs = GetRingCTACs(opts.MachineType, opts.ReportingSku);
+            Dictionary<CTAC, string> CTACs = new();
+
+            if (string.IsNullOrWhiteSpace(opts.TargetingAttribute))
+            {
+                CTACs = GetRingCTACs(opts.MachineType, opts.ReportingSku);
+            }
+            else
+            {
+                CTACs = GetRingCTACs(opts.MachineType, opts.ReportingSku)
+                    .Where(c => string.Equals(c.Value, opts.TargetingAttribute, StringComparison.Ordinal))
+                    .ToDictionary(c => c.Key, c => c.Value);
+            }
+
             foreach (KeyValuePair<CTAC, string> CTAC in CTACs)
             {
                 CTAC ctac = CTAC.Key;
