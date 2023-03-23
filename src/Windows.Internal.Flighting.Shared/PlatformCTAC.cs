@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using Windows.Data.Xml.Dom;
-using WinRT;
 
 namespace Windows.Internal.Flighting
 {
     public class PlatformCTAC : IEquatable<PlatformCTAC>
     {
-        private static ICommonTargetingAttributesFactory CommonTargetingAttributesFactory;
-        private static IClientAttributes ClientAttributes;
+        private static ClientAttributes ClientAttributes;
 
         public string JSON
         {
@@ -40,24 +36,12 @@ namespace Windows.Internal.Flighting
             this.ApplicationIdentifier = ApplicationIdentifier;
             this.ApplicationVersion = ApplicationVersion;
 
-            CommonTargetingAttributesFactory = GetCommonTargetingAttributesFactory();
             ClientAttributes = GetCurrentClientAttributes();
         }
 
-        private static ICommonTargetingAttributesFactory GetCommonTargetingAttributesFactory()
+        private ClientAttributes GetCurrentClientAttributes()
         {
-            Guid guid = typeof(ICommonTargetingAttributesFactory).GUID;
-
-            ThrowIfFailed(NativeMethods.GetActivationFactoryByPCWSTR("Windows.Internal.Flighting.ClientAttributes", ref guid, out IntPtr commonTargetingAttributesFactoryPtr));
-
-            return commonTargetingAttributesFactoryPtr.As<ICommonTargetingAttributesFactory>();
-        }
-
-        private IClientAttributes GetCurrentClientAttributes()
-        {
-            ThrowIfFailed(CommonTargetingAttributesFactory.GetClientAttributesForApp(ApplicationIdentifier, ApplicationVersion, out IClientAttributes clientAttributes));
-
-            return clientAttributes;
+            return new ClientAttributes(ApplicationIdentifier, ApplicationVersion);
         }
 
         private static void ThrowIfFailed(int hResult)

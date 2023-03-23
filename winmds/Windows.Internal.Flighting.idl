@@ -1,0 +1,38 @@
+import "windowscontracts.idl";
+import "Windows.Foundation.idl";
+
+namespace Windows.Internal.Flighting
+{
+	[contractversion(1.0)]
+	apicontract FlightingContract
+	{
+	}
+
+	[contract(Windows.Internal.Flighting.FlightingContract, 1.0)]
+	[exclusiveto(Windows.Internal.Flighting.ClientAttributes)]
+	[uuid(0723a53d-52e6-453b-9361-7826398f0111)]
+	interface IClientAttributes : IInspectable
+	{
+        Int32 ToJsonString(out String JsonString);
+        Int32 ToUriQueryString(out String UriQueryString);
+		Windows.Foundation.Collections.IMapView<String, Int32> AttributeErrors { get; };
+	}
+
+	[contract(Windows.Internal.Flighting.FlightingContract, 1.0)]
+	[exclusiveto(Windows.Internal.Flighting.ClientAttributes)]
+	[uuid(41845433-1668-4264-8a63-315eb82ab0d6)]
+	interface IClientAttributesFactory : IInspectable
+	{
+        HRESULT GetClientAttributesForApp([in] HSTRING ApplicationId, [in] HSTRING ApplicationVersion, [out] [retval] Windows.Internal.Flighting.ClientAttributes** ClientAttributes);
+        HRESULT GetClientAttributesFromList([in] Windows.Foundation.Collections.IIterable<HSTRING>* AttributeList, [out] [retval] Windows.Internal.Flighting.ClientAttributes** ClientAttributes);
+        HRESULT GetClientAttributesForAppEx([in] HSTRING ApplicationId, [in] HSTRING ApplicationVersion, [in] INT32 ClientAttributeFlags, [out] [retval] Windows.Internal.Flighting.ClientAttributes** ClientAttributes);
+	}
+
+    [activatable(Windows.Internal.Flighting.IClientAttributesFactory, Windows.Internal.Flighting.FlightingContract, 1.0)]
+    [contract(Windows.Internal.Flighting.FlightingContract, 1.0)]
+    [marshaling_behavior(agile)]
+    runtimeclass ClientAttributes
+    {
+        [default] interface Windows.Internal.Flighting.IClientAttributes;
+    }
+}

@@ -9,8 +9,6 @@
     <Import_RootNamespace>Windows.Internal.Flighting.Shared</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="$(MSBuildThisFileDirectory)IClientAttributes.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ICommonTargetingAttributesFactory.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)NativeMethods.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)PlatformCTAC.cs" />
   </ItemGroup>
