@@ -7,6 +7,7 @@
     <OutputPath>$(SolutionDir)build\$(Platform)\$(Configuration)\WindowsUpdateLib.NET\</OutputPath>
     <IntermediateOutputPath>$(SolutionDir)intermediate\$(Platform)\$(Configuration)\WindowsUpdateLib.NET\</IntermediateOutputPath>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\Cabinet.NET\Cabinet.NET.csproj" />

@@ -10,6 +10,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)BuildFetcher.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ComputerHardwareIDProvider.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Constants.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CorrelationVector.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CTAC.cs" />

@@ -151,6 +151,11 @@ namespace WindowsUpdateLib
                     string buildInfo = firstCompDB.TargetBuildInfo ?? firstCompDB.BuildInfo;
                     string osVersion = firstCompDB.TargetOSVersion ?? firstCompDB.OSVersion;
 
+                    if (buildInfo == null)
+                    {
+                        return result;
+                    }
+
                     string[] splitBI = buildInfo.Split(".");
 
                     result = $"{osVersion} ({splitBI[0]}.{splitBI[3]})";
@@ -287,8 +292,17 @@ namespace WindowsUpdateLib
                         try
                         {
                             byte[] xmlfile = CabinetExtractor.ExtractCabinetFile(file, CabinetExtractor.EnumCabinetFiles(file).First().FileName);
-                            using Stream xmlstream = new MemoryStream(xmlfile);
-                            _ = neutralCompDB.Add(CompDBXmlClass.DeserializeCompDB(xmlstream));
+
+                            try
+                            {
+                                using Stream xmlstream = new MemoryStream(xmlfile);
+                                _ = neutralCompDB.Add(CompDBXmlClass.DeserializeCompDB(xmlstream));
+                            }
+                            catch
+                            {
+                                using Stream xmlstream = new MemoryStream(xmlfile);
+                                _ = neutralCompDB.Add(CompDBXmlClass.DeserializeDeviceManifest(xmlstream));
+                            }
                         }
                         catch { }
                     }
@@ -326,8 +340,17 @@ namespace WindowsUpdateLib
                         update.CachedMetadata = metadataCabTemp;
 
                         byte[] xmlfile = CabinetExtractor.ExtractCabinetFile(update.CachedMetadata, CabinetExtractor.EnumCabinetFiles(update.CachedMetadata).First().FileName);
-                        using Stream xmlstream = new MemoryStream(xmlfile);
-                        _ = neutralCompDB.Add(CompDBXmlClass.DeserializeCompDB(xmlstream));
+                        
+                        try
+                        {
+                            using Stream xmlstream = new MemoryStream(xmlfile);
+                            _ = neutralCompDB.Add(CompDBXmlClass.DeserializeCompDB(xmlstream));
+                        }
+                        catch
+                        {
+                            using Stream xmlstream = new MemoryStream(xmlfile);
+                            _ = neutralCompDB.Add(CompDBXmlClass.DeserializeDeviceManifest(xmlstream));
+                        }
                     }
                     catch { }
                 }

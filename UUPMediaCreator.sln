@@ -89,7 +89,9 @@ Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Windows.Internal.Flighting.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Windows.Internal.Flighting.UWP", "src\Windows.Internal.Flighting.UWP\Windows.Internal.Flighting.UWP.csproj", "{5E445AAB-E495-4771-9E8C-8D06559E247F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Windows.Internal.Flighting.NET", "src\Windows.Internal.Flighting.NET\Windows.Internal.Flighting.NET.csproj", "{88235682-8C4D-436F-969E-012CFC21F6D5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Windows.Internal.Flighting.NET", "src\Windows.Internal.Flighting.NET\Windows.Internal.Flighting.NET.csproj", "{88235682-8C4D-436F-969E-012CFC21F6D5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Playground", "src\Applications\Playground\Playground.csproj", "{572DBD19-B9BF-4C30-8129-3F2E82386DEB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -577,6 +579,22 @@ Global
 		{88235682-8C4D-436F-969E-012CFC21F6D5}.Release|x64.Build.0 = Release|Any CPU
 		{88235682-8C4D-436F-969E-012CFC21F6D5}.Release|x86.ActiveCfg = Release|Any CPU
 		{88235682-8C4D-436F-969E-012CFC21F6D5}.Release|x86.Build.0 = Release|Any CPU
+		{572DBD19-B9BF-4C30-8129-3F2E82386DEB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{572DBD19-B9BF-4C30-8129-3F2E82386DEB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{572DBD19-B9BF-4C30-8129-3F2E82386DEB}.Debug|arm64.ActiveCfg = Debug|Any CPU
+		{572DBD19-B9BF-4C30-8129-3F2E82386DEB}.Debug|arm64.Build.0 = Debug|Any CPU
+		{572DBD19-B9BF-4C30-8129-3F2E82386DEB}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{572DBD19-B9BF-4C30-8129-3F2E82386DEB}.Debug|x64.Build.0 = Debug|Any CPU
+		{572DBD19-B9BF-4C30-8129-3F2E82386DEB}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{572DBD19-B9BF-4C30-8129-3F2E82386DEB}.Debug|x86.Build.0 = Debug|Any CPU
+		{572DBD19-B9BF-4C30-8129-3F2E82386DEB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{572DBD19-B9BF-4C30-8129-3F2E82386DEB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{572DBD19-B9BF-4C30-8129-3F2E82386DEB}.Release|arm64.ActiveCfg = Release|Any CPU
+		{572DBD19-B9BF-4C30-8129-3F2E82386DEB}.Release|arm64.Build.0 = Release|Any CPU
+		{572DBD19-B9BF-4C30-8129-3F2E82386DEB}.Release|x64.ActiveCfg = Release|Any CPU
+		{572DBD19-B9BF-4C30-8129-3F2E82386DEB}.Release|x64.Build.0 = Release|Any CPU
+		{572DBD19-B9BF-4C30-8129-3F2E82386DEB}.Release|x86.ActiveCfg = Release|Any CPU
+		{572DBD19-B9BF-4C30-8129-3F2E82386DEB}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -622,6 +640,7 @@ Global
 		{9B63AD7B-4B69-4037-A23A-7982943B1F00} = {24BB6CC7-870A-4A61-BAC0-E22BF57CE5F4}
 		{5E445AAB-E495-4771-9E8C-8D06559E247F} = {CE03294E-582F-47C6-BAD4-BBFA970FF25D}
 		{88235682-8C4D-436F-969E-012CFC21F6D5} = {335D091D-458E-41C2-A2BB-9F8216A8FA6B}
+		{572DBD19-B9BF-4C30-8129-3F2E82386DEB} = {C4A7DBD6-6FB5-410A-9252-922C7909C82C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {FEE89471-4FE8-4620-991F-4EBAD0F4CFEA}
