@@ -44,5 +44,8 @@ namespace UUPMediaConverter
 
         [Option('c', "compression-format", HelpText = "The compression format to use. Valid values are: XPRESS, LZX, LZMS", Required = false, Default = Common.CompressionType.LZX)]
         public Common.CompressionType Compression { get; set; }
+
+        [Option("no-key-prompt", HelpText = "Use the alternate efisys and cdboot implementations to suppress the 'press any key' prompt", Required = false)]
+        public bool SuppressAnyKeyPrompt { get; set; }
     }
 }

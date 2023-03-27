@@ -375,6 +375,7 @@ namespace MediaCreationLib.NET
             string Edition,
             string LanguageCode,
             bool IntegrateUpdates,
+            bool suppressAnyKeyPrompt,
             Common.CompressionType CompressionType,
             ProgressCallback progressCallback = null,
             string Temp = null)
@@ -417,7 +418,7 @@ namespace MediaCreationLib.NET
                 //
                 // Build installer
                 //
-                result = SetupMediaCreator.CreateSetupMedia(UUPPath, LanguageCode, MediaRootPath, WinREWIMFilePath, CompressionType, CompositionDatabases, tempManager, progressCallback);
+                result = SetupMediaCreator.CreateSetupMedia(UUPPath, LanguageCode, MediaRootPath, WinREWIMFilePath, suppressAnyKeyPrompt, CompressionType, CompositionDatabases, tempManager, progressCallback);
                 if (!result)
                 {
                     error = "An error occurred while creating setup media.";
