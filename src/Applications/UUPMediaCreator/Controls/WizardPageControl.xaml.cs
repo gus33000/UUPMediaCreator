@@ -24,7 +24,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Markup;
 
-namespace UUPMediaCreator.UWP
+namespace UUPMediaCreator
 {
     [ContentProperty(Name = nameof(CastingElement))]
     public sealed partial class WizardPageControl : UserControl

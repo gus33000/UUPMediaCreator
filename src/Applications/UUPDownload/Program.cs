@@ -25,13 +25,13 @@ using System.Diagnostics;
 using System.Net;
 using System.Reflection;
 
-namespace UUPDownload
+namespace UnifiedUpdatePlatform.Media.Download
 {
     internal static class Program
     {
         private static void PrintLogo()
         {
-            Logging.Log($"UUPDownload {Assembly.GetExecutingAssembly().GetName().Version} - Download from the Microsoft Unified Update Platform");
+            Logging.Log($"UnifiedUpdatePlatform.Media.Download {Assembly.GetExecutingAssembly().GetName().Version} - Download from the Microsoft Unified Update Platform");
             Logging.Log("Copyright (c) Gustave Monce and Contributors");
             Logging.Log("https://github.com/gus33000/UUPMediaCreator");
             Logging.Log("");

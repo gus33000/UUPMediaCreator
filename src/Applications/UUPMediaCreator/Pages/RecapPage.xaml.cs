@@ -25,7 +25,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
-namespace UUPMediaCreator.UWP.Pages
+namespace UUPMediaCreator.Pages
 {
     public sealed partial class RecapPage : Page
     {

@@ -20,7 +20,7 @@
  * SOFTWARE.
  */
 using CommandLine;
-using UUPMediaCreator.InterCommunication;
+using UnifiedUpdatePlatform.Common.Messaging;
 
 namespace UUPMediaConverter
 {
@@ -42,7 +42,7 @@ namespace UUPMediaConverter
         [Option('t', "temp-path", HelpText = "The temp path for the tool to use. Defaults to %TEMP%.", Required = false)]
         public string TempPath { get; set; }
 
-        [Option('c', "compression-format", HelpText = "The compression format to use. Valid values are: XPRESS, LZX, LZMS", Required = false, Default = Common.CompressionType.LZX)]
-        public Common.CompressionType Compression { get; set; }
+        [Option('c', "compression-format", HelpText = "The compression format to use. Valid values are: XPRESS, LZX, LZMS", Required = false, Default = UnifiedUpdatePlatform.Common.Messaging.Common.CompressionType.LZX)]
+        public UnifiedUpdatePlatform.Common.Messaging.Common.CompressionType Compression { get; set; }
     }
 }

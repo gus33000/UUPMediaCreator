@@ -130,9 +130,9 @@
       <Project>{8ff9162b-7281-4274-823c-3bb7905508d2}</Project>
       <Name>CompDB.UWP</Name>
     </ProjectReference>
-    <ProjectReference Include="..\WindowsUpdateLib.UWP\WindowsUpdateLib.UWP.csproj">
+    <ProjectReference Include="..\UnifiedUpdatePlatform.Services.WindowsUpdate.UWP\UnifiedUpdatePlatform.Services.WindowsUpdate.UWP.csproj">
       <Project>{8ebd2b3f-31c4-493a-8853-fdbe32097b7e}</Project>
-      <Name>WindowsUpdateLib.UWP</Name>
+      <Name>UnifiedUpdatePlatform.Services.WindowsUpdate.UWP</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

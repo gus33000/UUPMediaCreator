@@ -24,7 +24,7 @@ using Windows.UI.Xaml.Controls;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
-namespace UUPMediaCreator.UWP.Pages
+namespace UUPMediaCreator.Pages
 {
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
@@ -40,15 +40,15 @@ namespace UUPMediaCreator.UWP.Pages
         {
             if (AMD64RadioButton.IsChecked.Value)
             {
-                App.ConversionPlan.MachineType = WindowsUpdateLib.MachineType.amd64;
+                App.ConversionPlan.MachineType = UnifiedUpdatePlatform.Services.WindowsUpdate.MachineType.amd64;
             }
             else if (ARM64RadioButton.IsChecked.Value)
             {
-                App.ConversionPlan.MachineType = WindowsUpdateLib.MachineType.arm64;
+                App.ConversionPlan.MachineType = UnifiedUpdatePlatform.Services.WindowsUpdate.MachineType.arm64;
             }
             else if (X86RadioButton.IsChecked.Value)
             {
-                App.ConversionPlan.MachineType = WindowsUpdateLib.MachineType.x86;
+                App.ConversionPlan.MachineType = UnifiedUpdatePlatform.Services.WindowsUpdate.MachineType.x86;
             }
             _ = Frame.Navigate(typeof(BuildPage));
         }

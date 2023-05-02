@@ -22,15 +22,15 @@
 using System;
 using System.IO;
 using System.Text.Json;
-using UUPMediaCreator.InterCommunication;
+using UnifiedUpdatePlatform.Common.Messaging;
 using Windows.Foundation.Collections;
 using Windows.Storage;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using static UUPMediaCreator.InterCommunication.Common;
+using static UnifiedUpdatePlatform.Common.Messaging.Common;
 
-namespace UUPMediaCreator.UWP.Pages
+namespace UUPMediaCreator.Pages
 {
     public sealed partial class BuildingISOPage : Page
     {
@@ -71,11 +71,11 @@ namespace UUPMediaCreator.UWP.Pages
                 IntegrateUpdates = false
             };
 
-            Common.InterCommunication comm = new() { InterCommunicationType = InterCommunicationType.StartISOConversionProcess, ISOConversion = job };
+            Common.UnifiedUpdatePlatform.Common.Messaging comm = new() { UnifiedUpdatePlatform.Common.MessagingType = UnifiedUpdatePlatform.Common.MessagingType.StartISOConversionProcess, ISOConversion = job };
 
             ValueSet val = new()
             {
-                { "InterCommunication", JsonSerializer.Serialize(comm) }
+                { "UnifiedUpdatePlatform.Common.Messaging", JsonSerializer.Serialize(comm) }
             };
 
             _ = await App.Connection.SendMessageAsync(val);
@@ -84,7 +84,7 @@ namespace UUPMediaCreator.UWP.Pages
         private ProcessPhase lastPhase;
 
         private int prevperc = -1;
-        private Common.ProcessPhase prevphase = ProcessPhase.ReadingMetadata;
+        private UnifiedUpdatePlatform.Common.Messaging.Common.ProcessPhase prevphase = ProcessPhase.ReadingMetadata;
         private string prevop = "";
 
         private void Log(string msg)
@@ -93,7 +93,7 @@ namespace UUPMediaCreator.UWP.Pages
             bw.Flush();
         }
 
-        private void LogInterComm(Common.InterCommunication interCommunication)
+        private void LogInterComm(Common.UnifiedUpdatePlatform.Common.Messaging interCommunication)
         {
             if (interCommunication.ISOConversionProgress.Phase == prevphase && prevperc == interCommunication.ISOConversionProgress.ProgressInPercentage && interCommunication.ISOConversionProgress.SubOperation == prevop)
             {
@@ -117,13 +117,13 @@ namespace UUPMediaCreator.UWP.Pages
         private async void Connection_RequestReceived(Windows.ApplicationModel.AppService.AppServiceConnection sender, Windows.ApplicationModel.AppService.AppServiceRequestReceivedEventArgs args)
         {
             ValueSet message = args.Request.Message;
-            if (message.ContainsKey("InterCommunication"))
+            if (message.ContainsKey("UnifiedUpdatePlatform.Common.Messaging"))
             {
-                Common.InterCommunication interCommunication = JsonSerializer.Deserialize<Common.InterCommunication>(message["InterCommunication"] as string);
+                Common.UnifiedUpdatePlatform.Common.Messaging interCommunication = JsonSerializer.Deserialize<Common.UnifiedUpdatePlatform.Common.Messaging>(message["UnifiedUpdatePlatform.Common.Messaging"] as string);
 
-                switch (interCommunication.InterCommunicationType)
+                switch (interCommunication.UnifiedUpdatePlatform.Common.MessagingType)
                 {
-                    case InterCommunicationType.ReportISOConversionProgress:
+                    case UnifiedUpdatePlatform.Common.MessagingType.ReportISOConversionProgress:
                         {
                             LogInterComm(interCommunication);
 

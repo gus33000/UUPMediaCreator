@@ -24,9 +24,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using WindowsUpdateLib;
+using UnifiedUpdatePlatform.Services.WindowsUpdate;
 
-namespace UUPDownload
+namespace UnifiedUpdatePlatform.Media.Download
 {
     public static class UpdateUtils
     {

@@ -23,10 +23,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using WindowsUpdateLib;
-using WindowsUpdateLib.Shared;
+using UnifiedUpdatePlatform.Services.WindowsUpdate;
+using UnifiedUpdatePlatform.Services.WindowsUpdate.Shared;
 
-namespace UUPDownload
+namespace UnifiedUpdatePlatform.Media.Download
 {
     public static class RingCheck
     {

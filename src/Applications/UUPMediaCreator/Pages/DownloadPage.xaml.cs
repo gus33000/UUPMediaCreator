@@ -27,7 +27,7 @@ using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
-namespace UUPMediaCreator.UWP.Pages
+namespace UUPMediaCreator.Pages
 {
     public sealed partial class DownloadPage : Page, IProgress<GeneralDownloadProgress>
     {

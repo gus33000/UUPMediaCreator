@@ -1,6 +1,6 @@
 {
   "profiles": {
-    "UUPDownload": {
+    "UnifiedUpdatePlatform.Media.Download": {
       "commandName": "Project",
       "commandLineArgs": "-s DatacenterServer -v 10.0.20348.1 -r Retail -b Retail -c fe_release -t amd64 -l en-US"
     }

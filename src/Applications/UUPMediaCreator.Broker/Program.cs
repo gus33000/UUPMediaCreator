@@ -19,7 +19,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-using MediaCreationLib;
+using UnifiedUpdatePlatform.Media.Creator;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -27,7 +27,7 @@ using System.Security.Principal;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
-using UUPMediaCreator.InterCommunication;
+using UnifiedUpdatePlatform.Common.Messaging;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.AppService;
 using Windows.Foundation.Collections;
@@ -152,11 +152,11 @@ namespace UUPMediaCreator.Broker
                 return;
             }
 
-            if (message.ContainsKey("InterCommunication"))
+            if (message.ContainsKey("UnifiedUpdatePlatform.Common.Messaging"))
             {
                 try
                 {
-                    await Task.Run(() => ParseInterCommunicationMessage(message, arguments, deferral));
+                    await Task.Run(() => ParseMessage(message, arguments, deferral));
                 }
                 catch (Exception) { }
             }
@@ -166,19 +166,19 @@ namespace UUPMediaCreator.Broker
             }
         }
 
-        private static void ParseInterCommunicationMessage(ValueSet message, AppServiceRequestReceivedEventArgs arguments, AppServiceDeferral deferral)
+        private static void ParseMessage(ValueSet message, AppServiceRequestReceivedEventArgs arguments, AppServiceDeferral deferral)
         {
-            Common.InterCommunication interCommunication = JsonSerializer.Deserialize<Common.InterCommunication>((string)message["InterCommunication"]);
+            UnifiedUpdatePlatform.Common.Messaging.Common.Messaging interCommunication = JsonSerializer.Deserialize<UnifiedUpdatePlatform.Common.Messaging.Common.Messaging>((string)message["UnifiedUpdatePlatform.Common.Messaging"]);
 
-            switch (interCommunication.InterCommunicationType)
+            switch (interCommunication.MessagingType)
             {
-                case Common.InterCommunicationType.Exit:
+                case UnifiedUpdatePlatform.Common.Messaging.Common.MessagingType.Exit:
                     {
                         Thread thread = new(async () =>
                         {
                             ValueSet val = new()
                             {
-                                { "InterCommunication", "" }
+                                { "UnifiedUpdatePlatform.Common.Messaging", "" }
                             };
                             _ = await arguments.Request.SendResponseAsync(val);
                         });
@@ -192,13 +192,13 @@ namespace UUPMediaCreator.Broker
                         break;
                     }
 
-                case Common.InterCommunicationType.IsElevated:
+                case UnifiedUpdatePlatform.Common.Messaging.Common.MessagingType.IsElevated:
                     {
                         Thread thread = new(async () =>
                         {
                             ValueSet val = new()
                             {
-                                { "InterCommunication", IsAdministrator() }
+                                { "UnifiedUpdatePlatform.Common.Messaging", IsAdministrator() }
                             };
                             _ = await arguments.Request.SendResponseAsync(val);
                         });
@@ -210,9 +210,9 @@ namespace UUPMediaCreator.Broker
                         break;
                     }
 
-                case Common.InterCommunicationType.StartISOConversionProcess:
+                case UnifiedUpdatePlatform.Common.Messaging.Common.MessagingType.StartISOConversionProcess:
                     {
-                        static async void callback(Common.ProcessPhase phase, bool IsIndeterminate, int ProgressInPercentage, string SubOperation)
+                        static async void callback(UnifiedUpdatePlatform.Common.Messaging.Common.ProcessPhase phase, bool IsIndeterminate, int ProgressInPercentage, string SubOperation)
                         {
                             Common.ISOConversionProgress prog = new()
                             {
@@ -222,11 +222,11 @@ namespace UUPMediaCreator.Broker
                                 SubOperation = SubOperation
                             };
 
-                            Common.InterCommunication comm = new() { InterCommunicationType = Common.InterCommunicationType.ReportISOConversionProgress, ISOConversionProgress = prog };
+                            UnifiedUpdatePlatform.Common.Messaging.Common.Messaging comm = new() { UnifiedUpdatePlatform.Common.Messaging.Common.MessagingType = UnifiedUpdatePlatform.Common.Messaging.Common.MessagingType.ReportISOConversionProgress, ISOConversionProgress = prog };
 
                             ValueSet val = new()
                             {
-                                { "InterCommunication", JsonSerializer.Serialize(comm) }
+                                { "UnifiedUpdatePlatform.Common.Messaging", JsonSerializer.Serialize(comm) }
                             };
 
                             _ = await connection.SendMessageAsync(val);
@@ -249,17 +249,17 @@ namespace UUPMediaCreator.Broker
                             {
                                 Common.ISOConversionProgress prog = new()
                                 {
-                                    Phase = Common.ProcessPhase.Error,
+                                    Phase = UnifiedUpdatePlatform.Common.Messaging.Common.ProcessPhase.Error,
                                     IsIndeterminate = true,
                                     ProgressInPercentage = 0,
                                     SubOperation = ex.ToString()
                                 };
 
-                                Common.InterCommunication comm = new() { InterCommunicationType = Common.InterCommunicationType.ReportISOConversionProgress, ISOConversionProgress = prog };
+                                UnifiedUpdatePlatform.Common.Messaging.Common.Messaging comm = new() { UnifiedUpdatePlatform.Common.Messaging.Common.MessagingType = UnifiedUpdatePlatform.Common.Messaging.Common.MessagingType.ReportISOConversionProgress, ISOConversionProgress = prog };
 
                                 ValueSet val = new()
                                 {
-                                    { "InterCommunication", JsonSerializer.Serialize(comm) }
+                                    { "UnifiedUpdatePlatform.Common.Messaging", JsonSerializer.Serialize(comm) }
                                 };
 
                                 _ = await connection.SendMessageAsync(val);

@@ -22,7 +22,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-namespace MediaCreationLib.Planning.Applications
+namespace UnifiedUpdatePlatform.Media.Creator.Planning.Applications
 {
     public enum ResourceType
     {

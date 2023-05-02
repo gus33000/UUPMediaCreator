@@ -20,13 +20,13 @@
  * SOFTWARE.
  */
 using CompDB;
-using MediaCreationLib.Planning;
+using UnifiedUpdatePlatform.Media.Creator.Planning;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using WindowsUpdateLib;
+using UnifiedUpdatePlatform.Services.WindowsUpdate;
 
-namespace UUPDownload
+namespace UnifiedUpdatePlatform.Media.Download
 {
     public static class BuildTargets
     {

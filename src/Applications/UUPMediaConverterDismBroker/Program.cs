@@ -19,8 +19,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-using MediaCreationLib.DismOperations;
-using MediaCreationLib.Planning.Applications;
+using UnifiedUpdatePlatform.Media.Creator.DismOperations;
+using UnifiedUpdatePlatform.Media.Creator.Planning.Applications;
 using System;
 
 namespace UUPMediaConverterDismBroker

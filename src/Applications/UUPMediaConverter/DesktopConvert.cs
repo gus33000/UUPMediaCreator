@@ -19,14 +19,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-using MediaCreationLib;
+using UnifiedUpdatePlatform.Media.Creator;
 using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Security.Principal;
-using UUPMediaCreator.InterCommunication;
+using UnifiedUpdatePlatform.Common.Messaging;
 
 namespace UUPMediaConverter
 {
@@ -125,10 +125,10 @@ namespace UUPMediaConverter
             }
 
             int prevperc = -1;
-            Common.ProcessPhase prevphase = Common.ProcessPhase.ReadingMetadata;
+            UnifiedUpdatePlatform.Common.Messaging.Common.ProcessPhase prevphase = UnifiedUpdatePlatform.Common.Messaging.Common.ProcessPhase.ReadingMetadata;
             string prevop = "";
 
-            void callback(Common.ProcessPhase phase, bool IsIndeterminate, int ProgressInPercentage, string SubOperation)
+            void callback(UnifiedUpdatePlatform.Common.Messaging.Common.ProcessPhase phase, bool IsIndeterminate, int ProgressInPercentage, string SubOperation)
             {
                 if (phase == prevphase && prevperc == ProgressInPercentage && SubOperation == prevop)
                 {
@@ -139,7 +139,7 @@ namespace UUPMediaConverter
                 prevop = SubOperation;
                 prevperc = ProgressInPercentage;
 
-                if (phase == Common.ProcessPhase.Error)
+                if (phase == UnifiedUpdatePlatform.Common.Messaging.Common.ProcessPhase.Error)
                 {
                     Logging.Log("An error occured!", severity: Logging.LoggingLevel.Error);
                     Logging.Log(SubOperation, severity: Logging.LoggingLevel.Error);

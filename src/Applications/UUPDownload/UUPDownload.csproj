@@ -13,9 +13,9 @@
     <ProjectReference Include="..\..\Cabinet.NET\Cabinet.NET.csproj" />
     <ProjectReference Include="..\..\DownloadLib.NET\DownloadLib.NET.csproj" />
     <ProjectReference Include="..\..\CompDB.NET\CompDB.NET.csproj" />
-    <ProjectReference Include="..\..\MediaCreationLib.Planning.NET\MediaCreationLib.Planning.NET.csproj" />
+    <ProjectReference Include="..\..\UnifiedUpdatePlatform.Media.Creator.Planning.NET\UnifiedUpdatePlatform.Media.Creator.Planning.NET.csproj" />
     <ProjectReference Include="..\..\TempManager.NET\TempManager.NET.csproj" />
-    <ProjectReference Include="..\..\WindowsUpdateLib.NET\WindowsUpdateLib.NET.csproj" />
+    <ProjectReference Include="..\..\UnifiedUpdatePlatform.Services.WindowsUpdate.NET\UnifiedUpdatePlatform.Services.WindowsUpdate.NET.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="CommandLineParser" Version="2.9.1" />

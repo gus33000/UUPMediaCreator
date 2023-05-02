@@ -24,7 +24,7 @@
  */
 using System.Collections.Generic;
 
-namespace MediaCreationLib.Planning.Applications
+namespace UnifiedUpdatePlatform.Media.Creator.Planning.Applications
 {
     internal static class AppxApplicabilityEngine
     {

@@ -29,11 +29,11 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text.Json;
 using System.Threading.Tasks;
-using UUPDownload.Downloading;
-using WindowsUpdateLib;
-using WindowsUpdateLib.Shared;
+using UnifiedUpdatePlatform.Media.Download.Downloading;
+using UnifiedUpdatePlatform.Services.WindowsUpdate;
+using UnifiedUpdatePlatform.Services.WindowsUpdate.Shared;
 
-namespace UUPDownload.DownloadRequest
+namespace UnifiedUpdatePlatform.Media.Download.DownloadRequest
 {
     public static class Process
     {

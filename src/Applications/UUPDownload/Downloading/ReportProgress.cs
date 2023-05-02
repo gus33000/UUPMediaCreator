@@ -24,7 +24,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 
-namespace UUPDownload.Downloading
+namespace UnifiedUpdatePlatform.Media.Download.Downloading
 {
     public class ReportProgress : IProgress<GeneralDownloadProgress>, IDisposable
     {

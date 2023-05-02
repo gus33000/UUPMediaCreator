@@ -30,7 +30,7 @@ using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
-using WindowsUpdateLib;
+using UnifiedUpdatePlatform.Services.WindowsUpdate;
 
 namespace DownloadLib
 {

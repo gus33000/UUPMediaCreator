@@ -22,7 +22,7 @@
 using System;
 using System.Text.Json;
 using System.Threading.Tasks;
-using UUPMediaCreator.InterCommunication;
+using UnifiedUpdatePlatform.Common.Messaging;
 using Windows.ApplicationModel.AppService;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
@@ -30,7 +30,7 @@ using Windows.UI.Xaml.Controls;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
-namespace UUPMediaCreator.UWP.Pages
+namespace UUPMediaCreator.Pages
 {
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
@@ -44,17 +44,17 @@ namespace UUPMediaCreator.UWP.Pages
 
         public async Task<bool> IsBrokerElevated()
         {
-            Common.InterCommunication comm = new() { InterCommunicationType = Common.InterCommunicationType.IsElevated };
+            Common.UnifiedUpdatePlatform.Common.Messaging comm = new() { UnifiedUpdatePlatform.Common.MessagingType = Common.UnifiedUpdatePlatform.Common.MessagingType.IsElevated };
 
             ValueSet val = new()
             {
-                { "InterCommunication", JsonSerializer.Serialize(comm) }
+                { "UnifiedUpdatePlatform.Common.Messaging", JsonSerializer.Serialize(comm) }
             };
 
             AppServiceResponse response = await App.Connection.SendMessageAsync(val);
-            if (response.Message.ContainsKey("InterCommunication"))
+            if (response.Message.ContainsKey("UnifiedUpdatePlatform.Common.Messaging"))
             {
-                if (response.Message["InterCommunication"] is bool adminStatus)
+                if (response.Message["UnifiedUpdatePlatform.Common.Messaging"] is bool adminStatus)
                 {
                     return adminStatus;
                 }

@@ -22,9 +22,9 @@
 using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
-using WindowsUpdateLib;
+using UnifiedUpdatePlatform.Services.WindowsUpdate;
 
-namespace UUPDownload.DownloadRequest
+namespace UnifiedUpdatePlatform.Media.Download.DownloadRequest
 {
     public class UpdateScan
     {

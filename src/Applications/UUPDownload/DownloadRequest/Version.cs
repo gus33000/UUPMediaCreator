@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 
-namespace UUPDownload.DownloadRequest
+namespace UnifiedUpdatePlatform.Media.Download.DownloadRequest
 {
     public class Version
     {

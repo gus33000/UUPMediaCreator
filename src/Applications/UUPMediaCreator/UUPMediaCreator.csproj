@@ -583,13 +583,13 @@
       <Project>{8ff9162b-7281-4274-823c-3bb7905508d2}</Project>
       <Name>CompDB.UWP</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\InterCommunication.UWP\InterCommunication.UWP.csproj">
+    <ProjectReference Include="..\..\UnifiedUpdatePlatform.Common.Messaging.UWP\UnifiedUpdatePlatform.Common.Messaging.UWP.csproj">
       <Project>{11385f97-61d8-47ef-a068-3a130232f6b6}</Project>
-      <Name>InterCommunication.UWP</Name>
+      <Name>UnifiedUpdatePlatform.Common.Messaging.UWP</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\WindowsUpdateLib.UWP\WindowsUpdateLib.UWP.csproj">
+    <ProjectReference Include="..\..\UnifiedUpdatePlatform.Services.WindowsUpdate.UWP\UnifiedUpdatePlatform.Services.WindowsUpdate.UWP.csproj">
       <Project>{8ebd2b3f-31c4-493a-8853-fdbe32097b7e}</Project>
-      <Name>WindowsUpdateLib.UWP</Name>
+      <Name>UnifiedUpdatePlatform.Services.WindowsUpdate.UWP</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

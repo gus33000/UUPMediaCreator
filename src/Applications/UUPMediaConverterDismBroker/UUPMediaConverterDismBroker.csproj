@@ -11,6 +11,6 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\CompDB.NET\CompDB.NET.csproj" />
-    <ProjectReference Include="..\..\MediaCreationLib.DismOperations.NET\MediaCreationLib.DismOperations.NET.csproj" />
+    <ProjectReference Include="..\..\UnifiedUpdatePlatform.Media.Creator.DismOperations.NET\UnifiedUpdatePlatform.Media.Creator.DismOperations.NET.csproj" />
   </ItemGroup>
 </Project>

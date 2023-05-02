@@ -21,8 +21,8 @@
  */
 using System;
 using System.Text.Json;
-using UUPMediaCreator.InterCommunication;
-using UUPMediaCreator.UWP.Pages;
+using UnifiedUpdatePlatform.Common.Messaging;
+using UUPMediaCreator.Pages;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.AppService;
@@ -34,8 +34,8 @@ using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
-using WindowsUpdateLib;
-using static UUPMediaCreator.InterCommunication.Common;
+using UnifiedUpdatePlatform.Services.WindowsUpdate;
+using static UnifiedUpdatePlatform.Common.Messaging.Common;
 
 namespace UUPMediaCreator
 {
@@ -180,7 +180,7 @@ namespace UUPMediaCreator
                 {
                     ValueSet message = new()
                     {
-                        { "InterCommunication", JsonSerializer.Serialize(new Common.InterCommunication() { InterCommunicationType = InterCommunicationType.Exit }) }
+                        { "UnifiedUpdatePlatform.Common.Messaging", JsonSerializer.Serialize(new Common.UnifiedUpdatePlatform.Common.Messaging() { UnifiedUpdatePlatform.Common.MessagingType = UnifiedUpdatePlatform.Common.MessagingType.Exit }) }
                     };
                     _ = await Connection.SendMessageAsync(message);
                 }

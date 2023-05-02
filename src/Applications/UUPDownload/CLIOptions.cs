@@ -20,9 +20,9 @@
  * SOFTWARE.
  */
 using CommandLine;
-using WindowsUpdateLib;
+using UnifiedUpdatePlatform.Services.WindowsUpdate;
 
-namespace UUPDownload
+namespace UnifiedUpdatePlatform.Media.Download
 {
     [Verb("request-download", isDefault: true, HelpText = "Request a download from zero using a number of different request parameters.")]
     internal class DownloadRequestOptions

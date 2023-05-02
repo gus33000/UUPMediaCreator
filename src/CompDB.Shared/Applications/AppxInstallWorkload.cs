@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace MediaCreationLib.Planning.Applications
+namespace UnifiedUpdatePlatform.Media.Creator.Planning.Applications
 {
     public class AppxInstallWorkload
     {

@@ -15,7 +15,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CompDB.NET\CompDB.NET.csproj" />
-    <ProjectReference Include="..\WindowsUpdateLib.NET\WindowsUpdateLib.NET.csproj" />
+    <ProjectReference Include="..\UnifiedUpdatePlatform.Services.WindowsUpdate.NET\UnifiedUpdatePlatform.Services.WindowsUpdate.NET.csproj" />
   </ItemGroup>
 
 </Project>

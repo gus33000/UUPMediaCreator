@@ -29,8 +29,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\InterCommunication.NET\InterCommunication.NET.csproj" />
-    <ProjectReference Include="..\..\MediaCreationLib.NET\MediaCreationLib.NET.csproj" />
+    <ProjectReference Include="..\..\UnifiedUpdatePlatform.Common.Messaging.NET\UnifiedUpdatePlatform.Common.Messaging.NET.csproj" />
+    <ProjectReference Include="..\..\UnifiedUpdatePlatform.Media.Creator.NET\UnifiedUpdatePlatform.Media.Creator.NET.csproj" />
   </ItemGroup>
 
   <ItemGroup>
