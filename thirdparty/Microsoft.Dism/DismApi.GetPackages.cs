@@ -17,7 +17,7 @@ namespace Microsoft.Dism
         /// <exception cref="DismException">When a failure occurs.</exception>
         public static DismPackageCollection GetPackages(DismSession session)
         {
-            int hresult = NativeMethods.DismGetPackages(session, out IntPtr packagePtr, out uint packageCount);
+            int hresult = NativeMethods.DismGetPackages(session, out IntPtr packagePtr, out UInt32 packageCount);
 
             try
             {
@@ -50,7 +50,7 @@ namespace Microsoft.Dism
             /// </remarks>
             [DllImport(DismDllName, CharSet = DismCharacterSet)]
             [return: MarshalAs(UnmanagedType.Error)]
-            public static extern int DismGetPackages(DismSession dismSession, out IntPtr packageInfo, out uint count);
+            public static extern int DismGetPackages(DismSession dismSession, out IntPtr packageInfo, out UInt32 count);
         }
     }
 }

@@ -36,27 +36,27 @@ namespace Microsoft.Dism
             /// <summary>
             /// The major version.
             /// </summary>
-            public uint MajorVersion;
+            public UInt32 MajorVersion;
 
             /// <summary>
             /// The minor version.
             /// </summary>
-            public uint MinorVersion;
+            public UInt32 MinorVersion;
 
             /// <summary>
             /// The build version.
             /// </summary>
-            public uint Build;
+            public UInt32 Build;
 
             /// <summary>
             /// The revision version.
             /// </summary>
-            public uint Revision;
+            public UInt32 Revision;
 
             /// <summary>
             /// The architecture of the package.
             /// </summary>
-            public uint Architecture;
+            public UInt32 Architecture;
 
             /// <summary>
             /// The resource ID.
@@ -135,7 +135,7 @@ namespace Microsoft.Dism
         /// Determines whether the specified <see cref="T:System.Object" /> is equal to the current <see cref="T:System.Object" />.
         /// </summary>
         /// <param name="obj">The object to compare with the current object.</param>
-        /// <returns>true if the specified <see cref="T:System.Object" /> is equal to the current <see cref="T:System.Object" />; otherwise, false.</returns>
+        /// <returns><c>true</c> if the specified <see cref="T:System.Object" /> is equal to the current <see cref="T:System.Object" />, otherwise <c>false</c>.</returns>
         public override bool Equals(object? obj)
         {
             return obj != null && Equals(obj as DismAppxPackage);
@@ -145,7 +145,7 @@ namespace Microsoft.Dism
         /// Determines whether the specified <see cref="DismAppxPackage" /> is equal to the current <see cref="DismAppxPackage" />.
         /// </summary>
         /// <param name="other">The <see cref="DismAppxPackage" /> object to compare with the current object.</param>
-        /// <returns>true if the specified <see cref="DismAppxPackage" /> is equal to the current <see cref="DismAppxPackage" />; otherwise, false.</returns>
+        /// <returns><c>true</c> if the specified <see cref="DismAppxPackage" /> is equal to the current <see cref="DismAppxPackage" />, otherwise <c>false</c>.</returns>
         public bool Equals(DismAppxPackage? other)
         {
             return other != null

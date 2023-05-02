@@ -74,7 +74,7 @@ namespace Microsoft.Wim
             }
 
             // Create a CopyFileProgress object
-            CopyFileProgress fileInfoCopyProgress = new(sourceFile, destinationFile, copyFileProgressCallback, userData);
+            CopyFileProgress fileInfoCopyProgress = new CopyFileProgress(sourceFile, destinationFile, copyFileProgressCallback, userData);
 
             // Cancel flag is always false
             bool cancel = false;

@@ -29,17 +29,17 @@ namespace Microsoft.Dism
             /// <summary>
             /// The size of the DismWimCustomizedInfo structure.
             /// </summary>
-            public uint Size;
+            public UInt32 Size;
 
             /// <summary>
             /// The number of directories in the image.
             /// </summary>
-            public uint DirectoryCount;
+            public UInt32 DirectoryCount;
 
             /// <summary>
             /// The number of files in the image.
             /// </summary>
-            public uint FileCount;
+            public UInt32 FileCount;
 
             /// <summary>
             /// The time that the image file was created.
@@ -111,7 +111,7 @@ namespace Microsoft.Dism
         /// Determines whether the specified <see cref="T:System.Object" /> is equal to the current <see cref="T:System.Object" />.
         /// </summary>
         /// <param name="obj">The object to compare with the current object.</param>
-        /// <returns>true if the specified <see cref="T:System.Object" /> is equal to the current <see cref="T:System.Object" />; otherwise, false.</returns>
+        /// <returns><c>true</c> if the specified <see cref="T:System.Object" /> is equal to the current <see cref="T:System.Object" />, otherwise <c>false</c>.</returns>
         public override bool Equals(object? obj)
         {
             return obj != null && Equals(obj as DismWimCustomizedInfo);
@@ -121,7 +121,7 @@ namespace Microsoft.Dism
         /// Determines whether the specified <see cref="DismWimCustomizedInfo" /> is equal to the current <see cref="DismWimCustomizedInfo" />.
         /// </summary>
         /// <param name="other">The <see cref="DismWimCustomizedInfo" /> object to compare with the current object.</param>
-        /// <returns>true if the specified <see cref="DismWimCustomizedInfo" /> is equal to the current <see cref="DismWimCustomizedInfo" />; otherwise, false.</returns>
+        /// <returns><c>true</c> if the specified <see cref="DismWimCustomizedInfo" /> is equal to the current <see cref="DismWimCustomizedInfo" />, otherwise <c>false</c>.</returns>
         public bool Equals(DismWimCustomizedInfo? other)
         {
             return other != null

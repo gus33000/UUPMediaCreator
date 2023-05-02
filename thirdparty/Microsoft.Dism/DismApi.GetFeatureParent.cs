@@ -45,7 +45,7 @@ namespace Microsoft.Dism
         /// <returns>A <see cref="DismFeatureCollection" /> object containing a collection of <see cref="DismFeature" /> objects.</returns>
         private static DismFeatureCollection GetFeatureParent(DismSession session, string featureName, string identifier, DismPackageIdentifier packageIdentifier)
         {
-            int hresult = NativeMethods.DismGetFeatureParent(session, featureName, identifier, packageIdentifier, out IntPtr featurePtr, out uint featureCount);
+            int hresult = NativeMethods.DismGetFeatureParent(session, featureName, identifier, packageIdentifier, out IntPtr featurePtr, out UInt32 featureCount);
 
             try
             {
@@ -79,7 +79,7 @@ namespace Microsoft.Dism
             /// </remarks>
             [DllImport(DismDllName, CharSet = DismCharacterSet)]
             [return: MarshalAs(UnmanagedType.Error)]
-            public static extern int DismGetFeatureParent(DismSession session, string featureName, string identifier, DismPackageIdentifier packageIdentifier, out IntPtr feature, out uint count);
+            public static extern int DismGetFeatureParent(DismSession session, string featureName, string identifier, DismPackageIdentifier packageIdentifier, out IntPtr feature, out UInt32 count);
         }
     }
 }

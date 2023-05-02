@@ -39,7 +39,7 @@ namespace Microsoft.Dism
             /// <summary>
             /// The index number of the image. Index numbering starts at 1.
             /// </summary>
-            public uint ImageIndex;
+            public UInt32 ImageIndex;
 
             /// <summary>
             /// A <a href="DismMountMode" /> Enumeration value representing whether the image is DismReadWrite or DismReadOnly.
@@ -98,7 +98,7 @@ namespace Microsoft.Dism
         /// Determines whether the specified <see cref="T:System.Object" /> is equal to the current <see cref="T:System.Object" />.
         /// </summary>
         /// <param name="obj">The object to compare with the current object.</param>
-        /// <returns>true if the specified <see cref="T:System.Object" /> is equal to the current <see cref="T:System.Object" />; otherwise, false.</returns>
+        /// <returns><c>true</c> if the specified <see cref="T:System.Object" /> is equal to the current <see cref="T:System.Object" />, otherwise <c>false</c>.</returns>
         public override bool Equals(object? obj)
         {
             return obj != null && Equals(obj as DismMountedImageInfo);
@@ -108,7 +108,7 @@ namespace Microsoft.Dism
         /// Determines whether the specified <see cref="DismMountedImageInfo" /> is equal to the current <see cref="DismMountedImageInfo" />.
         /// </summary>
         /// <param name="other">The <see cref="DismMountedImageInfo" /> object to compare with the current object.</param>
-        /// <returns>true if the specified <see cref="DismMountedImageInfo" /> is equal to the current <see cref="DismMountedImageInfo" />; otherwise, false.</returns>
+        /// <returns><c>true</c> if the specified <see cref="DismMountedImageInfo" /> is equal to the current <see cref="DismMountedImageInfo" />, otherwise <c>false</c>.</returns>
         public bool Equals(DismMountedImageInfo? other)
         {
             return other != null

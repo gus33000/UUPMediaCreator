@@ -24,6 +24,6 @@ namespace Microsoft.Dism
         /// <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/hh824734.aspx" />
         /// void DismProgressCallback(_In_ UINT Current, _In_ UINT Total, _In_ PVOID UserData)
         /// </remarks>
-        internal delegate void DismProgressCallback(uint current, uint total, IntPtr userData);
+        internal delegate void DismProgressCallback(UInt32 current, UInt32 total, IntPtr userData);
     }
 }

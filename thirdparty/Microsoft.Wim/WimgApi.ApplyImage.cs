@@ -80,13 +80,16 @@ namespace Microsoft.Wim
             if (!WimgApi.NativeMethods.WIMApplyImage(imageHandle, path, (UInt32)options))
             {
                 // Get the last error
-                Win32Exception win32Exception = new();
+                Win32Exception win32Exception = new Win32Exception();
 
-                throw win32Exception.NativeErrorCode switch
+                switch (win32Exception.NativeErrorCode)
                 {
-                    WimgApi.ERROR_REQUEST_ABORTED => new OperationCanceledException(win32Exception.Message, win32Exception),// If the operation was aborted, throw an OperationCanceledException exception
-                    _ => win32Exception,
-                };
+                    case WimgApi.ERROR_REQUEST_ABORTED:
+                        // If the operation was aborted, throw an OperationCanceledException exception
+                        throw new OperationCanceledException(win32Exception.Message, win32Exception);
+                    default:
+                        throw win32Exception;
+                }
             }
         }
 

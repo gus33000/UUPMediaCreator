@@ -43,7 +43,10 @@ namespace Microsoft.Dism
         public bool RebootRequired
         {
             get => _rebootRequired;
-            internal set => _rebootRequired = _rebootRequired || value;
+            internal set
+            {
+                _rebootRequired = _rebootRequired || value;
+            }
         }
 
         /// <summary>
@@ -58,7 +61,7 @@ namespace Microsoft.Dism
         {
             if (!IsInvalid)
             {
-                _ = DismApi.NativeMethods.DismCloseSession(handle);
+                DismApi.NativeMethods.DismCloseSession(handle);
             }
 
             int hresult = DismApi.NativeMethods.DismOpenSession(_imagePath, _windowsDirectory, _systemDrive, out IntPtr sessionPtr);
@@ -71,7 +74,7 @@ namespace Microsoft.Dism
         /// <summary>
         /// Releases the DismSession handle.
         /// </summary>
-        /// <returns>true if the handle is released successfully; otherwise, in the event of a catastrophic failure, false.</returns>
+        /// <returns><c>true</c> if the handle is released successfully; otherwise, in the event of a catastrophic failure, <c>false</c>.</returns>
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.MayFail)]
         protected override bool ReleaseHandle()
         {

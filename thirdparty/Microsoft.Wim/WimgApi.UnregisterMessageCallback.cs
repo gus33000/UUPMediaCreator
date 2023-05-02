@@ -83,28 +83,28 @@ namespace Microsoft.Wim
                 if (wimHandle == WimHandle.Null && messageCallback != null)
                 {
                     // Unregister the globally registered callback
-                    _ = WimgApi.RegisteredCallbacks.UnregisterCallback(messageCallback);
+                    WimgApi.RegisteredCallbacks.UnregisterCallback(messageCallback);
                 }
 
                 // See if a single registered callback by handle should be removed
                 if (wimHandle != WimHandle.Null && messageCallback != null)
                 {
                     // Unregister the callback for the handle
-                    _ = WimgApi.RegisteredCallbacks.UnregisterCallback(wimHandle, messageCallback);
+                    WimgApi.RegisteredCallbacks.UnregisterCallback(wimHandle, messageCallback);
                 }
 
                 // See if all registered callbacks for this handle should be removed
                 if (wimHandle != WimHandle.Null && messageCallback == null)
                 {
                     // Unregister all callbacks for this handle
-                    _ = WimgApi.RegisteredCallbacks.UnregisterCallbacks(wimHandle);
+                    WimgApi.RegisteredCallbacks.UnregisterCallbacks(wimHandle);
                 }
 
                 // See if all registered callbacks by handle and all globally registered callbacks should be removed
                 if (wimHandle == WimHandle.Null && messageCallback == null)
                 {
                     // Unregister all callbacks
-                    _ = WimgApi.RegisteredCallbacks.UnregisterCallbacks();
+                    WimgApi.RegisteredCallbacks.UnregisterCallbacks();
                 }
             } // Release lock
         }

@@ -256,11 +256,6 @@ namespace Microsoft.Dism
             : base(message, innerException)
         {
         }
-
-        private DismPackageNotApplicableException(SerializationInfo serializationInfo, StreamingContext streamingContext)
-        {
-            throw new NotImplementedException();
-        }
     }
 
     /// <summary>

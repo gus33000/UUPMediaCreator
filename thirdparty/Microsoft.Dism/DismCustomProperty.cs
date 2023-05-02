@@ -77,7 +77,7 @@ namespace Microsoft.Dism
         /// Determines whether the specified <see cref="T:System.Object" /> is equal to the current <see cref="T:System.Object" />.
         /// </summary>
         /// <param name="obj">The object to compare with the current object. </param><filterpriority>2</filterpriority>
-        /// <returns>true if the specified <see cref="T:System.Object" /> is equal to the current <see cref="T:System.Object" />; otherwise, false.</returns>
+        /// <returns><c>true</c> if the specified <see cref="T:System.Object" /> is equal to the current <see cref="T:System.Object" />, otherwise <c>false</c>.</returns>
         public override bool Equals(object? obj)
         {
             return obj != null && Equals(obj as DismCustomProperty);
@@ -87,7 +87,7 @@ namespace Microsoft.Dism
         /// Determines whether the specified <see cref="DismCustomProperty" /> is equal to the current <see cref="DismCustomProperty" />.
         /// </summary>
         /// <param name="other">A <see cref="DismCustomProperty" /> object to compare with the current object.</param>
-        /// <returns><code>true</code> if the specified <see cref="DismCustomProperty" /> is equal to the current <see cref="DismCustomProperty" />; otherwise, false.</returns>
+        /// <returns><code>true</code> if the specified <see cref="DismCustomProperty" /> is equal to the current <see cref="DismCustomProperty" />, otherwise <c>false</c>.</returns>
         public bool Equals(DismCustomProperty? other)
         {
             return other != null

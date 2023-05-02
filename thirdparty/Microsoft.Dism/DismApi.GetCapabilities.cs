@@ -17,7 +17,7 @@ namespace Microsoft.Dism
         /// <exception cref="DismException">When a failure occurs.</exception>
         public static DismCapabilityCollection GetCapabilities(DismSession session)
         {
-            int hresult = NativeMethods.DismGetCapabilities(session, out IntPtr capabilityPtr, out uint capabilityCount);
+            int hresult = NativeMethods.DismGetCapabilities(session, out IntPtr capabilityPtr, out UInt32 capabilityCount);
 
             try
             {
@@ -42,7 +42,7 @@ namespace Microsoft.Dism
             /// <returns>Returns S_OK on success.</returns>
             [DllImport(DismDllName, CharSet = DismCharacterSet)]
             [return: MarshalAs(UnmanagedType.Error)]
-            public static extern int DismGetCapabilities(DismSession session, out IntPtr capability, out uint count);
+            public static extern int DismGetCapabilities(DismSession session, out IntPtr capability, out UInt32 count);
         }
     }
 }

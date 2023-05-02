@@ -47,7 +47,7 @@ namespace Microsoft.Dism
             public string OriginalFileName;
 
             /// <summary>
-            /// TRUE if the driver is included on the Windows distribution media and automatically installed as part of Windows®, otherwise FALSE.
+            /// <c>true</c> if the driver is included on the Windows distribution media and automatically installed as part of Windows®, otherwise <c>false</c>.
             /// </summary>
             public bool InBox;
 
@@ -72,7 +72,7 @@ namespace Microsoft.Dism
             public string ClassDescription;
 
             /// <summary>
-            /// TRUE if the driver is boot-critical, otherwise FALSE.
+            /// <c>true</c> if the driver is boot-critical, otherwise <c>false</c>.
             /// </summary>
             public bool BootCritical;
 
@@ -94,22 +94,22 @@ namespace Microsoft.Dism
             /// <summary>
             /// The major version number of the driver.
             /// </summary>
-            public uint MajorVersion;
+            public UInt32 MajorVersion;
 
             /// <summary>
             /// The minor version number of the driver.
             /// </summary>
-            public uint MinorVersion;
+            public UInt32 MinorVersion;
 
             /// <summary>
             /// The build number of the driver.
             /// </summary>
-            public uint Build;
+            public UInt32 Build;
 
             /// <summary>
             /// The revision number of the driver.
             /// </summary>
-            public uint Revision;
+            public UInt32 Revision;
         }
     }
 
@@ -202,7 +202,7 @@ namespace Microsoft.Dism
         /// Determines whether the specified <see cref="T:System.Object" /> is equal to the current <see cref="T:System.Object" />.
         /// </summary>
         /// <param name="obj">The object to compare with the current object.</param>
-        /// <returns>true if the specified <see cref="T:System.Object" /> is equal to the current <see cref="T:System.Object" />; otherwise, false.</returns>
+        /// <returns><c>true</c> if the specified <see cref="T:System.Object" /> is equal to the current <see cref="T:System.Object" />, otherwise <c>false</c>.</returns>
         public override bool Equals(object? obj)
         {
             return obj != null && Equals(obj as DismDriverPackage);
@@ -212,7 +212,7 @@ namespace Microsoft.Dism
         /// Determines whether the specified <see cref="DismDriverPackage" /> is equal to the current <see cref="DismDriverPackage" />.
         /// </summary>
         /// <param name="other">The <see cref="DismDriverPackage" /> object to compare with the current object.</param>
-        /// <returns>true if the specified <see cref="DismDriverPackage" /> is equal to the current <see cref="DismDriverPackage" />; otherwise, false.</returns>
+        /// <returns><c>true</c> if the specified <see cref="DismDriverPackage" /> is equal to the current <see cref="DismDriverPackage" />, otherwise <c>false</c>.</returns>
         public bool Equals(DismDriverPackage? other)
         {
             return other != null

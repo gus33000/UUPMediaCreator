@@ -64,7 +64,7 @@ namespace Microsoft.Dism
             public SystemTime InstallTime;
 
             /// <summary>
-            /// TRUE if the package is applicable to the image, otherwise FALSE.
+            /// <c>true</c> if the package is applicable to the image, otherwise <c>false</c>.
             /// </summary>
             public bool Applicable;
 
@@ -141,7 +141,7 @@ namespace Microsoft.Dism
             /// <summary>
             /// The number of elements in the CustomProperty array.
             /// </summary>
-            public uint CustomPropertyCount;
+            public UInt32 CustomPropertyCount;
 
             /// <summary>
             /// An array of DismFeature Structure objects representing the features in the package.
@@ -151,7 +151,7 @@ namespace Microsoft.Dism
             /// <summary>
             /// The number of elements in the Feature array.
             /// </summary>
-            public uint FeatureCount;
+            public UInt32 FeatureCount;
         }
     }
 
@@ -292,7 +292,7 @@ namespace Microsoft.Dism
         /// Determines whether the specified <see cref="T:System.Object" /> is equal to the current <see cref="T:System.Object" />.
         /// </summary>
         /// <param name="obj">The object to compare with the current object.</param>
-        /// <returns>true if the specified <see cref="T:System.Object" /> is equal to the current <see cref="T:System.Object" />; otherwise, false.</returns>
+        /// <returns><c>true</c> if the specified <see cref="T:System.Object" /> is equal to the current <see cref="T:System.Object" />, otherwise <c>false</c>.</returns>
         public override bool Equals(object? obj)
         {
             return obj != null && Equals(obj as DismPackageInfo);
@@ -302,7 +302,7 @@ namespace Microsoft.Dism
         /// Determines whether the specified <see cref="DismPackageInfo" /> is equal to the current <see cref="DismPackageInfo" />.
         /// </summary>
         /// <param name="other">The <see cref="DismPackageInfo" /> object to compare with the current object.</param>
-        /// <returns>true if the specified <see cref="DismPackageInfo" /> is equal to the current <see cref="DismPackageInfo" />; otherwise, false.</returns>
+        /// <returns><c>true</c> if the specified <see cref="DismPackageInfo" /> is equal to the current <see cref="DismPackageInfo" />, otherwise <c>false</c>.</returns>
         public bool Equals(DismPackageInfo? other)
         {
             return other != null

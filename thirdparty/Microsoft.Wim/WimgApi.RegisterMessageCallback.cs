@@ -106,7 +106,7 @@ namespace Microsoft.Wim
                     }
 
                     // Add the callback to the registered callbacks by handle
-                    _ = WimgApi.RegisteredCallbacks.RegisterCallback(wimHandle, messageCallback, userData);
+                    WimgApi.RegisteredCallbacks.RegisterCallback(wimHandle, messageCallback, userData);
                 }
 
                 // Call the native function

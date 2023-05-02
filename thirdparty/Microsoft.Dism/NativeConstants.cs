@@ -1,8 +1,8 @@
-﻿
-// Copyright (c). All rights reserved.
+﻿// Copyright (c). All rights reserved.
 //
 // Licensed under the MIT license.
 
+#pragma warning disable SA1310 // Field names must not contain underscore
 namespace Microsoft.Dism
 {
     public static partial class DismApi
@@ -127,7 +127,7 @@ namespace Microsoft.Dism
         /// One or several parent features are disabled so current feature can not be enabled.
         /// Solutions:
         /// 1 Call function DismGetFeatureParent to get all parent features and enable all of them. Or
-        /// 2 Set EnableAll to TRUE when calling function DismEnableFeature.
+        /// 2 Set EnableAll to <c>true</c> when calling function DismEnableFeature.
         /// </summary>
         public const uint DISMAPI_E_PARENT_FEATURE_DISABLED = 0xC004000D;
 
@@ -187,3 +187,4 @@ namespace Microsoft.Dism
         internal const uint CBS_E_NOT_APPLICABLE = 0x800F081E;
     }
 }
+#pragma warning restore SA1310 // Field names must not contain underscore

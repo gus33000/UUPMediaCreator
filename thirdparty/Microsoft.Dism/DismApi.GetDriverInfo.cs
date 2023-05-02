@@ -18,7 +18,7 @@ namespace Microsoft.Dism
         /// <exception cref="DismException">When a failure occurs.</exception>
         public static DismDriverCollection GetDriverInfo(DismSession session, string driverPath)
         {
-            int hresult = NativeMethods.DismGetDriverInfo(session, driverPath, out IntPtr driverInfoPtr, out uint driverInfoCount, out IntPtr driverPackagePtr);
+            int hresult = NativeMethods.DismGetDriverInfo(session, driverPath, out IntPtr driverInfoPtr, out UInt32 driverInfoCount, out IntPtr driverPackagePtr);
 
             try
             {
@@ -52,7 +52,7 @@ namespace Microsoft.Dism
             /// </remarks>
             [DllImport(DismDllName, CharSet = DismCharacterSet)]
             [return: MarshalAs(UnmanagedType.Error)]
-            public static extern int DismGetDriverInfo(DismSession session, string driverPath, out IntPtr driver, out uint count, out IntPtr driverPackage);
+            public static extern int DismGetDriverInfo(DismSession session, string driverPath, out IntPtr driver, out UInt32 count, out IntPtr driverPackage);
         }
     }
 }

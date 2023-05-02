@@ -97,7 +97,7 @@ namespace Microsoft.Dism
         /// <param name="current">The current progress value.</param>
         /// <param name="total">The total progress.</param>
         /// <param name="userData">Any user data associated with the callback.</param>
-        internal void DismProgressCallbackNative(uint current, uint total, IntPtr userData)
+        internal void DismProgressCallbackNative(UInt32 current, UInt32 total, IntPtr userData)
         {
             // Save the current progress
             Current = (int)current;
@@ -112,7 +112,7 @@ namespace Microsoft.Dism
             if (Cancel)
             {
                 // Signal the event
-                _ = _eventHandle.Set();
+                _eventHandle.Set();
             }
         }
     }

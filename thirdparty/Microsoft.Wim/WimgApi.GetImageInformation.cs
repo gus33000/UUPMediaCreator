@@ -32,21 +32,25 @@ namespace Microsoft.Wim
                 return null;
             }
 
-            XmlReaderSettings xmlReaderSettings = new()
+            XmlReaderSettings xmlReaderSettings = new XmlReaderSettings
             {
                 DtdProcessing = DtdProcessing.Prohibit,
             };
 
-            using StringReader stringReader = new(xml);
-            using XmlReader xmlReader = XmlReader.Create(stringReader, xmlReaderSettings);
-            return new XPathDocument(xmlReader);
+            using (StringReader stringReader = new StringReader(xml))
+            {
+                using (XmlReader xmlReader = XmlReader.Create(stringReader, xmlReaderSettings))
+                {
+                    return new XPathDocument(xmlReader);
+                }
+            }
         }
 
         /// <summary>
         /// Gets information about an image within the .wim (Windows image) file.
         /// </summary>
         /// <param name="wimHandle">Either a <see cref="WimHandle"/> returned from <see cref="CreateFile"/>, <see cref="LoadImage"/>, or <see cref="CaptureImage"/>.</param>
-        /// <returns>A <see cref="string"/> object containing XML information about the volume image.</returns>
+        /// <returns>A <see cref="String"/> object containing XML information about the volume image.</returns>
         /// <exception cref="ArgumentNullException">wimHandle is null.</exception>
         /// <exception cref="Win32Exception">The Windows® Imaging API reported a failure.</exception>
         public static string GetImageInformationAsString(WimHandle wimHandle)
@@ -70,7 +74,7 @@ namespace Microsoft.Wim
                 }
 
                 // Marshal the buffer as a Unicode string and remove the Unicode file marker
-                return Marshal.PtrToStringUni(imageInfoPtr)?[1..];
+                return Marshal.PtrToStringUni(imageInfoPtr)?.Substring(1);
             }
             finally
             {
@@ -109,18 +113,20 @@ namespace Microsoft.Wim
                 return null;
             }
 
-            XmlDocument xmlDocument = new()
+            XmlDocument xmlDocument = new XmlDocument
             {
                 XmlResolver = null,
             };
 
-            using (StringReader stringReader = new(xml))
+            using (StringReader stringReader = new StringReader(xml))
             {
-                using XmlReader xmlReader = new XmlTextReader(stringReader)
+                using (XmlReader xmlReader = new XmlTextReader(stringReader)
                 {
                     DtdProcessing = DtdProcessing.Prohibit,
-                };
-                xmlDocument.Load(xmlReader);
+                })
+                {
+                    xmlDocument.Load(xmlReader);
+                }
             }
 
             return xmlDocument;

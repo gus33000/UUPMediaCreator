@@ -61,12 +61,10 @@ namespace Microsoft.Dism
         public DismPackageFeatureState State => _capability.State;
 
         /// <summary>
-        /// Determines whether the specified <see cref="object" />, is equal to this instance.
+        /// Determines whether the specified <see cref="System.Object" />, is equal to this instance.
         /// </summary>
-        /// <param name="obj">The <see cref="object" /> to compare with this instance.</param>
-        /// <returns>
-        ///   <c>true</c> if the specified <see cref="object" /> is equal to this instance; otherwise, <c>false</c>.
-        /// </returns>
+        /// <param name="obj">The <see cref="System.Object" /> to compare with this instance.</param>
+        /// <returns><c>true</c> if the specified <see cref="System.Object" /> is equal to this instance; otherwise, <c>false</c>.</returns>
         public override bool Equals(object? obj)
         {
             return obj != null && Equals(obj as DismCapability);
@@ -76,9 +74,7 @@ namespace Microsoft.Dism
         /// Indicates whether the current object is equal to another object of the same type.
         /// </summary>
         /// <param name="other">The <see cref="DismCapability" /> object to compare with this object.</param>
-        /// <returns>
-        /// true if the current object is equal to the <paramref name="other" /> parameter; otherwise, false.
-        /// </returns>
+        /// <returns><c>true</c> if the current object is equal to the <paramref name="other" /> parameter, otherwise <c>false</c>.</returns>
         public bool Equals(DismCapability? other)
         {
             return other != null && Name == other.Name && State == other.State;
@@ -87,9 +83,7 @@ namespace Microsoft.Dism
         /// <summary>
         /// Returns a hash code for this instance.
         /// </summary>
-        /// <returns>
-        /// A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table.
-        /// </returns>
+        /// <returns>A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table.</returns>
         public override int GetHashCode()
         {
             return (string.IsNullOrEmpty(Name) ? 0 : Name.GetHashCode()) ^ State.GetHashCode();

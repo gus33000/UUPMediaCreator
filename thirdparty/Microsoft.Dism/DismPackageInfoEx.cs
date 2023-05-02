@@ -66,7 +66,7 @@ namespace Microsoft.Dism
         /// Determines whether the specified <see cref="T:System.Object" /> is equal to the current <see cref="T:System.Object" />.
         /// </summary>
         /// <param name="obj">The object to compare with the current object.</param>
-        /// <returns>true if the specified <see cref="T:System.Object" /> is equal to the current <see cref="T:System.Object" />; otherwise, false.</returns>
+        /// <returns><c>true</c> if the specified <see cref="T:System.Object" /> is equal to the current <see cref="T:System.Object" />, otherwise <c>false</c>.</returns>
         public override bool Equals(object? obj)
         {
             return obj != null && Equals(obj as DismPackageInfoEx);
@@ -76,7 +76,7 @@ namespace Microsoft.Dism
         /// Determines whether the specified <see cref="DismPackageInfoEx" /> is equal to the current <see cref="DismPackageInfoEx" />.
         /// </summary>
         /// <param name="other">The <see cref="DismPackageInfoEx" /> object to compare with the current object.</param>
-        /// <returns>true if the specified <see cref="DismPackageInfoEx" /> is equal to the current <see cref="DismPackageInfoEx" />; otherwise, false.</returns>
+        /// <returns><c>true</c> if the specified <see cref="DismPackageInfoEx" /> is equal to the current <see cref="DismPackageInfoEx" />, otherwise <c>false</c>.</returns>
         public bool Equals(DismPackageInfoEx? other)
         {
             return other != null

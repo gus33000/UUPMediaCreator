@@ -66,7 +66,7 @@ namespace Microsoft.Wim
         /// <summary>
         /// Represents a <c>null</c> handle.
         /// </summary>
-        public static readonly WimHandle Null = new();
+        public static readonly WimHandle Null = new WimHandle();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="WimHandle"/> class.

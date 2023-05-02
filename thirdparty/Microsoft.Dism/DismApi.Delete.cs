@@ -16,7 +16,7 @@ namespace Microsoft.Dism
         private static void Delete(IntPtr handle)
         {
             // Call the native function
-            _ = NativeMethods.DismDelete(handle);
+            NativeMethods.DismDelete(handle);
         }
 
         internal static partial class NativeMethods

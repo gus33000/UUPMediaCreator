@@ -62,7 +62,7 @@ namespace Microsoft.Dism
             /// <summary>
             /// The number of elements in the CustomProperty array.
             /// </summary>
-            public uint CustomPropertyCount;
+            public UInt32 CustomPropertyCount;
         }
     }
 
@@ -118,7 +118,7 @@ namespace Microsoft.Dism
         /// Determines whether the specified <see cref="T:System.Object" /> is equal to the current <see cref="T:System.Object" />.
         /// </summary>
         /// <param name="obj">The object to compare with the current object.</param>
-        /// <returns>true if the specified <see cref="T:System.Object" /> is equal to the current <see cref="T:System.Object" />; otherwise, false.</returns>
+        /// <returns><c>true</c> if the specified <see cref="T:System.Object" /> is equal to the current <see cref="T:System.Object" />, otherwise <c>false</c>.</returns>
         public override bool Equals(object? obj)
         {
             return obj != null && Equals(obj as DismFeatureInfo);
@@ -128,7 +128,7 @@ namespace Microsoft.Dism
         /// Determines whether the specified <see cref="DismFeatureInfo" /> is equal to the current <see cref="DismFeatureInfo" />.
         /// </summary>
         /// <param name="other">The <see cref="DismFeatureInfo" /> object to compare with the current object.</param>
-        /// <returns>true if the specified <see cref="DismFeatureInfo" /> is equal to the current <see cref="DismFeatureInfo" />; otherwise, false.</returns>
+        /// <returns><c>true</c> if the specified <see cref="DismFeatureInfo" /> is equal to the current <see cref="DismFeatureInfo" />, otherwise <c>false</c>.</returns>
         public bool Equals(DismFeatureInfo? other)
         {
             return other != null
