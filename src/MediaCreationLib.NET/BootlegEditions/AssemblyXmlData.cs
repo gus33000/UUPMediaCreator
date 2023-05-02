@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Xml.Serialization;
 
-namespace MediaCreationLib.NET.BootlegEditions
+namespace MediaCreationLib.BootlegEditions
 {
     [XmlRoot(ElementName = "assemblyIdentity", Namespace = "urn:schemas-microsoft-com:asm.v3")]
     public class AssemblyIdentity

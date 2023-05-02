@@ -20,10 +20,10 @@
  * SOFTWARE.
  */
 using Cabinet;
-using Imaging.NET;
+using Imaging;
 using IniParser;
 using IniParser.Model;
-using MediaCreationLib.NET.Settings;
+using MediaCreationLib.Settings;
 using Microsoft.Wim;
 using System;
 using System.IO;
@@ -31,7 +31,7 @@ using System.Linq;
 using System.Text;
 using UUPMediaCreator.InterCommunication;
 
-namespace MediaCreationLib.NET.BootlegEditions
+namespace MediaCreationLib.BootlegEditions
 {
     public static class BootlegEditionCreator
     {
@@ -265,7 +265,7 @@ namespace MediaCreationLib.NET.BootlegEditions
             progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, "Serial: " + serial);
 
             progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, "Getting current edition");
-            string SourceEdition = DismOperations.NET.DismOperations.Instance.GetCurrentEdition(MountedImagePath);
+            string SourceEdition = DismOperations.DismOperations.Instance.GetCurrentEdition(MountedImagePath);
             progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, "Current edition is: " + SourceEdition);
 
             progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, "Getting wim info for: " + OutputInstallImage);
@@ -571,7 +571,7 @@ namespace MediaCreationLib.NET.BootlegEditions
             // Apply unattend
             //
             progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, "Applying unattend");
-            DismOperations.NET.DismOperations.Instance.ApplyUnattend(MountedImagePath, unattendPath);
+            DismOperations.DismOperations.Instance.ApplyUnattend(MountedImagePath, unattendPath);
 
             //
             // Restore OEMDefaultAssociations
@@ -612,14 +612,14 @@ namespace MediaCreationLib.NET.BootlegEditions
             // Apply edition xml as unattend
             //
             progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, "Applying Edition Unattend XML");
-            DismOperations.NET.DismOperations.Instance.ApplyUnattend(MountedImagePath, desintationEditionXml);
+            DismOperations.DismOperations.Instance.ApplyUnattend(MountedImagePath, desintationEditionXml);
 
             //
             // Install correct product key
             //
             progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, true, 0, "Installing product key");
 
-            DismOperations.NET.DismOperations.Instance.SetProductKey(MountedImagePath, serial);
+            DismOperations.DismOperations.Instance.SetProductKey(MountedImagePath, serial);
 
             //
             // Application handling

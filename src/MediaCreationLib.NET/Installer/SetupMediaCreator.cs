@@ -20,12 +20,12 @@
  * SOFTWARE.
  */
 using CompDB;
-using MediaCreationLib.NET.Utils;
+using MediaCreationLib.Utils;
 using Microsoft.Wim;
 using System.Collections.Generic;
 using UUPMediaCreator.InterCommunication;
 
-namespace MediaCreationLib.NET.Installer
+namespace MediaCreationLib.Installer
 {
     public static class SetupMediaCreator
     {

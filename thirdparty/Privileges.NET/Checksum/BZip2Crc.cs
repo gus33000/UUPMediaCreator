@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.CompilerServices;
 
-namespace Privileges.NET.Checksum
+namespace Privileges.Checksum
 {
     /// <summary>
     /// CRC-32 with unreversed data and reversed output

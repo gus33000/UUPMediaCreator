@@ -19,8 +19,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-using Imaging.NET;
-using MediaCreationLib.NET.Settings;
+using Imaging;
+using MediaCreationLib.Settings;
 using Microsoft.Wim;
 using System;
 using System.Collections.Generic;
@@ -29,7 +29,7 @@ using System.Linq;
 using System.Text;
 using UUPMediaCreator.InterCommunication;
 
-namespace MediaCreationLib.NET
+namespace MediaCreationLib
 {
     public static class UUPMediaCreator
     {
@@ -110,7 +110,7 @@ namespace MediaCreationLib.NET
         {
             bool result = true;
 
-            string SourceEdition = DismOperations.NET.DismOperations.Instance.GetCurrentEdition(MountedImagePath);
+            string SourceEdition = DismOperations.DismOperations.Instance.GetCurrentEdition(MountedImagePath);
 
             result = Constants.imagingInterface.GetWIMInformation(OutputInstallImage, out WIMInformationXML.WIM wiminfo);
             if (!result)
@@ -142,7 +142,7 @@ namespace MediaCreationLib.NET
                 progressCallback?.Invoke(Common.ProcessPhase.ApplyingImage, IsIndeterminate, ProgressInPercentage, SubOperation);
             }
 
-            DismOperations.NET.DismOperations.Instance.SetTargetEdition(MountedImagePath, EditionID, callback);
+            DismOperations.DismOperations.Instance.SetTargetEdition(MountedImagePath, EditionID, callback);
 
             void callback2(string Operation, int ProgressPercentage, bool IsIndeterminate)
             {

@@ -20,7 +20,7 @@
  * SOFTWARE.
  */
 using CompDB;
-using Imaging.NET;
+using Imaging;
 using MediaCreationLib.Planning.Applications;
 using System;
 using System.Collections.Generic;
@@ -29,7 +29,7 @@ using System.Linq;
 
 #nullable enable
 
-namespace MediaCreationLib.Planning.NET
+namespace MediaCreationLib.Planning
 {
     public class EditionTarget
     {

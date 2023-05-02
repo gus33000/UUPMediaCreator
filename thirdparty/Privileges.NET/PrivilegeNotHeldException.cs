@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace Privileges.NET
+namespace Privileges
 {
     [Serializable]
     public sealed class PrivilegeNotHeldException : UnauthorizedAccessException, ISerializable

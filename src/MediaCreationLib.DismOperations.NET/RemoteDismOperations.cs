@@ -23,7 +23,7 @@ using MediaCreationLib.Planning.Applications;
 using System.Diagnostics;
 using System.IO;
 
-namespace MediaCreationLib.DismOperations.NET
+namespace MediaCreationLib.DismOperations
 {
     public class RemoteDismOperations : IDismOperations
     {

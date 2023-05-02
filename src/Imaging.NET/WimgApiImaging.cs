@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace Imaging.NET
+namespace Imaging
 {
     public class WimgApiImaging : IImaging
     {

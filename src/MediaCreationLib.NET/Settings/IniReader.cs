@@ -1,11 +1,11 @@
 ﻿using IniParser;
 using IniParser.Model;
-using MediaCreationLib.DismOperations.NET;
+using MediaCreationLib.DismOperations;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace MediaCreationLib.NET.Settings
+namespace MediaCreationLib.Settings
 {
     public static class IniReader
     {

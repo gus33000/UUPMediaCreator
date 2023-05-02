@@ -19,13 +19,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-using Privileges.NET;
+using Privileges;
 using System;
 using System.IO;
 using System.Security.AccessControl;
 using System.Security.Principal;
 
-namespace MediaCreationLib.NET.Utils
+namespace MediaCreationLib.Utils
 {
     public static class TakeOwn
     {
@@ -45,7 +45,7 @@ namespace MediaCreationLib.NET.Utils
                 new DirectoryInfo(path).SetAccessControl(directorySecurity);
                 ownershipTaken = true;
             }
-            catch (Privileges.NET.PrivilegeNotHeldException e)
+            catch (Privileges.PrivilegeNotHeldException e)
             {
                 Console.WriteLine("Failed to assign privileges. " + e.ToString());
             }
@@ -84,7 +84,7 @@ namespace MediaCreationLib.NET.Utils
 
                 new DirectoryInfo(path).SetAccessControl(directorySecurity);
             }
-            catch (Privileges.NET.PrivilegeNotHeldException e)
+            catch (Privileges.PrivilegeNotHeldException e)
             {
                 Console.WriteLine("Failed to assign privileges. " + e.ToString());
             }
@@ -110,7 +110,7 @@ namespace MediaCreationLib.NET.Utils
                 new FileInfo(path).SetAccessControl(fileSecurity);
                 ownershipTaken = true;
             }
-            catch (Privileges.NET.PrivilegeNotHeldException e)
+            catch (Privileges.PrivilegeNotHeldException e)
             {
                 Console.WriteLine("Failed to assign privileges. " + e.ToString());
             }
@@ -139,7 +139,7 @@ namespace MediaCreationLib.NET.Utils
 
                 new FileInfo(path).SetAccessControl(fileSecurity);
             }
-            catch (Privileges.NET.PrivilegeNotHeldException e)
+            catch (Privileges.PrivilegeNotHeldException e)
             {
                 Console.WriteLine("Failed to assign privileges. " + e.ToString());
             }

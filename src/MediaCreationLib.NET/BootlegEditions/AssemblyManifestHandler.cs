@@ -24,7 +24,7 @@ using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
 
-namespace MediaCreationLib.NET.BootlegEditions
+namespace MediaCreationLib.BootlegEditions
 {
     public static class AssemblyManifestHandler
     {

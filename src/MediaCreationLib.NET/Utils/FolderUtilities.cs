@@ -2,7 +2,7 @@
 using System.IO;
 using System.Linq;
 
-namespace MediaCreationLib.NET.Utils
+namespace MediaCreationLib.Utils
 {
     public static class FolderUtilities
     {

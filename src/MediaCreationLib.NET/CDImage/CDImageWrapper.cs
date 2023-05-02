@@ -19,14 +19,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-using MediaCreationLib.NET.Utils;
+using MediaCreationLib.Utils;
 using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 
-namespace MediaCreationLib.NET.CDImage
+namespace MediaCreationLib.CDImage
 {
     internal static class CDImageWrapper
     {

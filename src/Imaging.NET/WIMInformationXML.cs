@@ -24,7 +24,7 @@ using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
 
-namespace Imaging.NET
+namespace Imaging
 {
     public static class WIMInformationXML
     {

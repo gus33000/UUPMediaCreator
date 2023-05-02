@@ -28,7 +28,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 
-namespace Imaging.NET
+namespace Imaging
 {
     public class WimLibImaging : IImaging
     {

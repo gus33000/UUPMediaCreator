@@ -28,7 +28,7 @@ using System.Linq;
 using System.Threading;
 using System.Xml.Linq;
 
-namespace MediaCreationLib.DismOperations.NET
+namespace MediaCreationLib.DismOperations
 {
     public class DismOperations : IDismOperations
     {

@@ -19,10 +19,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-using Imaging.NET;
+using Imaging;
 using System.IO;
 
-namespace MediaCreationLib.NET
+namespace MediaCreationLib
 {
     public static class Constants
     {

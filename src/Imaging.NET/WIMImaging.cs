@@ -1,7 +1,7 @@
 ﻿using Microsoft.Wim;
 using System.Collections.Generic;
 
-namespace Imaging.NET
+namespace Imaging
 {
     public class WimImaging : IImaging
     {
