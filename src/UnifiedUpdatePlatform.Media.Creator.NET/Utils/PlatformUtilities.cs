@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Security.Principal;
 
-namespace UnifiedUpdatePlatform.Media.Creator.Utils
+namespace UnifiedUpdatePlatform.Media.Creator.NET.Utils
 {
     public static class PlatformUtilities
     {

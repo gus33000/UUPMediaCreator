@@ -31,7 +31,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace VirtualHardDiskLib
+namespace VirtualHardDiskLib.NET
 {
     public static class VHDUtilities
     {

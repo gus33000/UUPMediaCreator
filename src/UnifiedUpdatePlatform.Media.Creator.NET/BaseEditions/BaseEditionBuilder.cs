@@ -21,20 +21,19 @@
  */
 using Cabinet;
 using CompDB;
-using UnifiedUpdatePlatform.Imaging;
 using IniParser;
 using IniParser.Model;
-using UnifiedUpdatePlatform.Media.Creator.DismOperations;
-using UnifiedUpdatePlatform.Media.Creator.Planning.Applications;
 using Microsoft.Wim;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
-using UnifiedUpdatePlatform.Common.Messaging;
-using VirtualHardDiskLib;
+using UnifiedUpdatePlatform.Imaging.NET;
+using UnifiedUpdatePlatform.Media.Creator.DismOperations.NET;
+using UnifiedUpdatePlatform.Media.Creator.Planning.Applications;
+using VirtualHardDiskLib.NET;
 
-namespace UnifiedUpdatePlatform.Media.Creator.BaseEditions
+namespace UnifiedUpdatePlatform.Media.Creator.NET.BaseEditions
 {
     public static class BaseEditionBuilder
     {
@@ -44,7 +43,7 @@ namespace UnifiedUpdatePlatform.Media.Creator.BaseEditions
             string EditionID,
             string InputWindowsREPath,
             string OutputInstallImage,
-            UnifiedUpdatePlatform.Common.Messaging.Common.CompressionType CompressionType,
+            Common.Messaging.Common.CompressionType CompressionType,
             IEnumerable<CompDBXmlClass.CompDB> CompositionDatabases,
             TempManager.TempManager tempManager,
             ProgressCallback progressCallback = null)
@@ -52,15 +51,15 @@ namespace UnifiedUpdatePlatform.Media.Creator.BaseEditions
             WimCompressionType compression = WimCompressionType.None;
             switch (CompressionType)
             {
-                case UnifiedUpdatePlatform.Common.Messaging.Common.CompressionType.LZMS:
+                case Common.Messaging.Common.CompressionType.LZMS:
                     compression = WimCompressionType.Lzms;
                     break;
 
-                case UnifiedUpdatePlatform.Common.Messaging.Common.CompressionType.LZX:
+                case Common.Messaging.Common.CompressionType.LZX:
                     compression = WimCompressionType.Lzx;
                     break;
 
-                case UnifiedUpdatePlatform.Common.Messaging.Common.CompressionType.XPRESS:
+                case Common.Messaging.Common.CompressionType.XPRESS:
                     compression = WimCompressionType.Xpress;
                     break;
             }
@@ -68,7 +67,7 @@ namespace UnifiedUpdatePlatform.Media.Creator.BaseEditions
             (bool result, string BaseESD, HashSet<string> ReferencePackages) = BuildReferenceImageList(UUPPath, LanguageCode, EditionID, CompositionDatabases, tempManager, progressCallback);
             if (!result)
             {
-                progressCallback?.Invoke(UnifiedUpdatePlatform.Common.Messaging.Common.ProcessPhase.ApplyingImage, true, 0, "CreateBaseEdition -> BuildReferenceImageList failed");
+                progressCallback?.Invoke(Common.Messaging.Common.ProcessPhase.ApplyingImage, true, 0, "CreateBaseEdition -> BuildReferenceImageList failed");
                 goto exit;
             }
 
@@ -78,7 +77,7 @@ namespace UnifiedUpdatePlatform.Media.Creator.BaseEditions
             result = Constants.imagingInterface.GetWIMImageInformation(BaseESD, 3, out WIMInformationXML.IMAGE image);
             if (!result)
             {
-                progressCallback?.Invoke(UnifiedUpdatePlatform.Common.Messaging.Common.ProcessPhase.ApplyingImage, true, 0, "CreateBaseEdition -> GetWIMImageInformation failed");
+                progressCallback?.Invoke(Common.Messaging.Common.ProcessPhase.ApplyingImage, true, 0, "CreateBaseEdition -> GetWIMImageInformation failed");
                 goto exit;
             }
 
@@ -87,7 +86,7 @@ namespace UnifiedUpdatePlatform.Media.Creator.BaseEditions
             //
             void callback(string Operation, int ProgressPercentage, bool IsIndeterminate)
             {
-                progressCallback?.Invoke(UnifiedUpdatePlatform.Common.Messaging.Common.ProcessPhase.ApplyingImage, IsIndeterminate, ProgressPercentage, Operation);
+                progressCallback?.Invoke(Common.Messaging.Common.ProcessPhase.ApplyingImage, IsIndeterminate, ProgressPercentage, Operation);
             }
 
             result = Constants.imagingInterface.ExportImage(
@@ -99,14 +98,14 @@ namespace UnifiedUpdatePlatform.Media.Creator.BaseEditions
                 progressCallback: callback);
             if (!result)
             {
-                progressCallback?.Invoke(UnifiedUpdatePlatform.Common.Messaging.Common.ProcessPhase.ApplyingImage, true, 0, "CreateBaseEdition -> ExportImage failed");
+                progressCallback?.Invoke(Common.Messaging.Common.ProcessPhase.ApplyingImage, true, 0, "CreateBaseEdition -> ExportImage failed");
                 goto exit;
             }
 
             result = Constants.imagingInterface.GetWIMInformation(OutputInstallImage, out WIMInformationXML.WIM wim);
             if (!result)
             {
-                progressCallback?.Invoke(UnifiedUpdatePlatform.Common.Messaging.Common.ProcessPhase.ApplyingImage, true, 0, "CreateBaseEdition -> GetWIMInformation failed");
+                progressCallback?.Invoke(Common.Messaging.Common.ProcessPhase.ApplyingImage, true, 0, "CreateBaseEdition -> GetWIMInformation failed");
                 goto exit;
             }
 
@@ -139,19 +138,19 @@ namespace UnifiedUpdatePlatform.Media.Creator.BaseEditions
             result = Constants.imagingInterface.SetWIMImageInformation(OutputInstallImage, wim.IMAGE.Count, image);
             if (!result)
             {
-                progressCallback?.Invoke(UnifiedUpdatePlatform.Common.Messaging.Common.ProcessPhase.ApplyingImage, true, 0, "CreateBaseEdition -> SetWIMImageInformation failed");
+                progressCallback?.Invoke(Common.Messaging.Common.ProcessPhase.ApplyingImage, true, 0, "CreateBaseEdition -> SetWIMImageInformation failed");
                 goto exit;
             }
 
             void callback2(string Operation, int ProgressPercentage, bool IsIndeterminate)
             {
-                progressCallback?.Invoke(UnifiedUpdatePlatform.Common.Messaging.Common.ProcessPhase.IntegratingWinRE, IsIndeterminate, ProgressPercentage, Operation);
+                progressCallback?.Invoke(Common.Messaging.Common.ProcessPhase.IntegratingWinRE, IsIndeterminate, ProgressPercentage, Operation);
             }
 
             //
             // Integrate the WinRE image into the installation image
             //
-            progressCallback?.Invoke(UnifiedUpdatePlatform.Common.Messaging.Common.ProcessPhase.IntegratingWinRE, true, 0, "");
+            progressCallback?.Invoke(Common.Messaging.Common.ProcessPhase.IntegratingWinRE, true, 0, "");
 
             result = Constants.imagingInterface.AddFileToImage(
                 OutputInstallImage,
@@ -161,7 +160,7 @@ namespace UnifiedUpdatePlatform.Media.Creator.BaseEditions
                 callback2);
             if (!result)
             {
-                progressCallback?.Invoke(UnifiedUpdatePlatform.Common.Messaging.Common.ProcessPhase.ApplyingImage, true, 0, "CreateBaseEdition -> AddFileToImage failed");
+                progressCallback?.Invoke(Common.Messaging.Common.ProcessPhase.ApplyingImage, true, 0, "CreateBaseEdition -> AddFileToImage failed");
                 goto exit;
             }
 
@@ -175,7 +174,7 @@ namespace UnifiedUpdatePlatform.Media.Creator.BaseEditions
             string EditionID,
             string InputWindowsREPath,
             string OutputInstallImage,
-            UnifiedUpdatePlatform.Common.Messaging.Common.CompressionType CompressionType,
+            Common.Messaging.Common.CompressionType CompressionType,
             AppxInstallWorkload[] appxWorkloads,
             IEnumerable<CompDBXmlClass.CompDB> CompositionDatabases,
             TempManager.TempManager tempManager,
@@ -187,15 +186,15 @@ namespace UnifiedUpdatePlatform.Media.Creator.BaseEditions
             WimCompressionType compression = WimCompressionType.None;
             switch (CompressionType)
             {
-                case UnifiedUpdatePlatform.Common.Messaging.Common.CompressionType.LZMS:
+                case Common.Messaging.Common.CompressionType.LZMS:
                     compression = WimCompressionType.Lzms;
                     break;
 
-                case UnifiedUpdatePlatform.Common.Messaging.Common.CompressionType.LZX:
+                case Common.Messaging.Common.CompressionType.LZX:
                     compression = WimCompressionType.Lzx;
                     break;
 
-                case UnifiedUpdatePlatform.Common.Messaging.Common.CompressionType.XPRESS:
+                case Common.Messaging.Common.CompressionType.XPRESS:
                     compression = WimCompressionType.Xpress;
                     break;
             }
@@ -203,7 +202,7 @@ namespace UnifiedUpdatePlatform.Media.Creator.BaseEditions
             (bool result, string BaseESD, HashSet<string> ReferencePackages) = BuildReferenceImageList(UUPPath, LanguageCode, EditionID, CompositionDatabases, tempManager, progressCallback);
             if (!result)
             {
-                progressCallback?.Invoke(UnifiedUpdatePlatform.Common.Messaging.Common.ProcessPhase.ApplyingImage, true, 0, "CreateBaseEditionWithAppXs -> BuildReferenceImageList failed");
+                progressCallback?.Invoke(Common.Messaging.Common.ProcessPhase.ApplyingImage, true, 0, "CreateBaseEditionWithAppXs -> BuildReferenceImageList failed");
                 goto exit;
             }
 
@@ -213,7 +212,7 @@ namespace UnifiedUpdatePlatform.Media.Creator.BaseEditions
             result = Constants.imagingInterface.GetWIMImageInformation(BaseESD, 3, out WIMInformationXML.IMAGE image);
             if (!result)
             {
-                progressCallback?.Invoke(UnifiedUpdatePlatform.Common.Messaging.Common.ProcessPhase.ApplyingImage, true, 0, "CreateBaseEditionWithAppXs -> GetWIMImageInformation failed");
+                progressCallback?.Invoke(Common.Messaging.Common.ProcessPhase.ApplyingImage, true, 0, "CreateBaseEditionWithAppXs -> GetWIMImageInformation failed");
                 goto exit;
             }
 
@@ -226,7 +225,7 @@ namespace UnifiedUpdatePlatform.Media.Creator.BaseEditions
             result = FileLocator.GenerateAppXLicenseFiles(licenseFolder, LanguageCode, EditionID, CompositionDatabases, progressCallback);
             if (!result)
             {
-                progressCallback?.Invoke(UnifiedUpdatePlatform.Common.Messaging.Common.ProcessPhase.ApplyingImage, true, 0, "CreateBaseEditionWithAppXs -> GenerateAppXLicenseFiles failed");
+                progressCallback?.Invoke(Common.Messaging.Common.ProcessPhase.ApplyingImage, true, 0, "CreateBaseEditionWithAppXs -> GenerateAppXLicenseFiles failed");
                 goto exit;
             }
 
@@ -235,7 +234,7 @@ namespace UnifiedUpdatePlatform.Media.Creator.BaseEditions
             //
             void callback(string Operation, int ProgressPercentage, bool IsIndeterminate)
             {
-                progressCallback?.Invoke(UnifiedUpdatePlatform.Common.Messaging.Common.ProcessPhase.ApplyingImage, IsIndeterminate, ProgressPercentage, Operation);
+                progressCallback?.Invoke(Common.Messaging.Common.ProcessPhase.ApplyingImage, IsIndeterminate, ProgressPercentage, Operation);
             }
 
             using (VirtualDiskSession vhdSession = new(tempManager, delete: !keepVhd))
@@ -245,29 +244,29 @@ namespace UnifiedUpdatePlatform.Media.Creator.BaseEditions
                 result = Constants.imagingInterface.ApplyImage(BaseESD, 3, vhdSession.GetMountedPath(), referenceWIMs: ReferencePackages, progressCallback: callback);
                 if (!result)
                 {
-                    progressCallback?.Invoke(UnifiedUpdatePlatform.Common.Messaging.Common.ProcessPhase.ApplyingImage, true, 0, "CreateBaseEditionWithAppXs -> ApplyImage failed");
+                    progressCallback?.Invoke(Common.Messaging.Common.ProcessPhase.ApplyingImage, true, 0, "CreateBaseEditionWithAppXs -> ApplyImage failed");
                     goto exit;
                 }
 
                 void customCallback(bool IsIndeterminate, int ProgressInPercentage, string SubOperation)
                 {
-                    progressCallback?.Invoke(UnifiedUpdatePlatform.Common.Messaging.Common.ProcessPhase.ApplyingImage, IsIndeterminate, ProgressInPercentage, SubOperation);
+                    progressCallback?.Invoke(Common.Messaging.Common.ProcessPhase.ApplyingImage, IsIndeterminate, ProgressInPercentage, SubOperation);
                 }
 
-                progressCallback?.Invoke(UnifiedUpdatePlatform.Common.Messaging.Common.ProcessPhase.ApplyingImage, true, 0, $"Installing Applications");
+                progressCallback?.Invoke(Common.Messaging.Common.ProcessPhase.ApplyingImage, true, 0, $"Installing Applications");
                 result = RemoteDismOperations.Instance.PerformAppxWorkloadsInstallation(vhdSession.GetMountedPath(), UUPPath, licenseFolder, appxWorkloads, customCallback);
                 if (!result)
                 {
-                    result = DismOperations.DismOperations.Instance.PerformAppxWorkloadsInstallation(vhdSession.GetMountedPath(), UUPPath, licenseFolder, appxWorkloads, customCallback);
+                    result = DismOperations.NET.DismOperations.Instance.PerformAppxWorkloadsInstallation(vhdSession.GetMountedPath(), UUPPath, licenseFolder, appxWorkloads, customCallback);
                     if (!result)
                     {
                         foreach (AppxInstallWorkload appx in appxWorkloads)
                         {
-                            progressCallback?.Invoke(UnifiedUpdatePlatform.Common.Messaging.Common.ProcessPhase.ApplyingImage, true, 0, $"Installing {appx.AppXPath}");
+                            progressCallback?.Invoke(Common.Messaging.Common.ProcessPhase.ApplyingImage, true, 0, $"Installing {appx.AppXPath}");
                             result = RemoteDismOperations.Instance.PerformAppxWorkloadInstallation(vhdSession.GetMountedPath(), UUPPath, licenseFolder, appx);
                             if (!result)
                             {
-                                result = DismOperations.DismOperations.Instance.PerformAppxWorkloadInstallation(vhdSession.GetMountedPath(), UUPPath, licenseFolder, appx);
+                                result = DismOperations.NET.DismOperations.Instance.PerformAppxWorkloadInstallation(vhdSession.GetMountedPath(), UUPPath, licenseFolder, appx);
                             }
                         }
                     }
@@ -275,11 +274,11 @@ namespace UnifiedUpdatePlatform.Media.Creator.BaseEditions
 
                 if (!result)
                 {
-                    progressCallback?.Invoke(UnifiedUpdatePlatform.Common.Messaging.Common.ProcessPhase.ApplyingImage, true, 0, "An error occured while running the external tool for appx installation.");
+                    progressCallback?.Invoke(Common.Messaging.Common.ProcessPhase.ApplyingImage, true, 0, "An error occured while running the external tool for appx installation.");
                     goto exit;
                 }
 
-                progressCallback?.Invoke(UnifiedUpdatePlatform.Common.Messaging.Common.ProcessPhase.IntegratingWinRE, true, 0, "Integrating WinRE");
+                progressCallback?.Invoke(Common.Messaging.Common.ProcessPhase.IntegratingWinRE, true, 0, "Integrating WinRE");
                 File.Copy(InputWindowsREPath, Path.Combine(vhdSession.GetMountedPath(), "Windows", "System32", "Recovery", "Winre.wim"), true);
 
                 result = Constants.imagingInterface.CaptureImage(
@@ -295,7 +294,7 @@ namespace UnifiedUpdatePlatform.Media.Creator.BaseEditions
                     progressCallback: callback);
                 if (!result)
                 {
-                    progressCallback?.Invoke(UnifiedUpdatePlatform.Common.Messaging.Common.ProcessPhase.ApplyingImage, true, 0, "CreateBaseEditionWithAppXs -> CaptureImage failed");
+                    progressCallback?.Invoke(Common.Messaging.Common.ProcessPhase.ApplyingImage, true, 0, "CreateBaseEditionWithAppXs -> CaptureImage failed");
                     goto exit;
                 }
             }
@@ -303,7 +302,7 @@ namespace UnifiedUpdatePlatform.Media.Creator.BaseEditions
             result = Constants.imagingInterface.GetWIMInformation(OutputInstallImage, out WIMInformationXML.WIM wim);
             if (!result)
             {
-                progressCallback?.Invoke(UnifiedUpdatePlatform.Common.Messaging.Common.ProcessPhase.ApplyingImage, true, 0, "CreateBaseEdition -> GetWIMInformation failed");
+                progressCallback?.Invoke(Common.Messaging.Common.ProcessPhase.ApplyingImage, true, 0, "CreateBaseEdition -> GetWIMInformation failed");
                 goto exit;
             }
 
@@ -336,7 +335,7 @@ namespace UnifiedUpdatePlatform.Media.Creator.BaseEditions
             result = Constants.imagingInterface.SetWIMImageInformation(OutputInstallImage, wim.IMAGE.Count, image);
             if (!result)
             {
-                progressCallback?.Invoke(UnifiedUpdatePlatform.Common.Messaging.Common.ProcessPhase.ApplyingImage, true, 0, "CreateBaseEdition -> SetWIMImageInformation failed");
+                progressCallback?.Invoke(Common.Messaging.Common.ProcessPhase.ApplyingImage, true, 0, "CreateBaseEdition -> SetWIMImageInformation failed");
                 goto exit;
             }
 
@@ -370,7 +369,7 @@ namespace UnifiedUpdatePlatform.Media.Creator.BaseEditions
             {
                 int progressScale = (int)Math.Round((double)1 / total * 100);
                 string fileName = Path.GetFileName(file);
-                progressCallback?.Invoke(UnifiedUpdatePlatform.Common.Messaging.Common.ProcessPhase.PreparingFiles, false, progressPercentage, $"Unpacking {fileName}");
+                progressCallback?.Invoke(Common.Messaging.Common.ProcessPhase.PreparingFiles, false, progressPercentage, $"Unpacking {fileName}");
                 try
                 {
                     CabinetExtractor.ExtractCabinet(file, Path.Combine(unpackedFODEsd, fileName));
@@ -386,7 +385,7 @@ namespace UnifiedUpdatePlatform.Media.Creator.BaseEditions
 
             if (!parallelResult.IsCompleted)
             {
-                progressCallback?.Invoke(UnifiedUpdatePlatform.Common.Messaging.Common.ProcessPhase.ReadingMetadata, true, 0, "CreateBaseEdition -> Reference ESD creation from Cabinet files failed - Cab extraction");
+                progressCallback?.Invoke(Common.Messaging.Common.ProcessPhase.ReadingMetadata, true, 0, "CreateBaseEdition -> Reference ESD creation from Cabinet files failed - Cab extraction");
                 result = false;
                 goto exit;
             }
@@ -431,7 +430,7 @@ namespace UnifiedUpdatePlatform.Media.Creator.BaseEditions
 
             string esdFilePath = tempManager.GetTempPath();
 
-            progressCallback?.Invoke(UnifiedUpdatePlatform.Common.Messaging.Common.ProcessPhase.PreparingFiles, false, progressPercentage, $"Creating {esdFilePath}");
+            progressCallback?.Invoke(Common.Messaging.Common.ProcessPhase.PreparingFiles, false, progressPercentage, $"Creating {esdFilePath}");
 
             result = Constants.imagingInterface.CaptureImage(esdFilePath, "Metadata ESD", null, null, unpackedFODEsd, compressionType: WimCompressionType.None, PreserveACL: false, tempManager: tempManager);
 
@@ -439,7 +438,7 @@ namespace UnifiedUpdatePlatform.Media.Creator.BaseEditions
 
             if (!result)
             {
-                progressCallback?.Invoke(UnifiedUpdatePlatform.Common.Messaging.Common.ProcessPhase.ReadingMetadata, true, 0, "CreateBaseEdition -> Reference ESD creation from Cabinet files failed - WIM creation");
+                progressCallback?.Invoke(Common.Messaging.Common.ProcessPhase.ReadingMetadata, true, 0, "CreateBaseEdition -> Reference ESD creation from Cabinet files failed - WIM creation");
                 goto exit;
             }
 

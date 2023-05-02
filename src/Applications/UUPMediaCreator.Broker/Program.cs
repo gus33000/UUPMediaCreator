@@ -19,7 +19,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-using UnifiedUpdatePlatform.Media.Creator;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -28,6 +27,7 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using UnifiedUpdatePlatform.Common.Messaging;
+using UnifiedUpdatePlatform.Media.Creator.NET;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.AppService;
 using Windows.Foundation.Collections;
@@ -80,14 +80,12 @@ namespace UUPMediaCreator.Broker
             {
                 try
                 {
-                    using (Process elevatedProcess = new())
-                    {
-                        elevatedProcess.StartInfo.Verb = "runas";
-                        elevatedProcess.StartInfo.UseShellExecute = true;
-                        elevatedProcess.StartInfo.FileName = Environment.ProcessPath;
-                        elevatedProcess.StartInfo.Arguments = "elevate";
-                        _ = elevatedProcess.Start();
-                    }
+                    using Process elevatedProcess = new();
+                    elevatedProcess.StartInfo.Verb = "runas";
+                    elevatedProcess.StartInfo.UseShellExecute = true;
+                    elevatedProcess.StartInfo.FileName = Environment.ProcessPath;
+                    elevatedProcess.StartInfo.Arguments = "elevate";
+                    _ = elevatedProcess.Start();
                     return false;
                 }
                 catch (Win32Exception)
@@ -222,7 +220,11 @@ namespace UUPMediaCreator.Broker
                                 SubOperation = SubOperation
                             };
 
-                            UnifiedUpdatePlatform.Common.Messaging.Common.Messaging comm = new() { UnifiedUpdatePlatform.Common.Messaging.Common.MessagingType = UnifiedUpdatePlatform.Common.Messaging.Common.MessagingType.ReportISOConversionProgress, ISOConversionProgress = prog };
+                            UnifiedUpdatePlatform.Common.Messaging.Common.Messaging comm = new()
+                            {
+                                UnifiedUpdatePlatform.Common.Messaging.Common.MessagingType = UnifiedUpdatePlatform.Common.Messaging.Common.MessagingType.ReportISOConversionProgress,
+                                ISOConversionProgress = prog
+                            };
 
                             ValueSet val = new()
                             {
@@ -255,7 +257,11 @@ namespace UUPMediaCreator.Broker
                                     SubOperation = ex.ToString()
                                 };
 
-                                UnifiedUpdatePlatform.Common.Messaging.Common.Messaging comm = new() { UnifiedUpdatePlatform.Common.Messaging.Common.MessagingType = UnifiedUpdatePlatform.Common.Messaging.Common.MessagingType.ReportISOConversionProgress, ISOConversionProgress = prog };
+                                UnifiedUpdatePlatform.Common.Messaging.Common.Messaging comm = new()
+                                {
+                                    UnifiedUpdatePlatform.Common.Messaging.Common.MessagingType = UnifiedUpdatePlatform.Common.Messaging.Common.MessagingType.ReportISOConversionProgress,
+                                    ISOConversionProgress = prog
+                                };
 
                                 ValueSet val = new()
                                 {

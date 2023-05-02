@@ -141,7 +141,7 @@ namespace Microsoft.Dism
             /// <summary>
             /// The number of elements in the CustomProperty array.
             /// </summary>
-            public UInt32 CustomPropertyCount;
+            public uint CustomPropertyCount;
 
             /// <summary>
             /// An array of DismFeature Structure objects representing the features in the package.
@@ -151,7 +151,7 @@ namespace Microsoft.Dism
             /// <summary>
             /// The number of elements in the Feature array.
             /// </summary>
-            public UInt32 FeatureCount;
+            public uint FeatureCount;
         }
     }
 
@@ -206,12 +206,18 @@ namespace Microsoft.Dism
         /// <summary>
         /// Gets the date and time that the package was created. This field is local time, based on the time zone of the computer that created the package.
         /// </summary>
-        public DateTime CreationTime { get; }
+        public DateTime CreationTime
+        {
+            get;
+        }
 
         /// <summary>
         /// Gets an array of DismCustomProperty Structure objects representing the custom properties of the package.
         /// </summary>
-        public DismCustomPropertyCollection CustomProperties { get; }
+        public DismCustomPropertyCollection CustomProperties
+        {
+            get;
+        }
 
         /// <summary>
         /// Gets a description of the purpose of the package.
@@ -226,7 +232,10 @@ namespace Microsoft.Dism
         /// <summary>
         /// Gets an array of DismFeature Structure objects representing the features in the package.
         /// </summary>
-        public DismFeatureCollection Features { get; }
+        public DismFeatureCollection Features
+        {
+            get;
+        }
 
         /// <summary>
         /// Gets a DismFullyOfflineInstallableType Enumeration value describing whether a package can be installed offline without booting the image.
@@ -246,12 +255,18 @@ namespace Microsoft.Dism
         /// <summary>
         /// Gets the date and time that the package was installed.
         /// </summary>
-        public DateTime InstallTime { get; }
+        public DateTime InstallTime
+        {
+            get;
+        }
 
         /// <summary>
         /// Gets the date and time when this package was last updated. This field is local time, based on the servicing host computer.
         /// </summary>
-        public DateTime LastUpdateTime { get; }
+        public DateTime LastUpdateTime
+        {
+            get;
+        }
 
         /// <summary>
         /// Gets the name of the package.

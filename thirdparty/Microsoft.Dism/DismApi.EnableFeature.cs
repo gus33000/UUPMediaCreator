@@ -224,7 +224,7 @@ namespace Microsoft.Dism
             string[] sourcePathsArray = sourcePaths?.ToArray() ?? new string[0];
 
             // Create a DismProgress object to wrap the callback and allow cancellation
-            DismProgress progress = new DismProgress(progressCallback, userData);
+            DismProgress progress = new(progressCallback, userData);
 
             int hresult = NativeMethods.DismEnableFeature(
                 session: session,
@@ -268,7 +268,7 @@ namespace Microsoft.Dism
             /// </remarks>
             [DllImport(DismDllName, CharSet = DismCharacterSet)]
             [return: MarshalAs(UnmanagedType.Error)]
-            public static extern int DismEnableFeature(DismSession session, string featureName, string? identifier, DismPackageIdentifier packageIdentifier, [MarshalAs(UnmanagedType.Bool)] bool limitAccess, [MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.LPWStr, SizeParamIndex = 6)] string[] sourcePaths, UInt32 sourcePathCount, [MarshalAs(UnmanagedType.Bool)] bool enableAll, SafeWaitHandle cancelEvent, DismProgressCallback progress, IntPtr userData);
+            public static extern int DismEnableFeature(DismSession session, string featureName, string? identifier, DismPackageIdentifier packageIdentifier, [MarshalAs(UnmanagedType.Bool)] bool limitAccess, [MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.LPWStr, SizeParamIndex = 6)] string[] sourcePaths, uint sourcePathCount, [MarshalAs(UnmanagedType.Bool)] bool enableAll, SafeWaitHandle cancelEvent, DismProgressCallback progress, IntPtr userData);
         }
     }
 }

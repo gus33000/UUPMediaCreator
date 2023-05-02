@@ -24,16 +24,34 @@ using System.Xml;
 using System.Xml.Serialization;
 using UnifiedUpdatePlatform.Services.WindowsUpdate;
 
-namespace UnifiedUpdatePlatform.Media.Download.DownloadRequest
+namespace UUPDownload.DownloadRequest
 {
     public class UpdateScan
     {
-        public UpdateData UpdateData { get; set; }
-        public BuildTargets.EditionPlanningWithLanguage[] Targets { get; set; }
-        public MachineType Architecture { get; set; }
-        public string BuildString { get; set; }
-        public string Title { get; set; }
-        public string Description { get; set; }
+        public UpdateData UpdateData
+        {
+            get; set;
+        }
+        public BuildTargets.EditionPlanningWithLanguage[] Targets
+        {
+            get; set;
+        }
+        public MachineType Architecture
+        {
+            get; set;
+        }
+        public string BuildString
+        {
+            get; set;
+        }
+        public string Title
+        {
+            get; set;
+        }
+        public string Description
+        {
+            get; set;
+        }
 
         public string Serialize()
         {

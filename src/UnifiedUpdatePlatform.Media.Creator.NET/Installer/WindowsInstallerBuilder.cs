@@ -19,19 +19,18 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-using UnifiedUpdatePlatform.Imaging;
-using UnifiedUpdatePlatform.Media.Creator.DismOperations;
-using UnifiedUpdatePlatform.Media.Creator.Settings;
-using UnifiedUpdatePlatform.Media.Creator.Utils;
 using Microsoft.Wim;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using UnifiedUpdatePlatform.Common.Messaging;
-using VirtualHardDiskLib;
+using UnifiedUpdatePlatform.Imaging.NET;
+using UnifiedUpdatePlatform.Media.Creator.DismOperations.NET;
+using UnifiedUpdatePlatform.Media.Creator.NET.Settings;
+using UnifiedUpdatePlatform.Media.Creator.NET.Utils;
+using VirtualHardDiskLib.NET;
 
-namespace UnifiedUpdatePlatform.Media.Creator.Installer
+namespace UnifiedUpdatePlatform.Media.Creator.NET.Installer
 {
     public static class WindowsInstallerBuilder
     {
@@ -518,13 +517,13 @@ namespace UnifiedUpdatePlatform.Media.Creator.Installer
 
                 void customCallback(bool IsIndeterminate, int ProgressInPercentage, string SubOperation)
                 {
-                    progressCallback?.Invoke(UnifiedUpdatePlatform.Common.Messaging.Common.ProcessPhase.CreatingWindowsInstaller, IsIndeterminate, ProgressInPercentage, SubOperation);
+                    progressCallback?.Invoke(Common.Messaging.Common.ProcessPhase.CreatingWindowsInstaller, IsIndeterminate, ProgressInPercentage, SubOperation);
                 }
 
                 result = RemoteDismOperations.Instance.UninstallPEComponents(ospath, customCallback);
                 if (!result)
                 {
-                    result = DismOperations.DismOperations.Instance.UninstallPEComponents(ospath, customCallback);
+                    result = DismOperations.NET.DismOperations.Instance.UninstallPEComponents(ospath, customCallback);
                 }
 
                 if (!result)

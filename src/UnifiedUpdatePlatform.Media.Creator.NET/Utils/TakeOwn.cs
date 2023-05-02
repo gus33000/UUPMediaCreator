@@ -19,13 +19,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-using Privileges;
+using Privileges.NET;
 using System;
 using System.IO;
 using System.Security.AccessControl;
 using System.Security.Principal;
 
-namespace UnifiedUpdatePlatform.Media.Creator.Utils
+namespace UnifiedUpdatePlatform.Media.Creator.NET.Utils
 {
     public static class TakeOwn
     {
@@ -45,7 +45,7 @@ namespace UnifiedUpdatePlatform.Media.Creator.Utils
                 new DirectoryInfo(path).SetAccessControl(directorySecurity);
                 ownershipTaken = true;
             }
-            catch (Privileges.PrivilegeNotHeldException e)
+            catch (Privileges.NET.PrivilegeNotHeldException e)
             {
                 Console.WriteLine("Failed to assign privileges. " + e.ToString());
             }
@@ -84,7 +84,7 @@ namespace UnifiedUpdatePlatform.Media.Creator.Utils
 
                 new DirectoryInfo(path).SetAccessControl(directorySecurity);
             }
-            catch (Privileges.PrivilegeNotHeldException e)
+            catch (Privileges.NET.PrivilegeNotHeldException e)
             {
                 Console.WriteLine("Failed to assign privileges. " + e.ToString());
             }
@@ -110,7 +110,7 @@ namespace UnifiedUpdatePlatform.Media.Creator.Utils
                 new FileInfo(path).SetAccessControl(fileSecurity);
                 ownershipTaken = true;
             }
-            catch (Privileges.PrivilegeNotHeldException e)
+            catch (Privileges.NET.PrivilegeNotHeldException e)
             {
                 Console.WriteLine("Failed to assign privileges. " + e.ToString());
             }
@@ -139,7 +139,7 @@ namespace UnifiedUpdatePlatform.Media.Creator.Utils
 
                 new FileInfo(path).SetAccessControl(fileSecurity);
             }
-            catch (Privileges.PrivilegeNotHeldException e)
+            catch (Privileges.NET.PrivilegeNotHeldException e)
             {
                 Console.WriteLine("Failed to assign privileges. " + e.ToString());
             }

@@ -20,7 +20,6 @@
  * SOFTWARE.
  */
 using CommandLine;
-using UnifiedUpdatePlatform.Common.Messaging;
 
 namespace UUPMediaConverter
 {
@@ -28,21 +27,39 @@ namespace UUPMediaConverter
     internal class DesktopConvertOptions
     {
         [Option('u', "uup-path", HelpText = "The path to the downloaded files from UUP (Unified Update Platform)", Required = true)]
-        public string UUPPath { get; set; }
+        public string UUPPath
+        {
+            get; set;
+        }
 
         [Option('i', "iso-path", HelpText = "The destination ISO file path (includes the filename)", Required = true)]
-        public string ISOPath { get; set; }
+        public string ISOPath
+        {
+            get; set;
+        }
 
         [Option('l', "language-code", HelpText = "The language to make media for. e.g. en-US", Required = true)]
-        public string LanguageCode { get; set; }
+        public string LanguageCode
+        {
+            get; set;
+        }
 
         [Option('e', "edition", HelpText = "The edition to make media for, if possible. Not specifying this argument results in all possible editions being made, if possible.", Required = false)]
-        public string Edition { get; set; }
+        public string Edition
+        {
+            get; set;
+        }
 
         [Option('t', "temp-path", HelpText = "The temp path for the tool to use. Defaults to %TEMP%.", Required = false)]
-        public string TempPath { get; set; }
+        public string TempPath
+        {
+            get; set;
+        }
 
         [Option('c', "compression-format", HelpText = "The compression format to use. Valid values are: XPRESS, LZX, LZMS", Required = false, Default = UnifiedUpdatePlatform.Common.Messaging.Common.CompressionType.LZX)]
-        public UnifiedUpdatePlatform.Common.Messaging.Common.CompressionType Compression { get; set; }
+        public UnifiedUpdatePlatform.Common.Messaging.Common.CompressionType Compression
+        {
+            get; set;
+        }
     }
 }

@@ -68,11 +68,26 @@ namespace DownloadLib
 
     public class UUPFile
     {
-        public FileExchangeV3FileDownloadInformation WUFile { get; set; }
-        public string FileName { get; set; }
-        public long FileSize { get; set; }
-        public string Hash { get; set; }
-        public string HashAlgorithm { get; set; }
+        public FileExchangeV3FileDownloadInformation WUFile
+        {
+            get; set;
+        }
+        public string FileName
+        {
+            get; set;
+        }
+        public long FileSize
+        {
+            get; set;
+        }
+        public string Hash
+        {
+            get; set;
+        }
+        public string HashAlgorithm
+        {
+            get; set;
+        }
 
         public UUPFile(FileExchangeV3FileDownloadInformation WUFile, string FileName, long FileSize, string Hash, string HashAlgorithm)
         {
@@ -90,10 +105,22 @@ namespace DownloadLib
         private const string TEMP_DOWNLOAD_EXTENSION = ".dlTmp";
 
         private readonly HttpClient _hc;
-        public string DownloadFolderPath { get; set; }
-        public int DownloadThreads { get; set; }
-        public int DownloadRetries { get; set; }
-        public bool VerifyFiles { get; set; }
+        public string DownloadFolderPath
+        {
+            get; set;
+        }
+        public int DownloadThreads
+        {
+            get; set;
+        }
+        public int DownloadRetries
+        {
+            get; set;
+        }
+        public bool VerifyFiles
+        {
+            get; set;
+        }
 
         public HttpDownloader(string downloadFolderPath, int downloadThreads = 4, bool verifyFiles = true, IWebProxy proxy = null, bool useSystemProxy = true)
         {

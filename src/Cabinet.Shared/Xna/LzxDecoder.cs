@@ -165,7 +165,8 @@ namespace Microsoft.Xna.Framework
                 if (intel != 0)
                 {
                     // read the filesize
-                    i = bitbuf.ReadBits(16); j = bitbuf.ReadBits(16);
+                    i = bitbuf.ReadBits(16);
+                    j = bitbuf.ReadBits(16);
                     m_state.intel_filesize = (int)((i << 16) | j);
                 }
                 m_state.header_read = 1;
@@ -196,7 +197,11 @@ namespace Microsoft.Xna.Framework
                     switch (m_state.block_type)
                     {
                         case LzxConstants.BLOCKTYPE.ALIGNED:
-                            for (i = 0; i < 8; i++) { j = bitbuf.ReadBits(3); m_state.ALIGNED_len[i] = (byte)j; }
+                            for (i = 0; i < 8; i++)
+                            {
+                                j = bitbuf.ReadBits(3);
+                                m_state.ALIGNED_len[i] = (byte)j;
+                            }
                             _ = MakeDecodeTable(LzxConstants.ALIGNED_MAXSYMBOLS, LzxConstants.ALIGNED_TABLEBITS,
                                             m_state.ALIGNED_len, m_state.ALIGNED_table);
                             /* rest of aligned header is same as verbatim */
@@ -226,11 +231,20 @@ namespace Microsoft.Xna.Framework
                             }
 
                             byte hi, mh, ml, lo;
-                            lo = (byte)inData.ReadByte(); ml = (byte)inData.ReadByte(); mh = (byte)inData.ReadByte(); hi = (byte)inData.ReadByte();
+                            lo = (byte)inData.ReadByte();
+                            ml = (byte)inData.ReadByte();
+                            mh = (byte)inData.ReadByte();
+                            hi = (byte)inData.ReadByte();
                             R0 = (uint)(lo | (ml << 8) | (mh << 16) | (hi << 24));
-                            lo = (byte)inData.ReadByte(); ml = (byte)inData.ReadByte(); mh = (byte)inData.ReadByte(); hi = (byte)inData.ReadByte();
+                            lo = (byte)inData.ReadByte();
+                            ml = (byte)inData.ReadByte();
+                            mh = (byte)inData.ReadByte();
+                            hi = (byte)inData.ReadByte();
                             R1 = (uint)(lo | (ml << 8) | (mh << 16) | (hi << 24));
-                            lo = (byte)inData.ReadByte(); ml = (byte)inData.ReadByte(); mh = (byte)inData.ReadByte(); hi = (byte)inData.ReadByte();
+                            lo = (byte)inData.ReadByte();
+                            ml = (byte)inData.ReadByte();
+                            mh = (byte)inData.ReadByte();
+                            hi = (byte)inData.ReadByte();
                             R2 = (uint)(lo | (ml << 8) | (mh << 16) | (hi << 24));
                             break;
 
@@ -321,7 +335,9 @@ namespace Microsoft.Xna.Framework
                                         }
 
                                         /* update repeated offset LRU queue */
-                                        R2 = R1; R1 = R0; R0 = (uint)match_offset;
+                                        R2 = R1;
+                                        R1 = R0;
+                                        R0 = (uint)match_offset;
                                     }
                                     else if (match_offset == 0)
                                     {
@@ -330,12 +346,14 @@ namespace Microsoft.Xna.Framework
                                     else if (match_offset == 1)
                                     {
                                         match_offset = (int)R1;
-                                        R1 = R0; R0 = (uint)match_offset;
+                                        R1 = R0;
+                                        R0 = (uint)match_offset;
                                     }
                                     else /* match_offset == 2 */
                                     {
                                         match_offset = (int)R2;
-                                        R2 = R0; R0 = (uint)match_offset;
+                                        R2 = R0;
+                                        R0 = (uint)match_offset;
                                     }
 
                                     rundest = (int)window_posn;
@@ -441,7 +459,9 @@ namespace Microsoft.Xna.Framework
                                         }
 
                                         /* update repeated offset LRU queue */
-                                        R2 = R1; R1 = R0; R0 = (uint)match_offset;
+                                        R2 = R1;
+                                        R1 = R0;
+                                        R0 = (uint)match_offset;
                                     }
                                     else if (match_offset == 0)
                                     {
@@ -450,12 +470,14 @@ namespace Microsoft.Xna.Framework
                                     else if (match_offset == 1)
                                     {
                                         match_offset = (int)R1;
-                                        R1 = R0; R0 = (uint)match_offset;
+                                        R1 = R0;
+                                        R0 = (uint)match_offset;
                                     }
                                     else /* match_offset == 2 */
                                     {
                                         match_offset = (int)R2;
-                                        R2 = R0; R0 = (uint)match_offset;
+                                        R2 = R0;
+                                        R0 = (uint)match_offset;
                                     }
 
                                     rundest = (int)window_posn;
@@ -549,7 +571,11 @@ namespace Microsoft.Xna.Framework
                     int dataend = (int)outData.Position + outLen - 10;
                     while (outData.Position < dataend)
                     {
-                        if (outData.ReadByte() != 0xE8) { curpos++; continue; }
+                        if (outData.ReadByte() != 0xE8)
+                        {
+                            curpos++;
+                            continue;
+                        }
                         abs_off = (byte)outData.ReadByte() | ((byte)outData.ReadByte() << 8) | ((byte)outData.ReadByte() << 16) | ((byte)outData.ReadByte() << 24);
                         if ((abs_off >= 0 - curpos) && abs_off < m_state.intel_filesize)
                         {
@@ -703,7 +729,8 @@ namespace Microsoft.Xna.Framework
                                 LzxConstants.PRETREE_MAXSYMBOLS, LzxConstants.PRETREE_TABLEBITS, bitbuf);
                 if (z == 17)
                 {
-                    y = bitbuf.ReadBits(4); y += 4;
+                    y = bitbuf.ReadBits(4);
+                    y += 4;
                     while (y-- != 0)
                     {
                         lens[x++] = 0;
@@ -711,7 +738,8 @@ namespace Microsoft.Xna.Framework
                 }
                 else if (z == 18)
                 {
-                    y = bitbuf.ReadBits(5); y += 20;
+                    y = bitbuf.ReadBits(5);
+                    y += 20;
                     while (y-- != 0)
                     {
                         lens[x++] = 0;
@@ -719,10 +747,12 @@ namespace Microsoft.Xna.Framework
                 }
                 else if (z == 19)
                 {
-                    y = bitbuf.ReadBits(1); y += 4;
+                    y = bitbuf.ReadBits(1);
+                    y += 4;
                     z = (int)ReadHuffSym(m_state.PRETREE_table, m_state.PRETREE_len,
                                 LzxConstants.PRETREE_MAXSYMBOLS, LzxConstants.PRETREE_TABLEBITS, bitbuf);
-                    z = lens[x] - z; if (z < 0)
+                    z = lens[x] - z;
+                    if (z < 0)
                     {
                         z += 17;
                     }
@@ -734,7 +764,8 @@ namespace Microsoft.Xna.Framework
                 }
                 else
                 {
-                    z = lens[x] - z; if (z < 0)
+                    z = lens[x] - z;
+                    if (z < 0)
                     {
                         z += 17;
                     }
@@ -753,7 +784,9 @@ namespace Microsoft.Xna.Framework
                 j = (uint)(1 << (int)((sizeof(uint) * 8) - nbits));
                 do
                 {
-                    j >>= 1; i <<= 1; i |= (bitbuf.GetBuffer() & j) != 0 ? (uint)1 : 0;
+                    j >>= 1;
+                    i <<= 1;
+                    i |= (bitbuf.GetBuffer() & j) != 0 ? (uint)1 : 0;
                     if (j == 0)
                     {
                         return 0; // TODO throw proper exception

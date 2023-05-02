@@ -23,7 +23,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 
-namespace UnifiedUpdatePlatform.Media.Creator.DismOperations
+namespace UnifiedUpdatePlatform.Media.Creator.DismOperations.NET
 {
     public static class PathUtils
     {

@@ -68,7 +68,10 @@ namespace Microsoft.Dism
         /// <summary>
         /// Gets the date and time the package was installed.
         /// </summary>
-        public DateTime InstallTime { get; }
+        public DateTime InstallTime
+        {
+            get;
+        }
 
         /// <summary>
         /// Gets the package name.

@@ -35,22 +35,34 @@ namespace Cabinet
         /// <summary>
         /// The raw header structure of the cabinet file
         /// </summary>
-        public CFHEADER CabinetFileHeader { get; set; }
+        public CFHEADER CabinetFileHeader
+        {
+            get; set;
+        }
 
         /// <summary>
         /// Additional Application-specific data for the header
         /// </summary>
-        public byte[] AdditionalApplicationData { get; set; }
+        public byte[] AdditionalApplicationData
+        {
+            get; set;
+        }
 
         /// <summary>
         /// Additional Application-specific data size for the volumes
         /// </summary>
-        public byte VolumeAdditionalApplicationDataSize { get; set; }
+        public byte VolumeAdditionalApplicationDataSize
+        {
+            get; set;
+        }
 
         /// <summary>
         /// Additional Application-specific data size for the data
         /// </summary>
-        public byte DataAdditionalApplicationDataSize { get; set; }
+        public byte DataAdditionalApplicationDataSize
+        {
+            get; set;
+        }
     }
 
     internal class CabinetVolume
@@ -58,16 +70,28 @@ namespace Cabinet
         /// <summary>
         /// The raw folder structure of the volume
         /// </summary>
-        public CFFOLDER CabinetFileVolume { get; set; }
+        public CFFOLDER CabinetFileVolume
+        {
+            get; set;
+        }
 
         /// <summary>
         /// Additional Application-specific data for the volume
         /// </summary>
-        public byte[] AdditionalApplicationData { get; set; }
+        public byte[] AdditionalApplicationData
+        {
+            get; set;
+        }
 
-        public List<(CFDATA dataStruct, int dataOffsetCabinet, int beginFolderOffset, int endFolderOffset, int index)> DataMap { get; set; }
+        public List<(CFDATA dataStruct, int dataOffsetCabinet, int beginFolderOffset, int endFolderOffset, int index)> DataMap
+        {
+            get; set;
+        }
 
-        public List<(CabinetVolumeFile file, int startingBlock, int startingBlockOffset, int endingBlock, int endingBlockOffset)> BlockMap { get; set; }
+        public List<(CabinetVolumeFile file, int startingBlock, int startingBlockOffset, int endingBlock, int endingBlockOffset)> BlockMap
+        {
+            get; set;
+        }
     }
 
     internal class CabinetVolumeFile
@@ -75,12 +99,18 @@ namespace Cabinet
         /// <summary>
         /// The raw folder structure of the file in the volume
         /// </summary>
-        public CFFILE CabinetFileVolumeFile { get; set; }
+        public CFFILE CabinetFileVolumeFile
+        {
+            get; set;
+        }
 
         /// <summary>
         /// The file name
         /// </summary>
-        public string FileName { get; set; }
+        public string FileName
+        {
+            get; set;
+        }
     }
 
     internal class CabinetData
@@ -88,17 +118,26 @@ namespace Cabinet
         /// <summary>
         /// The raw folder structure of the data in the volume
         /// </summary>
-        public CFDATA CabinetFileData { get; set; }
+        public CFDATA CabinetFileData
+        {
+            get; set;
+        }
 
         /// <summary>
         /// Additional Application-specific data for the data
         /// </summary>
-        public byte[] AdditionalApplicationData { get; set; }
+        public byte[] AdditionalApplicationData
+        {
+            get; set;
+        }
 
         /// <summary>
         /// The offset to the data payload described by this object in the cabinet file
         /// </summary>
-        public uint CabinetFileDataPayloadOffset { get; set; }
+        public uint CabinetFileDataPayloadOffset
+        {
+            get; set;
+        }
     }
 
     public class CabinetFile
@@ -106,22 +145,34 @@ namespace Cabinet
         /// <summary>
         /// The file size
         /// </summary>
-        public uint UncompressedSize { get; set; }
+        public uint UncompressedSize
+        {
+            get; set;
+        }
 
         /// <summary>
         /// The file timestamp
         /// </summary>
-        public DateTime TimeStamp { get; set; }
+        public DateTime TimeStamp
+        {
+            get; set;
+        }
 
         /// <summary>
         /// The file attributes
         /// </summary>
-        public FileAttributes FileAttributes { get; set; }
+        public FileAttributes FileAttributes
+        {
+            get; set;
+        }
 
         /// <summary>
         /// The file name
         /// </summary>
-        public string FileName { get; set; }
+        public string FileName
+        {
+            get; set;
+        }
 
         internal CabinetFile(CabinetVolumeFile file)
         {

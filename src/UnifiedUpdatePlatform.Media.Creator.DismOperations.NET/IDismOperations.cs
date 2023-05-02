@@ -21,7 +21,7 @@
  */
 using UnifiedUpdatePlatform.Media.Creator.Planning.Applications;
 
-namespace UnifiedUpdatePlatform.Media.Creator.DismOperations
+namespace UnifiedUpdatePlatform.Media.Creator.DismOperations.NET
 {
     public delegate void ProgressCallback(bool IsIndeterminate, int ProgressInPercentage, string SubOperation);
 

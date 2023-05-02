@@ -47,22 +47,34 @@ namespace Microsoft.Wim
         /// <summary>
         /// Gets the lParam object from the native callback function.
         /// </summary>
-        protected IntPtr LParam { get; }
+        protected IntPtr LParam
+        {
+            get;
+        }
 
         /// <summary>
         /// Gets or sets the marshaled value of wParam.
         /// </summary>
-        protected TParam1 Param1 { get; set; }
+        protected TParam1 Param1
+        {
+            get; set;
+        }
 
         /// <summary>
         /// Gets or sets the marshaled value of lParam.
         /// </summary>
-        protected TParam2 Param2 { get; set; }
+        protected TParam2 Param2
+        {
+            get; set;
+        }
 
         /// <summary>
         /// Gets the wParam object from the native callback function.
         /// </summary>
-        protected IntPtr WParam { get; }
+        protected IntPtr WParam
+        {
+            get;
+        }
     }
 
     /// <summary>
@@ -252,7 +264,7 @@ namespace Microsoft.Wim
             Param1 = Marshal.PtrToStringUni(wParam);
 
             // See if the last character is the path separator
-            if (Param1 != null && Param1[Param1.Length - 1] == System.IO.Path.DirectorySeparatorChar)
+            if (Param1 != null && Param1[^1] == System.IO.Path.DirectorySeparatorChar)
             {
                 // Remove the last character
                 Param1 = Param1.Remove(Param1.Length - 1);

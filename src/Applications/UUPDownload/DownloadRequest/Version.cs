@@ -1,13 +1,25 @@
 ﻿using System.Linq;
 
-namespace UnifiedUpdatePlatform.Media.Download.DownloadRequest
+namespace UUPDownload.DownloadRequest
 {
     public class Version
     {
-        public ulong MajorVersion { get; set; }
-        public ulong MinorVersion { get; set; }
-        public ulong Build { get; set; }
-        public ulong Revision { get; set; }
+        public ulong MajorVersion
+        {
+            get; set;
+        }
+        public ulong MinorVersion
+        {
+            get; set;
+        }
+        public ulong Build
+        {
+            get; set;
+        }
+        public ulong Revision
+        {
+            get; set;
+        }
 
         public Version(ulong MajorVersion = 0, ulong MinorVersion = 0, ulong Build = 0, ulong Revision = 0)
         {
@@ -23,7 +35,7 @@ namespace UnifiedUpdatePlatform.Media.Download.DownloadRequest
             return new Version(verArray[0], verArray[1], verArray[2], verArray[3]);
         }
 
-        public static bool TryParse(string versionStr, out Version? version)
+        public static bool TryParse(string versionStr, out Version version)
         {
             version = null;
             try

@@ -43,16 +43,16 @@ namespace Microsoft.Dism
         public bool RebootRequired
         {
             get => _rebootRequired;
-            internal set
-            {
-                _rebootRequired = _rebootRequired || value;
-            }
+            internal set => _rebootRequired = _rebootRequired || value;
         }
 
         /// <summary>
         /// Gets the options for the session.
         /// </summary>
-        internal DismSessionOptions Options { get; }
+        internal DismSessionOptions Options
+        {
+            get;
+        }
 
         /// <summary>
         /// Reloads the session by closing the current session and opening it again.
@@ -61,7 +61,7 @@ namespace Microsoft.Dism
         {
             if (!IsInvalid)
             {
-                DismApi.NativeMethods.DismCloseSession(handle);
+                _ = DismApi.NativeMethods.DismCloseSession(handle);
             }
 
             int hresult = DismApi.NativeMethods.DismOpenSession(_imagePath, _windowsDirectory, _systemDrive, out IntPtr sessionPtr);

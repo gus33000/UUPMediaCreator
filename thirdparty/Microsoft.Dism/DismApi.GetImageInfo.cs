@@ -17,7 +17,7 @@ namespace Microsoft.Dism
         /// <exception cref="DismException">When a failure occurs.</exception>
         public static DismImageInfoCollection GetImageInfo(string imageFilePath)
         {
-            int hresult = NativeMethods.DismGetImageInfo(imageFilePath, out IntPtr imageInfoPtr, out UInt32 imageInfoCount);
+            int hresult = NativeMethods.DismGetImageInfo(imageFilePath, out IntPtr imageInfoPtr, out uint imageInfoCount);
 
             try
             {
@@ -51,7 +51,7 @@ namespace Microsoft.Dism
             /// </remarks>
             [DllImport(DismDllName, CharSet = DismCharacterSet)]
             [return: MarshalAs(UnmanagedType.Error)]
-            public static extern int DismGetImageInfo(string imageFilePath, out IntPtr imageInfo, out UInt32 count);
+            public static extern int DismGetImageInfo(string imageFilePath, out IntPtr imageInfo, out uint count);
         }
     }
 }

@@ -94,22 +94,22 @@ namespace Microsoft.Dism
             /// <summary>
             /// The major version number of the driver.
             /// </summary>
-            public UInt32 MajorVersion;
+            public uint MajorVersion;
 
             /// <summary>
             /// The minor version number of the driver.
             /// </summary>
-            public UInt32 MinorVersion;
+            public uint MinorVersion;
 
             /// <summary>
             /// The build number of the driver.
             /// </summary>
-            public UInt32 Build;
+            public uint Build;
 
             /// <summary>
             /// The revision number of the driver.
             /// </summary>
-            public UInt32 Revision;
+            public uint Revision;
         }
     }
 
@@ -162,7 +162,10 @@ namespace Microsoft.Dism
         /// <summary>
         /// Gets the manufacturer's build date of the driver.
         /// </summary>
-        public DateTime Date { get; }
+        public DateTime Date
+        {
+            get;
+        }
 
         /// <summary>
         /// Gets the driver signature status.

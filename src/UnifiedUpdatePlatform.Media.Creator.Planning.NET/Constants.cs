@@ -21,7 +21,7 @@
  */
 using System.Collections.Generic;
 
-namespace UnifiedUpdatePlatform.Media.Creator.Planning
+namespace UnifiedUpdatePlatform.Media.Creator.Planning.NET
 {
     internal static class Constants
     {

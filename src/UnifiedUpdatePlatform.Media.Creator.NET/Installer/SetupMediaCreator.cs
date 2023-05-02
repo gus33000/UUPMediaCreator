@@ -20,12 +20,11 @@
  * SOFTWARE.
  */
 using CompDB;
-using UnifiedUpdatePlatform.Media.Creator.Utils;
 using Microsoft.Wim;
 using System.Collections.Generic;
-using UnifiedUpdatePlatform.Common.Messaging;
+using UnifiedUpdatePlatform.Media.Creator.NET.Utils;
 
-namespace UnifiedUpdatePlatform.Media.Creator.Installer
+namespace UnifiedUpdatePlatform.Media.Creator.NET.Installer
 {
     public static class SetupMediaCreator
     {
@@ -34,7 +33,7 @@ namespace UnifiedUpdatePlatform.Media.Creator.Installer
             string LanguageCode,
             string OutputMediaPath,
             string OutputWindowsREPath,
-            UnifiedUpdatePlatform.Common.Messaging.Common.CompressionType CompressionType,
+            Common.Messaging.Common.CompressionType CompressionType,
             IEnumerable<CompDBXmlClass.CompDB> CompositionDatabases,
             TempManager.TempManager tempManager,
             ProgressCallback progressCallback = null)
@@ -51,15 +50,15 @@ namespace UnifiedUpdatePlatform.Media.Creator.Installer
             WimCompressionType compression = WimCompressionType.None;
             switch (CompressionType)
             {
-                case UnifiedUpdatePlatform.Common.Messaging.Common.CompressionType.LZMS:
+                case Common.Messaging.Common.CompressionType.LZMS:
                     compression = WimCompressionType.Lzms;
                     break;
 
-                case UnifiedUpdatePlatform.Common.Messaging.Common.CompressionType.LZX:
+                case Common.Messaging.Common.CompressionType.LZX:
                     compression = WimCompressionType.Lzx;
                     break;
 
-                case UnifiedUpdatePlatform.Common.Messaging.Common.CompressionType.XPRESS:
+                case Common.Messaging.Common.CompressionType.XPRESS:
                     compression = WimCompressionType.Xpress;
                     break;
             }

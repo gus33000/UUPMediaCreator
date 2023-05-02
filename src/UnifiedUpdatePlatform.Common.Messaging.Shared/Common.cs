@@ -50,20 +50,50 @@ namespace UnifiedUpdatePlatform.Common.Messaging
 
         public class ISOConversion
         {
-            public string ISOPath { get; set; }
-            public string UUPPath { get; set; }
-            public string Edition { get; set; }
-            public string LanguageCode { get; set; }
-            public bool IntegrateUpdates { get; set; }
-            public CompressionType CompressionType { get; set; }
+            public string ISOPath
+            {
+                get; set;
+            }
+            public string UUPPath
+            {
+                get; set;
+            }
+            public string Edition
+            {
+                get; set;
+            }
+            public string LanguageCode
+            {
+                get; set;
+            }
+            public bool IntegrateUpdates
+            {
+                get; set;
+            }
+            public CompressionType CompressionType
+            {
+                get; set;
+            }
         }
 
         public class ISOConversionProgress
         {
-            public ProcessPhase Phase { get; set; }
-            public bool IsIndeterminate { get; set; }
-            public int ProgressInPercentage { get; set; }
-            public string SubOperation { get; set; }
+            public ProcessPhase Phase
+            {
+                get; set;
+            }
+            public bool IsIndeterminate
+            {
+                get; set;
+            }
+            public int ProgressInPercentage
+            {
+                get; set;
+            }
+            public string SubOperation
+            {
+                get; set;
+            }
         }
 
         public enum MessagingType
@@ -76,9 +106,18 @@ namespace UnifiedUpdatePlatform.Common.Messaging
 
         public class Messaging
         {
-            public MessagingType MessagingType { get; set; }
-            public ISOConversionProgress ISOConversionProgress { get; set; }
-            public ISOConversion ISOConversion { get; set; }
+            public MessagingType MessagingType
+            {
+                get; set;
+            }
+            public ISOConversionProgress ISOConversionProgress
+            {
+                get; set;
+            }
+            public ISOConversion ISOConversion
+            {
+                get; set;
+            }
         }
     }
 }

@@ -206,7 +206,10 @@ namespace Microsoft.Dism
         /// <summary>
         /// Gets the customized information for the image file. A <see cref="DismWimCustomizedInfo" /> for a WIM file. null for a VHD image.
         /// </summary>
-        public DismWimCustomizedInfo? CustomizedInfo { get; }
+        public DismWimCustomizedInfo? CustomizedInfo
+        {
+            get;
+        }
 
         /// <summary>
         /// Gets the default language of the image.
@@ -281,7 +284,10 @@ namespace Microsoft.Dism
         /// <summary>
         /// Gets the version of the operating system contained in the image.
         /// </summary>
-        public Version ProductVersion { get; }
+        public Version ProductVersion
+        {
+            get;
+        }
 
         /// <summary>
         /// Gets the service pack number.

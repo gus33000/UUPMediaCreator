@@ -19,11 +19,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-using UnifiedUpdatePlatform.Media.Creator.Planning.Applications;
 using System.Diagnostics;
 using System.IO;
+using UnifiedUpdatePlatform.Media.Creator.Planning.Applications;
 
-namespace UnifiedUpdatePlatform.Media.Creator.DismOperations
+namespace UnifiedUpdatePlatform.Media.Creator.DismOperations.NET
 {
     public class RemoteDismOperations : IDismOperations
     {

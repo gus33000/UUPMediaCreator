@@ -23,7 +23,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace VirtualHardDiskLib
+namespace VirtualHardDiskLib.NET
 {
     internal static class NativeMethods
     {

@@ -26,7 +26,7 @@ using System.Threading.Tasks;
 using UnifiedUpdatePlatform.Services.WindowsUpdate;
 using UnifiedUpdatePlatform.Services.WindowsUpdate.Shared;
 
-namespace UnifiedUpdatePlatform.Media.Download
+namespace UUPDownload
 {
     public static class RingCheck
     {
@@ -62,16 +62,11 @@ namespace UnifiedUpdatePlatform.Media.Download
         {
             Dictionary<CTAC, string> CTACs = new();
 
-            if (string.IsNullOrWhiteSpace(opts.TargetingAttribute))
-            {
-                CTACs = GetRingCTACs(opts.MachineType, opts.ReportingSku);
-            }
-            else
-            {
-                CTACs = GetRingCTACs(opts.MachineType, opts.ReportingSku)
+            CTACs = string.IsNullOrWhiteSpace(opts.TargetingAttribute)
+                ? GetRingCTACs(opts.MachineType, opts.ReportingSku)
+                : GetRingCTACs(opts.MachineType, opts.ReportingSku)
                     .Where(c => string.Equals(c.Value, opts.TargetingAttribute, StringComparison.Ordinal))
                     .ToDictionary(c => c.Key, c => c.Value);
-            }
 
             foreach (KeyValuePair<CTAC, string> CTAC in CTACs)
             {

@@ -439,7 +439,10 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate
             {
                 foreach (CSOAPCommon.Update update in response.Item1.SyncUpdatesResult.ExtendedUpdateInfo.Updates.Update)
                 {
-                    UpdateData data = new() { Update = update };
+                    UpdateData data = new()
+                    {
+                        Update = update
+                    };
 
                     foreach (CSyncUpdatesResponse.UpdateInfo updateInfo in response.Item1.SyncUpdatesResult.NewUpdates.UpdateInfo)
                     {
@@ -548,7 +551,10 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate
 
     public class FileExchangeV3FileDownloadInformation
     {
-        public string DownloadUrl { get; }
+        public string DownloadUrl
+        {
+            get;
+        }
 
         public bool IsEncrypted => EsrpDecryptionInformation != null;
 
@@ -573,7 +579,10 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate
 
         public EsrpDecryptionInformation EsrpDecryptionInformation { get; set; } = null;
 
-        public string Digest { get; }
+        public string Digest
+        {
+            get;
+        }
 
         internal FileExchangeV3FileDownloadInformation(CGetExtendedUpdateInfo2Response.FileLocation fileLocation)
         {
@@ -617,30 +626,57 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate
     public class UpdateData
     {
         [JsonPropertyName("UpdateInfo")]
-        public CSyncUpdatesResponse.UpdateInfo UpdateInfo { get; set; }
+        public CSyncUpdatesResponse.UpdateInfo UpdateInfo
+        {
+            get; set;
+        }
 
         [JsonPropertyName("Update")]
-        public CSOAPCommon.Update Update { get; set; }
+        public CSOAPCommon.Update Update
+        {
+            get; set;
+        }
 
         [JsonPropertyName("Xml")]
-        public CExtendedUpdateInfoXml.Xml Xml { get; set; }
+        public CExtendedUpdateInfoXml.Xml Xml
+        {
+            get; set;
+        }
 
         [JsonPropertyName("AppxMetadata")]
-        public CAppxMetadataJSON.AppxMetadataJson AppxMetadata { get; set; }
+        public CAppxMetadataJSON.AppxMetadataJson AppxMetadata
+        {
+            get; set;
+        }
 
         [JsonPropertyName("CTAC")]
-        public CTAC CTAC { get; set; }
+        public CTAC CTAC
+        {
+            get; set;
+        }
 
         [JsonPropertyName("CachedMetadata")]
-        public string CachedMetadata { get; set; }
+        public string CachedMetadata
+        {
+            get; set;
+        }
 
         [JsonPropertyName("SyncUpdatesResponse")]
-        public string SyncUpdatesResponse { get; set; }
+        public string SyncUpdatesResponse
+        {
+            get; set;
+        }
 
         [JsonPropertyName("GEI2Response")]
-        public string GEI2Response { get; set; }
+        public string GEI2Response
+        {
+            get; set;
+        }
 
         [JsonPropertyName("CompDBs")]
-        public HashSet<CompDBXmlClass.CompDB> CompDBs { get; set; }
+        public HashSet<CompDBXmlClass.CompDB> CompDBs
+        {
+            get; set;
+        }
     }
 }

@@ -28,7 +28,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 
-namespace UnifiedUpdatePlatform.Imaging
+namespace UnifiedUpdatePlatform.Imaging.NET
 {
     public class WimLibImaging : IImaging
     {
@@ -184,8 +184,9 @@ namespace UnifiedUpdatePlatform.Imaging
                     UpdateFlags.SendProgress);
                 wim.Overwrite(WriteFlags.None, Wim.DefaultThreads);
             }
-            catch
+            catch (Exception e)
             {
+                Console.WriteLine(e.ToString());
                 return false;
             }
             return ReseatWIMXml(wimFile);
@@ -757,6 +758,7 @@ namespace UnifiedUpdatePlatform.Imaging
 
         private static bool ReseatWIMXml(string wimFile)
         {
+            Console.WriteLine("ReseatWIMXml!");
             try
             {
                 using WimHandle wimHandle = WimgApi.CreateFile(
@@ -774,15 +776,20 @@ namespace UnifiedUpdatePlatform.Imaging
                 xmldata = WIMInformationXML.SerializeWIM(xml);
                 WimgApi.SetImageInformation(wimHandle, xmldata);
             }
-            catch
+            catch (Exception e)
             {
+                Console.WriteLine("ReseatWIMXml failed!");
+                Console.WriteLine(e.ToString());
                 return ReseatWIMXml2(wimFile);
             }
+
+            Console.WriteLine("ReseatWIMXml succ!");
             return true;
         }
 
         private static bool ReseatWIMXml2(string wimFile)
         {
+            Console.WriteLine("ReseatWIMXml2!");
             try
             {
                 using Wim wim = Wim.OpenWim(wimFile, OpenFlags.WriteAccess);
@@ -791,10 +798,13 @@ namespace UnifiedUpdatePlatform.Imaging
                 xmldata = WIMInformationXML.SerializeWIM(xml);
                 // TODO
             }
-            catch
+            catch (Exception e)
             {
+                Console.WriteLine("ReseatWIMXml2 failed!");
+                Console.WriteLine(e.ToString());
                 return false;
             }
+            Console.WriteLine("ReseatWIMXml2 succ!");
             return true;
         }
     }

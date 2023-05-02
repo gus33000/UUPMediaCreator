@@ -21,7 +21,7 @@
  */
 using System;
 
-namespace UnifiedUpdatePlatform.Media.Download
+namespace UUPDownload
 {
     internal static class Logging
     {

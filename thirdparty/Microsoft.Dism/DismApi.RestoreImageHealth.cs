@@ -68,7 +68,7 @@ namespace Microsoft.Dism
             string[] sourcePathsArray = sourcePaths?.ToArray() ?? new string[0];
 
             // Create a DismProgress object to wrap the callback and allow cancellation
-            DismProgress progress = new DismProgress(progressCallback, userData);
+            DismProgress progress = new(progressCallback, userData);
 
             int hresult = NativeMethods.DismRestoreImageHealth(session, sourcePathsArray, (uint)sourcePathsArray.Length, limitAccess, progress.EventHandle, progress.DismProgressCallbackNative, IntPtr.Zero);
 
@@ -97,7 +97,7 @@ namespace Microsoft.Dism
             /// </remarks>
             [DllImport(DismDllName, CharSet = DismCharacterSet)]
             [return: MarshalAs(UnmanagedType.Error)]
-            public static extern int DismRestoreImageHealth(DismSession session, [MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.LPWStr, SizeParamIndex = 2)] string[] sourcePaths, UInt32 sourcePathCount, [MarshalAs(UnmanagedType.Bool)] bool limitAccess, SafeWaitHandle cancelEvent, DismProgressCallback progress, IntPtr userData);
+            public static extern int DismRestoreImageHealth(DismSession session, [MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.LPWStr, SizeParamIndex = 2)] string[] sourcePaths, uint sourcePathCount, [MarshalAs(UnmanagedType.Bool)] bool limitAccess, SafeWaitHandle cancelEvent, DismProgressCallback progress, IntPtr userData);
         }
     }
 }

@@ -75,7 +75,7 @@ namespace Microsoft.Wim
             public DateTime ToDateTime()
             {
                 // Convert the file time to a long and then to a DateTime
-                return DateTime.FromFileTimeUtc((long)dwHighDateTime << 32 | dwLowDateTime);
+                return DateTime.FromFileTimeUtc(((long)dwHighDateTime << 32) | dwLowDateTime);
             }
 
             /// <summary>

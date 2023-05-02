@@ -29,17 +29,17 @@ namespace Microsoft.Dism
             /// <summary>
             /// The size of the DismWimCustomizedInfo structure.
             /// </summary>
-            public UInt32 Size;
+            public uint Size;
 
             /// <summary>
             /// The number of directories in the image.
             /// </summary>
-            public UInt32 DirectoryCount;
+            public uint DirectoryCount;
 
             /// <summary>
             /// The number of files in the image.
             /// </summary>
-            public UInt32 FileCount;
+            public uint FileCount;
 
             /// <summary>
             /// The time that the image file was created.
@@ -85,7 +85,10 @@ namespace Microsoft.Dism
         /// <summary>
         /// Gets the time that the image file was created.
         /// </summary>
-        public DateTime CreatedTime { get; }
+        public DateTime CreatedTime
+        {
+            get;
+        }
 
         /// <summary>
         /// Gets the number of directories in the image.
@@ -100,7 +103,10 @@ namespace Microsoft.Dism
         /// <summary>
         /// Gets the time that the image file was last modified.
         /// </summary>
-        public DateTime ModifiedTime { get; }
+        public DateTime ModifiedTime
+        {
+            get;
+        }
 
         /// <summary>
         /// Gets the size of the customized info.

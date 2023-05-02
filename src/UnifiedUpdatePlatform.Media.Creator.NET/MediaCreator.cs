@@ -20,23 +20,22 @@
  * SOFTWARE.
  */
 using CompDB;
-using UnifiedUpdatePlatform.Imaging;
-using UnifiedUpdatePlatform.Media.Creator.BaseEditions;
-using UnifiedUpdatePlatform.Media.Creator.BootlegEditions;
-using UnifiedUpdatePlatform.Media.Creator.CDImage;
-using UnifiedUpdatePlatform.Media.Creator.Installer;
-using UnifiedUpdatePlatform.Media.Creator.Utils;
-using UnifiedUpdatePlatform.Media.Creator.Planning;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using UnifiedUpdatePlatform.Common.Messaging;
-using VirtualHardDiskLib;
+using UnifiedUpdatePlatform.Imaging.NET;
+using UnifiedUpdatePlatform.Media.Creator.NET.BaseEditions;
+using UnifiedUpdatePlatform.Media.Creator.NET.BootlegEditions;
+using UnifiedUpdatePlatform.Media.Creator.NET.CDImage;
+using UnifiedUpdatePlatform.Media.Creator.NET.Installer;
+using UnifiedUpdatePlatform.Media.Creator.NET.Utils;
+using UnifiedUpdatePlatform.Media.Creator.Planning.NET;
+using VirtualHardDiskLib.NET;
 
-namespace UnifiedUpdatePlatform.Media.Creator
+namespace UnifiedUpdatePlatform.Media.Creator.NET
 {
-    public delegate void ProgressCallback(UnifiedUpdatePlatform.Common.Messaging.Common.ProcessPhase phase, bool IsIndeterminate, int ProgressInPercentage, string SubOperation);
+    public delegate void ProgressCallback(Common.Messaging.Common.ProcessPhase phase, bool IsIndeterminate, int ProgressInPercentage, string SubOperation);
 
     public static class MediaCreator
     {
@@ -47,7 +46,7 @@ namespace UnifiedUpdatePlatform.Media.Creator
             string LanguageCode,
             string InstallWIMFilePath,
             string WinREWIMFilePath,
-            UnifiedUpdatePlatform.Common.Messaging.Common.CompressionType CompressionType,
+            Common.Messaging.Common.CompressionType CompressionType,
             IEnumerable<CompDBXmlClass.CompDB> CompositionDatabases,
             TempManager.TempManager tempManager,
             string VHDMountPath = null,
@@ -55,7 +54,7 @@ namespace UnifiedUpdatePlatform.Media.Creator
             ProgressCallback progressCallback = null,
             string edition = null)
         {
-            progressCallback?.Invoke(UnifiedUpdatePlatform.Common.Messaging.Common.ProcessPhase.ApplyingImage, true, 0, $"Applying {targetEdition.PlannedEdition.EditionName} - {targetEdition.PlannedEdition.AvailabilityType}");
+            progressCallback?.Invoke(Common.Messaging.Common.ProcessPhase.ApplyingImage, true, 0, $"Applying {targetEdition.PlannedEdition.EditionName} - {targetEdition.PlannedEdition.AvailabilityType}");
 
             bool result = true;
             string vhdPath = null;
@@ -124,7 +123,7 @@ namespace UnifiedUpdatePlatform.Media.Creator
                     {
                         string newvhd = VHDUtilities.CreateDiffDisk(CurrentBackupVHD, tempManager);
 
-                        progressCallback?.Invoke(UnifiedUpdatePlatform.Common.Messaging.Common.ProcessPhase.ApplyingImage, true, 0, "Mounting VHD");
+                        progressCallback?.Invoke(Common.Messaging.Common.ProcessPhase.ApplyingImage, true, 0, "Mounting VHD");
                         using VirtualDiskSession vhdSession = new(tempManager, existingVHD: newvhd);
                         VHDMountPath = vhdSession.GetMountedPath();
 
@@ -165,7 +164,7 @@ namespace UnifiedUpdatePlatform.Media.Creator
                         {
                             string newvhd = VHDUtilities.CreateDiffDisk(CurrentBackupVHD, tempManager);
 
-                            progressCallback?.Invoke(UnifiedUpdatePlatform.Common.Messaging.Common.ProcessPhase.ApplyingImage, true, 0, "Mounting VHD");
+                            progressCallback?.Invoke(Common.Messaging.Common.ProcessPhase.ApplyingImage, true, 0, "Mounting VHD");
                             using VirtualDiskSession vhdSession = new(tempManager, existingVHD: newvhd);
                             VHDMountPath = vhdSession.GetMountedPath();
 
@@ -199,7 +198,7 @@ namespace UnifiedUpdatePlatform.Media.Creator
 
                     void callback(string Operation, int ProgressPercentage, bool IsIndeterminate)
                     {
-                        progressCallback?.Invoke(UnifiedUpdatePlatform.Common.Messaging.Common.ProcessPhase.ApplyingImage, IsIndeterminate, ProgressPercentage, Operation);
+                        progressCallback?.Invoke(Common.Messaging.Common.ProcessPhase.ApplyingImage, IsIndeterminate, ProgressPercentage, Operation);
                     }
                     result = Constants.imagingInterface.ApplyImage(InstallWIMFilePath, index, vhdSession.GetMountedPath(), progressCallback: callback);
                     if (!result)
@@ -214,7 +213,7 @@ namespace UnifiedUpdatePlatform.Media.Creator
                 {
                     string newvhd = VHDUtilities.CreateDiffDisk(vhdPath, tempManager);
 
-                    progressCallback?.Invoke(UnifiedUpdatePlatform.Common.Messaging.Common.ProcessPhase.ApplyingImage, true, 0, "Mounting VHD");
+                    progressCallback?.Invoke(Common.Messaging.Common.ProcessPhase.ApplyingImage, true, 0, "Mounting VHD");
 
                     using VirtualDiskSession vhdSession = new(tempManager, existingVHD: newvhd);
                     foreach (EditionTarget ed in targetEdition.NonDestructiveTargets)
@@ -289,7 +288,7 @@ namespace UnifiedUpdatePlatform.Media.Creator
             TempManager.TempManager tempManager,
             ProgressCallback progressCallback = null)
         {
-            progressCallback?.Invoke(UnifiedUpdatePlatform.Common.Messaging.Common.ProcessPhase.ReadingMetadata, true, 0, "Acquiring Composition Databases");
+            progressCallback?.Invoke(Common.Messaging.Common.ProcessPhase.ReadingMetadata, true, 0, "Acquiring Composition Databases");
 
             string EditionPack = "";
 
@@ -298,7 +297,7 @@ namespace UnifiedUpdatePlatform.Media.Creator
             //
             IEnumerable<CompDBXmlClass.CompDB> filteredCompositionDatabases = CompositionDatabases.GetEditionCompDBsForLanguage(LanguageCode).Where(x =>
             {
-                (bool success, HashSet<string> missingfiles) = Planning.FileLocator.VerifyFilesAreAvailableForCompDB(x, UUPPath);
+                (bool success, HashSet<string> missingfiles) = Planning.NET.FileLocator.VerifyFilesAreAvailableForCompDB(x, UUPPath);
                 return success;
             });
 
@@ -340,7 +339,7 @@ namespace UnifiedUpdatePlatform.Media.Creator
                 }
             }
 
-            return ConversionPlanBuilder.GetTargetedPlan(UUPPath, CompositionDatabases, EditionPack, LanguageCode, PlatformUtilities.RunsAsAdministrator, out EditionTargets, tempManager, (msg) => progressCallback?.Invoke(UnifiedUpdatePlatform.Common.Messaging.Common.ProcessPhase.ReadingMetadata, true, 0, msg));
+            return ConversionPlanBuilder.GetTargetedPlan(UUPPath, CompositionDatabases, EditionPack, LanguageCode, PlatformUtilities.RunsAsAdministrator, out EditionTargets, tempManager, (msg) => progressCallback?.Invoke(Common.Messaging.Common.ProcessPhase.ReadingMetadata, true, 0, msg));
         }
 
         public static bool IsRightPath(EditionTarget editionTarget, string edition)
@@ -375,7 +374,7 @@ namespace UnifiedUpdatePlatform.Media.Creator
             string Edition,
             string LanguageCode,
             bool IntegrateUpdates,
-            UnifiedUpdatePlatform.Common.Messaging.Common.CompressionType CompressionType,
+            Common.Messaging.Common.CompressionType CompressionType,
             ProgressCallback progressCallback = null,
             string Temp = null)
         {
@@ -386,7 +385,7 @@ namespace UnifiedUpdatePlatform.Media.Creator
 
             try
             {
-                List<CompDBXmlClass.CompDB> CompositionDatabases = Planning.FileLocator.GetCompDBsFromUUPFiles(UUPPath, tempManager);
+                List<CompDBXmlClass.CompDB> CompositionDatabases = Planning.NET.FileLocator.GetCompDBsFromUUPFiles(UUPPath, tempManager);
 
                 result = GetTargetedPlan(UUPPath, LanguageCode, CompositionDatabases, out List<EditionTarget> editionTargets, tempManager, progressCallback);
                 if (!result)
@@ -399,18 +398,18 @@ namespace UnifiedUpdatePlatform.Media.Creator
                 {
                     foreach (string line in ConversionPlanBuilder.PrintEditionTarget(ed))
                     {
-                        progressCallback?.Invoke(UnifiedUpdatePlatform.Common.Messaging.Common.ProcessPhase.ReadingMetadata, true, 0, line);
+                        progressCallback?.Invoke(Common.Messaging.Common.ProcessPhase.ReadingMetadata, true, 0, line);
                     }
                 }
 
-                progressCallback?.Invoke(UnifiedUpdatePlatform.Common.Messaging.Common.ProcessPhase.ReadingMetadata, true, 0, "Enumerating files");
+                progressCallback?.Invoke(Common.Messaging.Common.ProcessPhase.ReadingMetadata, true, 0, "Enumerating files");
 
                 string temp = tempManager.GetTempPath();
                 _ = Directory.CreateDirectory(temp);
 
                 string WinREWIMFilePath = Path.Combine(temp, "Winre.wim");
                 string MediaRootPath = Path.Combine(temp, "MediaRoot");
-                string InstallWIMFilePath = CompressionType == UnifiedUpdatePlatform.Common.Messaging.Common.CompressionType.LZMS ?
+                string InstallWIMFilePath = CompressionType == Common.Messaging.Common.CompressionType.LZMS ?
                     Path.Combine(MediaRootPath, "sources", "install.esd") :
                     Path.Combine(MediaRootPath, "sources", "install.wim");
 
@@ -454,7 +453,7 @@ namespace UnifiedUpdatePlatform.Media.Creator
                     goto error;
                 }
 
-                progressCallback?.Invoke(UnifiedUpdatePlatform.Common.Messaging.Common.ProcessPhase.Done, true, 0, "");
+                progressCallback?.Invoke(Common.Messaging.Common.ProcessPhase.Done, true, 0, "");
                 goto exit;
             }
             catch (Exception ex)
@@ -463,7 +462,7 @@ namespace UnifiedUpdatePlatform.Media.Creator
             }
 
         error:
-            progressCallback?.Invoke(UnifiedUpdatePlatform.Common.Messaging.Common.ProcessPhase.Error, true, 0, error);
+            progressCallback?.Invoke(Common.Messaging.Common.ProcessPhase.Error, true, 0, error);
 
         exit:
             tempManager.Dispose();

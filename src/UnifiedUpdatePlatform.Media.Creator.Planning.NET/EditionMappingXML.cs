@@ -23,7 +23,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Xml.Serialization;
 
-namespace UnifiedUpdatePlatform.Media.Creator.Planning
+namespace UnifiedUpdatePlatform.Media.Creator.Planning.NET
 {
     public static class EditionMappingXML
     {
@@ -31,23 +31,38 @@ namespace UnifiedUpdatePlatform.Media.Creator.Planning
         public class Edition
         {
             [XmlElement(ElementName = "Name")]
-            public string Name { get; set; }
+            public string Name
+            {
+                get; set;
+            }
 
             [XmlElement(ElementName = "ParentEdition")]
-            public string ParentEdition { get; set; }
+            public string ParentEdition
+            {
+                get; set;
+            }
 
             [XmlAttribute(AttributeName = "virtual")]
-            public string Virtual { get; set; }
+            public string Virtual
+            {
+                get; set;
+            }
         }
 
         [XmlRoot(ElementName = "WindowsEditions")]
         public class WindowsEditions
         {
             [XmlElement(ElementName = "Edition")]
-            public List<Edition> Edition { get; set; }
+            public List<Edition> Edition
+            {
+                get; set;
+            }
 
             [XmlAttribute(AttributeName = "e", Namespace = "http://www.w3.org/2000/xmlns/")]
-            public string E { get; set; }
+            public string E
+            {
+                get; set;
+            }
         }
 
         public static WindowsEditions Deserialize(string editionMappingXml)

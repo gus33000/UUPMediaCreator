@@ -24,7 +24,7 @@ using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
 
-namespace UnifiedUpdatePlatform.Media.Creator.BootlegEditions
+namespace UnifiedUpdatePlatform.Media.Creator.NET.BootlegEditions
 {
     public static class AssemblyManifestHandler
     {

@@ -36,27 +36,27 @@ namespace Microsoft.Dism
             /// <summary>
             /// The major version.
             /// </summary>
-            public UInt32 MajorVersion;
+            public uint MajorVersion;
 
             /// <summary>
             /// The minor version.
             /// </summary>
-            public UInt32 MinorVersion;
+            public uint MinorVersion;
 
             /// <summary>
             /// The build version.
             /// </summary>
-            public UInt32 Build;
+            public uint Build;
 
             /// <summary>
             /// The revision version.
             /// </summary>
-            public UInt32 Revision;
+            public uint Revision;
 
             /// <summary>
             /// The architecture of the package.
             /// </summary>
-            public UInt32 Architecture;
+            public uint Architecture;
 
             /// <summary>
             /// The resource ID.
@@ -129,7 +129,10 @@ namespace Microsoft.Dism
         /// <summary>
         /// Gets the version of the package.
         /// </summary>
-        public Version Version { get; }
+        public Version Version
+        {
+            get;
+        }
 
         /// <summary>
         /// Determines whether the specified <see cref="T:System.Object" /> is equal to the current <see cref="T:System.Object" />.

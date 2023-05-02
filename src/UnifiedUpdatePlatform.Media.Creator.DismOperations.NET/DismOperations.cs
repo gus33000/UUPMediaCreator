@@ -19,7 +19,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-using UnifiedUpdatePlatform.Media.Creator.Planning.Applications;
 using Microsoft.Dism;
 using System;
 using System.Collections.Generic;
@@ -27,8 +26,9 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Xml.Linq;
+using UnifiedUpdatePlatform.Media.Creator.Planning.Applications;
 
-namespace UnifiedUpdatePlatform.Media.Creator.DismOperations
+namespace UnifiedUpdatePlatform.Media.Creator.DismOperations.NET
 {
     public class DismOperations : IDismOperations
     {

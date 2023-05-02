@@ -25,7 +25,7 @@ using System.Diagnostics;
 using System.Net;
 using System.Reflection;
 
-namespace UnifiedUpdatePlatform.Media.Download
+namespace UUPDownload
 {
     internal static class Program
     {

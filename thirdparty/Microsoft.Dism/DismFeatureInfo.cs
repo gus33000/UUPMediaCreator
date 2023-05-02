@@ -62,7 +62,7 @@ namespace Microsoft.Dism
             /// <summary>
             /// The number of elements in the CustomProperty array.
             /// </summary>
-            public UInt32 CustomPropertyCount;
+            public uint CustomPropertyCount;
         }
     }
 
@@ -87,7 +87,10 @@ namespace Microsoft.Dism
         /// <summary>
         /// Gets a list of custom properties associated with the feature.
         /// </summary>
-        public DismCustomPropertyCollection CustomProperties { get; }
+        public DismCustomPropertyCollection CustomProperties
+        {
+            get;
+        }
 
         /// <summary>
         /// Gets the description of the feature.

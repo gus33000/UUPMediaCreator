@@ -248,7 +248,10 @@ namespace Microsoft.Wim
         /// <summary>
         /// Gets the native callback delegate to be executed.
         /// </summary>
-        public WimgApi.WIMMessageCallback NativeCallback { get; }
+        public WimgApi.WIMMessageCallback NativeCallback
+        {
+            get;
+        }
 
         /// <summary>
         /// A callback method for messages.

@@ -20,16 +20,15 @@
  * SOFTWARE.
  */
 using CompDB;
-using UnifiedUpdatePlatform.Media.Creator.Planning.Applications;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using UnifiedUpdatePlatform.Common.Messaging;
+using UnifiedUpdatePlatform.Media.Creator.Planning.Applications;
 
 #nullable enable
 
-namespace UnifiedUpdatePlatform.Media.Creator
+namespace UnifiedUpdatePlatform.Media.Creator.NET
 {
     internal static class FileLocator
     {
@@ -39,7 +38,7 @@ namespace UnifiedUpdatePlatform.Media.Creator
 
             foreach (CompDBXmlClass.CompDB compDB in CompositionDatabases)
             {
-                (bool succeeded, HashSet<string> missingFiles) = Planning.FileLocator.VerifyFilesAreAvailableForCompDB(compDB, UUPPath);
+                (bool succeeded, HashSet<string> missingFiles) = Planning.NET.FileLocator.VerifyFilesAreAvailableForCompDB(compDB, UUPPath);
                 foreach (string? missingFile in missingFiles)
                 {
                     if (!missingPackages.Contains(missingFile))
@@ -95,7 +94,7 @@ namespace UnifiedUpdatePlatform.Media.Creator
             IEnumerable<CompDBXmlClass.CompDB> CompositionDatabases,
             ProgressCallback? progressCallback = null)
         {
-            progressCallback?.Invoke(UnifiedUpdatePlatform.Common.Messaging.Common.ProcessPhase.ReadingMetadata, true, 0, "Looking up Composition Database in order to find a Base ESD image appropriate for building windows setup files.");
+            progressCallback?.Invoke(Common.Messaging.Common.ProcessPhase.ReadingMetadata, true, 0, "Looking up Composition Database in order to find a Base ESD image appropriate for building windows setup files.");
 
             HashSet<CompDBXmlClass.CompDB> filteredCompositionDatabases = CompositionDatabases.GetEditionCompDBsForLanguage(LanguageCode);
             if (filteredCompositionDatabases.Count > 0)
@@ -125,7 +124,7 @@ namespace UnifiedUpdatePlatform.Media.Creator
                 }
             }
 
-            progressCallback?.Invoke(UnifiedUpdatePlatform.Common.Messaging.Common.ProcessPhase.Error, true, 0, "While looking up the Composition Database, we couldn't find an edition composition for the specified language. This error is fatal.");
+            progressCallback?.Invoke(Common.Messaging.Common.ProcessPhase.Error, true, 0, "While looking up the Composition Database, we couldn't find an edition composition for the specified language. This error is fatal.");
             return (false, null);
         }
 
@@ -138,13 +137,13 @@ namespace UnifiedUpdatePlatform.Media.Creator
         {
             bool success = true;
 
-            progressCallback?.Invoke(UnifiedUpdatePlatform.Common.Messaging.Common.ProcessPhase.ReadingMetadata, true, 0, "Enumerating files");
+            progressCallback?.Invoke(Common.Messaging.Common.ProcessPhase.ReadingMetadata, true, 0, "Enumerating files");
 
             CompDBXmlClass.CompDB? compDB = GetEditionCompDBForLanguage(CompositionDatabases, EditionID, LanguageCode);
 
             if (compDB == null)
             {
-                progressCallback?.Invoke(UnifiedUpdatePlatform.Common.Messaging.Common.ProcessPhase.ReadingMetadata, true, 0, "No compDB found");
+                progressCallback?.Invoke(Common.Messaging.Common.ProcessPhase.ReadingMetadata, true, 0, "No compDB found");
                 goto error;
             }
 
@@ -175,13 +174,13 @@ namespace UnifiedUpdatePlatform.Media.Creator
             HashSet<string> ReferencePackages = new();
             HashSet<string> referencePackagesToConvert = new();
             string? BaseESD = null;
-            progressCallback?.Invoke(UnifiedUpdatePlatform.Common.Messaging.Common.ProcessPhase.ReadingMetadata, true, 0, "Enumerating files");
+            progressCallback?.Invoke(Common.Messaging.Common.ProcessPhase.ReadingMetadata, true, 0, "Enumerating files");
 
             CompDBXmlClass.CompDB? compDB = GetEditionCompDBForLanguage(CompositionDatabases, EditionID, LanguageCode);
 
             if (compDB == null)
             {
-                progressCallback?.Invoke(UnifiedUpdatePlatform.Common.Messaging.Common.ProcessPhase.ReadingMetadata, true, 0, "No compDB found");
+                progressCallback?.Invoke(Common.Messaging.Common.ProcessPhase.ReadingMetadata, true, 0, "No compDB found");
                 goto error;
             }
 
@@ -196,7 +195,7 @@ namespace UnifiedUpdatePlatform.Media.Creator
                     file = pkg.Payload.PayloadItem[0].Path.Replace('\\', Path.DirectorySeparatorChar);
                     if (!File.Exists(Path.Combine(UUPPath, file)))
                     {
-                        progressCallback?.Invoke(UnifiedUpdatePlatform.Common.Messaging.Common.ProcessPhase.ReadingMetadata, true, 0, $"File {file} is missing");
+                        progressCallback?.Invoke(Common.Messaging.Common.ProcessPhase.ReadingMetadata, true, 0, $"File {file} is missing");
                         goto error;
                     }
                 }
@@ -219,7 +218,7 @@ namespace UnifiedUpdatePlatform.Media.Creator
 
             if (BaseESD == null)
             {
-                progressCallback?.Invoke(UnifiedUpdatePlatform.Common.Messaging.Common.ProcessPhase.ReadingMetadata, true, 0, "Base ESD not found");
+                progressCallback?.Invoke(Common.Messaging.Common.ProcessPhase.ReadingMetadata, true, 0, "Base ESD not found");
                 goto error;
             }
 

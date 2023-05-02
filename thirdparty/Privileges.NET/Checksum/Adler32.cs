@@ -1,6 +1,6 @@
 using System;
 
-namespace Privileges.Checksum
+namespace Privileges.NET.Checksum
 {
     /// <summary>
     /// <para>

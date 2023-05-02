@@ -258,12 +258,26 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate
 
     public class CTAC
     {
-        public string DeviceAttributes { get; set; }
-        public string CallerAttributes { get; set; }
-        public string Products { get; set; }
-        public bool SyncCurrentVersionOnly { get; set; }
+        public string DeviceAttributes
+        {
+            get; set;
+        }
+        public string CallerAttributes
+        {
+            get; set;
+        }
+        public string Products
+        {
+            get; set;
+        }
+        public bool SyncCurrentVersionOnly
+        {
+            get; set;
+        }
 
-        public CTAC() { }
+        public CTAC()
+        {
+        }
 
         public CTAC(OSSkuId ReportingSku,
                     string ReportingVersion,

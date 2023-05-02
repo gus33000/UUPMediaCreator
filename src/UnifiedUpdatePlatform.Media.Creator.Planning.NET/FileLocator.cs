@@ -28,7 +28,7 @@ using System.Linq;
 
 #nullable enable
 
-namespace UnifiedUpdatePlatform.Media.Creator.Planning
+namespace UnifiedUpdatePlatform.Media.Creator.Planning.NET
 {
     public static class FileLocator
     {

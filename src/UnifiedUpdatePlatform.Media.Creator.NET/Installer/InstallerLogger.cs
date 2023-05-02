@@ -1,11 +1,10 @@
-﻿using UnifiedUpdatePlatform.Imaging;
-using UnifiedUpdatePlatform.Common.Messaging;
+﻿using UnifiedUpdatePlatform.Imaging.NET;
 
-namespace UnifiedUpdatePlatform.Media.Creator.Installer
+namespace UnifiedUpdatePlatform.Media.Creator.NET.Installer
 {
     internal static class InstallerLogger
     {
-        private static readonly UnifiedUpdatePlatform.Common.Messaging.Common.ProcessPhase Phase = UnifiedUpdatePlatform.Common.Messaging.Common.ProcessPhase.CreatingWindowsInstaller;
+        private static readonly Common.Messaging.Common.ProcessPhase Phase = Common.Messaging.Common.ProcessPhase.CreatingWindowsInstaller;
 
         internal static IImaging.ProgressCallback GetImagingCallback(this ProgressCallback progressCallback)
         {

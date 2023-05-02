@@ -1,11 +1,11 @@
 ﻿using IniParser;
 using IniParser.Model;
-using UnifiedUpdatePlatform.Media.Creator.DismOperations;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using UnifiedUpdatePlatform.Media.Creator.DismOperations.NET;
 
-namespace UnifiedUpdatePlatform.Media.Creator.Settings
+namespace UnifiedUpdatePlatform.Media.Creator.NET.Settings
 {
     public static class IniReader
     {

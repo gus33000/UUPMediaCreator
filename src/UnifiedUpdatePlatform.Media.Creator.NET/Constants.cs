@@ -19,10 +19,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-using UnifiedUpdatePlatform.Imaging;
 using System.IO;
+using UnifiedUpdatePlatform.Imaging.NET;
 
-namespace UnifiedUpdatePlatform.Media.Creator
+namespace UnifiedUpdatePlatform.Media.Creator.NET
 {
     public static class Constants
     {

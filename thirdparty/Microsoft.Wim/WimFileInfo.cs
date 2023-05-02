@@ -49,7 +49,10 @@ namespace Microsoft.Wim
         /// <summary>
         /// Gets the attributes for the current file or directory.
         /// </summary>
-        public FileAttributes Attributes { get; }
+        public FileAttributes Attributes
+        {
+            get;
+        }
 
         /// <summary>
         /// Gets the creation time of the current file or directory.
@@ -59,7 +62,10 @@ namespace Microsoft.Wim
         /// <summary>
         /// Gets the creation time, in coordinated universal time (UTC), of the current file or directory.
         /// </summary>
-        public DateTime CreationTimeUtc { get; }
+        public DateTime CreationTimeUtc
+        {
+            get;
+        }
 
         /// <summary>
         /// Gets a string representing the directory's full path.
@@ -74,7 +80,10 @@ namespace Microsoft.Wim
         /// <summary>
         /// Gets the full path of the directory or file.
         /// </summary>
-        public string FullName { get; }
+        public string FullName
+        {
+            get;
+        }
 
         /// <summary>
         /// Gets the time the current file or directory was last accessed.
@@ -84,7 +93,10 @@ namespace Microsoft.Wim
         /// <summary>
         /// Gets the time, in coordinated universal time (UTC), that the current file or directory was last accessed.
         /// </summary>
-        public DateTime LastAccessTimeUtc { get; }
+        public DateTime LastAccessTimeUtc
+        {
+            get;
+        }
 
         /// <summary>
         /// Gets the time the current file or directory was last written to.
@@ -94,16 +106,25 @@ namespace Microsoft.Wim
         /// <summary>
         /// Gets the time, in coordinated universal time (UTC), that the current file or directory was last written to.
         /// </summary>
-        public DateTime LastWriteTimeUtc { get; }
+        public DateTime LastWriteTimeUtc
+        {
+            get;
+        }
 
         /// <summary>
         /// Gets the size, in bytes, of the current file.
         /// </summary>
-        public long Length { get; }
+        public long Length
+        {
+            get;
+        }
 
         /// <summary>
         /// Gets the name of the file.
         /// </summary>
-        public string Name { get; }
+        public string Name
+        {
+            get;
+        }
     }
 }

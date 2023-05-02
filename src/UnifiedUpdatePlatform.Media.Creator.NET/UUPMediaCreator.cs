@@ -19,17 +19,16 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-using UnifiedUpdatePlatform.Imaging;
-using UnifiedUpdatePlatform.Media.Creator.Settings;
 using Microsoft.Wim;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using UnifiedUpdatePlatform.Common.Messaging;
+using UnifiedUpdatePlatform.Imaging.NET;
+using UnifiedUpdatePlatform.Media.Creator.NET.Settings;
 
-namespace UnifiedUpdatePlatform.Media.Creator
+namespace UnifiedUpdatePlatform.Media.Creator.NET
 {
     public static class UUPMediaCreator
     {
@@ -104,13 +103,13 @@ namespace UnifiedUpdatePlatform.Media.Creator
             string EditionID,
             string OutputInstallImage,
             bool IsVirtual,
-            UnifiedUpdatePlatform.Common.Messaging.Common.CompressionType CompressionType,
+            Common.Messaging.Common.CompressionType CompressionType,
             TempManager.TempManager tempManager,
             ProgressCallback progressCallback = null)
         {
             bool result = true;
 
-            string SourceEdition = DismOperations.DismOperations.Instance.GetCurrentEdition(MountedImagePath);
+            string SourceEdition = DismOperations.NET.DismOperations.Instance.GetCurrentEdition(MountedImagePath);
 
             result = Constants.imagingInterface.GetWIMInformation(OutputInstallImage, out WIMInformationXML.WIM wiminfo);
             if (!result)
@@ -124,29 +123,29 @@ namespace UnifiedUpdatePlatform.Media.Creator
             WimCompressionType compression = WimCompressionType.None;
             switch (CompressionType)
             {
-                case UnifiedUpdatePlatform.Common.Messaging.Common.CompressionType.LZMS:
+                case Common.Messaging.Common.CompressionType.LZMS:
                     compression = WimCompressionType.Lzms;
                     break;
 
-                case UnifiedUpdatePlatform.Common.Messaging.Common.CompressionType.LZX:
+                case Common.Messaging.Common.CompressionType.LZX:
                     compression = WimCompressionType.Lzx;
                     break;
 
-                case UnifiedUpdatePlatform.Common.Messaging.Common.CompressionType.XPRESS:
+                case Common.Messaging.Common.CompressionType.XPRESS:
                     compression = WimCompressionType.Xpress;
                     break;
             }
 
             void callback(bool IsIndeterminate, int ProgressInPercentage, string SubOperation)
             {
-                progressCallback?.Invoke(UnifiedUpdatePlatform.Common.Messaging.Common.ProcessPhase.ApplyingImage, IsIndeterminate, ProgressInPercentage, SubOperation);
+                progressCallback?.Invoke(Common.Messaging.Common.ProcessPhase.ApplyingImage, IsIndeterminate, ProgressInPercentage, SubOperation);
             }
 
-            DismOperations.DismOperations.Instance.SetTargetEdition(MountedImagePath, EditionID, callback);
+            DismOperations.NET.DismOperations.Instance.SetTargetEdition(MountedImagePath, EditionID, callback);
 
             void callback2(string Operation, int ProgressPercentage, bool IsIndeterminate)
             {
-                progressCallback?.Invoke(UnifiedUpdatePlatform.Common.Messaging.Common.ProcessPhase.CapturingImage, IsIndeterminate, ProgressPercentage, Operation);
+                progressCallback?.Invoke(Common.Messaging.Common.ProcessPhase.CapturingImage, IsIndeterminate, ProgressPercentage, Operation);
             }
 
             string replaceStr = LongestCommonSubstring(new string[] { srcimage.DISPLAYNAME, SourceEdition });

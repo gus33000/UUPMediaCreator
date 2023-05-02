@@ -71,7 +71,11 @@ namespace UUPMediaCreator.Pages
                 IntegrateUpdates = false
             };
 
-            Common.UnifiedUpdatePlatform.Common.Messaging comm = new() { UnifiedUpdatePlatform.Common.MessagingType = UnifiedUpdatePlatform.Common.MessagingType.StartISOConversionProcess, ISOConversion = job };
+            Common.UnifiedUpdatePlatform.Common.Messaging comm = new()
+            {
+                UnifiedUpdatePlatform.Common.MessagingType = UnifiedUpdatePlatform.Common.MessagingType.StartISOConversionProcess,
+                ISOConversion = job
+            };
 
             ValueSet val = new()
             {

@@ -1,9 +1,8 @@
-﻿using UnifiedUpdatePlatform.Imaging;
-using System;
+﻿using System;
 using System.IO;
-using UnifiedUpdatePlatform.Common.Messaging;
+using UnifiedUpdatePlatform.Imaging.NET;
 
-namespace UnifiedUpdatePlatform.Media.Creator.CDImage
+namespace UnifiedUpdatePlatform.Media.Creator.NET.CDImage
 {
     public static class DiscImageFactory
     {
@@ -182,7 +181,7 @@ namespace UnifiedUpdatePlatform.Media.Creator.CDImage
 
             void cdcallback(string Operation, int ProgressPercentage, bool IsIndeterminate)
             {
-                progressCallback?.Invoke(UnifiedUpdatePlatform.Common.Messaging.Common.ProcessPhase.CreatingISO, IsIndeterminate, ProgressPercentage, Operation);
+                progressCallback?.Invoke(Common.Messaging.Common.ProcessPhase.CreatingISO, IsIndeterminate, ProgressPercentage, Operation);
             }
 
             // TODO proper labelling of the disc image

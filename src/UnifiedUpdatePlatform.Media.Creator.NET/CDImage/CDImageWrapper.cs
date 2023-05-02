@@ -19,14 +19,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-using UnifiedUpdatePlatform.Media.Creator.Utils;
 using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using UnifiedUpdatePlatform.Media.Creator.NET.Utils;
 
-namespace UnifiedUpdatePlatform.Media.Creator.CDImage
+namespace UnifiedUpdatePlatform.Media.Creator.NET.CDImage
 {
     internal static class CDImageWrapper
     {

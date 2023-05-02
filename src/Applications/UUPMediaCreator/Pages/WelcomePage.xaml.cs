@@ -44,7 +44,10 @@ namespace UUPMediaCreator.Pages
 
         public async Task<bool> IsBrokerElevated()
         {
-            Common.UnifiedUpdatePlatform.Common.Messaging comm = new() { UnifiedUpdatePlatform.Common.MessagingType = Common.UnifiedUpdatePlatform.Common.MessagingType.IsElevated };
+            Common.UnifiedUpdatePlatform.Common.Messaging comm = new()
+            {
+                UnifiedUpdatePlatform.Common.MessagingType = Common.UnifiedUpdatePlatform.Common.MessagingType.IsElevated
+            };
 
             ValueSet val = new()
             {

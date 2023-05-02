@@ -64,7 +64,10 @@ namespace UUPMediaCreator
           new PropertyMetadata(false, new PropertyChangedCallback(OnChanged))
         );
 
-        public FrameworkElement CastingElement { get; set; }
+        public FrameworkElement CastingElement
+        {
+            get; set;
+        }
 
         public event EventHandler<RoutedEventArgs> NextClicked;
 

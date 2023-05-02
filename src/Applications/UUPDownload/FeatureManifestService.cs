@@ -25,7 +25,7 @@ using System.IO;
 using System.Xml;
 using System.Xml.Linq;
 
-namespace UnifiedUpdatePlatform.Media.Download
+namespace UUPDownload
 {
     public static class FeatureManifestService
     {

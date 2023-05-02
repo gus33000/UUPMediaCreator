@@ -39,7 +39,7 @@ namespace Microsoft.Dism
             /// <summary>
             /// The index number of the image. Index numbering starts at 1.
             /// </summary>
-            public UInt32 ImageIndex;
+            public uint ImageIndex;
 
             /// <summary>
             /// A <a href="DismMountMode" /> Enumeration value representing whether the image is DismReadWrite or DismReadOnly.

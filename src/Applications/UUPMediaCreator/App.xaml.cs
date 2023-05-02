@@ -22,6 +22,7 @@
 using System;
 using System.Text.Json;
 using UnifiedUpdatePlatform.Common.Messaging;
+using UnifiedUpdatePlatform.Services.WindowsUpdate;
 using UUPMediaCreator.Pages;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
@@ -34,8 +35,6 @@ using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
-using UnifiedUpdatePlatform.Services.WindowsUpdate;
-using static UnifiedUpdatePlatform.Common.Messaging.Common;
 
 namespace UUPMediaCreator
 {
@@ -63,26 +62,62 @@ namespace UUPMediaCreator
 
     public class ConversionPlan
     {
-        public UpdateData UpdateData { get; set; }
-        public string Language { get; set; }
-        public string LanguageTitle { get; set; }
-        public Uri FlagUri { get; set; }
-        public string Edition { get; set; }
-        public string BuildString { get; set; }
+        public UpdateData UpdateData
+        {
+            get; set;
+        }
+        public string Language
+        {
+            get; set;
+        }
+        public string LanguageTitle
+        {
+            get; set;
+        }
+        public Uri FlagUri
+        {
+            get; set;
+        }
+        public string Edition
+        {
+            get; set;
+        }
+        public string BuildString
+        {
+            get; set;
+        }
 
         //public string FakeEdition { get; set; }
         //public string VirtualEdition { get; set; }
-        public MachineType MachineType { get; set; }
+        public MachineType MachineType
+        {
+            get; set;
+        }
 
-        public MediumType MediumType { get; set; }
-        public InstallationMediumType InstallationMediumType { get; set; }
-        public InstallationWIMMediumType InstallationWIMMediumType { get; set; }
+        public MediumType MediumType
+        {
+            get; set;
+        }
+        public InstallationMediumType InstallationMediumType
+        {
+            get; set;
+        }
+        public InstallationWIMMediumType InstallationWIMMediumType
+        {
+            get; set;
+        }
         //public string[] FODs { get; set; }
         //public bool IntegrateUpdates { get; set; }
 
-        public string TmpOutputFolder { get; set; }
+        public string TmpOutputFolder
+        {
+            get; set;
+        }
 
-        public string ISOPath { get; set; }
+        public string ISOPath
+        {
+            get; set;
+        }
     }
 
     /// <summary>
@@ -166,7 +201,12 @@ namespace UUPMediaCreator
         private async void SystemNavigationManager_CloseRequested(object sender, SystemNavigationCloseRequestedPreviewEventArgs e)
         {
             Deferral deferral = e.GetDeferral();
-            ContentDialog dlg = new() { Title = "Do you really want to exit the application?", PrimaryButtonText = "Yes", SecondaryButtonText = "No" };
+            ContentDialog dlg = new()
+            {
+                Title = "Do you really want to exit the application?",
+                PrimaryButtonText = "Yes",
+                SecondaryButtonText = "No"
+            };
             ContentDialogResult result = await dlg.ShowAsync();
             if (result == ContentDialogResult.Secondary)
             {

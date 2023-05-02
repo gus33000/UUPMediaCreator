@@ -30,12 +30,30 @@ namespace UnifiedUpdatePlatform.Media.Creator.Planning.Applications
 {
     public class DeploymentProperties
     {
-        public HashSet<string> Dependencies { get; set; }
-        public bool PreferStub { get; set; }
-        public bool IsFramework { get; set; }
-        public HashSet<string> PackageIDs { get; set; }
-        public string MainPackageID { get; set; }
-        public bool HasLicense { get; set; }
+        public HashSet<string> Dependencies
+        {
+            get; set;
+        }
+        public bool PreferStub
+        {
+            get; set;
+        }
+        public bool IsFramework
+        {
+            get; set;
+        }
+        public HashSet<string> PackageIDs
+        {
+            get; set;
+        }
+        public string MainPackageID
+        {
+            get; set;
+        }
+        public bool HasLicense
+        {
+            get; set;
+        }
 
         public void AddApplicablePackages(IEnumerable<CompDB.CompDBXmlClass.Package> packageElements, IEnumerable<string> applicableLanguageTags)
         {

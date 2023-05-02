@@ -20,13 +20,13 @@
  * SOFTWARE.
  */
 using DiscUtils.Registry;
-using UnifiedUpdatePlatform.Media.Creator.Utils;
 using System;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using UnifiedUpdatePlatform.Media.Creator.NET.Utils;
 
-namespace UnifiedUpdatePlatform.Media.Creator.Installer
+namespace UnifiedUpdatePlatform.Media.Creator.NET.Installer
 {
     internal static class PreinstallationEnvironmentRegistryService
     {

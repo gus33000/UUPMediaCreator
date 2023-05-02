@@ -73,23 +73,50 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate
     {
         public class AvailableBuild
         {
-            public UpdateData UpdateData { get; set; }
-            public string Title { get; set; }
-            public string BuildString { get; set; }
-            public string Description { get; set; }
-            public string Created { get; set; }
+            public UpdateData UpdateData
+            {
+                get; set;
+            }
+            public string Title
+            {
+                get; set;
+            }
+            public string BuildString
+            {
+                get; set;
+            }
+            public string Description
+            {
+                get; set;
+            }
+            public string Created
+            {
+                get; set;
+            }
         }
 
         public class AvailableBuildLanguages
         {
-            public string Title { get; set; }
-            public string LanguageCode { get; set; }
-            public Uri FlagUri { get; set; }
+            public string Title
+            {
+                get; set;
+            }
+            public string LanguageCode
+            {
+                get; set;
+            }
+            public Uri FlagUri
+            {
+                get; set;
+            }
         }
 
         public class AvailableEdition
         {
-            public string Edition { get; set; }
+            public string Edition
+            {
+                get; set;
+            }
         }
 
         public static async Task<AvailableBuild[]> GetAvailableBuildsAsync(MachineType machineType)

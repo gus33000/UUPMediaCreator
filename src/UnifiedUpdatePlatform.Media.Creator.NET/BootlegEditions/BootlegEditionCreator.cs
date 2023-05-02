@@ -20,18 +20,17 @@
  * SOFTWARE.
  */
 using Cabinet;
-using UnifiedUpdatePlatform.Imaging;
 using IniParser;
 using IniParser.Model;
-using UnifiedUpdatePlatform.Media.Creator.Settings;
 using Microsoft.Wim;
 using System;
 using System.IO;
 using System.Linq;
 using System.Text;
-using UnifiedUpdatePlatform.Common.Messaging;
+using UnifiedUpdatePlatform.Imaging.NET;
+using UnifiedUpdatePlatform.Media.Creator.NET.Settings;
 
-namespace UnifiedUpdatePlatform.Media.Creator.BootlegEditions
+namespace UnifiedUpdatePlatform.Media.Creator.NET.BootlegEditions
 {
     public static class BootlegEditionCreator
     {
@@ -236,14 +235,14 @@ namespace UnifiedUpdatePlatform.Media.Creator.BootlegEditions
             string MountedImagePath,
             string EditionID,
             string OutputInstallImage,
-            UnifiedUpdatePlatform.Common.Messaging.Common.CompressionType CompressionType,
+            Common.Messaging.Common.CompressionType CompressionType,
             TempManager.TempManager tempManager,
             ProgressCallback progressCallback = null)
         {
             bool result = true;
-            progressCallback?.Invoke(UnifiedUpdatePlatform.Common.Messaging.Common.ProcessPhase.ApplyingImage, true, 0, "Applying " + EditionID + " - Package Swap");
+            progressCallback?.Invoke(Common.Messaging.Common.ProcessPhase.ApplyingImage, true, 0, "Applying " + EditionID + " - Package Swap");
 
-            progressCallback?.Invoke(UnifiedUpdatePlatform.Common.Messaging.Common.ProcessPhase.ApplyingImage, true, 0, "Getting serial for " + EditionID);
+            progressCallback?.Invoke(Common.Messaging.Common.ProcessPhase.ApplyingImage, true, 0, "Getting serial for " + EditionID);
             string productinifilepath = Path.Combine(MediaPath, "sources", "product.ini");
 
             // .......How?
@@ -262,20 +261,20 @@ namespace UnifiedUpdatePlatform.Media.Creator.BootlegEditions
             IniData data = parser.ReadData(productIniStreamReader);
 
             string serial = data["cmi"].First(x => string.Equals(x.KeyName, EditionID, StringComparison.CurrentCultureIgnoreCase)).Value;
-            progressCallback?.Invoke(UnifiedUpdatePlatform.Common.Messaging.Common.ProcessPhase.ApplyingImage, true, 0, "Serial: " + serial);
+            progressCallback?.Invoke(Common.Messaging.Common.ProcessPhase.ApplyingImage, true, 0, "Serial: " + serial);
 
-            progressCallback?.Invoke(UnifiedUpdatePlatform.Common.Messaging.Common.ProcessPhase.ApplyingImage, true, 0, "Getting current edition");
-            string SourceEdition = DismOperations.DismOperations.Instance.GetCurrentEdition(MountedImagePath);
-            progressCallback?.Invoke(UnifiedUpdatePlatform.Common.Messaging.Common.ProcessPhase.ApplyingImage, true, 0, "Current edition is: " + SourceEdition);
+            progressCallback?.Invoke(Common.Messaging.Common.ProcessPhase.ApplyingImage, true, 0, "Getting current edition");
+            string SourceEdition = DismOperations.NET.DismOperations.Instance.GetCurrentEdition(MountedImagePath);
+            progressCallback?.Invoke(Common.Messaging.Common.ProcessPhase.ApplyingImage, true, 0, "Current edition is: " + SourceEdition);
 
-            progressCallback?.Invoke(UnifiedUpdatePlatform.Common.Messaging.Common.ProcessPhase.ApplyingImage, true, 0, "Getting wim info for: " + OutputInstallImage);
+            progressCallback?.Invoke(Common.Messaging.Common.ProcessPhase.ApplyingImage, true, 0, "Getting wim info for: " + OutputInstallImage);
             result = Constants.imagingInterface.GetWIMInformation(OutputInstallImage, out WIMInformationXML.WIM wiminfo);
             if (!result)
             {
                 goto exit;
             }
 
-            progressCallback?.Invoke(UnifiedUpdatePlatform.Common.Messaging.Common.ProcessPhase.ApplyingImage, true, 0, "Searching index for : " + SourceEdition);
+            progressCallback?.Invoke(Common.Messaging.Common.ProcessPhase.ApplyingImage, true, 0, "Searching index for : " + SourceEdition);
             WIMInformationXML.IMAGE srcimage = wiminfo.IMAGE.First(x =>
             {
                 WIMInformationXML.IMAGE img = x;
@@ -285,21 +284,21 @@ namespace UnifiedUpdatePlatform.Media.Creator.BootlegEditions
             });
             int index = int.Parse(srcimage.INDEX);
             string languagecode = srcimage.WINDOWS.LANGUAGES.DEFAULT;
-            progressCallback?.Invoke(UnifiedUpdatePlatform.Common.Messaging.Common.ProcessPhase.ApplyingImage, true, 0, "Source index: " + index);
-            progressCallback?.Invoke(UnifiedUpdatePlatform.Common.Messaging.Common.ProcessPhase.ApplyingImage, true, 0, "Source language: " + languagecode);
+            progressCallback?.Invoke(Common.Messaging.Common.ProcessPhase.ApplyingImage, true, 0, "Source index: " + index);
+            progressCallback?.Invoke(Common.Messaging.Common.ProcessPhase.ApplyingImage, true, 0, "Source language: " + languagecode);
 
             WimCompressionType compression = WimCompressionType.None;
             switch (CompressionType)
             {
-                case UnifiedUpdatePlatform.Common.Messaging.Common.CompressionType.LZMS:
+                case Common.Messaging.Common.CompressionType.LZMS:
                     compression = WimCompressionType.Lzms;
                     break;
 
-                case UnifiedUpdatePlatform.Common.Messaging.Common.CompressionType.LZX:
+                case Common.Messaging.Common.CompressionType.LZX:
                     compression = WimCompressionType.Lzx;
                     break;
 
-                case UnifiedUpdatePlatform.Common.Messaging.Common.CompressionType.XPRESS:
+                case Common.Messaging.Common.CompressionType.XPRESS:
                     compression = WimCompressionType.Xpress;
                     break;
             }
@@ -322,7 +321,7 @@ namespace UnifiedUpdatePlatform.Media.Creator.BootlegEditions
             bool HasEditionPack = Directory.EnumerateFiles(UUPPath, "*.esd", SearchOption.AllDirectories).Any(x =>
                 Path.GetFileName(x).Equals($"microsoft-windows-editionpack-{EditionID}-package.esd", StringComparison.InvariantCultureIgnoreCase)
             );
-            progressCallback?.Invoke(UnifiedUpdatePlatform.Common.Messaging.Common.ProcessPhase.ApplyingImage, true, 0, "Has edition pack: " + HasEditionPack);
+            progressCallback?.Invoke(Common.Messaging.Common.ProcessPhase.ApplyingImage, true, 0, "Has edition pack: " + HasEditionPack);
 
             string TemporaryFolder = tempManager.GetTempPath();
             _ = Directory.CreateDirectory(TemporaryFolder);
@@ -333,7 +332,7 @@ namespace UnifiedUpdatePlatform.Media.Creator.BootlegEditions
             //
             // Build reconstructed edition xml
             //
-            progressCallback?.Invoke(UnifiedUpdatePlatform.Common.Messaging.Common.ProcessPhase.ApplyingImage, true, 0, "Generating edition manifest");
+            progressCallback?.Invoke(Common.Messaging.Common.ProcessPhase.ApplyingImage, true, 0, "Generating edition manifest");
             string packageFilter = $"microsoft-windows-edition*{EditionID}-*.esd";
             System.Collections.Generic.IEnumerable<string> packages = Directory.EnumerateFiles(UUPPath, packageFilter, SearchOption.AllDirectories);
 
@@ -364,7 +363,7 @@ namespace UnifiedUpdatePlatform.Media.Creator.BootlegEditions
             // Cleanup WOW64
             if (!packages.Any(x => x.Equals($"microsoft-windows-editionspecific-{EditionID}-wow64-package.esd", StringComparison.InvariantCultureIgnoreCase)))
             {
-                progressCallback?.Invoke(UnifiedUpdatePlatform.Common.Messaging.Common.ProcessPhase.ApplyingImage, true, 0, "Cleaning up WOW64");
+                progressCallback?.Invoke(Common.Messaging.Common.ProcessPhase.ApplyingImage, true, 0, "Cleaning up WOW64");
                 AssemblyManifestHandler.RemoveWOW64Package(newManifestPath, $"microsoft-windows-editionspecific-{EditionID}-wow64-package");
             }
 
@@ -383,7 +382,7 @@ namespace UnifiedUpdatePlatform.Media.Creator.BootlegEditions
                     string lppackage = paths.First();
                     void ProgressCallback(int percent, string file)
                     {
-                        progressCallback?.Invoke(UnifiedUpdatePlatform.Common.Messaging.Common.ProcessPhase.PreparingFiles, false, percent, "Unpacking " + file + "...");
+                        progressCallback?.Invoke(Common.Messaging.Common.ProcessPhase.PreparingFiles, false, percent, "Unpacking " + file + "...");
                     }
 
                     CabinetExtractor.ExtractCabinet(lppackage, LPFolder, ProgressCallback);
@@ -401,7 +400,7 @@ namespace UnifiedUpdatePlatform.Media.Creator.BootlegEditions
                             lpfilter2 = $"microsoft-windows-client-languagepack-package_{languagecode}~*~{languagecode}~.esd";
                             if (!Directory.EnumerateFiles(UUPPath, lpfilter2, SearchOption.AllDirectories).Any())
                             {
-                                progressCallback?.Invoke(UnifiedUpdatePlatform.Common.Messaging.Common.ProcessPhase.Error, true, 0, "Unable to find LP package!");
+                                progressCallback?.Invoke(Common.Messaging.Common.ProcessPhase.Error, true, 0, "Unable to find LP package!");
                                 goto exit;
                             }
                         }
@@ -459,7 +458,7 @@ namespace UnifiedUpdatePlatform.Media.Creator.BootlegEditions
             //
             // Generate unattend
             //
-            progressCallback?.Invoke(UnifiedUpdatePlatform.Common.Messaging.Common.ProcessPhase.ApplyingImage, true, 0, "Generating unattend");
+            progressCallback?.Invoke(Common.Messaging.Common.ProcessPhase.ApplyingImage, true, 0, "Generating unattend");
             string arch = manifestFileName.Split('~')[2];
             string ver = manifestFileName.Split('~')[4].Replace(".mum", "");
 
@@ -546,7 +545,7 @@ namespace UnifiedUpdatePlatform.Media.Creator.BootlegEditions
             //
             // Backup OEMDefaultAssociations
             //
-            progressCallback?.Invoke(UnifiedUpdatePlatform.Common.Messaging.Common.ProcessPhase.ApplyingImage, true, 0, "Backing up OEMDefaultAssociations");
+            progressCallback?.Invoke(Common.Messaging.Common.ProcessPhase.ApplyingImage, true, 0, "Backing up OEMDefaultAssociations");
 
             bool HandleOEMDefaultAssociationsXml = File.Exists(Path.Combine(MountedImagePath, "Windows", "System32", "OEMDefaultAssociations.xml"));
             bool HandleOEMDefaultAssociationsDll = File.Exists(Path.Combine(MountedImagePath, "Windows", "System32", "OEMDefaultAssociations.dll"));
@@ -570,13 +569,13 @@ namespace UnifiedUpdatePlatform.Media.Creator.BootlegEditions
             //
             // Apply unattend
             //
-            progressCallback?.Invoke(UnifiedUpdatePlatform.Common.Messaging.Common.ProcessPhase.ApplyingImage, true, 0, "Applying unattend");
-            DismOperations.DismOperations.Instance.ApplyUnattend(MountedImagePath, unattendPath);
+            progressCallback?.Invoke(Common.Messaging.Common.ProcessPhase.ApplyingImage, true, 0, "Applying unattend");
+            DismOperations.NET.DismOperations.Instance.ApplyUnattend(MountedImagePath, unattendPath);
 
             //
             // Restore OEMDefaultAssociations
             //
-            progressCallback?.Invoke(UnifiedUpdatePlatform.Common.Messaging.Common.ProcessPhase.ApplyingImage, true, 0, "Restoring up OEMDefaultAssociations");
+            progressCallback?.Invoke(Common.Messaging.Common.ProcessPhase.ApplyingImage, true, 0, "Restoring up OEMDefaultAssociations");
 
             if (HandleOEMDefaultAssociationsXml)
             {
@@ -597,7 +596,7 @@ namespace UnifiedUpdatePlatform.Media.Creator.BootlegEditions
             //
             // Copy edition xml
             //
-            progressCallback?.Invoke(UnifiedUpdatePlatform.Common.Messaging.Common.ProcessPhase.ApplyingImage, true, 0, "Handling Edition Unattend XML");
+            progressCallback?.Invoke(Common.Messaging.Common.ProcessPhase.ApplyingImage, true, 0, "Handling Edition Unattend XML");
             string editionXml = Path.Combine(MountedImagePath, "Windows", "servicing", "Editions", $"{EditionID}Edition.xml");
             string desintationEditionXml = Path.Combine(MountedImagePath, "Windows", $"{EditionID}.xml");
 
@@ -611,33 +610,33 @@ namespace UnifiedUpdatePlatform.Media.Creator.BootlegEditions
             //
             // Apply edition xml as unattend
             //
-            progressCallback?.Invoke(UnifiedUpdatePlatform.Common.Messaging.Common.ProcessPhase.ApplyingImage, true, 0, "Applying Edition Unattend XML");
-            DismOperations.DismOperations.Instance.ApplyUnattend(MountedImagePath, desintationEditionXml);
+            progressCallback?.Invoke(Common.Messaging.Common.ProcessPhase.ApplyingImage, true, 0, "Applying Edition Unattend XML");
+            DismOperations.NET.DismOperations.Instance.ApplyUnattend(MountedImagePath, desintationEditionXml);
 
             //
             // Install correct product key
             //
-            progressCallback?.Invoke(UnifiedUpdatePlatform.Common.Messaging.Common.ProcessPhase.ApplyingImage, true, 0, "Installing product key");
+            progressCallback?.Invoke(Common.Messaging.Common.ProcessPhase.ApplyingImage, true, 0, "Installing product key");
 
-            DismOperations.DismOperations.Instance.SetProductKey(MountedImagePath, serial);
+            DismOperations.NET.DismOperations.Instance.SetProductKey(MountedImagePath, serial);
 
             //
             // Application handling
             //
-            progressCallback?.Invoke(UnifiedUpdatePlatform.Common.Messaging.Common.ProcessPhase.ApplyingImage, true, 0, "Installing apps");
+            progressCallback?.Invoke(Common.Messaging.Common.ProcessPhase.ApplyingImage, true, 0, "Installing apps");
 
             //////////////////////// TODO ////////////////////////
 
             //
             // Cleanup
             //
-            progressCallback?.Invoke(UnifiedUpdatePlatform.Common.Messaging.Common.ProcessPhase.ApplyingImage, true, 0, "Cleaning up");
+            progressCallback?.Invoke(Common.Messaging.Common.ProcessPhase.ApplyingImage, true, 0, "Cleaning up");
             Directory.Delete(TemporaryFolder, true);
             CleanupLanguagePackFolderIfRequired();
 
             void callback2(string Operation, int ProgressPercentage, bool IsIndeterminate)
             {
-                progressCallback?.Invoke(UnifiedUpdatePlatform.Common.Messaging.Common.ProcessPhase.CapturingImage, IsIndeterminate, ProgressPercentage, Operation);
+                progressCallback?.Invoke(Common.Messaging.Common.ProcessPhase.CapturingImage, IsIndeterminate, ProgressPercentage, Operation);
             }
 
             string name = $"Windows 10 {EditionID}";

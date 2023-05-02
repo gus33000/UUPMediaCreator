@@ -137,31 +137,29 @@ namespace Microsoft.Dism
         {
             get
             {
-                using (RegistryKey? key = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Default).OpenSubKey("SOFTWARE\\Microsoft\\ComponentStudio\\6.1.7600.16385") !)
+                using RegistryKey? key = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Default).OpenSubKey("SOFTWARE\\Microsoft\\ComponentStudio\\6.1.7600.16385")!;
+                if (key == null)
                 {
-                    if (key == null)
-                    {
-                        return null;
-                    }
-
-                    object? obj = key.GetValue("ServicingPath");
-
-                    if (obj == null)
-                    {
-                        return null;
-                    }
-
-                    string servicingPath = obj.ToString();
-
-                    if (string.IsNullOrEmpty(servicingPath))
-                    {
-                        return null;
-                    }
-
-                    FileInfo dismPath = new FileInfo(Path.Combine(servicingPath, "dism.exe"));
-
-                    return dismPath.Exists ? dismPath.FullName : null;
+                    return null;
                 }
+
+                object? obj = key.GetValue("ServicingPath");
+
+                if (obj == null)
+                {
+                    return null;
+                }
+
+                string servicingPath = obj.ToString();
+
+                if (string.IsNullOrEmpty(servicingPath))
+                {
+                    return null;
+                }
+
+                FileInfo dismPath = new(Path.Combine(servicingPath, "dism.exe"));
+
+                return dismPath.Exists ? dismPath.FullName : null;
             }
         }
 
@@ -181,17 +179,9 @@ namespace Microsoft.Dism
                 return DismGeneration.Win8_1;
             }
 
-            if (!string.IsNullOrEmpty(WADK80DISMAPIPath))
-            {
-                return DismGeneration.Win8;
-            }
-
-            if (!string.IsNullOrEmpty(WADK80DISMAPIPath))
-            {
-                return DismGeneration.Win7;
-            }
-
-            return DismGeneration.NotFound;
+            return !string.IsNullOrEmpty(WADK80DISMAPIPath)
+                ? DismGeneration.Win8
+                : !string.IsNullOrEmpty(WADK80DISMAPIPath) ? DismGeneration.Win7 : DismGeneration.NotFound;
         }
 
         /// <summary>
@@ -211,8 +201,7 @@ namespace Microsoft.Dism
                 return false;
             }
 
-            string? dismApiPath = null;
-
+            string dismApiPath;
             switch (generation)
             {
                 case DismGeneration.Win10:
@@ -288,31 +277,29 @@ namespace Microsoft.Dism
 
         private static string? GetKitsRoot(string keyName)
         {
-            using (RegistryKey key = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32).OpenSubKey("SOFTWARE\\Microsoft\\Windows Kits\\Installed Roots") !)
+            using RegistryKey key = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32).OpenSubKey("SOFTWARE\\Microsoft\\Windows Kits\\Installed Roots")!;
+            if (key == null)
             {
-                if (key == null)
-                {
-                    return null;
-                }
-
-                object? value = key.GetValue(keyName);
-
-                if (value == null)
-                {
-                    return null;
-                }
-
-                string kitsRoot = value.ToString();
-
-                if (string.IsNullOrWhiteSpace(kitsRoot))
-                {
-                    return null;
-                }
-
-                FileInfo dismPath = new FileInfo(Path.Combine(kitsRoot, "Assessment and Deployment Kit", "Deployment Tools", Environment.Is64BitProcess ? "amd64" : "x86", "DISM", "dismapi.dll"));
-
-                return dismPath.Exists ? dismPath.FullName : null;
+                return null;
             }
+
+            object? value = key.GetValue(keyName);
+
+            if (value == null)
+            {
+                return null;
+            }
+
+            string kitsRoot = value.ToString();
+
+            if (string.IsNullOrWhiteSpace(kitsRoot))
+            {
+                return null;
+            }
+
+            FileInfo dismPath = new(Path.Combine(kitsRoot, "Assessment and Deployment Kit", "Deployment Tools", Environment.Is64BitProcess ? "amd64" : "x86", "DISM", "dismapi.dll"));
+
+            return dismPath.Exists ? dismPath.FullName : null;
         }
 
         /// <summary>
@@ -338,7 +325,7 @@ namespace Microsoft.Dism
             ///
             /// If the function fails, the return value is NULL.To get extended error information, call <see cref="Marshal.GetLastWin32Error" />.</returns>
             [DllImport("kernel32.dll")]
-            public static extern IntPtr LoadLibrary([MarshalAs(UnmanagedType.LPStr)] string lpFileName);
+            public static extern IntPtr LoadLibrary([MarshalAs(UnmanagedType.LPWStr)] string lpFileName);
         }
     }
 }

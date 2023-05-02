@@ -4,7 +4,6 @@
 
 using System;
 
-#pragma warning disable SA1401 // Fields must be private
 namespace Microsoft.Dism
 {
     public static partial class DismApi
@@ -15,4 +14,3 @@ namespace Microsoft.Dism
         internal static Func<string?>? GetLastErrorMessageTestHook = null;
     }
 }
-#pragma warning restore SA1401 // Fields must be private

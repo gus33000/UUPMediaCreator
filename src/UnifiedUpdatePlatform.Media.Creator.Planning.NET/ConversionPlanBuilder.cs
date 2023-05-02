@@ -20,16 +20,16 @@
  * SOFTWARE.
  */
 using CompDB;
-using UnifiedUpdatePlatform.Imaging;
-using UnifiedUpdatePlatform.Media.Creator.Planning.Applications;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using UnifiedUpdatePlatform.Imaging.NET;
+using UnifiedUpdatePlatform.Media.Creator.Planning.Applications;
 
 #nullable enable
 
-namespace UnifiedUpdatePlatform.Media.Creator.Planning
+namespace UnifiedUpdatePlatform.Media.Creator.Planning.NET
 {
     public class EditionTarget
     {
@@ -41,7 +41,10 @@ namespace UnifiedUpdatePlatform.Media.Creator.Planning
     public class PlannedEdition
     {
         public string EditionName { get; set; } = "";
-        public AvailabilityType AvailabilityType { get; set; }
+        public AvailabilityType AvailabilityType
+        {
+            get; set;
+        }
         public AppxInstallWorkload[] AppXInstallWorkloads { get; set; } = Array.Empty<AppxInstallWorkload>();
     }
 
@@ -68,7 +71,10 @@ namespace UnifiedUpdatePlatform.Media.Creator.Planning
             ref List<string> editionsAdded
         )
         {
-            EditionTarget target = new() { PlannedEdition = edition };
+            EditionTarget target = new()
+            {
+                PlannedEdition = edition
+            };
             editionsAdded.Add(edition.EditionName);
 
             //

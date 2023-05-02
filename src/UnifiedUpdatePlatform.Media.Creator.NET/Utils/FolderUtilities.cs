@@ -2,7 +2,7 @@
 using System.IO;
 using System.Linq;
 
-namespace UnifiedUpdatePlatform.Media.Creator.Utils
+namespace UnifiedUpdatePlatform.Media.Creator.NET.Utils
 {
     public static class FolderUtilities
     {

@@ -26,7 +26,13 @@ namespace UnifiedUpdatePlatform.Media.Creator.Planning.Applications
 {
     public class PackageProperties
     {
-        public string Path { get; set; }
-        public string SHA256 { get; set; }
+        public string Path
+        {
+            get; set;
+        }
+        public string SHA256
+        {
+            get; set;
+        }
     }
 }

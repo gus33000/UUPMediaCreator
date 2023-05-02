@@ -1,6 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
 
-namespace Privileges.Checksum
+namespace Privileges.NET.Checksum
 {
     internal static class CrcUtilities
     {
