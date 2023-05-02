@@ -133,7 +133,7 @@
       <Version>6.2.14</Version>
     </PackageReference>
     <PackageReference Include="SharpZipLib">
-      <Version>1.4.1</Version>
+      <Version>1.4.2</Version>
     </PackageReference>
   </ItemGroup>
   <Import Project="..\Cabinet.Shared\Cabinet.Shared.projitems" Label="Shared" />
