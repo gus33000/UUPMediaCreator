@@ -23,7 +23,6 @@ using ManagedWimLib;
 using Microsoft.Wim;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -34,55 +33,56 @@ namespace UnifiedUpdatePlatform.Imaging.NET
     {
         private static string GetExecutableDirectory()
         {
-            string fileName = Process.GetCurrentProcess().MainModule.FileName;
+            string fileName = Environment.ProcessPath;
             return fileName.Contains(Path.DirectorySeparatorChar) ? string.Join(Path.DirectorySeparatorChar, fileName.Split(Path.DirectorySeparatorChar).Reverse().Skip(1).Reverse()) : "";
         }
 
         private static void InitNativeLibrary()
         {
-            string libDir = Path.Combine(GetExecutableDirectory(), "runtimes");
+            string executableDirectory = GetExecutableDirectory();
+            string libraryDirectory = Path.Combine(executableDirectory, "runtimes");
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
-                libDir = Path.Combine(libDir, "win-");
+                libraryDirectory = Path.Combine(libraryDirectory, "win-");
             }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {
-                libDir = Path.Combine(libDir, "linux-");
+                libraryDirectory = Path.Combine(libraryDirectory, "linux-");
             }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
             {
-                libDir = Path.Combine(libDir, "osx-");
+                libraryDirectory = Path.Combine(libraryDirectory, "osx-");
             }
 
             switch (RuntimeInformation.ProcessArchitecture)
             {
                 case Architecture.X86:
-                    libDir += "x86";
+                    libraryDirectory += "x86";
                     break;
                 case Architecture.X64:
-                    libDir += "x64";
+                    libraryDirectory += "x64";
                     break;
                 case Architecture.Arm:
-                    libDir += "arm";
+                    libraryDirectory += "arm";
                     break;
                 case Architecture.Arm64:
-                    libDir += "arm64";
+                    libraryDirectory += "arm64";
                     break;
             }
-            libDir = Path.Combine(libDir, "native");
+            libraryDirectory = Path.Combine(libraryDirectory, "native");
 
             string libPath = null;
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
-                libPath = Path.Combine(libDir, "libwim-15.dll");
+                libPath = Path.Combine(libraryDirectory, "libwim-15.dll");
             }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {
-                libPath = Path.Combine(libDir, "libwim.so");
+                libPath = Path.Combine(libraryDirectory, "libwim.so");
             }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
             {
-                libPath = Path.Combine(libDir, "libwim.dylib");
+                libPath = Path.Combine(libraryDirectory, "libwim.dylib");
             }
 
             if (libPath == null)
@@ -93,18 +93,18 @@ namespace UnifiedUpdatePlatform.Imaging.NET
 
             if (!File.Exists(libPath))
             {
-                libDir = GetExecutableDirectory();
+                libraryDirectory = executableDirectory;
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 {
-                    libPath = Path.Combine(libDir, "libwim-15.dll");
+                    libPath = Path.Combine(libraryDirectory, "libwim-15.dll");
                 }
                 else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
                 {
-                    libPath = Path.Combine(libDir, "libwim.so");
+                    libPath = Path.Combine(libraryDirectory, "libwim.so");
                 }
                 else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
                 {
-                    libPath = Path.Combine(libDir, "libwim.dylib");
+                    libPath = Path.Combine(libraryDirectory, "libwim.dylib");
                 }
 
                 if (!File.Exists(libPath))
@@ -127,6 +127,30 @@ namespace UnifiedUpdatePlatform.Imaging.NET
         static WimLibImaging()
         {
             InitNativeLibrary();
+        }
+
+        private static CompressionType GetCompressionTypeFromWimCompressionType(WimCompressionType compressionType)
+        {
+            switch (compressionType)
+            {
+                case WimCompressionType.Lzms:
+                    {
+                        return CompressionType.LZMS;
+                    }
+                case WimCompressionType.Lzx:
+                    {
+                        return CompressionType.LZX;
+                    }
+                case WimCompressionType.Xpress:
+                    {
+                        return CompressionType.XPRESS;
+                    }
+                default:
+                case WimCompressionType.None:
+                    {
+                        return CompressionType.None;
+                    }
+            }
         }
 
         public bool AddFileToImage(string wimFile, int imageIndex, string fileToAdd, string destination, IImaging.ProgressCallback progressCallback = null)
@@ -176,20 +200,21 @@ namespace UnifiedUpdatePlatform.Imaging.NET
                     return CallbackStatus.Continue;
                 }
 
+                bool originChunked = wimFile.EndsWith(".esd", StringComparison.InvariantCultureIgnoreCase);
                 using Wim wim = Wim.OpenWim(wimFile, OpenFlags.WriteAccess);
                 wim.RegisterCallback(ProgressCallback);
                 wim.UpdateImage(
                     imageIndex,
                     UpdateCommand.SetAdd(fileToAdd, destination, null, AddFlags.None),
                     UpdateFlags.SendProgress);
-                wim.Overwrite(WriteFlags.None, Wim.DefaultThreads);
+                wim.Overwrite(originChunked ? WriteFlags.Solid : WriteFlags.None, Wim.DefaultThreads);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Console.WriteLine(e.ToString());
+                Console.WriteLine(ex.ToString());
                 return false;
             }
-            return ReseatWIMXml(wimFile);
+            return ReformatWindowsImageFileXML(wimFile);
         }
 
         public bool DeleteFileFromImage(string wimFile, int imageIndex, string fileToRemove, IImaging.ProgressCallback progressCallback = null)
@@ -239,19 +264,21 @@ namespace UnifiedUpdatePlatform.Imaging.NET
                     return CallbackStatus.Continue;
                 }
 
+                bool originChunked = wimFile.EndsWith(".esd", StringComparison.InvariantCultureIgnoreCase);
                 using Wim wim = Wim.OpenWim(wimFile, OpenFlags.None);
                 wim.RegisterCallback(ProgressCallback);
                 wim.UpdateImage(
                     imageIndex,
                     UpdateCommand.SetDelete(fileToRemove, DeleteFlags.None),
                     UpdateFlags.SendProgress);
-                wim.Overwrite(WriteFlags.None, Wim.DefaultThreads);
+                wim.Overwrite(originChunked ? WriteFlags.Solid : WriteFlags.None, Wim.DefaultThreads);
             }
-            catch
+            catch (Exception ex)
             {
+                Console.WriteLine(ex.ToString());
                 return false;
             }
-            return ReseatWIMXml(wimFile);
+            return ReformatWindowsImageFileXML(wimFile);
         }
 
         public bool ExportImage(string wimFile, string destinationWimFile, int imageIndex, IEnumerable<string> referenceWIMs = null, WimCompressionType compressionType = WimCompressionType.Lzx, IImaging.ProgressCallback progressCallback = null)
@@ -283,65 +310,37 @@ namespace UnifiedUpdatePlatform.Imaging.NET
                 string imageName = srcWim.GetImageName(imageIndex);
                 string imageDescription = srcWim.GetImageDescription(imageIndex);
 
-                CompressionType compression = CompressionType.None;
-                switch (compressionType)
-                {
-                    case WimCompressionType.Lzms:
-                        {
-                            compression = CompressionType.LZMS;
-                            break;
-                        }
-                    case WimCompressionType.Lzx:
-                        {
-                            compression = CompressionType.LZX;
-                            break;
-                        }
-                    case WimCompressionType.None:
-                        {
-                            compression = CompressionType.None;
-                            break;
-                        }
-                    case WimCompressionType.Xpress:
-                        {
-                            compression = CompressionType.XPRESS;
-                            break;
-                        }
-                }
-
                 if (referenceWIMs?.Any() == true)
                 {
                     srcWim.ReferenceResourceFiles(referenceWIMs, RefFlags.None, OpenFlags.None);
                 }
 
+                using Wim destWim = File.Exists(destinationWimFile) ? Wim.OpenWim(destinationWimFile, OpenFlags.WriteAccess) : Wim.CreateNewWim(GetCompressionTypeFromWimCompressionType(compressionType));
+
+                destWim.RegisterCallback(ProgressCallback);
+
+                if (destWim.IsImageNameInUse(imageName))
+                {
+                    imageName = imageName + " " + DateTime.UtcNow.ToString();
+                }
+
+                srcWim.ExportImage(imageIndex, destWim, imageName, imageDescription, ExportFlags.None);
+
                 if (File.Exists(destinationWimFile))
                 {
-                    using Wim destWim = Wim.OpenWim(destinationWimFile, OpenFlags.WriteAccess);
-                    destWim.RegisterCallback(ProgressCallback);
-
-                    if (destWim.IsImageNameInUse(imageName))
-                    {
-                        srcWim.ExportImage(imageIndex, destWim, imageName + " " + DateTime.UtcNow.ToString(), imageDescription, ExportFlags.None);
-                    }
-                    else
-                    {
-                        srcWim.ExportImage(imageIndex, destWim, imageName, imageDescription, ExportFlags.None);
-                    }
-
-                    destWim.Overwrite(WriteFlags.None, Wim.DefaultThreads);
+                    destWim.Overwrite(GetCompressionTypeFromWimCompressionType(compressionType) == CompressionType.LZMS ? WriteFlags.Solid : WriteFlags.None, Wim.DefaultThreads);
                 }
                 else
                 {
-                    using Wim destWim = Wim.CreateNewWim(compression);
-                    destWim.RegisterCallback(ProgressCallback);
-                    srcWim.ExportImage(imageIndex, destWim, imageName, imageDescription, ExportFlags.None);
-                    destWim.Write(destinationWimFile, Wim.AllImages, compression == CompressionType.LZMS ? WriteFlags.Solid : WriteFlags.None, Wim.DefaultThreads);
+                    destWim.Write(destinationWimFile, Wim.AllImages, GetCompressionTypeFromWimCompressionType(compressionType) == CompressionType.LZMS ? WriteFlags.Solid : WriteFlags.None, Wim.DefaultThreads);
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Console.WriteLine(ex.ToString());
                 return false;
             }
-            return ReseatWIMXml(destinationWimFile);
+            return ReformatWindowsImageFileXML(destinationWimFile);
         }
 
         public bool ExtractFileFromImage(string wimFile, int imageIndex, string fileToExtract, string destination)
@@ -418,19 +417,21 @@ namespace UnifiedUpdatePlatform.Imaging.NET
                     return CallbackStatus.Continue;
                 }
 
+                bool originChunked = wimFile.EndsWith(".esd", StringComparison.InvariantCultureIgnoreCase);
                 using Wim wim = Wim.OpenWim(wimFile, OpenFlags.None);
                 wim.RegisterCallback(ProgressCallback);
                 wim.UpdateImage(
                     imageIndex,
                     UpdateCommand.SetRename(sourceFilePath, destinationFilePath),
                     UpdateFlags.SendProgress);
-                wim.Overwrite(WriteFlags.None, Wim.DefaultThreads);
+                wim.Overwrite(originChunked ? WriteFlags.Solid : WriteFlags.None, Wim.DefaultThreads);
             }
-            catch
+            catch (Exception ex)
             {
+                Console.WriteLine(ex.ToString());
                 return false;
             }
-            return ReseatWIMXml(wimFile);
+            return ReformatWindowsImageFileXML(wimFile);
         }
 
         public bool ApplyImage(string wimFile, int imageIndex, string OutputDirectory, IEnumerable<string> referenceWIMs = null, bool PreserveACL = true, IImaging.ProgressCallback progressCallback = null)
@@ -489,8 +490,9 @@ namespace UnifiedUpdatePlatform.Imaging.NET
 
                 wim.ExtractImage(imageIndex, OutputDirectory, PreserveACL ? ExtractFlags.StrictAcls : ExtractFlags.NoAcls);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Console.WriteLine(ex.ToString());
                 return false;
             }
             return true;
@@ -584,36 +586,11 @@ namespace UnifiedUpdatePlatform.Imaging.NET
                         wim.ReferenceTemplateImage((int)wim.GetWimInfo().ImageCount, UpdateFrom);
                     }
 
-                    wim.Overwrite(WriteFlags.None, Wim.DefaultThreads);
+                    wim.Overwrite(GetCompressionTypeFromWimCompressionType(compressionType) == CompressionType.LZMS ? WriteFlags.Solid : WriteFlags.None, Wim.DefaultThreads);
                 }
                 else
                 {
-                    CompressionType compression = CompressionType.None;
-                    switch (compressionType)
-                    {
-                        case WimCompressionType.Lzms:
-                            {
-                                compression = CompressionType.LZMS;
-                                break;
-                            }
-                        case WimCompressionType.Lzx:
-                            {
-                                compression = CompressionType.LZX;
-                                break;
-                            }
-                        case WimCompressionType.None:
-                            {
-                                compression = CompressionType.None;
-                                break;
-                            }
-                        case WimCompressionType.Xpress:
-                            {
-                                compression = CompressionType.XPRESS;
-                                break;
-                            }
-                    }
-
-                    using Wim wim = Wim.CreateNewWim(compression);
+                    using Wim wim = Wim.CreateNewWim(GetCompressionTypeFromWimCompressionType(compressionType));
                     wim.RegisterCallback(ProgressCallback);
 
                     const string config = @"[ExclusionList]
@@ -651,11 +628,12 @@ namespace UnifiedUpdatePlatform.Imaging.NET
                     File.Delete(configpath);
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Console.WriteLine(ex.ToString());
                 return false;
             }
-            return ReseatWIMXml(wimFile);
+            return ReformatWindowsImageFileXML(wimFile);
         }
 
         public bool EnumerateFiles(string wimFile, int imageIndex, string path, out string[] entries)
@@ -671,8 +649,9 @@ namespace UnifiedUpdatePlatform.Imaging.NET
                 }
                 _ = wim.IterateDirTree(imageIndex, path, IterateDirTreeFlags.Children, IterateDirTreeCallback);
             }
-            catch
+            catch (Exception ex)
             {
+                Console.WriteLine(ex.ToString());
                 entries = fsentries.ToArray();
                 return false;
             }
@@ -684,12 +663,14 @@ namespace UnifiedUpdatePlatform.Imaging.NET
         {
             try
             {
+                bool originChunked = wimFile.EndsWith(".esd", StringComparison.InvariantCultureIgnoreCase);
                 using Wim wim = Wim.OpenWim(wimFile, OpenFlags.None);
                 wim.SetWimInfo(new ManagedWimLib.WimInfo() { BootIndex = (uint)imageIndex }, ChangeFlags.BootIndex);
-                wim.Overwrite(WriteFlags.None, Wim.DefaultThreads);
+                wim.Overwrite(originChunked ? WriteFlags.Solid : WriteFlags.None, Wim.DefaultThreads);
             }
-            catch
+            catch (Exception ex)
             {
+                Console.WriteLine(ex.ToString());
                 return false;
             }
             return true;
@@ -697,17 +678,18 @@ namespace UnifiedUpdatePlatform.Imaging.NET
 
         public bool GetWIMInformation(
             string wimFile,
-            out WIMInformationXML.WIM wim)
+            out WIMInformationXML.WIM wimInformationObject)
         {
-            wim = null;
+            wimInformationObject = null;
             try
             {
-                using Wim wiml = Wim.OpenWim(wimFile, OpenFlags.None);
-                string xmldata = string.Join("", wiml.GetXmlData().Skip(1));
-                wim = WIMInformationXML.DeserializeWIM(xmldata);
+                using Wim wim = Wim.OpenWim(wimFile, OpenFlags.None);
+                string xmlString = string.Join("", wim.GetXmlData().Skip(1));
+                wimInformationObject = WIMInformationXML.DeserializeWIM(xmlString);
             }
-            catch
+            catch (Exception ex)
             {
+                Console.WriteLine(ex.ToString());
                 return false;
             }
             return true;
@@ -722,12 +704,13 @@ namespace UnifiedUpdatePlatform.Imaging.NET
             try
             {
                 using Wim wim = Wim.OpenWim(wimFile, OpenFlags.None);
-                string xmldata = string.Join("", wim.GetXmlData().Skip(1));
-                WIMInformationXML.WIM xml = WIMInformationXML.DeserializeWIM(xmldata);
+                string xmlString = string.Join("", wim.GetXmlData().Skip(1));
+                WIMInformationXML.WIM xml = WIMInformationXML.DeserializeWIM(xmlString);
                 image = xml.IMAGE.First(x => x.INDEX == imageIndex.ToString());
             }
-            catch
+            catch (Exception ex)
             {
+                Console.WriteLine(ex.ToString());
                 return false;
             }
             return true;
@@ -742,23 +725,23 @@ namespace UnifiedUpdatePlatform.Imaging.NET
             try
             {
                 using Wim wim = Wim.OpenWim(wimFile, OpenFlags.WriteAccess);
-                string xmldata = string.Join("", wim.GetXmlData().Skip(1));
-                WIMInformationXML.WIM xml = WIMInformationXML.DeserializeWIM(xmldata);
-                int index = xml.IMAGE.IndexOf(xml.IMAGE.First(x => x.INDEX == imageIndex.ToString()));
-                xml.IMAGE[index] = image;
-                xmldata = WIMInformationXML.SerializeWIM(xml);
+                string xmlString = string.Join("", wim.GetXmlData().Skip(1));
+                WIMInformationXML.WIM wimInformationObject = WIMInformationXML.DeserializeWIM(xmlString);
+                int index = wimInformationObject.IMAGE.IndexOf(wimInformationObject.IMAGE.First(x => x.INDEX == imageIndex.ToString()));
+                wimInformationObject.IMAGE[index] = image;
+                xmlString = WIMInformationXML.SerializeWIM(wimInformationObject);
                 // TODO
             }
-            catch
+            catch (Exception ex)
             {
+                Console.WriteLine(ex.ToString());
                 return false;
             }
             return true;
         }
 
-        private static bool ReseatWIMXml(string wimFile)
+        private static bool ReformatWindowsImageFileXML(string wimFile)
         {
-            Console.WriteLine("ReseatWIMXml!");
             try
             {
                 using WimHandle wimHandle = WimgApi.CreateFile(
@@ -771,40 +754,34 @@ namespace UnifiedUpdatePlatform.Imaging.NET
                 //
                 WimgApi.SetTemporaryPath(wimHandle, Path.GetTempPath());
 
-                string xmldata = WimgApi.GetImageInformationAsString(wimHandle);
-                WIMInformationXML.WIM xml = WIMInformationXML.DeserializeWIM(xmldata);
-                xmldata = WIMInformationXML.SerializeWIM(xml);
-                WimgApi.SetImageInformation(wimHandle, xmldata);
+                string xmlString = WimgApi.GetImageInformationAsString(wimHandle);
+                WIMInformationXML.WIM wimInformationObject = WIMInformationXML.DeserializeWIM(xmlString);
+                xmlString = WIMInformationXML.SerializeWIM(wimInformationObject);
+                WimgApi.SetImageInformation(wimHandle, xmlString);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Console.WriteLine("ReseatWIMXml failed!");
-                Console.WriteLine(e.ToString());
-                return ReseatWIMXml2(wimFile);
+                Console.WriteLine(ex.ToString());
+                return ReformatWindowsImageFileXMLUsingWimgApi(wimFile);
             }
-
-            Console.WriteLine("ReseatWIMXml succ!");
             return true;
         }
 
-        private static bool ReseatWIMXml2(string wimFile)
+        private static bool ReformatWindowsImageFileXMLUsingWimgApi(string wimFile)
         {
-            Console.WriteLine("ReseatWIMXml2!");
             try
             {
                 using Wim wim = Wim.OpenWim(wimFile, OpenFlags.WriteAccess);
-                string xmldata = string.Join("", wim.GetXmlData().Skip(1));
-                WIMInformationXML.WIM xml = WIMInformationXML.DeserializeWIM(xmldata);
-                xmldata = WIMInformationXML.SerializeWIM(xml);
+                string xmlString = string.Join("", wim.GetXmlData().Skip(1));
+                WIMInformationXML.WIM wimInformationObject = WIMInformationXML.DeserializeWIM(xmlString);
+                xmlString = WIMInformationXML.SerializeWIM(wimInformationObject);
                 // TODO
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Console.WriteLine("ReseatWIMXml2 failed!");
-                Console.WriteLine(e.ToString());
+                Console.WriteLine(ex.ToString());
                 return false;
             }
-            Console.WriteLine("ReseatWIMXml2 succ!");
             return true;
         }
     }

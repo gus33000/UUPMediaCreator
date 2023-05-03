@@ -169,17 +169,11 @@ namespace Microsoft.Dism
         /// <returns>A <see cref="DismGeneration" /> indicating the lastest DISM generation installed if found, otherwise <see cref="DismGeneration.NotFound" />.</returns>
         public static DismGeneration GetLatestDismGeneration()
         {
-            if (!string.IsNullOrEmpty(WADK10DismApiPath))
-            {
-                return DismGeneration.Win10;
-            }
-
-            if (!string.IsNullOrEmpty(WADK81DISMAPIPath))
-            {
-                return DismGeneration.Win8_1;
-            }
-
-            return !string.IsNullOrEmpty(WADK80DISMAPIPath)
+            return !string.IsNullOrEmpty(WADK10DismApiPath)
+                ? DismGeneration.Win10
+                : !string.IsNullOrEmpty(WADK81DISMAPIPath)
+                ? DismGeneration.Win8_1
+                : !string.IsNullOrEmpty(WADK80DISMAPIPath)
                 ? DismGeneration.Win8
                 : !string.IsNullOrEmpty(WADK80DISMAPIPath) ? DismGeneration.Win7 : DismGeneration.NotFound;
         }
