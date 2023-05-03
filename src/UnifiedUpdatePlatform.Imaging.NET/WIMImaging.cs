@@ -20,7 +20,7 @@ namespace UnifiedUpdatePlatform.Imaging.NET
 
         public bool CaptureImage(string wimFile, string imageName, string imageDescription, string imageFlag, string InputDirectory, TempManager.TempManager tempManager, string imageDisplayName = null, string imageDisplayDescription = null, WimCompressionType compressionType = WimCompressionType.Lzx, IImaging.ProgressCallback progressCallback = null, int UpdateFrom = -1, bool PreserveACL = true)
         {
-            return WimgApi.CaptureImage(wimFile, imageName, imageDescription, imageFlag, InputDirectory, tempManager, imageDisplayName = null, imageDisplayDescription = null, compressionType, progressCallback, UpdateFrom, PreserveACL) ||
+            return (compressionType != WimCompressionType.Lzms && WimgApi.CaptureImage(wimFile, imageName, imageDescription, imageFlag, InputDirectory, tempManager, imageDisplayName = null, imageDisplayDescription = null, compressionType, progressCallback, UpdateFrom, PreserveACL)) ||
                 WimLib.CaptureImage(wimFile, imageName, imageDescription, imageFlag, InputDirectory, tempManager, imageDisplayName = null, imageDisplayDescription = null, compressionType, progressCallback, UpdateFrom, PreserveACL);
         }
 
@@ -36,7 +36,7 @@ namespace UnifiedUpdatePlatform.Imaging.NET
 
         public bool ExportImage(string wimFile, string destinationWimFile, int imageIndex, IEnumerable<string> referenceWIMs = null, WimCompressionType compressionType = WimCompressionType.Lzx, IImaging.ProgressCallback progressCallback = null)
         {
-            return WimgApi.ExportImage(wimFile, destinationWimFile, imageIndex, referenceWIMs, compressionType, progressCallback) || WimLib.ExportImage(wimFile, destinationWimFile, imageIndex, referenceWIMs, compressionType, progressCallback);
+            return (compressionType != WimCompressionType.Lzms && WimgApi.ExportImage(wimFile, destinationWimFile, imageIndex, referenceWIMs, compressionType, progressCallback)) || WimLib.ExportImage(wimFile, destinationWimFile, imageIndex, referenceWIMs, compressionType, progressCallback);
         }
 
         public bool ExtractFileFromImage(string wimFile, int imageIndex, string fileToExtract, string destination)
