@@ -72,8 +72,9 @@ namespace UnifiedUpdatePlatform.Media.Creator.NET.CDImage
                     process.WaitForExit();
                     return process.ExitCode == 0;
                 }
-                catch
+                catch (Exception ex)
                 {
+                    Console.WriteLine(ex.ToString());
                     return false;
                 }
             }
@@ -114,13 +115,15 @@ namespace UnifiedUpdatePlatform.Media.Creator.NET.CDImage
                         process.WaitForExit();
                         return process.ExitCode == 0;
                     }
-                    catch
+                    catch (Exception ex)
                     {
+                        Console.WriteLine(ex.ToString());
                         return false;
                     }
                 }
-                catch
+                catch (Exception ex)
                 {
+                    Console.WriteLine(ex.ToString());
                     return false;
                 }
             }
