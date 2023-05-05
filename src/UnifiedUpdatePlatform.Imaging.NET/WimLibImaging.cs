@@ -71,6 +71,7 @@ namespace UnifiedUpdatePlatform.Imaging.NET
             }
             libraryDirectory = Path.Combine(libraryDirectory, "native");
 
+            // Some platforms require native library custom path to be an absolute path.
             string libPath = null;
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
@@ -116,7 +117,7 @@ namespace UnifiedUpdatePlatform.Imaging.NET
 
             try
             {
-                Wim.GlobalInit(libPath);
+                Wim.GlobalInit(libPath, InitFlags.None);
             }
             catch (InvalidOperationException)
             {
@@ -742,6 +743,11 @@ namespace UnifiedUpdatePlatform.Imaging.NET
 
         private static bool ReformatWindowsImageFileXML(string wimFile)
         {
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                return ReformatWindowsImageFileXMLUsingWimgApi(wimFile);
+            }
+
             try
             {
                 using WimHandle wimHandle = WimgApi.CreateFile(

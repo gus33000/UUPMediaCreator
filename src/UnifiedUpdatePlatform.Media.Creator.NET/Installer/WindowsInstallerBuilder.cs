@@ -298,7 +298,7 @@ namespace UnifiedUpdatePlatform.Media.Creator.NET.Installer
             }
 
             string bgfile = new[] { "background_cli.bmp", "background_svr.bmp", "background_cli.png", "background_svr.png" }
-                .Select(asset => Path.Combine(MediaPath, $@"sources\{asset}"))
+                .Select(asset => Path.Combine(MediaPath, "sources", asset))
                 .FirstOrDefault(assetPath => File.Exists(assetPath));
 
             result = Constants.imagingInterface.AddFileToImage(bootwim, 2, bgfile, Path.Combine("Windows", "System32", "setup.bmp"), progressCallback: progressCallback?.GetImagingCallback());

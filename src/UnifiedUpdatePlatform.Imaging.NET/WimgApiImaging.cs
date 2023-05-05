@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 
 namespace UnifiedUpdatePlatform.Imaging.NET
 {
@@ -127,6 +128,11 @@ namespace UnifiedUpdatePlatform.Imaging.NET
 
         public bool ApplyImage(string wimFile, int imageIndex, string OutputDirectory, IEnumerable<string> referenceWIMs = null, bool PreserveACL = true, IImaging.ProgressCallback progressCallback = null)
         {
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                return false;
+            }
+
             string title = $"Applying {wimFile.Split(Path.DirectorySeparatorChar).Last()} - Index {imageIndex}";
             try
             {
@@ -257,6 +263,11 @@ namespace UnifiedUpdatePlatform.Imaging.NET
 
         public bool ExportImage(string wimFile, string destinationWimFile, int imageIndex, IEnumerable<string> referenceWIMs = null, WimCompressionType compressionType = WimCompressionType.Lzx, IImaging.ProgressCallback progressCallback = null)
         {
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                return false;
+            }
+
             string title = $"Exporting {wimFile.Split(Path.DirectorySeparatorChar).Last()} - Index {imageIndex}";
             try
             {
@@ -330,19 +341,24 @@ namespace UnifiedUpdatePlatform.Imaging.NET
 
         public bool ExtractFileFromImage(string wimFile, int imageIndex, string fileToExtract, string destination)
         {
-            using WimHandle wimHandle = WimgApi.CreateFile(
-                        wimFile,
-                        WimFileAccess.Read,
-                        WimCreationDisposition.OpenExisting,
-                        wimFile.EndsWith(".esd", StringComparison.InvariantCultureIgnoreCase) ? WimCreateFileOptions.Chunked : WimCreateFileOptions.None,
-                        WimCompressionType.None);
-
-            // Always set a temporary path
-            //
-            WimgApi.SetTemporaryPath(wimHandle, Path.GetTempPath());
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                return false;
+            }
 
             try
             {
+                using WimHandle wimHandle = WimgApi.CreateFile(
+                            wimFile,
+                            WimFileAccess.Read,
+                            WimCreationDisposition.OpenExisting,
+                            wimFile.EndsWith(".esd", StringComparison.InvariantCultureIgnoreCase) ? WimCreateFileOptions.Chunked : WimCreateFileOptions.None,
+                            WimCompressionType.None);
+
+                // Always set a temporary path
+                //
+                WimgApi.SetTemporaryPath(wimHandle, Path.GetTempPath());
+
                 using WimHandle wimImageHandle = WimgApi.LoadImage(wimHandle, imageIndex);
                 WimgApi.ExtractImagePath(wimImageHandle, fileToExtract, destination);
             }
@@ -350,13 +366,17 @@ namespace UnifiedUpdatePlatform.Imaging.NET
             {
                 return false;
             }
-
             return true;
         }
 
         public bool GetWIMImageInformation(string wimFile, int imageIndex, out WIMInformationXML.IMAGE image)
         {
             image = null;
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                return false;
+            }
+
             try
             {
                 using WimHandle wimHandle = WimgApi.CreateFile(
@@ -383,6 +403,11 @@ namespace UnifiedUpdatePlatform.Imaging.NET
         public bool GetWIMInformation(string wimFile, out WIMInformationXML.WIM wim)
         {
             wim = null;
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                return false;
+            }
+
             try
             {
                 using WimHandle wimHandle = WimgApi.CreateFile(
@@ -407,31 +432,40 @@ namespace UnifiedUpdatePlatform.Imaging.NET
 
         public bool MarkImageAsBootable(string wimFile, int imageIndex)
         {
-            using WimHandle wimHandle = WimgApi.CreateFile(
-                        wimFile,
-                        WimFileAccess.Write,
-                        WimCreationDisposition.OpenExisting,
-                        wimFile.EndsWith(".esd", StringComparison.InvariantCultureIgnoreCase) ? WimCreateFileOptions.Chunked : WimCreateFileOptions.None,
-                        WimCompressionType.None);
-
-            // Always set a temporary path
-            //
-            WimgApi.SetTemporaryPath(wimHandle, Path.GetTempPath());
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                return false;
+            }
 
             try
             {
+                using WimHandle wimHandle = WimgApi.CreateFile(
+                            wimFile,
+                            WimFileAccess.Write,
+                            WimCreationDisposition.OpenExisting,
+                            wimFile.EndsWith(".esd", StringComparison.InvariantCultureIgnoreCase) ? WimCreateFileOptions.Chunked : WimCreateFileOptions.None,
+                            WimCompressionType.None);
+
+                // Always set a temporary path
+                //
+                WimgApi.SetTemporaryPath(wimHandle, Path.GetTempPath());
+
                 WimgApi.SetBootImage(wimHandle, imageIndex);
             }
             catch
             {
                 return false;
             }
-
             return true;
         }
 
         public bool SetWIMImageInformation(string wimFile, int imageIndex, WIMInformationXML.IMAGE image)
         {
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                return false;
+            }
+
             try
             {
                 using WimHandle wimHandle = WimgApi.CreateFile(

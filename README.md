@@ -27,7 +27,7 @@ Right now the tooling includes:
 
 ## Supported features by OS
 
-| Feature                                                                                  | Windows | Linux  | macOS  |
+| Feature                                                                                  | Windows | Linux (3) | macOS  |
 |------------------------------------------------------------------------------------------|---------|--------|--------|
 | Downloading files from UUP (UUPDownload)                                                 | ✅       | ✅       | ✅       |
 | Replaying past downloads from UUP (UUPDownload)                                          | ✅       | ✅       | ✅       |
@@ -50,6 +50,8 @@ Right now the tooling includes:
 (1): requires ```apt-get install genisoimage```
 
 (2): requires ```brew install cdrtools```
+
+(3): requires ```apt-get install libfuse2```
 
 ## Usage
 
