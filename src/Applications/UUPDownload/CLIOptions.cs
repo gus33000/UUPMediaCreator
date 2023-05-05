@@ -57,7 +57,7 @@ namespace UUPDownload
             get; set;
         }
 
-        [Option('b', "flighting-branch-name", HelpText = "The flighting branch name to report to the Windows Update servers. Example: Retail, other example: Canary, Dev, Beta or ReleasePreview", Required = false, Default = "")]
+        [Option('b', "flighting-branch-name", HelpText = "The flighting branch name to report to the Windows Update servers. Example: Retail, other example: CanaryChannel, Dev, Beta or ReleasePreview", Required = false, Default = "")]
         public string FlightingBranchName
         {
             get; set;
