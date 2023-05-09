@@ -502,7 +502,7 @@
       <Version>7.1.3</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.UI.Xaml">
-      <Version>2.8.3</Version>
+      <Version>2.8.4</Version>
     </PackageReference>
     <PackageReference Include="System.Text.Json">
       <Version>7.0.2</Version>
