@@ -13,6 +13,11 @@ namespace UnifiedUpdatePlatform.Imaging.NET
             return WimgApi.AddFileToImage(wimFile, imageIndex, fileToAdd, destination, progressCallback) || WimLib.AddFileToImage(wimFile, imageIndex, fileToAdd, destination, progressCallback);
         }
 
+        public bool AddFilesToImage(string wimFile, int imageIndex, IEnumerable<(string fileToAdd, string destination)> fileList, IImaging.ProgressCallback progressCallback = null)
+        {
+            return WimgApi.AddFilesToImage(wimFile, imageIndex, fileList, progressCallback) || WimLib.AddFilesToImage(wimFile, imageIndex, fileList, progressCallback);
+        }
+
         public bool ApplyImage(string wimFile, int imageIndex, string OutputDirectory, IEnumerable<string> referenceWIMs = null, bool PreserveACL = true, IImaging.ProgressCallback progressCallback = null)
         {
             return WimgApi.ApplyImage(wimFile, imageIndex, OutputDirectory, referenceWIMs, PreserveACL, progressCallback) || WimLib.ApplyImage(wimFile, imageIndex, OutputDirectory, referenceWIMs, PreserveACL, progressCallback);

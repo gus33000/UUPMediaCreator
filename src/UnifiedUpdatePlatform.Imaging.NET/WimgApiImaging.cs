@@ -14,6 +14,11 @@ namespace UnifiedUpdatePlatform.Imaging.NET
             return false;
         }
 
+        public bool AddFilesToImage(string wimFile, int imageIndex, IEnumerable<(string fileToAdd, string destination)> fileList, IImaging.ProgressCallback progressCallback = null)
+        {
+            return false;
+        }
+
         public bool DeleteFileFromImage(string wimFile, int imageIndex, string fileToRemove, IImaging.ProgressCallback progressCallback = null)
         {
             return false;
