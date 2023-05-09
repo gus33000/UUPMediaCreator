@@ -30,6 +30,8 @@ namespace UnifiedUpdatePlatform.Imaging.NET
 
         public bool AddFileToImage(string wimFile, int imageIndex, string fileToAdd, string destination, ProgressCallback progressCallback = null);
 
+        public bool AddFilesToImage(string wimFile, int imageIndex, IEnumerable<(string fileToAdd, string destination)> fileList, ProgressCallback progressCallback = null);
+
         public bool DeleteFileFromImage(string wimFile, int imageIndex, string fileToRemove, ProgressCallback progressCallback = null);
 
         public bool ExportImage(string wimFile, string destinationWimFile, int imageIndex, IEnumerable<string> referenceWIMs = null, WimCompressionType compressionType = WimCompressionType.Lzx, ProgressCallback progressCallback = null);

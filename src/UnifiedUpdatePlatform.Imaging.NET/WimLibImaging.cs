@@ -154,11 +154,32 @@ namespace UnifiedUpdatePlatform.Imaging.NET
             }
         }
 
-        public bool AddFileToImage(string wimFile, int imageIndex, string fileToAdd, string destination, IImaging.ProgressCallback progressCallback = null)
+        public bool AddFileToImage(string wimFile, int imageIndex,string fileToAdd, string destination, IImaging.ProgressCallback progressCallback = null)
         {
-            destination = destination.Replace(Path.DirectorySeparatorChar, '\\');
+            return AddFilesToImage(wimFile, imageIndex,
+                new[] { (fileToAdd, destination) },
+                progressCallback);
+        }
 
-            string title = $"Adding {destination} to {wimFile.Split(Path.DirectorySeparatorChar).Last()}...";
+        public bool AddFilesToImage(string wimFile, int imageIndex, IEnumerable<(string fileToAdd, string destination)> fileList, IImaging.ProgressCallback progressCallback = null)
+        {
+            // Early false returns because calling add with nothing to add sounds unintentional
+            if (fileList == null)
+                return false;
+            var updateCmds = new List<UpdateCommand>();
+            foreach (var (fileToAdd, destination) in fileList)
+            {
+                var backSlashDest = destination.Replace(Path.DirectorySeparatorChar, '\\');
+                updateCmds.Add(UpdateCommand.SetAdd(fileToAdd, backSlashDest, null, AddFlags.None));
+            }
+            if (updateCmds.Count == 0)
+                return false;
+
+            string title;
+            if (updateCmds.Count == 1)
+                title = $"Adding {updateCmds[0].AddWimTargetPath} to {wimFile.Split(Path.DirectorySeparatorChar).Last()}...";
+            else
+                title = $"Adding {updateCmds.Count} files to {wimFile.Split(Path.DirectorySeparatorChar).Last()}...";
             try
             {
                 CallbackStatus ProgressCallback(ProgressMsg msg, object info, object progctx)
@@ -206,7 +227,7 @@ namespace UnifiedUpdatePlatform.Imaging.NET
                 wim.RegisterCallback(ProgressCallback);
                 wim.UpdateImage(
                     imageIndex,
-                    UpdateCommand.SetAdd(fileToAdd, destination, null, AddFlags.None),
+                    updateCmds,
                     UpdateFlags.SendProgress);
                 wim.Overwrite(originChunked ? WriteFlags.Solid : WriteFlags.None, Wim.DefaultThreads);
             }

@@ -328,6 +328,7 @@ namespace UnifiedUpdatePlatform.Media.Creator.NET.Installer
             }
             string langcode = dirs.First().Replace(Path.Combine(MediaPath, "sources") + Path.DirectorySeparatorChar, "");
 
+            var finalSetupFileList = new List<(string fileToAdd, string destination)>();
             foreach (string file in IniReader.SetupFilesToBackport)
             {
                 progressCallback?.Log($"Processing {file}");
@@ -343,17 +344,14 @@ namespace UnifiedUpdatePlatform.Media.Creator.NET.Installer
                 {
                     progressCallback?.Log($"Found {matchingfile}");
 
-                    result = Constants.imagingInterface.AddFileToImage(bootwim, 2, sourcePath, normalizedPath, progressCallback: progressCallback?.GetImagingCallback());
-                    if (!result)
-                    {
-                        goto exit;
-                    }
+                    finalSetupFileList.Add((sourcePath, normalizedPath));
                 }
                 else
                 {
                     progressCallback?.Log($"Didn't find {matchingfile}");
                 }
             }
+            result = Constants.imagingInterface.AddFilesToImage(bootwim, 2, finalSetupFileList, progressCallback: progressCallback?.GetImagingCallback());
 
         exit:
             return result;
