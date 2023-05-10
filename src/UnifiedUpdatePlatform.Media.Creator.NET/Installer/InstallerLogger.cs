@@ -6,7 +6,7 @@ namespace UnifiedUpdatePlatform.Media.Creator.NET.Installer
     {
         private static readonly Common.Messaging.Common.ProcessPhase Phase = Common.Messaging.Common.ProcessPhase.CreatingWindowsInstaller;
 
-        internal static IImaging.ProgressCallback GetImagingCallback(this ProgressCallback progressCallback)
+        internal static WimImaging.ProgressCallback GetImagingCallback(this ProgressCallback progressCallback)
         {
             return (Operation, ProgressPercentage, IsIndeterminate) => progressCallback?.Invoke(Phase, IsIndeterminate, ProgressPercentage, Operation);
         }
