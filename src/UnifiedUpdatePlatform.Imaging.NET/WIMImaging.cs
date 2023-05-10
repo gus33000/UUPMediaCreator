@@ -66,49 +66,9 @@ namespace UnifiedUpdatePlatform.Imaging.NET
                 title = $"Adding {updateCmds.Count} files to {wimFile.Split(Path.DirectorySeparatorChar).Last()}...";
             try
             {
-                CallbackStatus ProgressCallback(ProgressMsg msg, object info, object progctx)
-                {
-                    switch (msg)
-                    {
-                        case ProgressMsg.ScanBegin:
-                            {
-                                ScanProgress m = (ScanProgress)info;
-                                progressCallback?.Invoke($"Scanning files ({m.NumBytesScanned} bytes scanned, Current directory: {m.CurPath})", 0, true);
-                            }
-                            break;
-
-                        case ProgressMsg.ScanEnd:
-                            {
-                                ScanProgress m = (ScanProgress)info;
-                                progressCallback?.Invoke($"Scanning files ({m.NumBytesScanned} bytes scanned, Current directory: {m.CurPath})", 0, true);
-                            }
-                            break;
-
-                        case ProgressMsg.WriteMetadataBegin:
-                            break;
-
-                        case ProgressMsg.UpdateBeginCommand:
-                            break;
-
-                        case ProgressMsg.UpdateEndCommand:
-                            break;
-
-                        case ProgressMsg.WriteStreams:
-                            {
-                                WriteStreamsProgress m = (WriteStreamsProgress)info;
-                                progressCallback?.Invoke(title, m.TotalBytes > 0 ? (int)Math.Round((double)m.CompletedBytes / m.TotalBytes * 100) : 0, false);
-                            }
-                            break;
-
-                        case ProgressMsg.WriteMetadataEnd:
-                            break;
-                    }
-                    return CallbackStatus.Continue;
-                }
-
                 bool originChunked = wimFile.EndsWith(".esd", StringComparison.InvariantCultureIgnoreCase);
                 using Wim wim = Wim.OpenWim(wimFile, OpenFlags.WriteAccess);
-                wim.RegisterCallback(ProgressCallback);
+                wim.RegisterCallback(GetCallbackStatus(title, progressCallback));
                 wim.UpdateImage(
                     imageIndex,
                     updateCmds,
@@ -130,49 +90,9 @@ namespace UnifiedUpdatePlatform.Imaging.NET
             string title = $"Removing {fileToRemove} from {wimFile.Split(Path.DirectorySeparatorChar).Last()}...";
             try
             {
-                CallbackStatus ProgressCallback(ProgressMsg msg, object info, object progctx)
-                {
-                    switch (msg)
-                    {
-                        case ProgressMsg.ScanBegin:
-                            {
-                                ScanProgress m = (ScanProgress)info;
-                                progressCallback?.Invoke($"Scanning files ({m.NumBytesScanned} bytes scanned, Current directory: {m.CurPath})", 0, true);
-                            }
-                            break;
-
-                        case ProgressMsg.ScanEnd:
-                            {
-                                ScanProgress m = (ScanProgress)info;
-                                progressCallback?.Invoke($"Scanning files ({m.NumBytesScanned} bytes scanned, Current directory: {m.CurPath})", 0, true);
-                            }
-                            break;
-
-                        case ProgressMsg.WriteMetadataBegin:
-                            break;
-
-                        case ProgressMsg.UpdateBeginCommand:
-                            break;
-
-                        case ProgressMsg.UpdateEndCommand:
-                            break;
-
-                        case ProgressMsg.WriteStreams:
-                            {
-                                WriteStreamsProgress m = (WriteStreamsProgress)info;
-                                progressCallback?.Invoke(title, m.TotalBytes > 0 ? (int)Math.Round((double)m.CompletedBytes / m.TotalBytes * 100) : 0, false);
-                            }
-                            break;
-
-                        case ProgressMsg.WriteMetadataEnd:
-                            break;
-                    }
-                    return CallbackStatus.Continue;
-                }
-
                 bool originChunked = wimFile.EndsWith(".esd", StringComparison.InvariantCultureIgnoreCase);
                 using Wim wim = Wim.OpenWim(wimFile, OpenFlags.None);
-                wim.RegisterCallback(ProgressCallback);
+                wim.RegisterCallback(GetCallbackStatus(title, progressCallback));
                 wim.UpdateImage(
                     imageIndex,
                     UpdateCommand.SetDelete(fileToRemove, DeleteFlags.None),
@@ -192,26 +112,6 @@ namespace UnifiedUpdatePlatform.Imaging.NET
             string title = $"Exporting {wimFile.Split(Path.DirectorySeparatorChar).Last()} - Index {imageIndex}";
             try
             {
-                CallbackStatus ProgressCallback(ProgressMsg msg, object info, object progctx)
-                {
-                    switch (msg)
-                    {
-                        case ProgressMsg.WriteStreams:
-                            {
-                                WriteStreamsProgress m = (WriteStreamsProgress)info;
-                                progressCallback?.Invoke(title, m.TotalBytes > 0 ? (int)Math.Round((double)m.CompletedBytes / m.TotalBytes * 100) : 0, false);
-                            }
-                            break;
-
-                        case ProgressMsg.WriteMetadataBegin:
-                            break;
-
-                        case ProgressMsg.WriteMetadataEnd:
-                            break;
-                    }
-                    return CallbackStatus.Continue;
-                }
-
                 using Wim srcWim = Wim.OpenWim(wimFile, OpenFlags.None);
                 string imageName = srcWim.GetImageName(imageIndex);
                 string imageDescription = srcWim.GetImageDescription(imageIndex);
@@ -223,7 +123,7 @@ namespace UnifiedUpdatePlatform.Imaging.NET
 
                 using Wim destWim = File.Exists(destinationWimFile) ? Wim.OpenWim(destinationWimFile, OpenFlags.WriteAccess) : Wim.CreateNewWim(GetCompressionTypeFromWimCompressionType(compressionType));
 
-                destWim.RegisterCallback(ProgressCallback);
+                destWim.RegisterCallback(GetCallbackStatus(title, progressCallback));
 
                 if (destWim.IsImageNameInUse(imageName))
                 {
@@ -283,49 +183,9 @@ namespace UnifiedUpdatePlatform.Imaging.NET
             string title = $"Renaming {sourceFilePath} to {destinationFilePath} in {wimFile.Split(Path.DirectorySeparatorChar).Last()}...";
             try
             {
-                CallbackStatus ProgressCallback(ProgressMsg msg, object info, object progctx)
-                {
-                    switch (msg)
-                    {
-                        case ProgressMsg.ScanBegin:
-                            {
-                                ScanProgress m = (ScanProgress)info;
-                                progressCallback?.Invoke($"Scanning files ({m.NumBytesScanned} bytes scanned, Current directory: {m.CurPath})", 0, true);
-                            }
-                            break;
-
-                        case ProgressMsg.ScanEnd:
-                            {
-                                ScanProgress m = (ScanProgress)info;
-                                progressCallback?.Invoke($"Scanning files ({m.NumBytesScanned} bytes scanned, Current directory: {m.CurPath})", 0, true);
-                            }
-                            break;
-
-                        case ProgressMsg.WriteMetadataBegin:
-                            break;
-
-                        case ProgressMsg.UpdateBeginCommand:
-                            break;
-
-                        case ProgressMsg.UpdateEndCommand:
-                            break;
-
-                        case ProgressMsg.WriteStreams:
-                            {
-                                WriteStreamsProgress m = (WriteStreamsProgress)info;
-                                progressCallback?.Invoke(title, m.TotalBytes > 0 ? (int)Math.Round((double)m.CompletedBytes / m.TotalBytes * 100) : 0, false);
-                            }
-                            break;
-
-                        case ProgressMsg.WriteMetadataEnd:
-                            break;
-                    }
-                    return CallbackStatus.Continue;
-                }
-
                 bool originChunked = wimFile.EndsWith(".esd", StringComparison.InvariantCultureIgnoreCase);
                 using Wim wim = Wim.OpenWim(wimFile, OpenFlags.None);
-                wim.RegisterCallback(ProgressCallback);
+                wim.RegisterCallback(GetCallbackStatus(title, progressCallback));
                 wim.UpdateImage(
                     imageIndex,
                     UpdateCommand.SetRename(sourceFilePath, destinationFilePath),
@@ -345,50 +205,8 @@ namespace UnifiedUpdatePlatform.Imaging.NET
             string title = $"Applying {wimFile.Split(Path.DirectorySeparatorChar).Last()} - Index {imageIndex}";
             try
             {
-                CallbackStatus ProgressCallback(ProgressMsg msg, object info, object progctx)
-                {
-                    switch (msg)
-                    {
-                        case ProgressMsg.ExtractImageBegin:
-                            {
-                                ExtractProgress m = (ExtractProgress)info;
-                            }
-                            break;
-
-                        case ProgressMsg.ExtractImageEnd:
-                            {
-                                ExtractProgress m = (ExtractProgress)info;
-                            }
-                            break;
-
-                        case ProgressMsg.ExtractFileStructure:
-                            {
-                                ExtractProgress m = (ExtractProgress)info;
-                                int i = m.EndFileCount > 0 ? (int)Math.Round((double)m.CurrentFileCount / m.EndFileCount * 100) : 0;
-                                progressCallback?.Invoke($"Applying file structure ({i}%)", 0, true);
-                            }
-                            break;
-
-                        case ProgressMsg.ExtractStreams:
-                            {
-                                ExtractProgress m = (ExtractProgress)info;
-                                progressCallback?.Invoke(title, (int)Math.Round((double)m.CompletedBytes / m.TotalBytes * 100), false);
-                            }
-                            break;
-
-                        case ProgressMsg.ExtractMetadata:
-                            {
-                                ExtractProgress m = (ExtractProgress)info;
-                                int i = m.TotalBytes > 0 ? (int)Math.Round((double)m.CompletedBytes / m.TotalBytes * 100) : 0;
-                                progressCallback?.Invoke($"Applying metadata ({i}%)", 0, true);
-                            }
-                            break;
-                    }
-                    return CallbackStatus.Continue;
-                }
-
                 using Wim wim = Wim.OpenWim(wimFile, OpenFlags.None);
-                wim.RegisterCallback(ProgressCallback);
+                wim.RegisterCallback(GetCallbackStatus(title, progressCallback));
                 if (referenceWIMs?.Any() == true)
                 {
                     wim.ReferenceResourceFiles(referenceWIMs, RefFlags.None, OpenFlags.None);
@@ -421,51 +239,10 @@ namespace UnifiedUpdatePlatform.Imaging.NET
             string title = $"Creating {imageName} ({wimFile.Split(Path.DirectorySeparatorChar).Last()})";
             try
             {
-                CallbackStatus ProgressCallback(ProgressMsg msg, object info, object progctx)
-                {
-                    switch (msg)
-                    {
-                        case ProgressMsg.ScanBegin:
-                            {
-                                ScanProgress m = (ScanProgress)info;
-                                progressCallback?.Invoke($"Scanning files ({m.NumBytesScanned} bytes scanned, {m.NumDirsScanned} Directories, {m.NumNonDirsScanned} Files, Current directory: {m.CurPath})", 0, true);
-                            }
-                            break;
-
-                        case ProgressMsg.ScanDEntry:
-                            {
-                                ScanProgress m = (ScanProgress)info;
-                                progressCallback?.Invoke($"Scanning files ({m.NumBytesScanned} bytes scanned, {m.NumDirsScanned} Directories, {m.NumNonDirsScanned} Files, Current directory: {m.CurPath})", 0, true);
-                            }
-                            break;
-
-                        case ProgressMsg.ScanEnd:
-                            {
-                                ScanProgress m = (ScanProgress)info;
-                                progressCallback?.Invoke($"Scanning files ({m.NumBytesScanned} bytes scanned, {m.NumDirsScanned} Directories, {m.NumNonDirsScanned} Files, Current directory: {m.CurPath})", 0, true);
-                            }
-                            break;
-
-                        case ProgressMsg.WriteMetadataBegin:
-                            break;
-
-                        case ProgressMsg.WriteStreams:
-                            {
-                                WriteStreamsProgress m = (WriteStreamsProgress)info;
-                                progressCallback?.Invoke(title, (int)Math.Round((double)m.CompletedBytes / m.TotalBytes * 100), false);
-                            }
-                            break;
-
-                        case ProgressMsg.WriteMetadataEnd:
-                            break;
-                    }
-                    return CallbackStatus.Continue;
-                }
-
                 if (File.Exists(wimFile))
                 {
                     using Wim wim = Wim.OpenWim(wimFile, OpenFlags.WriteAccess);
-                    wim.RegisterCallback(ProgressCallback);
+                    wim.RegisterCallback(GetCallbackStatus(title, progressCallback));
                     wim.AddImage(InputDirectory, imageName, null, PreserveACL ? AddFlags.StrictAcls : AddFlags.NoAcls);
                     if (!string.IsNullOrEmpty(imageDescription))
                     {
@@ -497,7 +274,7 @@ namespace UnifiedUpdatePlatform.Imaging.NET
                 else
                 {
                     using Wim wim = Wim.CreateNewWim(GetCompressionTypeFromWimCompressionType(compressionType));
-                    wim.RegisterCallback(ProgressCallback);
+                    wim.RegisterCallback(GetCallbackStatus(title, progressCallback));
 
                     const string config = @"[ExclusionList]
 \$ntfs.log
@@ -812,6 +589,70 @@ namespace UnifiedUpdatePlatform.Imaging.NET
                 return false;
             }
             return true;
+        }
+
+        private ManagedWimLib.ProgressCallback GetCallbackStatus(String title, ProgressCallback progressCallback = null)
+        {
+            CallbackStatus ProgressCallback(ProgressMsg msg, object info, object progctx)
+            {
+                switch (msg)
+                {
+                    case ProgressMsg.ScanBegin:
+                        {
+                            ScanProgress m = (ScanProgress)info;
+                            progressCallback?.Invoke($"Scanning files ({m.NumBytesScanned} bytes scanned, {m.NumDirsScanned} Directories, {m.NumNonDirsScanned} Files, Current directory: {m.CurPath})", 0, true);
+                        }
+                        break;
+
+                    case ProgressMsg.ScanEnd:
+                        {
+                            ScanProgress m = (ScanProgress)info;
+                            progressCallback?.Invoke($"Scanning files ({m.NumBytesScanned} bytes scanned, {m.NumDirsScanned} Directories, {m.NumNonDirsScanned} Files, Current directory: {m.CurPath})", 0, true);
+                        }
+                        break;
+
+                    case ProgressMsg.WriteStreams:
+                        {
+                            WriteStreamsProgress m = (WriteStreamsProgress)info;
+                            progressCallback?.Invoke(title, m.TotalBytes > 0 ? (int)Math.Round((double)m.CompletedBytes / m.TotalBytes * 100) : 0, false);
+                        }
+                        break;
+
+                    case ProgressMsg.ExtractFileStructure:
+                        {
+                            ExtractProgress m = (ExtractProgress)info;
+                            int i = m.EndFileCount > 0 ? (int)Math.Round((double)m.CurrentFileCount / m.EndFileCount * 100) : 0;
+                            progressCallback?.Invoke($"Applying file structure ({i}%)", 0, true);
+                        }
+                        break;
+
+                    case ProgressMsg.ExtractStreams:
+                        {
+                            ExtractProgress m = (ExtractProgress)info;
+                            progressCallback?.Invoke(title, (int)Math.Round((double)m.CompletedBytes / m.TotalBytes * 100), false);
+                        }
+                        break;
+
+                    case ProgressMsg.ExtractMetadata:
+                        {
+                            ExtractProgress m = (ExtractProgress)info;
+                            int i = m.TotalBytes > 0 ? (int)Math.Round((double)m.CompletedBytes / m.TotalBytes * 100) : 0;
+                            progressCallback?.Invoke($"Applying metadata ({i}%)", 0, true);
+                        }
+                        break;
+
+                    case ProgressMsg.ScanDEntry:
+                        {
+                            ScanProgress m = (ScanProgress)info;
+                            progressCallback?.Invoke($"Scanning files ({m.NumBytesScanned} bytes scanned, {m.NumDirsScanned} Directories, {m.NumNonDirsScanned} Files, Current directory: {m.CurPath})", 0, true);
+                        }
+                        break;
+
+                }
+                return CallbackStatus.Continue;
+            }
+
+            return ProgressCallback;
         }
     }
 }
