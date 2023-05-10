@@ -27,6 +27,7 @@ using Microsoft.Wim;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using UnifiedUpdatePlatform.Imaging.NET;
 using UnifiedUpdatePlatform.Media.Creator.DismOperations.NET;
@@ -363,21 +364,19 @@ namespace UnifiedUpdatePlatform.Media.Creator.NET.BaseEditions
             string unpackedFODEsd = tempManager.GetTempPath();
             _ = Directory.CreateDirectory(unpackedFODEsd);
 
-            int progressPercentage = 0;
-            int total = referencePackagesToConvert.Count;
-            int progressScale = (int)Math.Round((double)1 / total * 100);
-
+            var totalToConvert = referencePackagesToConvert.Count;
+            var startedConversions = 0;
             ParallelLoopResult parallelResult = Parallel.ForEach(referencePackagesToConvert, (file, parallel) =>
             {
+                Interlocked.Increment(ref startedConversions);
                 string fileName = Path.GetFileName(file);
-                progressCallback?.Invoke(Common.Messaging.Common.ProcessPhase.PreparingFiles, false, progressPercentage, $"Unpacking {fileName}");
+                var pconvProgress = (int)(100 * ((double)startedConversions / totalToConvert));
+                progressCallback?.Invoke(Common.Messaging.Common.ProcessPhase.PreparingFiles, false, pconvProgress, $"Unpacking {fileName}");
                 try
                 {
                     CabinetExtractor.ExtractCabinet(file, Path.Combine(unpackedFODEsd, fileName));
                 }
                 catch { result = false; }
-                
-                progressPercentage += progressScale;
 
                 if (!result)
                 {
@@ -432,15 +431,17 @@ namespace UnifiedUpdatePlatform.Media.Creator.NET.BaseEditions
 
             string esdFilePath = tempManager.GetTempPath();
 
-            progressCallback?.Invoke(Common.Messaging.Common.ProcessPhase.PreparingFiles, false, progressPercentage, $"Creating {esdFilePath}");
-
-            result = Constants.imagingInterface.CaptureImage(esdFilePath, "Metadata ESD", null, null, unpackedFODEsd, compressionType: WimCompressionType.None, PreserveACL: false, tempManager: tempManager);
+            void callback(string Operation, int ProgressPercentage, bool IsIndeterminate)
+            {
+                progressCallback?.Invoke(Common.Messaging.Common.ProcessPhase.PreparingFiles, IsIndeterminate, ProgressPercentage, "Creating merged Feature Packages reference image");
+            }
+            result = Constants.imagingInterface.CaptureImage(esdFilePath, "Feature Packages", null, null, unpackedFODEsd, compressionType: WimCompressionType.None, PreserveACL: false, tempManager: tempManager, progressCallback: callback);
 
             Directory.Delete(unpackedFODEsd, true);
 
             if (!result)
             {
-                progressCallback?.Invoke(Common.Messaging.Common.ProcessPhase.ReadingMetadata, true, 0, "CreateBaseEdition -> Reference ESD creation from Cabinet files failed - WIM creation");
+                progressCallback?.Invoke(Common.Messaging.Common.ProcessPhase.ReadingMetadata, true, 0, "CreateBaseEdition -> Feature Packages image creation from Cabinet files failed - WIM creation");
                 goto exit;
             }
 
