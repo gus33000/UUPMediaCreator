@@ -50,10 +50,26 @@ jobs:
       - name: Build CLI utilities
         shell: pwsh
         run: |
-          msbuild /m /t:restore,cli\uupmediaconverter:publish,cli\uupdownload:publish,cli\uupmediaconverterdismbroker:publish /p:Platform=${{ matrix.architecture }} /p:RuntimeIdentifier=${{ matrix.platform }}-${{ matrix.architecture }} /p:PublishDir=${{ github.workspace }}/artifacts/${{ matrix.platform }}-${{ matrix.architecture }}/CLI /p:PublishSingleFile=true /p:PublishTrimmed=false /p:Configuration=Release UUPMediaCreator.sln
+          msbuild /m /t:restore,cli\uupmediaconverter:publish,cli\uupdownload:publish,cli\uupmediaconverterdismbroker:publish /p:Platform=${{ matrix.architecture }} /p:RuntimeIdentifier=${{ matrix.platform }}-${{ matrix.architecture }} /p:PublishDir=${{ github.workspace }}/artifacts/${{ matrix.platform }}-${{ matrix.architecture }}/CLIs /p:PublishSingleFile=true /p:PublishTrimmed=false /p:Configuration=Release UUPMediaCreator.sln
 
-      - name: Upload artifact
+      - name: Create PDB Output Directory
+        shell: pwsh
+        run: |
+          mkdir ${{ github.workspace }}\artifacts\${{ matrix.platform }}-${{ matrix.architecture }}\PDBs
+
+      - name: Move PDBs
+        shell: pwsh
+        run: |
+          move ${{ github.workspace }}\artifacts\${{ matrix.platform }}-${{ matrix.architecture }}\CLIs\*.pdb ${{ github.workspace }}\artifacts\${{ matrix.platform }}-${{ matrix.architecture }}\PDBs\
+
+      - name: Upload artifact (Binaries)
         uses: actions/upload-artifact@v3.1.2
         with:
-          name: ${{ matrix.platform }}-${{ matrix.architecture }}
-          path: ${{ github.workspace }}/artifacts/${{ matrix.platform }}-${{ matrix.architecture }}
+          name: ${{ matrix.platform }}-${{ matrix.architecture }}-binaries
+          path: ${{ github.workspace }}/artifacts/${{ matrix.platform }}-${{ matrix.architecture }}\CLIs
+
+      - name: Upload artifact (Symbols)
+        uses: actions/upload-artifact@v3.1.2
+        with:
+          name: ${{ matrix.platform }}-${{ matrix.architecture }}-symbols
+          path: ${{ github.workspace }}/artifacts/${{ matrix.platform }}-${{ matrix.architecture }}\PDBs
