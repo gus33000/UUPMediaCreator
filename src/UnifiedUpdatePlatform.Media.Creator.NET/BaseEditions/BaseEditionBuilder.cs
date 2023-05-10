@@ -365,9 +365,10 @@ namespace UnifiedUpdatePlatform.Media.Creator.NET.BaseEditions
 
             int progressPercentage = 0;
             int total = referencePackagesToConvert.Count;
+            int progressScale = (int)Math.Round((double)1 / total * 100);
+
             ParallelLoopResult parallelResult = Parallel.ForEach(referencePackagesToConvert, (file, parallel) =>
             {
-                int progressScale = (int)Math.Round((double)1 / total * 100);
                 string fileName = Path.GetFileName(file);
                 progressCallback?.Invoke(Common.Messaging.Common.ProcessPhase.PreparingFiles, false, progressPercentage, $"Unpacking {fileName}");
                 try
@@ -375,6 +376,7 @@ namespace UnifiedUpdatePlatform.Media.Creator.NET.BaseEditions
                     CabinetExtractor.ExtractCabinet(file, Path.Combine(unpackedFODEsd, fileName));
                 }
                 catch { result = false; }
+                
                 progressPercentage += progressScale;
 
                 if (!result)

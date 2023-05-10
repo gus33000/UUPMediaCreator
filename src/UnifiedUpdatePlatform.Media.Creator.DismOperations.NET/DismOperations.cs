@@ -127,11 +127,16 @@ namespace UnifiedUpdatePlatform.Media.Creator.DismOperations.NET
 
             try
             {
-                int current = 0;
+                int progressPercentage = 0;
+                int total = workloads.Length;
+                int progressScale = (int)Math.Round((double)1 / total * 100);
+
                 foreach (AppxInstallWorkload workload in workloads)
                 {
-                    current++;
-                    progressCallback?.Invoke(false, (int)Math.Round((double)current / workloads.Length * 100), "Installing " + workload.AppXPath);
+                    progressPercentage += progressScale;
+
+                    progressCallback?.Invoke(false, progressPercentage, "Installing " + workload.AppXPath);
+
                     DismApi.AddProvisionedAppxPackage(
                         session,
                         Path.Combine(repositoryPath, workload.AppXPath),
