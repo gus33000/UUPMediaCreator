@@ -239,31 +239,44 @@ namespace UnifiedUpdatePlatform.Imaging.NET
             string title = $"Creating {imageName} ({wimFile.Split(Path.DirectorySeparatorChar).Last()})";
             try
             {
+                const string config = @"[ExclusionList]
+\$ntfs.log
+\hiberfil.sys
+\pagefile.sys
+\swapfile.sys
+\System Volume Information";
+
+                string configpath = tempManager.GetTempPath();
+                File.WriteAllText(configpath, config);
+
+                using Wim wim = File.Exists(wimFile) ? Wim.OpenWim(wimFile, OpenFlags.WriteAccess) : Wim.CreateNewWim(GetCompressionTypeFromWimCompressionType(compressionType));
+
+                wim.RegisterCallback(GetCallbackStatus(title, progressCallback));
+
+                wim.AddImage(InputDirectory, imageName, configpath, PreserveACL ? AddFlags.StrictAcls : AddFlags.NoAcls);
+
+                if (!string.IsNullOrEmpty(imageDescription))
+                {
+                    wim.SetImageDescription((int)wim.GetWimInfo().ImageCount, imageDescription);
+                }
+
+                if (!string.IsNullOrEmpty(imageDisplayName))
+                {
+                    wim.SetImageProperty((int)wim.GetWimInfo().ImageCount, "DISPLAYNAME", imageDisplayName);
+                }
+
+                if (!string.IsNullOrEmpty(imageDisplayDescription))
+                {
+                    wim.SetImageProperty((int)wim.GetWimInfo().ImageCount, "DISPLAYDESCRIPTION", imageDisplayDescription);
+                }
+
+                if (!string.IsNullOrEmpty(imageFlag))
+                {
+                    wim.SetImageFlags((int)wim.GetWimInfo().ImageCount, imageFlag);
+                }
+
                 if (File.Exists(wimFile))
                 {
-                    using Wim wim = Wim.OpenWim(wimFile, OpenFlags.WriteAccess);
-                    wim.RegisterCallback(GetCallbackStatus(title, progressCallback));
-                    wim.AddImage(InputDirectory, imageName, null, PreserveACL ? AddFlags.StrictAcls : AddFlags.NoAcls);
-                    if (!string.IsNullOrEmpty(imageDescription))
-                    {
-                        wim.SetImageDescription((int)wim.GetWimInfo().ImageCount, imageDescription);
-                    }
-
-                    if (!string.IsNullOrEmpty(imageDisplayName))
-                    {
-                        wim.SetImageProperty((int)wim.GetWimInfo().ImageCount, "DISPLAYNAME", imageDisplayName);
-                    }
-
-                    if (!string.IsNullOrEmpty(imageDisplayDescription))
-                    {
-                        wim.SetImageProperty((int)wim.GetWimInfo().ImageCount, "DISPLAYDESCRIPTION", imageDisplayDescription);
-                    }
-
-                    if (!string.IsNullOrEmpty(imageFlag))
-                    {
-                        wim.SetImageFlags((int)wim.GetWimInfo().ImageCount, imageFlag);
-                    }
-
                     if (UpdateFrom != -1)
                     {
                         wim.ReferenceTemplateImage((int)wim.GetWimInfo().ImageCount, UpdateFrom);
@@ -273,43 +286,10 @@ namespace UnifiedUpdatePlatform.Imaging.NET
                 }
                 else
                 {
-                    using Wim wim = Wim.CreateNewWim(GetCompressionTypeFromWimCompressionType(compressionType));
-                    wim.RegisterCallback(GetCallbackStatus(title, progressCallback));
-
-                    const string config = @"[ExclusionList]
-\$ntfs.log
-\hiberfil.sys
-\pagefile.sys
-\swapfile.sys
-\System Volume Information";
-
-                    string configpath = tempManager.GetTempPath();
-                    File.WriteAllText(configpath, config);
-
-                    wim.AddImage(InputDirectory, imageName, configpath, PreserveACL ? AddFlags.StrictAcls : AddFlags.NoAcls);
-                    if (!string.IsNullOrEmpty(imageDescription))
-                    {
-                        wim.SetImageDescription((int)wim.GetWimInfo().ImageCount, imageDescription);
-                    }
-
-                    if (!string.IsNullOrEmpty(imageDisplayName))
-                    {
-                        wim.SetImageProperty((int)wim.GetWimInfo().ImageCount, "DISPLAYNAME", imageDisplayName);
-                    }
-
-                    if (!string.IsNullOrEmpty(imageDisplayDescription))
-                    {
-                        wim.SetImageProperty((int)wim.GetWimInfo().ImageCount, "DISPLAYDESCRIPTION", imageDisplayDescription);
-                    }
-
-                    if (!string.IsNullOrEmpty(imageFlag))
-                    {
-                        wim.SetImageFlags((int)wim.GetWimInfo().ImageCount, imageFlag);
-                    }
-
-                    wim.Write(wimFile, Wim.AllImages, WriteFlags.None, Wim.DefaultThreads);
-                    File.Delete(configpath);
+                    wim.Write(wimFile, Wim.AllImages, GetCompressionTypeFromWimCompressionType(compressionType) == CompressionType.LZMS ? WriteFlags.Solid : WriteFlags.None, Wim.DefaultThreads);
                 }
+
+                File.Delete(configpath);
             }
             catch (Exception ex)
             {
