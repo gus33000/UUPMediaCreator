@@ -40,30 +40,42 @@ namespace UnifiedUpdatePlatform.Imaging.NET
 
         public bool AddFileToImage(string wimFile, int imageIndex, string fileToAdd, string destination, ProgressCallback progressCallback = null)
         {
-            return AddFilesToImage(wimFile, imageIndex,
+            return UpdateFilesInImage(wimFile, imageIndex,
                 new[] { (fileToAdd, destination) },
                 progressCallback);
         }
 
-        public bool AddFilesToImage(string wimFile, int imageIndex, IEnumerable<(string fileToAdd, string destination)> fileList, ProgressCallback progressCallback = null)
+        public bool UpdateFilesInImage(string wimFile, int imageIndex, IEnumerable<(string fileToAdd, string destination)> fileList, ProgressCallback progressCallback = null)
         {
-            // Early false returns because calling add with nothing to add sounds unintentional
+            // Early false returns because calling update with no operations sounds unintentional
             if (fileList == null)
                 return false;
             var updateCmds = new List<UpdateCommand>();
             foreach (var (fileToAdd, destination) in fileList)
             {
                 var backSlashDest = destination.Replace(Path.DirectorySeparatorChar, '\\');
-                updateCmds.Add(UpdateCommand.SetAdd(fileToAdd, backSlashDest, null, AddFlags.None));
+                UpdateCommand newCmd;
+                if (!string.IsNullOrEmpty(fileToAdd))
+                    newCmd = UpdateCommand.SetAdd(fileToAdd, backSlashDest, null, AddFlags.None);
+                else
+                    newCmd = UpdateCommand.SetDelete(backSlashDest, DeleteFlags.None);
+                updateCmds.Add(newCmd);
             }
             if (updateCmds.Count == 0)
                 return false;
 
             string title;
             if (updateCmds.Count == 1)
-                title = $"Adding {updateCmds[0].AddWimTargetPath} to {wimFile.Split(Path.DirectorySeparatorChar).Last()}...";
+            {
+                var fCmd = updateCmds[0];
+                if (fCmd.Op == UpdateOp.Delete)
+                    title = "Deleting " + fCmd.DelWimPath + " from ";
+                else
+                    title = "Adding " + fCmd.AddWimTargetPath + " to ";
+                title += wimFile.Split(Path.DirectorySeparatorChar).Last() + "...";
+            }
             else
-                title = $"Adding {updateCmds.Count} files to {wimFile.Split(Path.DirectorySeparatorChar).Last()}...";
+                title = $"Updating {updateCmds.Count} files in {wimFile.Split(Path.DirectorySeparatorChar).Last()}...";
             try
             {
                 bool originChunked = wimFile.EndsWith(".esd", StringComparison.InvariantCultureIgnoreCase);
@@ -85,29 +97,10 @@ namespace UnifiedUpdatePlatform.Imaging.NET
 
         public bool DeleteFileFromImage(string wimFile, int imageIndex, string fileToRemove, ProgressCallback progressCallback = null)
         {
-            fileToRemove = fileToRemove.Replace(Path.DirectorySeparatorChar, '\\');
-
-            string title = $"Removing {fileToRemove} from {wimFile.Split(Path.DirectorySeparatorChar).Last()}...";
-            try
-            {
-                bool originChunked = wimFile.EndsWith(".esd", StringComparison.InvariantCultureIgnoreCase);
-                using Wim wim = Wim.OpenWim(wimFile, OpenFlags.None);
-                wim.RegisterCallback(GetCallbackStatus(title, progressCallback));
-                wim.UpdateImage(
-                    imageIndex,
-                    UpdateCommand.SetDelete(fileToRemove, DeleteFlags.None),
-                    UpdateFlags.SendProgress);
-                wim.Overwrite(originChunked ? WriteFlags.Solid : WriteFlags.None, Wim.DefaultThreads);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.ToString());
-                return false;
-            }
-            return ReformatWindowsImageFileXML(wimFile);
+            return UpdateFilesInImage(wimFile, imageIndex, new[] { ((string)null, fileToRemove) }, progressCallback);
         }
 
-        public bool ExportImage(string wimFile, string destinationWimFile, int imageIndex, IEnumerable<string> referenceWIMs = null, WimCompressionType compressionType = WimCompressionType.Lzx, ProgressCallback progressCallback = null)
+        public bool ExportImage(string wimFile, string destinationWimFile, int imageIndex, IEnumerable<string> referenceWIMs = null, WimCompressionType compressionType = WimCompressionType.Lzx, ProgressCallback progressCallback = null, ExportFlags exportFlags = ExportFlags.None)
         {
             string title = $"Exporting {wimFile.Split(Path.DirectorySeparatorChar).Last()} - Index {imageIndex}";
             try
@@ -130,7 +123,7 @@ namespace UnifiedUpdatePlatform.Imaging.NET
                     imageName = imageName + " " + DateTime.UtcNow.ToString();
                 }
 
-                srcWim.ExportImage(imageIndex, destWim, imageName, imageDescription, ExportFlags.None);
+                srcWim.ExportImage(imageIndex, destWim, imageName, imageDescription, exportFlags);
 
                 if (File.Exists(destinationWimFile))
                 {

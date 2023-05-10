@@ -109,21 +109,17 @@ namespace UnifiedUpdatePlatform.Media.Creator.NET.Installer
             }
 
             string bootwim = Path.Combine(MediaPath, "sources", "boot.wim");
-
-            string tmpwimcopy = tempManager.GetTempPath();
-            File.Copy(bootwim, tmpwimcopy);
-
             //
             // Duplicate the boot image so we have two of them
             //
-            result = Constants.imagingInterface.ExportImage(tmpwimcopy, bootwim, 1, compressionType: compressionType, progressCallback: progressCallback?.GetImagingCallback());
+            result = Constants.imagingInterface.ExportImage(bootwim, bootwim, 1, compressionType: compressionType,
+                progressCallback: progressCallback?.GetImagingCallback(),
+                exportFlags: ManagedWimLib.ExportFlags.Boot | ManagedWimLib.ExportFlags.NoNames | ManagedWimLib.ExportFlags.Gift);
             if (!result)
             {
                 progressCallback?.Log("An error occured while exporting the main boot image.");
                 goto exit;
             }
-
-            File.Delete(tmpwimcopy);
 
             //
             // Set the correct metadata on both images
@@ -171,15 +167,6 @@ namespace UnifiedUpdatePlatform.Media.Creator.NET.Installer
             if (!result)
             {
                 progressCallback?.Log("An error occured while setting image information for index 2.");
-                goto exit;
-            }
-
-            //
-            // Mark image as bootable
-            //
-            result = Constants.imagingInterface.MarkImageAsBootable(bootwim, 2);
-            if (!result)
-            {
                 goto exit;
             }
 
@@ -243,7 +230,7 @@ namespace UnifiedUpdatePlatform.Media.Creator.NET.Installer
             result = Constants.imagingInterface.AddFileToImage(bootwim, 2, $"{tempSoftwareHiveBackup}.2", Constants.SOFTWARE_Hive_Location, progressCallback: progressCallback?.GetImagingCallback());
             if (!result)
             {
-                progressCallback?.Log("An error occured while modifying adding back the SOFTWARE hive for index 2.");
+                progressCallback?.Log("An error occured while adding the modified SOFTWARE hive into index 2.");
                 goto exit;
             }
 
@@ -256,17 +243,15 @@ namespace UnifiedUpdatePlatform.Media.Creator.NET.Installer
                 goto exit;
             }
 
-            result = Constants.imagingInterface.AddFileToImage(bootwim, 1, tempSystemHiveBackup, Constants.SYSTEM_Hive_Location, progressCallback: progressCallback?.GetImagingCallback());
+            result = Constants.imagingInterface.UpdateFilesInImage(bootwim, 1,
+                new[] {
+                    (tempSystemHiveBackup, Constants.SYSTEM_Hive_Location),
+                    (tempSoftwareHiveBackup, Constants.SOFTWARE_Hive_Location)
+                },
+                progressCallback: progressCallback?.GetImagingCallback());
             if (!result)
             {
-                progressCallback?.Log("An error occured while modifying adding back the SYSTEM hive for index 1.");
-                goto exit;
-            }
-
-            result = Constants.imagingInterface.AddFileToImage(bootwim, 1, tempSoftwareHiveBackup, Constants.SOFTWARE_Hive_Location, progressCallback: progressCallback?.GetImagingCallback());
-            if (!result)
-            {
-                progressCallback?.Log("An error occured while modifying adding back the SOFTWARE hive for index 1.");
+                progressCallback?.Log("An error occured while adding modified registry hives into index 1.");
                 goto exit;
             }
 
@@ -288,36 +273,20 @@ namespace UnifiedUpdatePlatform.Media.Creator.NET.Installer
             //
             // Adding missing files in index 2
             //
-            progressCallback?.Log("Modifying assets for Setup PE (1)");
-
-            bool result = Constants.imagingInterface.DeleteFileFromImage(bootwim, 2, Path.Combine("Windows", "System32", "winpe.jpg"), progressCallback: progressCallback?.GetImagingCallback());
-            if (!result)
-            {
-                progressCallback?.Log("An error occured while modifying deleting the background file for index 2.");
-                goto exit;
-            }
+            progressCallback?.Log("Preparing assets for Setup PE");
 
             string bgfile = new[] { "background_cli.bmp", "background_svr.bmp", "background_cli.png", "background_svr.png" }
-                .Select(asset => Path.Combine(MediaPath, "sources", asset))
-                .FirstOrDefault(assetPath => File.Exists(assetPath));
+            .Select(asset => Path.Combine(MediaPath, "sources", asset))
+            .FirstOrDefault(assetPath => File.Exists(assetPath));
 
-            result = Constants.imagingInterface.AddFileToImage(bootwim, 2, bgfile, Path.Combine("Windows", "System32", "setup.bmp"), progressCallback: progressCallback?.GetImagingCallback());
-            if (!result)
-            {
-                progressCallback?.Log("An error occured while modifying adding the background file for index 2.");
-                goto exit;
-            }
-
-            progressCallback?.Log("Modifying assets for Setup PE (2)");
             string winpejpgtmp = tempManager.GetTempPath();
             File.WriteAllBytes(winpejpgtmp, Constants.winpejpg);
-            result = Constants.imagingInterface.AddFileToImage(bootwim, 2, winpejpgtmp, Path.Combine("Windows", "System32", "winpe.jpg"), progressCallback: progressCallback?.GetImagingCallback());
-            File.Delete(winpejpgtmp);
-            if (!result)
+
+            var updateDirectives = new List<(string fileToAdd, string destination)>
             {
-                progressCallback?.Log("An error occured while adding back the background file for index 2.");
-                goto exit;
-            }
+                (bgfile, Path.Combine("Windows", "System32", "setup.bmp")),
+                (winpejpgtmp, Path.Combine("Windows", "System32", "winpe.jpg"))
+            };
 
             progressCallback?.Log("Backporting missing files");
 
@@ -328,32 +297,27 @@ namespace UnifiedUpdatePlatform.Media.Creator.NET.Installer
             }
             string langcode = dirs.First().Replace(Path.Combine(MediaPath, "sources") + Path.DirectorySeparatorChar, "");
 
-            var finalSetupFileList = new List<(string fileToAdd, string destination)>();
             foreach (string file in IniReader.SetupFilesToBackport)
             {
-                progressCallback?.Log($"Processing {file}");
-
                 string normalizedPath = file.Replace("??-??", langcode);
                 string matchingfile = Path.Combine(MediaPath, normalizedPath);
-
-                progressCallback?.Log($"Looking for {matchingfile}");
 
                 string sourcePath = file == $"sources{Path.DirectorySeparatorChar}background.bmp" ? bgfile : matchingfile;
 
                 if (File.Exists(sourcePath))
                 {
-                    progressCallback?.Log($"Found {matchingfile}");
+                    progressCallback?.Log($"Queueing {normalizedPath}");
 
-                    finalSetupFileList.Add((sourcePath, normalizedPath));
+                    updateDirectives.Add((sourcePath, normalizedPath));
                 }
                 else
                 {
-                    progressCallback?.Log($"Didn't find {matchingfile}");
+                    progressCallback?.Log($"Skipping missing {normalizedPath}");
                 }
             }
-            result = Constants.imagingInterface.AddFilesToImage(bootwim, 2, finalSetupFileList, progressCallback: progressCallback?.GetImagingCallback());
+            var result = Constants.imagingInterface.UpdateFilesInImage(bootwim, 2, updateDirectives, progressCallback: progressCallback?.GetImagingCallback());
+            File.Delete(winpejpgtmp);
 
-        exit:
             return result;
         }
 
@@ -418,15 +382,17 @@ namespace UnifiedUpdatePlatform.Media.Creator.NET.Installer
             string sys32 = Path.Combine("Windows", "System32");
             string peshellini = Path.Combine(sys32, "winpeshl.ini");
 
-            // Ignore return result
-            _ = Constants.imagingInterface.DeleteFileFromImage(bootwim, 1, peshellini, progressCallback: progressCallback?.GetImagingCallback());
+            progressCallback?.Log("Preparing PE for cleanup");
+            var updateDirectives = new List<(string fileToAdd, string destination)>
+            {
+                (null, peshellini)
+            };
 
             //
             // Cleanup log file from RE conversion phase mentions
             //
             try
             {
-                progressCallback?.Log("Cleaning log files");
                 string logfile = tempManager.GetTempPath();
                 string pathinimage = Path.Combine("Windows", "INF", "setupapi.offline.log");
 
@@ -449,7 +415,7 @@ namespace UnifiedUpdatePlatform.Media.Creator.NET.Installer
                             finallines.RemoveAt(finallines.Count - 1);
                             File.WriteAllLines(logfile, finallines);
                             // Ignore return result
-                            _ = Constants.imagingInterface.AddFileToImage(bootwim, 1, logfile, pathinimage, progressCallback: progressCallback?.GetImagingCallback());
+                            updateDirectives.Add((logfile, pathinimage));
                             break;
                         }
                         finallines.Add(line);
@@ -461,7 +427,7 @@ namespace UnifiedUpdatePlatform.Media.Creator.NET.Installer
             //
             // Disable UMCI
             //
-            progressCallback?.Log("Disabling UMCI");
+            progressCallback?.Log("Preparing to disable UMCI in PE");
             string tempSystemHiveBackup = tempManager.GetTempPath();
 
             result = Constants.imagingInterface.ExtractFileFromImage(bootwim, 1, Constants.SYSTEM_Hive_Location, tempSystemHiveBackup);
@@ -476,7 +442,8 @@ namespace UnifiedUpdatePlatform.Media.Creator.NET.Installer
                 goto cleanup;
             }
 
-            result = Constants.imagingInterface.AddFileToImage(bootwim, 1, tempSystemHiveBackup, Constants.SYSTEM_Hive_Location, progressCallback: progressCallback?.GetImagingCallback());
+            updateDirectives.Add((tempSystemHiveBackup, Constants.SYSTEM_Hive_Location));
+            result = Constants.imagingInterface.UpdateFilesInImage(bootwim, 1, updateDirectives, progressCallback: progressCallback?.GetImagingCallback());
             if (!result)
             {
                 goto cleanup;
