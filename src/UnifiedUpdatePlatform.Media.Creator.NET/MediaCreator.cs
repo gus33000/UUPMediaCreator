@@ -67,6 +67,7 @@ namespace UnifiedUpdatePlatform.Media.Creator.NET
                             // Allow AppX Slipstreaming
                             result = BaseEditionBuilder.CreateBaseEditionWithAppXs(
                                     UUPPath,
+                                    MediaPath,
                                     LanguageCode,
                                     targetEdition.PlannedEdition.EditionName,
                                     WinREWIMFilePath,

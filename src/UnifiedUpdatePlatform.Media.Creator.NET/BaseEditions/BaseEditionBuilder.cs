@@ -171,6 +171,7 @@ namespace UnifiedUpdatePlatform.Media.Creator.NET.BaseEditions
 
         public static bool CreateBaseEditionWithAppXs(
             string UUPPath,
+            string MediaPath,
             string LanguageCode,
             string EditionID,
             string InputWindowsREPath,
@@ -270,6 +271,19 @@ namespace UnifiedUpdatePlatform.Media.Creator.NET.BaseEditions
                             goto exit;
                         }
                     }
+                }
+
+                // Replace the AppxProvisioning file on the install media given the application list has been updated.
+                progressCallback?.Invoke(Common.Messaging.Common.ProcessPhase.ApplyingImage, true, 0, "Updating Installation Media AppxProvisioning.xml replacement manifest file.");
+                try
+                {
+                    File.Copy(
+                        Path.Combine(vhdSession.GetMountedPath(), "ProgramData", "Microsoft", "Windows", "AppxProvisioning.xml"),
+                        Path.Combine(MediaPath, "sources", "replacementmanifests", "microsoft-windows-appx-deployment-server", "appxprovisioning.xml"), true);
+                }
+                catch
+                {
+                    progressCallback?.Invoke(Common.Messaging.Common.ProcessPhase.ApplyingImage, true, 0, "An error occured while updating Installation Media AppxProvisioning.xml replacement manifest file. This error is not fatal.");
                 }
 
                 progressCallback?.Invoke(Common.Messaging.Common.ProcessPhase.IntegratingWinRE, true, 0, "Integrating WinRE");
