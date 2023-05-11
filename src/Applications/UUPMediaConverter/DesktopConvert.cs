@@ -82,27 +82,7 @@ namespace UUPMediaConverter
             else
             {
                 string parentDirectory = GetParentExecutableDirectory();
-                string toolpath = Path.Combine(parentDirectory, "UUPMediaConverterDismBroker", "UUPMediaConverterDismBroker.exe");
-
-                if (!File.Exists(toolpath))
-                {
-                    parentDirectory = GetExecutableDirectory();
-                    toolpath = Path.Combine(parentDirectory, "UUPMediaConverterDismBroker", "UUPMediaConverterDismBroker.exe");
-                }
-
-                if (!File.Exists(toolpath))
-                {
-                    parentDirectory = GetExecutableDirectory();
-                    toolpath = Path.Combine(parentDirectory, "UUPMediaConverterDismBroker.exe");
-                }
-
-                if (!File.Exists(toolpath))
-                {
-                    Logging.Log("ERROR: Could not find: " + toolpath, severity: Logging.LoggingLevel.Error);
-                    return 1;
-                }
-
-                toolpath = Path.Combine(parentDirectory, "Settings", "Settings.ini");
+                string toolpath = Path.Combine(parentDirectory, "Settings", "Settings.ini");
 
                 if (!File.Exists(toolpath))
                 {

@@ -30,8 +30,10 @@ using UnifiedUpdatePlatform.Media.Creator.Planning.Applications;
 
 namespace UnifiedUpdatePlatform.Media.Creator.DismOperations.NET
 {
-    public class DismOperations : IDismOperations
+    public class DismOperations
     {
+        public delegate void ProgressCallback(bool IsIndeterminate, int ProgressInPercentage, string SubOperation);
+
         public static readonly DismOperations Instance = new();
 
         private List<string> GetRemovableREPackages(string mountDir)

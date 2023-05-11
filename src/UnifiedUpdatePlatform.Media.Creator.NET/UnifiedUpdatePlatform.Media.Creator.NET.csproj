@@ -10,10 +10,10 @@
 	<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
   <ItemGroup>
+	<ProjectReference Include="..\..\thirdparty\Microsoft.Dism\Microsoft.Dism.csproj" />
     <ProjectReference Include="..\CompDB.NET\CompDB.NET.csproj" />
     <ProjectReference Include="..\UnifiedUpdatePlatform.Imaging.NET\UnifiedUpdatePlatform.Imaging.NET.csproj" />
     <ProjectReference Include="..\UnifiedUpdatePlatform.Common.Messaging.NET\UnifiedUpdatePlatform.Common.Messaging.NET.csproj" />
-    <ProjectReference Include="..\UnifiedUpdatePlatform.Media.Creator.DismOperations.NET\UnifiedUpdatePlatform.Media.Creator.DismOperations.NET.csproj" />
     <ProjectReference Include="..\Cabinet.NET\Cabinet.NET.csproj" />
     <ProjectReference Include="..\..\thirdparty\Microsoft.Wim\Microsoft.Wim.csproj" />
     <ProjectReference Include="..\..\thirdparty\Privileges.NET\Privileges.NET.csproj" />

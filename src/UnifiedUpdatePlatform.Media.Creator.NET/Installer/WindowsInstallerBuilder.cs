@@ -485,11 +485,7 @@ namespace UnifiedUpdatePlatform.Media.Creator.NET.Installer
                     progressCallback?.Invoke(Common.Messaging.Common.ProcessPhase.CreatingWindowsInstaller, IsIndeterminate, ProgressInPercentage, SubOperation);
                 }
 
-                result = RemoteDismOperations.Instance.UninstallPEComponents(ospath, customCallback);
-                if (!result)
-                {
-                    result = DismOperations.NET.DismOperations.Instance.UninstallPEComponents(ospath, customCallback);
-                }
+                result = DismOperations.NET.DismOperations.Instance.UninstallPEComponents(ospath, customCallback);
 
                 if (!result)
                 {

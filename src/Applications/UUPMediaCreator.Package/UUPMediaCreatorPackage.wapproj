@@ -411,7 +411,6 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\UUPMediaCreator.Broker\UUPMediaCreator.Broker.csproj" />
-    <ProjectReference Include="..\UUPMediaConverterDismBroker\UUPMediaConverterDismBroker.csproj" />
     <ProjectReference Include="..\UUPMediaCreator\UUPMediaCreator.csproj" />
   </ItemGroup>
   <Import Project="$(WapProjPath)\Microsoft.DesktopBridge.targets" />

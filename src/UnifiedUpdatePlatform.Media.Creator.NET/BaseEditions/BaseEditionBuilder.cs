@@ -255,28 +255,21 @@ namespace UnifiedUpdatePlatform.Media.Creator.NET.BaseEditions
                 }
 
                 progressCallback?.Invoke(Common.Messaging.Common.ProcessPhase.ApplyingImage, true, 0, $"Installing Applications");
-                result = RemoteDismOperations.Instance.PerformAppxWorkloadsInstallation(vhdSession.GetMountedPath(), UUPPath, licenseFolder, appxWorkloads, customCallback);
+
+                result = DismOperations.NET.DismOperations.Instance.PerformAppxWorkloadsInstallation(vhdSession.GetMountedPath(), UUPPath, licenseFolder, appxWorkloads, customCallback);
                 if (!result)
                 {
-                    result = DismOperations.NET.DismOperations.Instance.PerformAppxWorkloadsInstallation(vhdSession.GetMountedPath(), UUPPath, licenseFolder, appxWorkloads, customCallback);
-                    if (!result)
+                    foreach (AppxInstallWorkload appx in appxWorkloads)
                     {
-                        foreach (AppxInstallWorkload appx in appxWorkloads)
+                        progressCallback?.Invoke(Common.Messaging.Common.ProcessPhase.ApplyingImage, true, 0, $"Installing {appx.AppXPath}");
+                        result = DismOperations.NET.DismOperations.Instance.PerformAppxWorkloadInstallation(vhdSession.GetMountedPath(), UUPPath, licenseFolder, appx);
+
+                        if (!result)
                         {
-                            progressCallback?.Invoke(Common.Messaging.Common.ProcessPhase.ApplyingImage, true, 0, $"Installing {appx.AppXPath}");
-                            result = RemoteDismOperations.Instance.PerformAppxWorkloadInstallation(vhdSession.GetMountedPath(), UUPPath, licenseFolder, appx);
-                            if (!result)
-                            {
-                                result = DismOperations.NET.DismOperations.Instance.PerformAppxWorkloadInstallation(vhdSession.GetMountedPath(), UUPPath, licenseFolder, appx);
-                            }
+                            progressCallback?.Invoke(Common.Messaging.Common.ProcessPhase.ApplyingImage, true, 0, "An error occured while running the external tool for appx installation.");
+                            goto exit;
                         }
                     }
-                }
-
-                if (!result)
-                {
-                    progressCallback?.Invoke(Common.Messaging.Common.ProcessPhase.ApplyingImage, true, 0, "An error occured while running the external tool for appx installation.");
-                    goto exit;
                 }
 
                 progressCallback?.Invoke(Common.Messaging.Common.ProcessPhase.IntegratingWinRE, true, 0, "Integrating WinRE");

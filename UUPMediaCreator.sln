@@ -35,8 +35,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Wim", "thirdparty
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Privileges.NET", "thirdparty\Privileges.NET\Privileges.NET.csproj", "{43C8BFCA-DB35-41F6-8602-A3E99BDD8EC6}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnifiedUpdatePlatform.Media.Creator.DismOperations.NET", "src\UnifiedUpdatePlatform.Media.Creator.DismOperations.NET\UnifiedUpdatePlatform.Media.Creator.DismOperations.NET.csproj", "{D141A8D4-61E6-4080-B7AF-D56ACCA26F5D}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Forwarders", "Forwarders", "{335D091D-458E-41C2-A2BB-9F8216A8FA6B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Forwarders", "Forwarders", "{CE03294E-582F-47C6-BAD4-BBFA970FF25D}"
@@ -56,8 +54,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UUPMediaCreator", "src\Applications\UUPMediaCreator\UUPMediaCreator.csproj", "{4291EF28-C146-4772-8598-982645C9FF9A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UUPMediaCreator.Broker", "src\Applications\UUPMediaCreator.Broker\UUPMediaCreator.Broker.csproj", "{10CCCD4A-4B25-4EE3-BCC4-1297769890DE}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UUPMediaConverterDismBroker", "src\Applications\UUPMediaConverterDismBroker\UUPMediaConverterDismBroker.csproj", "{775242B5-1184-4D4C-99B6-96AD29E11C44}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UUPMediaConverter", "src\Applications\UUPMediaConverter\UUPMediaConverter.csproj", "{0BAE9C75-B86F-4976-B24D-7A4B54853342}"
 EndProject
@@ -86,26 +82,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TempManager.UWP", "src\TempManager.UWP\TempManager.UWP.csproj", "{97D38557-F29C-4BA4-880C-01653A77AB1D}"
 EndProject
 Global
-	GlobalSection(SharedMSBuildProjectFiles) = preSolution
-		src\UnifiedUpdatePlatform.Services.WindowsUpdate.Shared\UnifiedUpdatePlatform.Services.WindowsUpdate.Shared.projitems*{0d26e90f-2cf6-4ba5-b235-72e646a3ff48}*SharedItemsImports = 13
-		src\UnifiedUpdatePlatform.Common.Messaging.Shared\UnifiedUpdatePlatform.Common.Messaging.Shared.projitems*{11385f97-61d8-47ef-a068-3a130232f6b6}*SharedItemsImports = 4
-		src\CompDB.Shared\CompDB.Shared.projitems*{113c95b3-1cbb-4b02-8bfe-8a623ad67f84}*SharedItemsImports = 13
-		src\Cabinet.Shared\Cabinet.Shared.projitems*{113c95b3-1cbb-4b02-8bfe-8a623ad67f85}*SharedItemsImports = 13
-		src\TempManager.Shared\TempManager.Shared.projitems*{1aac4923-a4e5-41d9-87fa-cfb028f802e5}*SharedItemsImports = 5
-		src\DownloadLib.Shared\DownloadLib.Shared.projitems*{299c6b2c-6f02-48a2-b455-32c4ba9ea2bc}*SharedItemsImports = 4
-		src\Cabinet.Shared\Cabinet.Shared.projitems*{8e7b7eb3-114b-48c4-8987-38e63ddca09d}*SharedItemsImports = 4
-		src\UnifiedUpdatePlatform.Services.WindowsUpdate.Shared\UnifiedUpdatePlatform.Services.WindowsUpdate.Shared.projitems*{8ebd2b3f-31c4-493a-8853-fdbe32097b7e}*SharedItemsImports = 4
-		src\CompDB.Shared\CompDB.Shared.projitems*{8ff9162b-7281-4274-823c-3bb7905508d2}*SharedItemsImports = 4
-		src\TempManager.Shared\TempManager.Shared.projitems*{97d38557-f29c-4ba4-880c-01653a77ab1d}*SharedItemsImports = 4
-		src\CompDB.Shared\CompDB.Shared.projitems*{a5ef8678-b621-451a-b58e-d1afdd92751b}*SharedItemsImports = 5
-		src\UnifiedUpdatePlatform.Services.WindowsUpdate.Shared\UnifiedUpdatePlatform.Services.WindowsUpdate.Shared.projitems*{b601b162-cdcd-492a-a8cf-747e0d3f6f83}*SharedItemsImports = 5
-		src\UnifiedUpdatePlatform.Common.Messaging.Shared\UnifiedUpdatePlatform.Common.Messaging.Shared.projitems*{b8ce22ed-2ad7-4fb2-8b72-88f345e29b86}*SharedItemsImports = 13
-		src\Cabinet.Shared\Cabinet.Shared.projitems*{c5835dcf-1a20-414b-865a-aa3f8cace62d}*SharedItemsImports = 5
-		src\TempManager.Shared\TempManager.Shared.projitems*{d021f60b-b14a-442c-bb5d-260c7c26e89d}*SharedItemsImports = 13
-		src\DownloadLib.Shared\DownloadLib.Shared.projitems*{dbbccc74-c90e-40aa-8f62-fa431de85a1a}*SharedItemsImports = 13
-		src\UnifiedUpdatePlatform.Common.Messaging.Shared\UnifiedUpdatePlatform.Common.Messaging.Shared.projitems*{f74c9d30-95f1-4a07-ba85-f5da26824b40}*SharedItemsImports = 5
-		src\DownloadLib.Shared\DownloadLib.Shared.projitems*{fe5f05df-b9a1-4ee8-9eff-fef6c26075af}*SharedItemsImports = 5
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Debug|ARM = Debug|ARM
@@ -279,26 +255,6 @@ Global
 		{43C8BFCA-DB35-41F6-8602-A3E99BDD8EC6}.Release|x64.Build.0 = Release|x64
 		{43C8BFCA-DB35-41F6-8602-A3E99BDD8EC6}.Release|x86.ActiveCfg = Release|x86
 		{43C8BFCA-DB35-41F6-8602-A3E99BDD8EC6}.Release|x86.Build.0 = Release|x86
-		{D141A8D4-61E6-4080-B7AF-D56ACCA26F5D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D141A8D4-61E6-4080-B7AF-D56ACCA26F5D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D141A8D4-61E6-4080-B7AF-D56ACCA26F5D}.Debug|ARM.ActiveCfg = Debug|Any CPU
-		{D141A8D4-61E6-4080-B7AF-D56ACCA26F5D}.Debug|ARM.Build.0 = Debug|Any CPU
-		{D141A8D4-61E6-4080-B7AF-D56ACCA26F5D}.Debug|arm64.ActiveCfg = Debug|arm64
-		{D141A8D4-61E6-4080-B7AF-D56ACCA26F5D}.Debug|arm64.Build.0 = Debug|arm64
-		{D141A8D4-61E6-4080-B7AF-D56ACCA26F5D}.Debug|x64.ActiveCfg = Debug|x64
-		{D141A8D4-61E6-4080-B7AF-D56ACCA26F5D}.Debug|x64.Build.0 = Debug|x64
-		{D141A8D4-61E6-4080-B7AF-D56ACCA26F5D}.Debug|x86.ActiveCfg = Debug|x86
-		{D141A8D4-61E6-4080-B7AF-D56ACCA26F5D}.Debug|x86.Build.0 = Debug|x86
-		{D141A8D4-61E6-4080-B7AF-D56ACCA26F5D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D141A8D4-61E6-4080-B7AF-D56ACCA26F5D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D141A8D4-61E6-4080-B7AF-D56ACCA26F5D}.Release|ARM.ActiveCfg = Release|Any CPU
-		{D141A8D4-61E6-4080-B7AF-D56ACCA26F5D}.Release|ARM.Build.0 = Release|Any CPU
-		{D141A8D4-61E6-4080-B7AF-D56ACCA26F5D}.Release|arm64.ActiveCfg = Release|arm64
-		{D141A8D4-61E6-4080-B7AF-D56ACCA26F5D}.Release|arm64.Build.0 = Release|arm64
-		{D141A8D4-61E6-4080-B7AF-D56ACCA26F5D}.Release|x64.ActiveCfg = Release|x64
-		{D141A8D4-61E6-4080-B7AF-D56ACCA26F5D}.Release|x64.Build.0 = Release|x64
-		{D141A8D4-61E6-4080-B7AF-D56ACCA26F5D}.Release|x86.ActiveCfg = Release|x86
-		{D141A8D4-61E6-4080-B7AF-D56ACCA26F5D}.Release|x86.Build.0 = Release|x86
 		{6A920E9F-BC98-4EAA-AA9B-2C9FA82443E9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{6A920E9F-BC98-4EAA-AA9B-2C9FA82443E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6A920E9F-BC98-4EAA-AA9B-2C9FA82443E9}.Debug|ARM.ActiveCfg = Debug|Any CPU
@@ -469,26 +425,6 @@ Global
 		{10CCCD4A-4B25-4EE3-BCC4-1297769890DE}.Release|x64.Build.0 = Release|x64
 		{10CCCD4A-4B25-4EE3-BCC4-1297769890DE}.Release|x86.ActiveCfg = Release|x86
 		{10CCCD4A-4B25-4EE3-BCC4-1297769890DE}.Release|x86.Build.0 = Release|x86
-		{775242B5-1184-4D4C-99B6-96AD29E11C44}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{775242B5-1184-4D4C-99B6-96AD29E11C44}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{775242B5-1184-4D4C-99B6-96AD29E11C44}.Debug|ARM.ActiveCfg = Debug|Any CPU
-		{775242B5-1184-4D4C-99B6-96AD29E11C44}.Debug|ARM.Build.0 = Debug|Any CPU
-		{775242B5-1184-4D4C-99B6-96AD29E11C44}.Debug|arm64.ActiveCfg = Debug|arm64
-		{775242B5-1184-4D4C-99B6-96AD29E11C44}.Debug|arm64.Build.0 = Debug|arm64
-		{775242B5-1184-4D4C-99B6-96AD29E11C44}.Debug|x64.ActiveCfg = Debug|x64
-		{775242B5-1184-4D4C-99B6-96AD29E11C44}.Debug|x64.Build.0 = Debug|x64
-		{775242B5-1184-4D4C-99B6-96AD29E11C44}.Debug|x86.ActiveCfg = Debug|x86
-		{775242B5-1184-4D4C-99B6-96AD29E11C44}.Debug|x86.Build.0 = Debug|x86
-		{775242B5-1184-4D4C-99B6-96AD29E11C44}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{775242B5-1184-4D4C-99B6-96AD29E11C44}.Release|Any CPU.Build.0 = Release|Any CPU
-		{775242B5-1184-4D4C-99B6-96AD29E11C44}.Release|ARM.ActiveCfg = Release|Any CPU
-		{775242B5-1184-4D4C-99B6-96AD29E11C44}.Release|ARM.Build.0 = Release|Any CPU
-		{775242B5-1184-4D4C-99B6-96AD29E11C44}.Release|arm64.ActiveCfg = Release|arm64
-		{775242B5-1184-4D4C-99B6-96AD29E11C44}.Release|arm64.Build.0 = Release|arm64
-		{775242B5-1184-4D4C-99B6-96AD29E11C44}.Release|x64.ActiveCfg = Release|x64
-		{775242B5-1184-4D4C-99B6-96AD29E11C44}.Release|x64.Build.0 = Release|x64
-		{775242B5-1184-4D4C-99B6-96AD29E11C44}.Release|x86.ActiveCfg = Release|x86
-		{775242B5-1184-4D4C-99B6-96AD29E11C44}.Release|x86.Build.0 = Release|x86
 		{0BAE9C75-B86F-4976-B24D-7A4B54853342}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{0BAE9C75-B86F-4976-B24D-7A4B54853342}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0BAE9C75-B86F-4976-B24D-7A4B54853342}.Debug|ARM.ActiveCfg = Debug|Any CPU
@@ -688,7 +624,6 @@ Global
 		{6B098DD6-800B-42DF-9309-DB29C64DDD29} = {1FAD29D8-1E0C-4A12-B091-205EAB78C214}
 		{5E74B6C3-20F3-4ED8-A1E5-98325B77A515} = {1FAD29D8-1E0C-4A12-B091-205EAB78C214}
 		{43C8BFCA-DB35-41F6-8602-A3E99BDD8EC6} = {1FAD29D8-1E0C-4A12-B091-205EAB78C214}
-		{D141A8D4-61E6-4080-B7AF-D56ACCA26F5D} = {1FAD29D8-1E0C-4A12-B091-205EAB78C214}
 		{335D091D-458E-41C2-A2BB-9F8216A8FA6B} = {1FAD29D8-1E0C-4A12-B091-205EAB78C214}
 		{CE03294E-582F-47C6-BAD4-BBFA970FF25D} = {715DF7A3-E1E7-4077-A53D-6F76D6C6F1F4}
 		{6A920E9F-BC98-4EAA-AA9B-2C9FA82443E9} = {1FAD29D8-1E0C-4A12-B091-205EAB78C214}
@@ -698,7 +633,6 @@ Global
 		{8FF9162B-7281-4274-823C-3BB7905508D2} = {CE03294E-582F-47C6-BAD4-BBFA970FF25D}
 		{4291EF28-C146-4772-8598-982645C9FF9A} = {26CB0999-BDB7-470B-A466-743E180E9EC8}
 		{10CCCD4A-4B25-4EE3-BCC4-1297769890DE} = {26CB0999-BDB7-470B-A466-743E180E9EC8}
-		{775242B5-1184-4D4C-99B6-96AD29E11C44} = {C4A7DBD6-6FB5-410A-9252-922C7909C82C}
 		{0BAE9C75-B86F-4976-B24D-7A4B54853342} = {C4A7DBD6-6FB5-410A-9252-922C7909C82C}
 		{67CB3F20-E40A-41F8-B159-A8857A7DC409} = {C4A7DBD6-6FB5-410A-9252-922C7909C82C}
 		{D021F60B-B14A-442C-BB5D-260C7C26E89D} = {24BB6CC7-870A-4A61-BAC0-E22BF57CE5F4}
@@ -714,5 +648,25 @@ Global
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {FEE89471-4FE8-4620-991F-4EBAD0F4CFEA}
+	EndGlobalSection
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		src\UnifiedUpdatePlatform.Services.WindowsUpdate.Shared\UnifiedUpdatePlatform.Services.WindowsUpdate.Shared.projitems*{0d26e90f-2cf6-4ba5-b235-72e646a3ff48}*SharedItemsImports = 13
+		src\UnifiedUpdatePlatform.Common.Messaging.Shared\UnifiedUpdatePlatform.Common.Messaging.Shared.projitems*{11385f97-61d8-47ef-a068-3a130232f6b6}*SharedItemsImports = 4
+		src\CompDB.Shared\CompDB.Shared.projitems*{113c95b3-1cbb-4b02-8bfe-8a623ad67f84}*SharedItemsImports = 13
+		src\Cabinet.Shared\Cabinet.Shared.projitems*{113c95b3-1cbb-4b02-8bfe-8a623ad67f85}*SharedItemsImports = 13
+		src\TempManager.Shared\TempManager.Shared.projitems*{1aac4923-a4e5-41d9-87fa-cfb028f802e5}*SharedItemsImports = 5
+		src\DownloadLib.Shared\DownloadLib.Shared.projitems*{299c6b2c-6f02-48a2-b455-32c4ba9ea2bc}*SharedItemsImports = 4
+		src\Cabinet.Shared\Cabinet.Shared.projitems*{8e7b7eb3-114b-48c4-8987-38e63ddca09d}*SharedItemsImports = 4
+		src\UnifiedUpdatePlatform.Services.WindowsUpdate.Shared\UnifiedUpdatePlatform.Services.WindowsUpdate.Shared.projitems*{8ebd2b3f-31c4-493a-8853-fdbe32097b7e}*SharedItemsImports = 4
+		src\CompDB.Shared\CompDB.Shared.projitems*{8ff9162b-7281-4274-823c-3bb7905508d2}*SharedItemsImports = 4
+		src\TempManager.Shared\TempManager.Shared.projitems*{97d38557-f29c-4ba4-880c-01653a77ab1d}*SharedItemsImports = 4
+		src\CompDB.Shared\CompDB.Shared.projitems*{a5ef8678-b621-451a-b58e-d1afdd92751b}*SharedItemsImports = 5
+		src\UnifiedUpdatePlatform.Services.WindowsUpdate.Shared\UnifiedUpdatePlatform.Services.WindowsUpdate.Shared.projitems*{b601b162-cdcd-492a-a8cf-747e0d3f6f83}*SharedItemsImports = 5
+		src\UnifiedUpdatePlatform.Common.Messaging.Shared\UnifiedUpdatePlatform.Common.Messaging.Shared.projitems*{b8ce22ed-2ad7-4fb2-8b72-88f345e29b86}*SharedItemsImports = 13
+		src\Cabinet.Shared\Cabinet.Shared.projitems*{c5835dcf-1a20-414b-865a-aa3f8cace62d}*SharedItemsImports = 5
+		src\TempManager.Shared\TempManager.Shared.projitems*{d021f60b-b14a-442c-bb5d-260c7c26e89d}*SharedItemsImports = 13
+		src\DownloadLib.Shared\DownloadLib.Shared.projitems*{dbbccc74-c90e-40aa-8f62-fa431de85a1a}*SharedItemsImports = 13
+		src\UnifiedUpdatePlatform.Common.Messaging.Shared\UnifiedUpdatePlatform.Common.Messaging.Shared.projitems*{f74c9d30-95f1-4a07-ba85-f5da26824b40}*SharedItemsImports = 5
+		src\DownloadLib.Shared\DownloadLib.Shared.projitems*{fe5f05df-b9a1-4ee8-9eff-fef6c26075af}*SharedItemsImports = 5
 	EndGlobalSection
 EndGlobal
