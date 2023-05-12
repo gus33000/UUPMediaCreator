@@ -9,6 +9,7 @@ namespace UnifiedUpdatePlatform.Media.Creator.NET.CDImage
         public static bool CreateDiscImageFromWindowsMediaPath(
             string OutputMediaPath,
             string OutputISOPath,
+            bool suppressAnyKeyPrompt,
             ProgressCallback progressCallback = null)
         {
             bool result = true;
@@ -185,7 +186,7 @@ namespace UnifiedUpdatePlatform.Media.Creator.NET.CDImage
             }
 
             // TODO proper labelling of the disc image
-            result = CDImageWrapper.GenerateISOImage(OutputISOPath, OutputMediaPath, label, cdcallback);
+            result = CDImageWrapper.GenerateISOImage(OutputISOPath, OutputMediaPath, label, suppressAnyKeyPrompt, cdcallback);
 
         exit:
             return result;

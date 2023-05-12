@@ -141,6 +141,7 @@ namespace UUPMediaConverter
                     opt.Edition,
                     opt.LanguageCode,
                     false,
+                    opt.SuppressAnyKeyPrompt,
                     opt.Compression,
                     callback,
                     opt.TempPath);
