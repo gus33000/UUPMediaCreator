@@ -418,7 +418,7 @@ namespace MediaCreationLib.NET
                 //
                 // Build installer
                 //
-                result = SetupMediaCreator.CreateSetupMedia(UUPPath, LanguageCode, MediaRootPath, WinREWIMFilePath, suppressAnyKeyPrompt, CompressionType, CompositionDatabases, tempManager, progressCallback);
+                result = SetupMediaCreator.CreateSetupMedia(UUPPath, LanguageCode, MediaRootPath, WinREWIMFilePath, CompressionType, CompositionDatabases, tempManager, progressCallback);
                 if (!result)
                 {
                     error = "An error occurred while creating setup media.";
@@ -448,7 +448,7 @@ namespace MediaCreationLib.NET
                 //
                 // Build ISO
                 //
-                result = DiscImageFactory.CreateDiscImageFromWindowsMediaPath(MediaRootPath, ISOPath, progressCallback);
+                result = DiscImageFactory.CreateDiscImageFromWindowsMediaPath(MediaRootPath, ISOPath, suppressAnyKeyPrompt, progressCallback);
                 if (!result)
                 {
                     error = "An error occurred while creating the ISO.";

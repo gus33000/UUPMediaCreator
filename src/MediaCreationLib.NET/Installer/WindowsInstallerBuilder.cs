@@ -42,7 +42,6 @@ namespace MediaCreationLib.NET.Installer
             string MediaPath,
             WimCompressionType compressionType,
             bool RunsAsAdministrator,
-            bool suppressAnyKeyPrompt,
             string LanguageCode,
             TempManager.TempManager tempManager,
             ProgressCallback progressCallback = null
@@ -55,20 +54,6 @@ namespace MediaCreationLib.NET.Installer
             if (!result)
             {
                 goto exit;
-            }
-
-            //
-            // If of the "Press any key to boot CD or DVD..." prompt is desired, we must
-            // swap out 
-            if (suppressAnyKeyPrompt)
-            {
-                var root = Path.Combine(MediaPath, @"efi\microsoft\boot\");
-
-                File.Move(Path.Combine(root, "cdboot.efi"), Path.Combine(root, "cdboot_prompt.efi"));
-                File.Move(Path.Combine(root, "efisys.bin"), Path.Combine(root, "efisys_prompt.bin"));
-
-                File.Move(Path.Combine(root, "cdboot_noprompt.efi"), Path.Combine(root, "cdboot.efi"));
-                File.Move(Path.Combine(root, "efisys_noprompt.bin"), Path.Combine(root, "efisys.bin"));
             }
 
             //

@@ -34,7 +34,6 @@ namespace MediaCreationLib.NET.Installer
             string LanguageCode,
             string OutputMediaPath,
             string OutputWindowsREPath,
-            bool suppressAnyKeyPrompt,
             Common.CompressionType CompressionType,
             IEnumerable<CompDBXmlClass.CompDB> CompositionDatabases,
             TempManager.TempManager tempManager,
@@ -68,7 +67,7 @@ namespace MediaCreationLib.NET.Installer
             //
             // Build installer
             //
-            result = WindowsInstallerBuilder.BuildSetupMedia(BaseESD, OutputWindowsREPath, OutputMediaPath, compression, PlatformUtilities.RunsAsAdministrator, suppressAnyKeyPrompt, LanguageCode, tempManager, progressCallback);
+            result = WindowsInstallerBuilder.BuildSetupMedia(BaseESD, OutputWindowsREPath, OutputMediaPath, compression, PlatformUtilities.RunsAsAdministrator, LanguageCode, tempManager, progressCallback);
             if (!result)
             {
                 goto exit;
