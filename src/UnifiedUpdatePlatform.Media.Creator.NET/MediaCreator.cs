@@ -375,6 +375,7 @@ namespace UnifiedUpdatePlatform.Media.Creator.NET
             string Edition,
             string LanguageCode,
             bool IntegrateUpdates,
+            bool suppressAnyKeyPrompt,
             Common.Messaging.Common.CompressionType CompressionType,
             ProgressCallback progressCallback = null,
             string Temp = null)
@@ -447,7 +448,7 @@ namespace UnifiedUpdatePlatform.Media.Creator.NET
                 //
                 // Build ISO
                 //
-                result = DiscImageFactory.CreateDiscImageFromWindowsMediaPath(MediaRootPath, ISOPath, progressCallback);
+                result = DiscImageFactory.CreateDiscImageFromWindowsMediaPath(MediaRootPath, ISOPath, suppressAnyKeyPrompt, progressCallback);
                 if (!result)
                 {
                     error = "An error occurred while creating the ISO.";

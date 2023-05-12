@@ -32,7 +32,7 @@ namespace UnifiedUpdatePlatform.Media.Creator.NET.CDImage
     {
         internal delegate void ProgressCallback(string Operation, int ProgressPercentage, bool IsIndeterminate);
 
-        internal static bool GenerateISOImage(string isopath, string cdroot, string volumelabel, ProgressCallback progressCallback)
+        internal static bool GenerateISOImage(string isopath, string cdroot, string volumelabel, bool suppressAnyKeyPrompt, ProgressCallback progressCallback)
         {
             string setupexe = Path.Combine(cdroot, "setup.exe");
             DateTime creationtime = File.GetCreationTimeUtc(setupexe);
@@ -40,11 +40,17 @@ namespace UnifiedUpdatePlatform.Media.Creator.NET.CDImage
             if (PlatformUtilities.OperatingSystem == OSPlatform.Windows)
             {
                 string cdimagepath = Path.Combine(PlatformUtilities.CurrentRunningDirectory, "CDImage", "cdimage.exe");
-
                 string timestamp = creationtime.ToString("MM/dd/yyyy,hh:mm:ss");
 
+                string bootdata =
+                    "\"" +
+                    "-bootdata:2" +
+                    $"#p0,e,b{cdroot}\\boot\\etfsboot.com" +
+                    $"#pEF,e,b{cdroot}\\efi\\Microsoft\\boot\\{(suppressAnyKeyPrompt ? "efisys_noprompt.bin" : "efisys.bin")}" +
+                    "\"";
+
                 ProcessStartInfo processStartInfo = new(cdimagepath,
-                    $"\"-bootdata:2#p0,e,b{cdroot}\\boot\\etfsboot.com#pEF,e,b{cdroot}\\efi\\Microsoft\\boot\\efisys.bin\" -o -h -m -u2 -udfver102 -t{timestamp} -l{volumelabel}  \"{cdroot}\" \"{isopath}\"")
+                    $"{bootdata} -o -h -m -u2 -udfver102 -t{timestamp} -l{volumelabel}  \"{cdroot}\" \"{isopath}\"")
                 {
                     UseShellExecute = false,
                     WindowStyle = ProcessWindowStyle.Hidden,
@@ -84,7 +90,8 @@ namespace UnifiedUpdatePlatform.Media.Creator.NET.CDImage
                 {
                     FolderUtilities.TrySetTimestampsRecursive(cdroot, creationtime);
 
-                    string cmdline = $"-b \"boot/etfsboot.com\" --no-emul-boot --eltorito-alt-boot -b \"efi/microsoft/boot/efisys.bin\" --no-emul-boot --udf --hide \"*\" -V \"{volumelabel}\" -o \"{isopath}\" {cdroot}";
+                    string bootFile = suppressAnyKeyPrompt ? "efisys_noprompt.bin" : "efisys.bin";
+                    string cmdline = $"-b \"boot/etfsboot.com\" --no-emul-boot --eltorito-alt-boot -b \"efi/microsoft/boot/{bootFile}\" --no-emul-boot --udf --hide \"*\" -V \"{volumelabel}\" -o \"{isopath}\" {cdroot}";
 
                     ProcessStartInfo processStartInfo = new("mkisofs",
                         cmdline)
