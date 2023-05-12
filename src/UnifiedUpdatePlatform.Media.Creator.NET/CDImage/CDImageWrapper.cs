@@ -41,7 +41,6 @@ namespace UnifiedUpdatePlatform.Media.Creator.NET.CDImage
             {
                 string cdimagepath = Path.Combine(PlatformUtilities.CurrentRunningDirectory, "CDImage", "cdimage.exe");
                 string timestamp = creationtime.ToString("MM/dd/yyyy,hh:mm:ss");
-
                 string bootdata =
                     "\"" +
                     "-bootdata:2" +
