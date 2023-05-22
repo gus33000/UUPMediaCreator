@@ -192,7 +192,7 @@ namespace DownloadLib
 
                 foreach (CompDBXmlClass.CompDB cdb in selectedCompDBs)
                 {
-                    if (cdb == AppCompDB)
+                    if (cdb == AppCompDB || cdb.Packages == null)
                     {
                         continue;
                     }
@@ -233,7 +233,7 @@ namespace DownloadLib
 
                 foreach (CompDBXmlClass.CompDB cdb in discardedCompDBs)
                 {
-                    if (cdb == AppCompDB)
+                    if (cdb == AppCompDB || cdb.Packages == null)
                     {
                         continue;
                     }
@@ -420,7 +420,7 @@ namespace DownloadLib
                     {
                         foreach (CompDBXmlClass.CompDB specificCompDB in specificCompDBs)
                         {
-                            if (specificCompDB == AppCompDB)
+                            if (specificCompDB == AppCompDB || specificCompDB.Packages == null)
                             {
                                 continue;
                             }
