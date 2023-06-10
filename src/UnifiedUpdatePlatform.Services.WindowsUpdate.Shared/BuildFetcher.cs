@@ -181,24 +181,44 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate
                 goto exit;
             }
 
-            if (metadataCabs.Count == 1 && metadataCabs[0].FileName.Replace('\\', Path.DirectorySeparatorChar).Contains("metadata", StringComparison.InvariantCultureIgnoreCase))
+            WebClient client = new();
+
+            IEnumerable<string> cabinetFiles = metadataCabs.Select(x => x.FileName.Replace('\\', Path.DirectorySeparatorChar));
+
+            IEnumerable<string> potentialFiles = cabinetFiles.Where(x =>
+                x.Contains("desktoptargetcompdb_", StringComparison.CurrentCultureIgnoreCase) &&
+                x.ToLower().Contains($"_{languagecode}") &&
+                !x.Contains("lxp", StringComparison.CurrentCultureIgnoreCase) &&
+                !x.ToLower().Contains($"desktoptargetcompdb_{languagecode}"));
+
+            foreach (string file in potentialFiles)
             {
-                // This is the new metadata format where all metadata is in a single cab
+                string edition = file.Split('_').Reverse().Skip(1).First();
 
-                if (string.IsNullOrEmpty(UpdateData.CachedMetadata))
+                if (availableEditions.Any(x => x.Edition == edition))
                 {
-                    FileExchangeV3FileDownloadInformation fileDownloadInfo = await FE3Handler.GetFileUrl(UpdateData, metadataCabs[0].Digest);
-                    if (fileDownloadInfo == null)
-                    {
-                        goto exit;
-                    }
+                    continue;
+                }
 
-                    string metadataCabTemp = Path.GetTempFileName();
+                availableEditions.Add(new AvailableEdition() { Edition = edition });
+            }
 
+            foreach (CExtendedUpdateInfoXml.File metadataCab in metadataCabs)
+            {
+                FileExchangeV3FileDownloadInformation fileDownloadInfo = await FE3Handler.GetFileUrl(UpdateData, metadataCabs.First().Digest);
+                if (fileDownloadInfo == null)
+                {
+                    goto exit;
+                }
+
+                string metadataCabTemp = Path.GetTempFileName();
+
+                try
+                {
                     // Download the file
-                    WebClient client = new();
                     await client.DownloadFileTaskAsync(new Uri(fileDownloadInfo.DownloadUrl), metadataCabTemp);
 
+                    // If the file is encrypted, decrypt it now
                     if (fileDownloadInfo.IsEncrypted)
                     {
                         if (!await fileDownloadInfo.DecryptAsync(metadataCabTemp, metadataCabTemp + ".decrypted"))
@@ -209,49 +229,43 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate
                         metadataCabTemp += ".decrypted";
                     }
 
-                    UpdateData.CachedMetadata = metadataCabTemp;
-                }
+                    // Create the required directory to expand the cabinet file
+                    string tmp = Path.GetTempFileName();
+                    File.Delete(tmp);
+                    _ = Directory.CreateDirectory(tmp);
 
-                IEnumerable<string> cabinetFiles = CabinetExtractor.EnumCabinetFiles(UpdateData.CachedMetadata).Select(x => x.FileName);
+                    // Expand the cabinet file
+                    CabinetExtractor.ExtractCabinet(metadataCabTemp, tmp);
 
-                IEnumerable<string> potentialFiles = cabinetFiles.Where(x =>
-                        x.Contains("desktoptargetcompdb_", StringComparison.CurrentCultureIgnoreCase) &&
-                        x.ToLower().Contains($"_{languagecode}") &&
-                        !x.Contains("lxp", StringComparison.CurrentCultureIgnoreCase) &&
-                        !x.ToLower().Contains($"desktoptargetcompdb_{languagecode}"));
-
-                foreach (string file in potentialFiles)
-                {
-                    string edition = file.Split('_').Reverse().Skip(1).First();
-
-                    if (availableEditions.Any(x => x.Edition == edition))
+                    // Two possibilities, we either have cabs inside our metadata, or xmls, handle both
+                    foreach (string cabinetFile in Directory.EnumerateFiles(tmp, "*.cab", SearchOption.AllDirectories))
                     {
-                        continue;
+                        try
+                        {
+                            cabinetFiles = CabinetExtractor.EnumCabinetFiles(cabinetFile).Select(x => x.FileName);
+
+                            potentialFiles = cabinetFiles.Where(x =>
+                                    x.Contains("desktoptargetcompdb_", StringComparison.CurrentCultureIgnoreCase) &&
+                                    x.ToLower().Contains($"_{languagecode}") &&
+                                    !x.Contains("lxp", StringComparison.CurrentCultureIgnoreCase) &&
+                                    !x.ToLower().Contains($"desktoptargetcompdb_{languagecode}"));
+
+                            foreach (string file in potentialFiles)
+                            {
+                                string edition = file.Split('_').Reverse().Skip(1).First();
+
+                                if (availableEditions.Any(x => x.Edition == edition))
+                                {
+                                    continue;
+                                }
+
+                                availableEditions.Add(new AvailableEdition() { Edition = edition });
+                            }
+                        }
+                        catch { }
                     }
-
-                    availableEditions.Add(new AvailableEdition() { Edition = edition });
                 }
-            }
-            else
-            {
-                IEnumerable<string> potentialFiles = metadataCabs.Select(x => x.FileName.Replace('\\', Path.DirectorySeparatorChar)).Where(x =>
-                    x.Contains("desktoptargetcompdb_", StringComparison.CurrentCultureIgnoreCase) &&
-                    x.ToLower().Contains($"_{languagecode}") &&
-                    !x.Contains("lxp", StringComparison.CurrentCultureIgnoreCase) &&
-                    !x.ToLower().Contains($"desktoptargetcompdb_{languagecode}"));
-
-                // This is the old format, each cab is a file in WU
-                foreach (string file in potentialFiles)
-                {
-                    string edition = file.Split('_').Reverse().Skip(1).First();
-
-                    if (availableEditions.Any(x => x.Edition == edition))
-                    {
-                        continue;
-                    }
-
-                    availableEditions.Add(new AvailableEdition() { Edition = edition });
-                }
+                catch { }
             }
 
             availableEditions.Sort((x, y) => x.Edition.CompareTo(y.Edition));

@@ -655,12 +655,6 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate
             get; set;
         }
 
-        [JsonPropertyName("CachedMetadata")]
-        public string CachedMetadata
-        {
-            get; set;
-        }
-
         [JsonPropertyName("SyncUpdatesResponse")]
         public string SyncUpdatesResponse
         {

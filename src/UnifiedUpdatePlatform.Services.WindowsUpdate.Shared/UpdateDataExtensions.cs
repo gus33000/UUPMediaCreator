@@ -240,97 +240,72 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate
                 return neutralCompDB;
             }
 
-            if (metadataCabs.Count == 1 && metadataCabs.First().FileName.Replace('\\', Path.DirectorySeparatorChar).Contains("metadata", StringComparison.InvariantCultureIgnoreCase))
+            foreach (CExtendedUpdateInfoXml.File metadataCab in metadataCabs)
             {
-                // This is the new metadata format where all metadata is in a single cab
-
-                if (string.IsNullOrEmpty(update.CachedMetadata))
+                FileExchangeV3FileDownloadInformation fileDownloadInfo = await FE3Handler.GetFileUrl(update, metadataCab.Digest);
+                if (fileDownloadInfo == null)
                 {
-                    FileExchangeV3FileDownloadInformation fileDownloadInfo = await FE3Handler.GetFileUrl(update, metadataCabs.First().Digest);
-                    if (fileDownloadInfo == null)
-                    {
-                        return neutralCompDB;
-                    }
-
-                    string metadataCabTemp = Path.GetTempFileName();
-
-                    try
-                    {
-                        // Download the file
-                        await client.DownloadFileTaskAsync(new Uri(fileDownloadInfo.DownloadUrl), metadataCabTemp);
-
-                        if (fileDownloadInfo.IsEncrypted)
-                        {
-                            if (!await fileDownloadInfo.DecryptAsync(metadataCabTemp, metadataCabTemp + ".decrypted"))
-                            {
-                                return neutralCompDB;
-                            }
-
-                            metadataCabTemp += ".decrypted";
-                        }
-
-                        update.CachedMetadata = metadataCabTemp;
-                    }
-                    catch { }
+                    return neutralCompDB;
                 }
+
+                string metadataCabTemp = Path.GetTempFileName();
 
                 try
                 {
+                    // Download the file
+                    await client.DownloadFileTaskAsync(new Uri(fileDownloadInfo.DownloadUrl), metadataCabTemp);
+
+                    // If the file is encrypted, decrypt it now
+                    if (fileDownloadInfo.IsEncrypted)
+                    {
+                        if (!await fileDownloadInfo.DecryptAsync(metadataCabTemp, metadataCabTemp + ".decrypted"))
+                        {
+                            return neutralCompDB;
+                        }
+
+                        metadataCabTemp += ".decrypted";
+                    }
+
+                    // Create the required directory to expand the cabinet file
                     string tmp = Path.GetTempFileName();
                     File.Delete(tmp);
                     _ = Directory.CreateDirectory(tmp);
 
-                    CabinetExtractor.ExtractCabinet(update.CachedMetadata, tmp);
+                    // Expand the cabinet file
+                    CabinetExtractor.ExtractCabinet(metadataCabTemp, tmp);
 
-                    foreach (string file in Directory.EnumerateFiles(tmp, "*", SearchOption.AllDirectories))
+                    // Two possibilities, we either have cabs inside our metadata, or xmls, handle both
+                    foreach (string cabinetFile in Directory.EnumerateFiles(tmp, "*.cab", SearchOption.AllDirectories))
                     {
                         try
                         {
-                            byte[] xmlfile = CabinetExtractor.ExtractCabinetFile(file, CabinetExtractor.EnumCabinetFiles(file).First().FileName);
-                            using Stream xmlstream = new MemoryStream(xmlfile);
-                            _ = neutralCompDB.Add(CompDBXmlClass.DeserializeCompDB(xmlstream));
+                            foreach (CabinetFile cabinetXmlFile in CabinetExtractor.EnumCabinetFiles(cabinetFile))
+                            {
+                                try
+                                {
+                                    // We need to expand the xml here
+                                    byte[] xmlFileBuffer = CabinetExtractor.ExtractCabinetFile(cabinetFile, cabinetXmlFile.FileName);
+                                    using Stream xmlStream = new MemoryStream(xmlFileBuffer);
+                                    _ = neutralCompDB.Add(CompDBXmlClass.DeserializeCompDB(xmlStream));
+                                }
+                                catch { }
+                            }
+                        }
+                        catch { }
+                    }
+
+                    // We just parse xmls here
+                    foreach (string xmlFile in Directory.EnumerateFiles(tmp, "*.xml", SearchOption.AllDirectories))
+                    {
+                        try
+                        {
+                            using Stream xmlStream = File.OpenRead(xmlFile);
+                            _ = neutralCompDB.Add(CompDBXmlClass.DeserializeCompDB(xmlStream));
                         }
                         catch { }
                     }
                 }
                 catch { }
-            }
-            else
-            {
-                // This is the old format, each cab is a file in WU
-                foreach (CExtendedUpdateInfoXml.File file in metadataCabs)
-                {
-                    FileExchangeV3FileDownloadInformation fileDownloadInfo = await FE3Handler.GetFileUrl(update, file.Digest);
-                    if (fileDownloadInfo == null)
-                    {
-                        continue;
-                    }
-
-                    string metadataCabTemp = Path.GetTempFileName();
-
-                    try
-                    {
-                        // Download the file
-                        await client.DownloadFileTaskAsync(new Uri(fileDownloadInfo.DownloadUrl), metadataCabTemp);
-
-                        if (fileDownloadInfo.IsEncrypted)
-                        {
-                            if (!await fileDownloadInfo.DecryptAsync(metadataCabTemp, metadataCabTemp + ".decrypted"))
-                            {
-                                continue;
-                            }
-
-                            metadataCabTemp += ".decrypted";
-                        }
-
-                        update.CachedMetadata = metadataCabTemp;
-
-                        byte[] xmlfile = CabinetExtractor.ExtractCabinetFile(update.CachedMetadata, CabinetExtractor.EnumCabinetFiles(update.CachedMetadata).First().FileName);
-                        using Stream xmlstream = new MemoryStream(xmlfile);
-                        _ = neutralCompDB.Add(CompDBXmlClass.DeserializeCompDB(xmlstream));
-                    }
-                    catch { }
-                }
             }
 
             return neutralCompDB;
