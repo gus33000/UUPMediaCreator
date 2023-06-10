@@ -293,7 +293,7 @@ namespace UUPDownload.DownloadRequest
             Logging.Log("Build String: " + buildstr);
             Logging.Log("Languages: " + string.Join(", ", languages));
 
-            Logging.Log("Parsing CompDBs...");
+            /*Logging.Log("Parsing CompDBs...");
 
             if (compDBs != null)
             {
@@ -310,7 +310,7 @@ namespace UUPDownload.DownloadRequest
                         plan.EditionTargets.PrintAvailablePlan();
                     }
                 }
-            }
+            }*/
 
             _ = await DownloadLib.UpdateUtils.ProcessUpdateAsync(update, pOutputFolder, MachineType, new ReportProgress(), Language, Edition, WriteMetadata);
         }
