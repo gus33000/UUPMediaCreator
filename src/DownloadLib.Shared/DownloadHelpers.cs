@@ -511,15 +511,16 @@ namespace DownloadLib
                 if (!Directory.Exists(OutputFolder))
                 {
                     _ = Directory.CreateDirectory(OutputFolder);
+                }
 
-                    string tmpname = update.Xml.LocalizedProperties.Title + " (" + MachineType.ToString() + ").uupmcreplay";
-                    illegalCharacters = new Regex(@"[\\/:*?""<>|]");
-                    tmpname = illegalCharacters.Replace(tmpname, "");
-                    string filename = Path.Combine(OutputFolder, tmpname);
-                    if (WriteMetadata && !File.Exists(filename))
-                    {
-                        File.WriteAllText(filename, JsonSerializer.Serialize(update, new JsonSerializerOptions() { WriteIndented = true, IncludeFields = true }));
-                    }
+                string tmpname = update.Xml.LocalizedProperties.Title + " (" + MachineType.ToString() + ").uupmcreplay";
+                illegalCharacters = new Regex(@"[\\/:*?""<>|]");
+                tmpname = illegalCharacters.Replace(tmpname, "");
+                string filename = Path.Combine(OutputFolder, tmpname);
+
+                if (WriteMetadata && !File.Exists(filename))
+                {
+                    File.WriteAllText(filename, JsonSerializer.Serialize(update, new JsonSerializerOptions() { WriteIndented = true, IncludeFields = true }));
                 }
 
                 using HttpDownloader helperDl = new(OutputFolder, downloadThreads);
