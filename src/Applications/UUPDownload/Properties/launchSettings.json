@@ -2,7 +2,7 @@
   "profiles": {
     "UnifiedUpdatePlatform.Media.Download": {
       "commandName": "Project",
-      "commandLineArgs": "-s DatacenterServer -v 10.0.20348.1 -r Retail -b Retail -c fe_release -t amd64 -l en-US"
+      "commandLineArgs": "-s Professional -v 10.0.22624.1 -r External -b CanaryChannel -c ni_release -t arm64 -l en-US -e Professional "
     }
   }
 }
