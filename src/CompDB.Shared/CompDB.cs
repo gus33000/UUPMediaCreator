@@ -27,7 +27,7 @@ namespace CompDB
 {
     public static class CompDBXmlClass
     {
-        [XmlRoot(ElementName = "Tag", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+        [XmlRoot(ElementName = "Tag", Namespace = "")]
         public class Tag
         {
             [XmlAttribute(AttributeName = "Name", Namespace = "")]
@@ -42,7 +42,7 @@ namespace CompDB
             }
         }
 
-        [XmlRoot(ElementName = "Package", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+        [XmlRoot(ElementName = "Package", Namespace = "")]
         public class Package
         {
             [XmlAttribute(AttributeName = "ID", Namespace = "")]
@@ -55,12 +55,12 @@ namespace CompDB
             {
                 get; set;
             }
-            [XmlElement(ElementName = "SatelliteInfo", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+            [XmlElement(ElementName = "SatelliteInfo", Namespace = "")]
             public SatelliteInfo SatelliteInfo
             {
                 get; set;
             }
-            [XmlElement(ElementName = "Payload", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+            [XmlElement(ElementName = "Payload", Namespace = "")]
             public Payload Payload
             {
                 get; set;
@@ -82,20 +82,20 @@ namespace CompDB
             }
         }
 
-        [XmlRoot(ElementName = "Packages", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+        [XmlRoot(ElementName = "Packages", Namespace = "")]
         public class Packages
         {
-            [XmlElement(ElementName = "Package", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+            [XmlElement(ElementName = "Package", Namespace = "")]
             public List<Package> Package
             {
                 get; set;
             }
         }
 
-        [XmlRoot(ElementName = "Feature", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+        [XmlRoot(ElementName = "Feature", Namespace = "")]
         public class Feature
         {
-            [XmlElement(ElementName = "Packages", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+            [XmlElement(ElementName = "Packages", Namespace = "")]
             public Packages Packages
             {
                 get; set;
@@ -120,17 +120,17 @@ namespace CompDB
             {
                 get; set;
             }
-            [XmlElement(ElementName = "Dependencies", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+            [XmlElement(ElementName = "Dependencies", Namespace = "")]
             public Dependencies Dependencies
             {
                 get; set;
             }
-            [XmlElement(ElementName = "InitialIntents", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+            [XmlElement(ElementName = "InitialIntents", Namespace = "")]
             public InitialIntents InitialIntents
             {
                 get; set;
             }
-            [XmlElement(ElementName = "CustomInformation", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+            [XmlElement(ElementName = "CustomInformation", Namespace = "")]
             public CustomInformation CustomInformation
             {
                 get; set;
@@ -142,17 +142,17 @@ namespace CompDB
             }
         }
 
-        [XmlRoot(ElementName = "Features", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+        [XmlRoot(ElementName = "Features", Namespace = "")]
         public class Features
         {
-            [XmlElement(ElementName = "Feature", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+            [XmlElement(ElementName = "Feature", Namespace = "")]
             public Feature[] Feature
             {
                 get; set;
             }
         }
 
-        [XmlRoot(ElementName = "Require", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+        [XmlRoot(ElementName = "Require", Namespace = "")]
         public class Require
         {
             [XmlAttribute(AttributeName = "Type", Namespace = "")]
@@ -167,41 +167,41 @@ namespace CompDB
             }
         }
 
-        [XmlRoot(ElementName = "RequireInfo", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+        [XmlRoot(ElementName = "RequireInfo", Namespace = "")]
         public class RequireInfo
         {
-            [XmlElement(ElementName = "Require", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+            [XmlElement(ElementName = "Require", Namespace = "")]
             public List<Require> Require
             {
                 get; set;
             }
         }
 
-        [XmlRoot(ElementName = "SatelliteInfo", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+        [XmlRoot(ElementName = "SatelliteInfo", Namespace = "")]
         public class SatelliteInfo
         {
-            [XmlElement(ElementName = "RequireInfo", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+            [XmlElement(ElementName = "RequireInfo", Namespace = "")]
             public RequireInfo RequireInfo
             {
                 get; set;
             }
-            [XmlElement(ElementName = "ApplyToInfo", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+            [XmlElement(ElementName = "ApplyToInfo", Namespace = "")]
             public ApplyToInfo ApplyToInfo
             {
                 get; set;
             }
-            [XmlElement(ElementName = "DeclareInfo", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+            [XmlElement(ElementName = "DeclareInfo", Namespace = "")]
             public DeclareInfo DeclareInfo
             {
                 get; set;
             }
         }
 
-        [XmlRoot(ElementName = "PayloadItem", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+        [XmlRoot(ElementName = "PayloadItem", Namespace = "")]
         public class PayloadItem
         {
             [XmlAttribute(AttributeName = "PayloadHash", Namespace = "")]
-            public string SourceHash
+            public string PayloadHash
             {
                 get; set;
             }
@@ -211,7 +211,7 @@ namespace CompDB
                 get; set;
             }
             [XmlAttribute(AttributeName = "Path", Namespace = "")]
-            public string SourceName
+            public string Path
             {
                 get; set;
             }
@@ -220,32 +220,19 @@ namespace CompDB
             {
                 get; set;
             }
-            [XmlAttribute(AttributeName = "AltSourceName", Namespace = "")]
-            public string AltSourceName
-            {
-                get; set;
-            }
-            [XmlAttribute(AttributeName = "AltSourceHash", Namespace = "")]
-            public string AltSourceHash
-            {
-                get; set;
-            }
-
-            public string Path => AltSourceName ?? SourceName;
-            public string PayloadHash => AltSourceHash ?? SourceHash;
         }
 
-        [XmlRoot(ElementName = "Payload", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+        [XmlRoot(ElementName = "Payload", Namespace = "")]
         public class Payload
         {
-            [XmlElement(ElementName = "PayloadItem", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+            [XmlElement(ElementName = "PayloadItem", Namespace = "")]
             public List<PayloadItem> PayloadItem
             {
                 get; set;
             }
         }
 
-        [XmlRoot(ElementName = "ApplyTo", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+        [XmlRoot(ElementName = "ApplyTo", Namespace = "")]
         public class ApplyTo
         {
             [XmlAttribute(AttributeName = "Type", Namespace = "")]
@@ -260,15 +247,15 @@ namespace CompDB
             }
         }
 
-        [XmlRoot(ElementName = "CompDB", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+        [XmlRoot(ElementName = "CompDB", Namespace = "")]
         public class CompDB
         {
-            [XmlElement(ElementName = "Tags", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+            [XmlElement(ElementName = "Tags", Namespace = "")]
             public Tags Tags
             {
                 get; set;
             }
-            [XmlElement(ElementName = "Features", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+            [XmlElement(ElementName = "Features", Namespace = "")]
             public Features Features
             {
                 get; set;
@@ -343,17 +330,17 @@ namespace CompDB
             {
                 get; set;
             }
-            [XmlElement(ElementName = "Packages", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+            [XmlElement(ElementName = "Packages", Namespace = "")]
             public Packages Packages
             {
                 get; set;
             }
-            [XmlElement(ElementName = "AppX", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+            [XmlElement(ElementName = "AppX", Namespace = "")]
             public Appx AppX
             {
                 get; set;
             }
-            [XmlElement(ElementName = "MSConditionalFeatures", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+            [XmlElement(ElementName = "MSConditionalFeatures", Namespace = "")]
             public MSConditionalFeatures MSConditionalFeatures
             {
                 get; set;
@@ -373,12 +360,27 @@ namespace CompDB
             {
                 get; set;
             }
+            [XmlAttribute(AttributeName = "UUPProduct", Namespace = "")]
+            public string UUPProduct
+            {
+                get; set;
+            }
+            [XmlAttribute(AttributeName = "UUPProductVersion", Namespace = "")]
+            public string UUPProductVersion
+            {
+                get; set;
+            }
         }
 
-        [XmlRoot(ElementName = "Tags", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+        [XmlRoot(ElementName = "DeviceManifest", Namespace = "")]
+        public class DeviceManifest : CompDB
+        {
+        }
+
+        [XmlRoot(ElementName = "Tags", Namespace = "")]
         public class Tags
         {
-            [XmlElement(ElementName = "Tag", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+            [XmlElement(ElementName = "Tag", Namespace = "")]
             public List<Tag> Tag
             {
                 get; set;
@@ -390,17 +392,17 @@ namespace CompDB
             }
         }
 
-        [XmlRoot(ElementName = "ApplyToInfo", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+        [XmlRoot(ElementName = "ApplyToInfo", Namespace = "")]
         public class ApplyToInfo
         {
-            [XmlElement(ElementName = "ApplyTo", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+            [XmlElement(ElementName = "ApplyTo", Namespace = "")]
             public List<ApplyTo> ApplyTo
             {
                 get; set;
             }
         }
 
-        [XmlRoot(ElementName = "Declare", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+        [XmlRoot(ElementName = "Declare", Namespace = "")]
         public class Declare
         {
             [XmlAttribute(AttributeName = "Type", Namespace = "")]
@@ -415,27 +417,27 @@ namespace CompDB
             }
         }
 
-        [XmlRoot(ElementName = "DeclareInfo", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+        [XmlRoot(ElementName = "DeclareInfo", Namespace = "")]
         public class DeclareInfo
         {
-            [XmlElement(ElementName = "Declare", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+            [XmlElement(ElementName = "Declare", Namespace = "")]
             public Declare Declare
             {
                 get; set;
             }
         }
 
-        [XmlRoot(ElementName = "Dependencies", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+        [XmlRoot(ElementName = "Dependencies", Namespace = "")]
         public class Dependencies
         {
-            [XmlElement(ElementName = "Feature", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+            [XmlElement(ElementName = "Feature", Namespace = "")]
             public List<Feature> Feature
             {
                 get; set;
             }
         }
 
-        [XmlRoot(ElementName = "InitialIntent", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+        [XmlRoot(ElementName = "InitialIntent", Namespace = "")]
         public class InitialIntent
         {
             [XmlAttribute(AttributeName = "Value", Namespace = "")]
@@ -445,7 +447,7 @@ namespace CompDB
             }
         }
 
-        [XmlRoot(ElementName = "CustomInfo", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+        [XmlRoot(ElementName = "CustomInfo", Namespace = "")]
         public class CustomInfo
         {
             [XmlAttribute(AttributeName = "Key", Namespace = "")]
@@ -461,27 +463,27 @@ namespace CompDB
             }
         }
 
-        [XmlRoot(ElementName = "CustomInformation", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+        [XmlRoot(ElementName = "CustomInformation", Namespace = "")]
         public class CustomInformation
         {
-            [XmlElement(ElementName = "CustomInfo", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+            [XmlElement(ElementName = "CustomInfo", Namespace = "")]
             public CustomInfo[] CustomInfo
             {
                 get; set;
             }
         }
 
-        [XmlRoot(ElementName = "InitialIntents", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+        [XmlRoot(ElementName = "InitialIntents", Namespace = "")]
         public class InitialIntents
         {
-            [XmlElement(ElementName = "InitialIntent", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+            [XmlElement(ElementName = "InitialIntent", Namespace = "")]
             public List<InitialIntent> InitialIntent
             {
                 get; set;
             }
         }
 
-        [XmlRoot(ElementName = "Condition", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+        [XmlRoot(ElementName = "Condition", Namespace = "")]
         public class Condition
         {
             [XmlAttribute(AttributeName = "Type", Namespace = "")]
@@ -531,10 +533,10 @@ namespace CompDB
             }
         }
 
-        [XmlRoot(ElementName = "ConditionSet", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+        [XmlRoot(ElementName = "ConditionSet", Namespace = "")]
         public class ConditionSet
         {
-            [XmlElement(ElementName = "Conditions", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+            [XmlElement(ElementName = "Conditions", Namespace = "")]
             public Conditions Conditions
             {
                 get; set;
@@ -544,37 +546,37 @@ namespace CompDB
             {
                 get; set;
             }
-            [XmlElement(ElementName = "ConditionSets", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+            [XmlElement(ElementName = "ConditionSets", Namespace = "")]
             public ConditionSets ConditionSets
             {
                 get; set;
             }
         }
 
-        [XmlRoot(ElementName = "Conditions", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+        [XmlRoot(ElementName = "Conditions", Namespace = "")]
         public class Conditions
         {
-            [XmlElement(ElementName = "Condition", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+            [XmlElement(ElementName = "Condition", Namespace = "")]
             public List<Condition> Condition
             {
                 get; set;
             }
         }
 
-        [XmlRoot(ElementName = "ConditionSets", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+        [XmlRoot(ElementName = "ConditionSets", Namespace = "")]
         public class ConditionSets
         {
-            [XmlElement(ElementName = "ConditionSet", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+            [XmlElement(ElementName = "ConditionSet", Namespace = "")]
             public ConditionSet ConditionSet
             {
                 get; set;
             }
         }
 
-        [XmlRoot(ElementName = "ConditionalFeature", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+        [XmlRoot(ElementName = "ConditionalFeature", Namespace = "")]
         public class ConditionalFeature
         {
-            [XmlElement(ElementName = "Condition", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+            [XmlElement(ElementName = "Condition", Namespace = "")]
             public Condition Condition
             {
                 get; set;
@@ -594,7 +596,7 @@ namespace CompDB
             {
                 get; set;
             }
-            [XmlElement(ElementName = "ConditionSet", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+            [XmlElement(ElementName = "ConditionSet", Namespace = "")]
             public ConditionSet ConditionSet
             {
                 get; set;
@@ -606,37 +608,37 @@ namespace CompDB
             }
         }
 
-        [XmlRoot(ElementName = "MSConditionalFeatures", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+        [XmlRoot(ElementName = "MSConditionalFeatures", Namespace = "")]
         public class MSConditionalFeatures
         {
-            [XmlElement(ElementName = "ConditionalFeature", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+            [XmlElement(ElementName = "ConditionalFeature", Namespace = "")]
             public List<ConditionalFeature> ConditionalFeature
             {
                 get; set;
             }
         }
 
-        [XmlRoot(ElementName = "AppX", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+        [XmlRoot(ElementName = "AppX", Namespace = "")]
         public class Appx
         {
-            [XmlElement(ElementName = "AppXPackages", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+            [XmlElement(ElementName = "AppXPackages", Namespace = "")]
             public AppxPackages AppXPackages
             {
                 get; set;
             }
         }
 
-        [XmlRoot(ElementName = "AppXPackages", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+        [XmlRoot(ElementName = "AppXPackages", Namespace = "")]
         public class AppxPackages
         {
-            [XmlElement(ElementName = "Package", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+            [XmlElement(ElementName = "Package", Namespace = "")]
             public List<AppxPackage> Package
             {
                 get; set;
             }
         }
 
-        [XmlRoot(ElementName = "Package", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+        [XmlRoot(ElementName = "Package", Namespace = "")]
         public class AppxPackage
         {
             [XmlAttribute(AttributeName = "AppXPackageType")]
@@ -654,12 +656,12 @@ namespace CompDB
             {
                 get; set;
             }
-            [XmlElement(ElementName = "Payload", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+            [XmlElement(ElementName = "Payload", Namespace = "")]
             public Payload Payload
             {
                 get; set;
             }
-            [XmlElement(ElementName = "LicenseData", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+            [XmlElement(ElementName = "LicenseData", Namespace = "")]
             public string LicenseData
             {
                 get; set;
@@ -671,6 +673,12 @@ namespace CompDB
         {
             XmlSerializer xmlSerializer = new(typeof(CompDB));
             return (CompDB)xmlSerializer.Deserialize(stringReader);
+        }
+
+        public static DeviceManifest DeserializeDeviceManifest(Stream stringReader)
+        {
+            XmlSerializer xmlSerializer = new(typeof(DeviceManifest));
+            return (DeviceManifest)xmlSerializer.Deserialize(stringReader);
         }
     }
 }
