@@ -151,6 +151,11 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate
                     string buildInfo = firstCompDB.TargetBuildInfo ?? firstCompDB.BuildInfo;
                     string osVersion = firstCompDB.TargetOSVersion ?? firstCompDB.OSVersion;
 
+                    if (buildInfo == null)
+                    {
+                        return result;
+                    }
+
                     string[] splitBI = buildInfo.Split(".");
 
                     result = $"{osVersion} ({splitBI[0]}.{splitBI[3]})";
@@ -285,8 +290,16 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate
                                 {
                                     // We need to expand the xml here
                                     byte[] xmlFileBuffer = CabinetExtractor.ExtractCabinetFile(cabinetFile, cabinetXmlFile.FileName);
-                                    using Stream xmlStream = new MemoryStream(xmlFileBuffer);
-                                    _ = neutralCompDB.Add(CompDBXmlClass.DeserializeCompDB(xmlStream));
+                                    try
+                                    {
+                                        using Stream xmlStream = new MemoryStream(xmlFileBuffer);
+                                        _ = neutralCompDB.Add(CompDBXmlClass.DeserializeCompDB(xmlStream));
+                                    }
+                                    catch
+                                    {
+                                        using Stream xmlStream = new MemoryStream(xmlFileBuffer);
+                                        _ = neutralCompDB.Add(CompDBXmlClass.DeserializeDeviceManifest(xmlStream));
+                                    }
                                 }
                                 catch { }
                             }
@@ -302,7 +315,11 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate
                             using Stream xmlStream = File.OpenRead(xmlFile);
                             _ = neutralCompDB.Add(CompDBXmlClass.DeserializeCompDB(xmlStream));
                         }
-                        catch { }
+                        catch
+                        {
+                            using Stream xmlStream = File.OpenRead(xmlFile);
+                            _ = neutralCompDB.Add(CompDBXmlClass.DeserializeDeviceManifest(xmlStream));
+                        }
                     }
                 }
                 catch { }
