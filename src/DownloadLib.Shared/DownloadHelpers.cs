@@ -192,7 +192,7 @@ namespace DownloadLib
 
                 foreach (CompDBXmlClass.CompDB cdb in selectedCompDBs)
                 {
-                    if (cdb == AppCompDB || cdb.Packages == null)
+                    if (cdb == AppCompDB)
                     {
                         continue;
                     }
@@ -233,7 +233,7 @@ namespace DownloadLib
 
                 foreach (CompDBXmlClass.CompDB cdb in discardedCompDBs)
                 {
-                    if (cdb == AppCompDB || cdb.Packages == null)
+                    if (cdb == AppCompDB)
                     {
                         continue;
                     }
@@ -420,7 +420,7 @@ namespace DownloadLib
                     {
                         foreach (CompDBXmlClass.CompDB specificCompDB in specificCompDBs)
                         {
-                            if (specificCompDB == AppCompDB || specificCompDB.Packages == null)
+                            if (specificCompDB == AppCompDB)
                             {
                                 continue;
                             }
@@ -536,9 +536,24 @@ namespace DownloadLib
 
                 IEnumerable<UUPFile> fileList = boundList.Select(boundFile =>
                 {
+                    string path = GetFilenameForCEUIFile(boundFile.Item1, payloadItems);
+
+                    foreach (CompDBXmlClass.CompDB compDb in compDBs)
+                    {
+                        foreach (CompDBXmlClass.Package pkg in compDb.Packages.Package)
+                        {
+                            string payloadHash = pkg.Payload.PayloadItem[0].PayloadHash;
+                            if (payloadHash == boundFile.Item1.AdditionalDigest.Text || payloadHash == boundFile.Item1.Digest)
+                            {
+                                path = pkg.ID.Split("-")[1].Replace(".inf", ".cab").Replace(".INF", ".CAB");
+                                break;
+                            }
+                        }
+                    }
+
                     return new UUPFile(
                         boundFile.Item2,
-                        GetFilenameForCEUIFile(boundFile.Item1, payloadItems),
+                        path,
                         long.Parse(boundFile.Item1.Size),
                         boundFile.Item1.AdditionalDigest.Text,
                         boundFile.Item1.AdditionalDigest.Algorithm);
