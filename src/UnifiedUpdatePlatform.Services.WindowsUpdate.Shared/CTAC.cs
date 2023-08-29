@@ -517,5 +517,13 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate
 
             this.SyncCurrentVersionOnly = SyncCurrentVersionOnly;
         }
+
+        public static string GenerateDeviceId(string Manufacturer, string Family, string Product, string Sku)
+        {
+            string inputString = Manufacturer + "&" + Family + "&" + Product + "&" + Sku;
+            Guid guidFromString = ComputerHardwareIDProvider.Class5GuidFromString(inputString);
+            string guidString = $"{{{guidFromString.ToString()}}}";
+            return guidString;
+        }
     }
 }
