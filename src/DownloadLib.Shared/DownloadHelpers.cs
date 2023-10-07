@@ -192,7 +192,7 @@ namespace DownloadLib
 
                 foreach (CompDBXmlClass.CompDB cdb in selectedCompDBs)
                 {
-                    if (cdb == AppCompDB)
+                    if (cdb == AppCompDB || cdb.Packages == null)
                     {
                         continue;
                     }
@@ -233,7 +233,7 @@ namespace DownloadLib
 
                 foreach (CompDBXmlClass.CompDB cdb in discardedCompDBs)
                 {
-                    if (cdb == AppCompDB)
+                    if (cdb == AppCompDB || cdb.Packages == null)
                     {
                         continue;
                     }
@@ -420,7 +420,7 @@ namespace DownloadLib
                     {
                         foreach (CompDBXmlClass.CompDB specificCompDB in specificCompDBs)
                         {
-                            if (specificCompDB == AppCompDB)
+                            if (specificCompDB == AppCompDB || specificCompDB.Packages == null)
                             {
                                 continue;
                             }
@@ -538,18 +538,25 @@ namespace DownloadLib
                 {
                     string path = GetFilenameForCEUIFile(boundFile.Item1, payloadItems);
 
-                    foreach (CompDBXmlClass.CompDB compDb in compDBs)
+                    try
                     {
-                        foreach (CompDBXmlClass.Package pkg in compDb.Packages.Package)
+                        foreach (CompDBXmlClass.CompDB compDb in compDBs)
                         {
-                            string payloadHash = pkg.Payload.PayloadItem[0].PayloadHash;
-                            if (payloadHash == boundFile.Item1.AdditionalDigest.Text || payloadHash == boundFile.Item1.Digest)
+                            foreach (CompDBXmlClass.Package pkg in compDb.Packages.Package)
                             {
-                                path = pkg.ID.Split("-")[1].Replace(".inf", ".cab").Replace(".INF", ".CAB");
-                                break;
+                                string payloadHash = pkg.Payload.PayloadItem[0].PayloadHash;
+                                if (payloadHash == boundFile.Item1.AdditionalDigest.Text || payloadHash == boundFile.Item1.Digest)
+                                {
+                                    if (pkg.ID.Contains("-") && pkg.ID.Contains(".inf", StringComparison.InvariantCultureIgnoreCase))
+                                    {
+                                        path = pkg.ID.Split("-")[1].Replace(".inf", ".cab").Replace(".INF", ".CAB");
+                                    }
+                                    break;
+                                }
                             }
                         }
                     }
+                    catch {}
 
                     return new UUPFile(
                         boundFile.Item2,
