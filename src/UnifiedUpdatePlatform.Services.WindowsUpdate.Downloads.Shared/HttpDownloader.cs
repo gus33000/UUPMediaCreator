@@ -32,7 +32,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using UnifiedUpdatePlatform.Services.WindowsUpdate;
 
-namespace DownloadLib
+namespace UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads
 {
     public class GeneralDownloadProgress
     {

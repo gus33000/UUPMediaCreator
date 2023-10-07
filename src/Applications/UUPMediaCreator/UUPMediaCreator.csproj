@@ -575,9 +575,9 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\DownloadLib.UWP\DownloadLib.UWP.csproj">
+    <ProjectReference Include="..\..\UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads.UWP\UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads.UWP.csproj">
       <Project>{299c6b2c-6f02-48a2-b455-32c4ba9ea2bc}</Project>
-      <Name>DownloadLib.UWP</Name>
+      <Name>UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads.UWP</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\CompDB.UWP\CompDB.UWP.csproj">
       <Project>{8ff9162b-7281-4274-823c-3bb7905508d2}</Project>

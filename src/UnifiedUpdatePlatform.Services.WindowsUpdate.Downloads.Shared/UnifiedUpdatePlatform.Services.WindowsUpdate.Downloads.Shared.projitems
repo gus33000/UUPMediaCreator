@@ -6,7 +6,7 @@
     <SharedGUID>dbbccc74-c90e-40aa-8f62-fa431de85a1a</SharedGUID>
   </PropertyGroup>
   <PropertyGroup Label="Configuration">
-    <Import_RootNamespace>DownloadLib.Shared</Import_RootNamespace>
+    <Import_RootNamespace>UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads.Shared</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)DownloadHelpers.cs" />

@@ -30,7 +30,7 @@ using System.Threading.Tasks;
 using UnifiedUpdatePlatform.Media.Creator.Planning.Applications;
 using UnifiedUpdatePlatform.Services.WindowsUpdate;
 
-namespace DownloadLib
+namespace UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads
 {
     public static class UpdateUtils
     {

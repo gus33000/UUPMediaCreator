@@ -19,7 +19,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-using DownloadLib;
+using UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads;
 using System;
 using System.Collections.Generic;
 using System.Threading;

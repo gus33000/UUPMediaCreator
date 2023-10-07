@@ -10,7 +10,7 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Cabinet.NET\Cabinet.NET.csproj" />
-    <ProjectReference Include="..\..\DownloadLib.NET\DownloadLib.NET.csproj" />
+    <ProjectReference Include="..\..\UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads.NET\UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads.NET.csproj" />
     <ProjectReference Include="..\..\CompDB.NET\CompDB.NET.csproj" />
     <ProjectReference Include="..\..\UnifiedUpdatePlatform.Media.Creator.Planning.NET\UnifiedUpdatePlatform.Media.Creator.Planning.NET.csproj" />
     <ProjectReference Include="..\..\TempManager.NET\TempManager.NET.csproj" />

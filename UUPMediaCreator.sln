@@ -63,11 +63,11 @@ Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "TempManager.Shared", "src\T
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CLI", "CLI", "{C4A7DBD6-6FB5-410A-9252-922C7909C82C}"
 EndProject
-Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "DownloadLib.Shared", "src\DownloadLib.Shared\DownloadLib.Shared.shproj", "{DBBCCC74-C90E-40AA-8F62-FA431DE85A1A}"
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads.Shared", "src\UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads.Shared\UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads.Shared.shproj", "{DBBCCC74-C90E-40AA-8F62-FA431DE85A1A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DownloadLib.UWP", "src\DownloadLib.UWP\DownloadLib.UWP.csproj", "{299C6B2C-6F02-48A2-B455-32C4BA9EA2BC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads.UWP", "src\UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads.UWP\UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads.UWP.csproj", "{299C6B2C-6F02-48A2-B455-32C4BA9EA2BC}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DownloadLib.NET", "src\DownloadLib.NET\DownloadLib.NET.csproj", "{FE5F05DF-B9A1-4EE8-9EFF-FEF6C26075AF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads.NET", "src\UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads.NET\UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads.NET.csproj", "{FE5F05DF-B9A1-4EE8-9EFF-FEF6C26075AF}"
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Cabinet.Shared", "src\Cabinet.Shared\Cabinet.Shared.shproj", "{113C95B3-1CBB-4B02-8BFE-8A623AD67F85}"
 EndProject
@@ -655,7 +655,7 @@ Global
 		src\CompDB.Shared\CompDB.Shared.projitems*{113c95b3-1cbb-4b02-8bfe-8a623ad67f84}*SharedItemsImports = 13
 		src\Cabinet.Shared\Cabinet.Shared.projitems*{113c95b3-1cbb-4b02-8bfe-8a623ad67f85}*SharedItemsImports = 13
 		src\TempManager.Shared\TempManager.Shared.projitems*{1aac4923-a4e5-41d9-87fa-cfb028f802e5}*SharedItemsImports = 5
-		src\DownloadLib.Shared\DownloadLib.Shared.projitems*{299c6b2c-6f02-48a2-b455-32c4ba9ea2bc}*SharedItemsImports = 4
+		src\UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads.Shared\UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads.Shared.projitems*{299c6b2c-6f02-48a2-b455-32c4ba9ea2bc}*SharedItemsImports = 4
 		src\Cabinet.Shared\Cabinet.Shared.projitems*{8e7b7eb3-114b-48c4-8987-38e63ddca09d}*SharedItemsImports = 4
 		src\UnifiedUpdatePlatform.Services.WindowsUpdate.Shared\UnifiedUpdatePlatform.Services.WindowsUpdate.Shared.projitems*{8ebd2b3f-31c4-493a-8853-fdbe32097b7e}*SharedItemsImports = 4
 		src\CompDB.Shared\CompDB.Shared.projitems*{8ff9162b-7281-4274-823c-3bb7905508d2}*SharedItemsImports = 4
@@ -665,8 +665,8 @@ Global
 		src\UnifiedUpdatePlatform.Common.Messaging.Shared\UnifiedUpdatePlatform.Common.Messaging.Shared.projitems*{b8ce22ed-2ad7-4fb2-8b72-88f345e29b86}*SharedItemsImports = 13
 		src\Cabinet.Shared\Cabinet.Shared.projitems*{c5835dcf-1a20-414b-865a-aa3f8cace62d}*SharedItemsImports = 5
 		src\TempManager.Shared\TempManager.Shared.projitems*{d021f60b-b14a-442c-bb5d-260c7c26e89d}*SharedItemsImports = 13
-		src\DownloadLib.Shared\DownloadLib.Shared.projitems*{dbbccc74-c90e-40aa-8f62-fa431de85a1a}*SharedItemsImports = 13
+		src\UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads.Shared\UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads.Shared.projitems*{dbbccc74-c90e-40aa-8f62-fa431de85a1a}*SharedItemsImports = 13
 		src\UnifiedUpdatePlatform.Common.Messaging.Shared\UnifiedUpdatePlatform.Common.Messaging.Shared.projitems*{f74c9d30-95f1-4a07-ba85-f5da26824b40}*SharedItemsImports = 5
-		src\DownloadLib.Shared\DownloadLib.Shared.projitems*{fe5f05df-b9a1-4ee8-9eff-fef6c26075af}*SharedItemsImports = 5
+		src\UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads.Shared\UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads.Shared.projitems*{fe5f05df-b9a1-4ee8-9eff-fef6c26075af}*SharedItemsImports = 5
 	EndGlobalSection
 EndGlobal
