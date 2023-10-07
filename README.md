@@ -7,7 +7,6 @@
   <a href="https://github.com/gus33000/UUPMediaCreator/releases">Downloads</a>
   <br><br>
   <img src="https://github.com/gus33000/UUPMediaCreator/actions/workflows/ci.yml/badge.svg">
-  <img src="Assets/screenshot.png"><br><br>
 </p>
 
 ## Readme
@@ -18,7 +17,6 @@ Right now the tooling includes:
 
 - UUPDownload: Allows you to scan, fetch and download updates from UUP (Windows Desktop, Windows 10X, Windows Holographic, Windows Server, Windows Mobile, Windows IoT etc...)
 - UUPMediaConverter: Allows you to convert a downloaded UUP update for Windows Desktop into an usable ISO image to use in last decade DVD reader or simply mounted.
-- An experimental UWP front end is also provided, but is not the main focus for now.
 
 ## Credits and Acknowledgements
 
