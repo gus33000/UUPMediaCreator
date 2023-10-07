@@ -201,7 +201,7 @@ namespace CompDB
         public class PayloadItem
         {
             [XmlAttribute(AttributeName = "PayloadHash", Namespace = "")]
-            public string PayloadHash
+            public string SourceHash
             {
                 get; set;
             }
@@ -211,7 +211,7 @@ namespace CompDB
                 get; set;
             }
             [XmlAttribute(AttributeName = "Path", Namespace = "")]
-            public string Path
+            public string SourceName
             {
                 get; set;
             }
@@ -220,6 +220,19 @@ namespace CompDB
             {
                 get; set;
             }
+            [XmlAttribute(AttributeName = "AltSourceName", Namespace = "")]
+            public string AltSourceName
+            {
+                get; set;
+            }
+            [XmlAttribute(AttributeName = "AltSourceHash", Namespace = "")]
+            public string AltSourceHash
+            {
+                get; set;
+            }
+
+            public string Path => AltSourceName ?? SourceName;
+            public string PayloadHash => AltSourceHash ?? SourceHash;
         }
 
         [XmlRoot(ElementName = "Payload", Namespace = "")]
