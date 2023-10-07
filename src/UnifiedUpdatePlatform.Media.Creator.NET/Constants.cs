@@ -26,7 +26,7 @@ namespace UnifiedUpdatePlatform.Media.Creator.NET
 {
     public static class Constants
     {
-        internal static readonly WimImaging imagingInterface = new();
+        internal static readonly IImaging imagingInterface = new WimLibImaging();
 
         internal static byte[] winpejpg = new byte[]
         {

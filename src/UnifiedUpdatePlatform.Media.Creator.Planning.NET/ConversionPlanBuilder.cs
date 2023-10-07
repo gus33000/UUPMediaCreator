@@ -60,7 +60,7 @@ namespace UnifiedUpdatePlatform.Media.Creator.Planning.NET
     {
         public delegate void ProgressCallback(string SubOperation);
 
-        private static readonly WimImaging imagingInterface = new();
+        private static readonly IImaging imagingInterface = new WimLibImaging();
 
         private static EditionTarget BuildTarget(
             PlannedEdition edition,

@@ -29,23 +29,21 @@ using System.Runtime.InteropServices;
 
 namespace UnifiedUpdatePlatform.Imaging.NET
 {
-    public class WimImaging
+    public class WimLibImaging : IImaging
     {
-        public delegate void ProgressCallback(string Operation, int ProgressPercentage, bool IsIndeterminate);
-
-        public WimImaging()
+        public WimLibImaging()
         {
             InitNativeLibrary();
         }
 
-        public bool AddFileToImage(string wimFile, int imageIndex, string fileToAdd, string destination, ProgressCallback progressCallback = null)
+        public bool AddFileToImage(string wimFile, int imageIndex, string fileToAdd, string destination, IImaging.ProgressCallback progressCallback = null)
         {
             return UpdateFilesInImage(wimFile, imageIndex,
                 new[] { (fileToAdd, destination) },
                 progressCallback);
         }
 
-        public bool UpdateFilesInImage(string wimFile, int imageIndex, IEnumerable<(string fileToAdd, string destination)> fileList, ProgressCallback progressCallback = null)
+        public bool UpdateFilesInImage(string wimFile, int imageIndex, IEnumerable<(string fileToAdd, string destination)> fileList, IImaging.ProgressCallback progressCallback = null)
         {
             // Early false returns because calling update with no operations sounds unintentional
             if (fileList == null)
@@ -95,12 +93,12 @@ namespace UnifiedUpdatePlatform.Imaging.NET
             return ReformatWindowsImageFileXML(wimFile);
         }
 
-        public bool DeleteFileFromImage(string wimFile, int imageIndex, string fileToRemove, ProgressCallback progressCallback = null)
+        public bool DeleteFileFromImage(string wimFile, int imageIndex, string fileToRemove, IImaging.ProgressCallback progressCallback = null)
         {
             return UpdateFilesInImage(wimFile, imageIndex, new[] { ((string)null, fileToRemove) }, progressCallback);
         }
 
-        public bool ExportImage(string wimFile, string destinationWimFile, int imageIndex, IEnumerable<string> referenceWIMs = null, WimCompressionType compressionType = WimCompressionType.Lzx, ProgressCallback progressCallback = null, ExportFlags exportFlags = ExportFlags.None)
+        public bool ExportImage(string wimFile, string destinationWimFile, int imageIndex, IEnumerable<string> referenceWIMs = null, WimCompressionType compressionType = WimCompressionType.Lzx, IImaging.ProgressCallback progressCallback = null, ExportFlags exportFlags = ExportFlags.None)
         {
             string title = $"Exporting {wimFile.Split(Path.DirectorySeparatorChar).Last()} - Index {imageIndex}";
             try
@@ -168,7 +166,7 @@ namespace UnifiedUpdatePlatform.Imaging.NET
             return true;
         }
 
-        public bool RenameFileInImage(string wimFile, int imageIndex, string sourceFilePath, string destinationFilePath, ProgressCallback progressCallback = null)
+        public bool RenameFileInImage(string wimFile, int imageIndex, string sourceFilePath, string destinationFilePath, IImaging.ProgressCallback progressCallback = null)
         {
             sourceFilePath = sourceFilePath.Replace(Path.DirectorySeparatorChar, '\\');
             destinationFilePath = destinationFilePath.Replace(Path.DirectorySeparatorChar, '\\');
@@ -193,7 +191,7 @@ namespace UnifiedUpdatePlatform.Imaging.NET
             return ReformatWindowsImageFileXML(wimFile);
         }
 
-        public bool ApplyImage(string wimFile, int imageIndex, string OutputDirectory, IEnumerable<string> referenceWIMs = null, bool PreserveACL = true, ProgressCallback progressCallback = null)
+        public bool ApplyImage(string wimFile, int imageIndex, string OutputDirectory, IEnumerable<string> referenceWIMs = null, bool PreserveACL = true, IImaging.ProgressCallback progressCallback = null)
         {
             string title = $"Applying {wimFile.Split(Path.DirectorySeparatorChar).Last()} - Index {imageIndex}";
             try
@@ -225,7 +223,7 @@ namespace UnifiedUpdatePlatform.Imaging.NET
             string imageDisplayName = null,
             string imageDisplayDescription = null,
             WimCompressionType compressionType = WimCompressionType.Lzx,
-            ProgressCallback progressCallback = null,
+            IImaging.ProgressCallback progressCallback = null,
             int UpdateFrom = -1,
             bool PreserveACL = true)
         {
@@ -564,7 +562,7 @@ namespace UnifiedUpdatePlatform.Imaging.NET
             return true;
         }
 
-        private ManagedWimLib.ProgressCallback GetCallbackStatus(String title, ProgressCallback progressCallback = null)
+        private ManagedWimLib.ProgressCallback GetCallbackStatus(String title, IImaging.ProgressCallback progressCallback = null)
         {
             CallbackStatus ProgressCallback(ProgressMsg msg, object info, object progctx)
             {
