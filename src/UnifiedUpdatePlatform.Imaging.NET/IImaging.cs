@@ -29,54 +29,54 @@ using System.Runtime.InteropServices;
 
 namespace UnifiedUpdatePlatform.Imaging.NET
 {
-     public interface IImaging
-     {
-          public delegate void ProgressCallback(string Operation, int ProgressPercentage, bool IsIndeterminate);
+    public interface IImaging
+    {
+        public delegate void ProgressCallback(string Operation, int ProgressPercentage, bool IsIndeterminate);
 
-          public bool AddFileToImage(string wimFile, int imageIndex, string fileToAdd, string destination, ProgressCallback progressCallback = null);
+        public bool AddFileToImage(string wimFile, int imageIndex, string fileToAdd, string destination, ProgressCallback progressCallback = null);
 
-          public bool UpdateFilesInImage(string wimFile, int imageIndex, IEnumerable<(string fileToAdd, string destination)> fileList, ProgressCallback progressCallback = null);
+        public bool UpdateFilesInImage(string wimFile, int imageIndex, IEnumerable<(string fileToAdd, string destination)> fileList, ProgressCallback progressCallback = null);
 
-          public bool DeleteFileFromImage(string wimFile, int imageIndex, string fileToRemove, ProgressCallback progressCallback = null);
+        public bool DeleteFileFromImage(string wimFile, int imageIndex, string fileToRemove, ProgressCallback progressCallback = null);
 
-          public bool ExportImage(string wimFile, string destinationWimFile, int imageIndex, IEnumerable<string> referenceWIMs = null, WimCompressionType compressionType = WimCompressionType.Lzx, ProgressCallback progressCallback = null, ExportFlags exportFlags = ExportFlags.None);
+        public bool ExportImage(string wimFile, string destinationWimFile, int imageIndex, IEnumerable<string> referenceWIMs = null, WimCompressionType compressionType = WimCompressionType.Lzx, ProgressCallback progressCallback = null, ExportFlags exportFlags = ExportFlags.None);
 
-          public bool ExtractFileFromImage(string wimFile, int imageIndex, string fileToExtract, string destination);
+        public bool ExtractFileFromImage(string wimFile, int imageIndex, string fileToExtract, string destination);
 
-          public bool RenameFileInImage(string wimFile, int imageIndex, string sourceFilePath, string destinationFilePath, ProgressCallback progressCallback = null);
+        public bool RenameFileInImage(string wimFile, int imageIndex, string sourceFilePath, string destinationFilePath, ProgressCallback progressCallback = null);
 
-          public bool ApplyImage(string wimFile, int imageIndex, string OutputDirectory, IEnumerable<string> referenceWIMs = null, bool PreserveACL = true, ProgressCallback progressCallback = null);
+        public bool ApplyImage(string wimFile, int imageIndex, string OutputDirectory, IEnumerable<string> referenceWIMs = null, bool PreserveACL = true, ProgressCallback progressCallback = null);
 
-          public bool CaptureImage(
-               string wimFile,
-               string imageName,
-               string imageDescription,
-               string imageFlag,
-               string InputDirectory,
-               TempManager.TempManager tempManager,
-               string imageDisplayName = null,
-               string imageDisplayDescription = null,
-               WimCompressionType compressionType = WimCompressionType.Lzx,
-               ProgressCallback progressCallback = null,
-               int UpdateFrom = -1,
-               bool PreserveACL = true);
+        public bool CaptureImage(
+             string wimFile,
+             string imageName,
+             string imageDescription,
+             string imageFlag,
+             string InputDirectory,
+             TempManager.TempManager tempManager,
+             string imageDisplayName = null,
+             string imageDisplayDescription = null,
+             WimCompressionType compressionType = WimCompressionType.Lzx,
+             ProgressCallback progressCallback = null,
+             int UpdateFrom = -1,
+             bool PreserveACL = true);
 
-          public bool EnumerateFiles(string wimFile, int imageIndex, string path, out string[] entries);
+        public bool EnumerateFiles(string wimFile, int imageIndex, string path, out string[] entries);
 
-          public bool MarkImageAsBootable(string wimFile, int imageIndex);
+        public bool MarkImageAsBootable(string wimFile, int imageIndex);
 
-          public bool GetWIMInformation(
-               string wimFile,
-               out WIMInformationXML.WIM wimInformationObject);
+        public bool GetWIMInformation(
+             string wimFile,
+             out WIMInformationXML.WIM wimInformationObject);
 
-          public bool GetWIMImageInformation(
-               string wimFile,
-               int imageIndex,
-               out WIMInformationXML.IMAGE image);
+        public bool GetWIMImageInformation(
+             string wimFile,
+             int imageIndex,
+             out WIMInformationXML.IMAGE image);
 
-          public bool SetWIMImageInformation(
-               string wimFile,
-               int imageIndex,
-               WIMInformationXML.IMAGE image);
-     }
+        public bool SetWIMImageInformation(
+             string wimFile,
+             int imageIndex,
+             WIMInformationXML.IMAGE image);
+    }
 }
