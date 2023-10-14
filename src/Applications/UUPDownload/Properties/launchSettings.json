@@ -2,7 +2,7 @@
   "profiles": {
     "UnifiedUpdatePlatform.Media.Download": {
       "commandName": "Project",
-      "commandLineArgs": "-s Professional -v 10.0.22624.1 -r External -b CanaryChannel -c ni_release -t arm64 -l en-US -e Professional "
+      "commandLineArgs": "-s Professional -e Professional -v 10.0.22621.100 -r Retail -b Retail -c ni_release -t arm64 -l en-US -o C:\\Users\\Gus\\Documents\\CLI"
     }
   }
 }
