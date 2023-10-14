@@ -431,7 +431,6 @@ Global
 	EndGlobalSection
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		src\UnifiedUpdatePlatform.Services.WindowsUpdate.Shared\UnifiedUpdatePlatform.Services.WindowsUpdate.Shared.projitems*{0d26e90f-2cf6-4ba5-b235-72e646a3ff48}*SharedItemsImports = 13
-		src\UnifiedUpdatePlatform.Common.Messaging.Shared\UnifiedUpdatePlatform.Common.Messaging.Shared.projitems*{11385f97-61d8-47ef-a068-3a130232f6b6}*SharedItemsImports = 4
 		src\CompDB.Shared\CompDB.Shared.projitems*{113c95b3-1cbb-4b02-8bfe-8a623ad67f84}*SharedItemsImports = 13
 		src\Cabinet.Shared\Cabinet.Shared.projitems*{113c95b3-1cbb-4b02-8bfe-8a623ad67f85}*SharedItemsImports = 13
 		src\TempManager.Shared\TempManager.Shared.projitems*{1aac4923-a4e5-41d9-87fa-cfb028f802e5}*SharedItemsImports = 5

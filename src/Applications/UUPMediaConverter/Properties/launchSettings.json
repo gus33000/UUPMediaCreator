@@ -2,7 +2,7 @@
   "profiles": {
     "UUPMediaConverter": {
       "commandName": "Project",
-      "commandLineArgs": "C:\\Users\\Gus\\source\\repos\\gus33000\\UUPMediaCreator\\build\\x64\\Debug\\UnifiedUpdatePlatform.Media.Download\\net7.0\\10.0.22518.1000.rs_prerelease.211203-1458_arm64fre_ec4e1526ea25 C:\\Users\\Gus\\source\\repos\\gus33000\\UUPMediaCreator\\build\\x64\\Debug\\UnifiedUpdatePlatform.Media.Download\\net7.0\\10.0.22518.1000.rs_prerelease.211203-1458_arm64fre_ec4e1526ea25.iso en-us professional"
+      "commandLineArgs": "-u C:\\Users\\Gus\\Documents\\CLI\\10.0.22631.2428.ni_release_svc_prod1.230929-1800_arm64fre_52b4ad2d28a8 -i C:\\Users\\Gus\\Documents\\CLI\\Windows.iso -l en-US -e Professional -c XPRESS"
     }
   }
 }

@@ -181,18 +181,18 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads
 
             if (compDBs != null)
             {
-                CompDBXmlClass.CompDB AppCompDB = null;
+                IEnumerable<CompDBXmlClass.CompDB> AppCompDBs = null;
 
                 (HashSet<CompDBXmlClass.CompDB> selectedCompDBs, HashSet<CompDBXmlClass.CompDB> discardedCompDBs, HashSet<CompDBXmlClass.CompDB> specificCompDBs) = FilterCompDBs(compDBs, Edition, Language);
 
-                if (compDBs.Any(x => x.Name?.StartsWith("Build~") == true && x.Name?.EndsWith("~Desktop_Apps~~") == true))
+                if (compDBs.Any(x => x.Name?.StartsWith("Build~") == true && (x.Name?.EndsWith("~Desktop_Apps~~") == true || x.Name?.EndsWith("~Desktop_Apps_Moment~~") == true)))
                 {
-                    AppCompDB = compDBs.First(x => x.Name?.StartsWith("Build~") == true && x.Name?.EndsWith("~Desktop_Apps~~") == true);
+                    AppCompDBs = compDBs.Where(x => x.Name?.StartsWith("Build~") == true && (x.Name?.EndsWith("~Desktop_Apps~~") == true || x.Name?.EndsWith("~Desktop_Apps_Moment~~") == true));
                 }
 
                 foreach (CompDBXmlClass.CompDB cdb in selectedCompDBs)
                 {
-                    if (cdb == AppCompDB || cdb.Packages == null)
+                    if (cdb == AppCompDBs || cdb.Packages == null)
                     {
                         continue;
                     }
@@ -233,7 +233,7 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads
 
                 foreach (CompDBXmlClass.CompDB cdb in discardedCompDBs)
                 {
-                    if (cdb == AppCompDB || cdb.Packages == null)
+                    if (cdb == AppCompDBs || cdb.Packages == null)
                     {
                         continue;
                     }
@@ -268,34 +268,18 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads
                     }
                 }
 
-                if (AppCompDB != null)
+                if (AppCompDBs != null)
                 {
                     List<string> payloadHashesToKeep = new();
 
-                    switch (!string.IsNullOrEmpty(Language), !string.IsNullOrEmpty(Edition))
+                    foreach (CompDBXmlClass.CompDB AppCompDB in AppCompDBs)
                     {
-                        // Get everything
-                        case (false, false):
-                            {
-                                foreach (CompDBXmlClass.Package pkg in AppCompDB.Packages.Package)
+                        switch (!string.IsNullOrEmpty(Language), !string.IsNullOrEmpty(Edition))
+                        {
+                            // Get everything
+                            case (false, false):
                                 {
-                                    if (pkg.Payload == null)
-                                    {
-                                        continue;
-                                    }
-
-                                    foreach (CompDBXmlClass.PayloadItem item in pkg.Payload.PayloadItem)
-                                    {
-                                        if (!item.PayloadType.Equals("Diff", StringComparison.InvariantCultureIgnoreCase))
-                                        {
-                                            payloadHashesToKeep.Add(item.PayloadHash);
-                                        }
-                                    }
-                                }
-
-                                if (AppCompDB.AppX?.AppXPackages?.Package != null)
-                                {
-                                    foreach (CompDBXmlClass.AppxPackage pkg in AppCompDB.AppX.AppXPackages.Package)
+                                    foreach (CompDBXmlClass.Package pkg in AppCompDB.Packages.Package)
                                     {
                                         if (pkg.Payload == null)
                                         {
@@ -310,92 +294,95 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads
                                             }
                                         }
                                     }
-                                }
-                                break;
-                            }
-                        // Get edition
-                        case (false, true):
-                            {
-                                foreach (CompDBXmlClass.CompDB cdb in compDBs.GetEditionCompDBs().Where(cdb =>
-                                {
-                                    bool hasEdition = cdb.Tags?.Tag?.Any(x => x.Name.Equals("Edition", StringComparison.InvariantCultureIgnoreCase)) == true;
 
-                                    bool editionMatching = cdb.Tags?.Tag?.Any(x => x.Name.Equals("Edition", StringComparison.InvariantCultureIgnoreCase) && x.Value.Equals(Edition, StringComparison.InvariantCultureIgnoreCase)) == true;
-
-                                    return hasEdition && editionMatching;
-                                }))
-                                {
-                                    PackageProperties[] appxsToKeep = AppxSelectionEngine.GetAppxFilesToKeep(cdb, AppCompDB);
-
-                                    foreach (PackageProperties appxToKeep in appxsToKeep)
+                                    if (AppCompDB.AppX?.AppXPackages?.Package != null)
                                     {
-                                        payloadHashesToKeep.Add(appxToKeep.SHA256);
+                                        foreach (CompDBXmlClass.AppxPackage pkg in AppCompDB.AppX.AppXPackages.Package)
+                                        {
+                                            if (pkg.Payload == null)
+                                            {
+                                                continue;
+                                            }
+
+                                            foreach (CompDBXmlClass.PayloadItem item in pkg.Payload.PayloadItem)
+                                            {
+                                                if (!item.PayloadType.Equals("Diff", StringComparison.InvariantCultureIgnoreCase))
+                                                {
+                                                    payloadHashesToKeep.Add(item.PayloadHash);
+                                                }
+                                            }
+                                        }
                                     }
+                                    break;
                                 }
-                                break;
-                            }
-                        // Get language
-                        case (true, false):
-                            {
-                                foreach (CompDBXmlClass.CompDB cdb in compDBs.GetEditionCompDBs().Where(cdb =>
+                            // Get edition
+                            case (false, true):
                                 {
-                                    bool hasLang = cdb.Tags?.Tag?.Any(x => x.Name.Equals("Language", StringComparison.InvariantCultureIgnoreCase)) == true;
-
-                                    bool langMatching = cdb.Tags?.Tag?.Any(x => x.Name.Equals("Language", StringComparison.InvariantCultureIgnoreCase) && x.Value.Equals(Language, StringComparison.InvariantCultureIgnoreCase)) == true;
-
-                                    return hasLang && langMatching;
-                                }))
-                                {
-                                    PackageProperties[] appxsToKeep = AppxSelectionEngine.GetAppxFilesToKeep(cdb, AppCompDB);
-
-                                    foreach (PackageProperties appxToKeep in appxsToKeep)
+                                    foreach (CompDBXmlClass.CompDB cdb in compDBs.GetEditionCompDBs().Where(cdb =>
                                     {
-                                        payloadHashesToKeep.Add(appxToKeep.SHA256);
-                                    }
-                                }
-                                break;
-                            }
-                        // Get edition + language
-                        case (true, true):
-                            {
-                                foreach (CompDBXmlClass.CompDB cdb in compDBs.GetEditionCompDBs().Where(cdb =>
-                                {
-                                    bool hasLang = cdb.Tags?.Tag?.Any(x => x.Name.Equals("Language", StringComparison.InvariantCultureIgnoreCase)) == true;
-                                    bool hasEdition = cdb.Tags?.Tag?.Any(x => x.Name.Equals("Edition", StringComparison.InvariantCultureIgnoreCase)) == true;
+                                        bool hasEdition = cdb.Tags?.Tag?.Any(x => x.Name.Equals("Edition", StringComparison.InvariantCultureIgnoreCase)) == true;
 
-                                    bool editionMatching = cdb.Tags?.Tag?.Any(x => x.Name.Equals("Edition", StringComparison.InvariantCultureIgnoreCase) && x.Value.Equals(Edition, StringComparison.InvariantCultureIgnoreCase)) == true;
-                                    bool langMatching = cdb.Tags?.Tag?.Any(x => x.Name.Equals("Language", StringComparison.InvariantCultureIgnoreCase) && x.Value.Equals(Language, StringComparison.InvariantCultureIgnoreCase)) == true;
+                                        bool editionMatching = cdb.Tags?.Tag?.Any(x => x.Name.Equals("Edition", StringComparison.InvariantCultureIgnoreCase) && x.Value.Equals(Edition, StringComparison.InvariantCultureIgnoreCase)) == true;
 
-                                    return hasEdition && editionMatching && hasLang && langMatching;
-                                }))
-                                {
-                                    PackageProperties[] appxsToKeep = AppxSelectionEngine.GetAppxFilesToKeep(cdb, AppCompDB);
-
-                                    foreach (PackageProperties appxToKeep in appxsToKeep)
+                                        return hasEdition && editionMatching;
+                                    }))
                                     {
-                                        payloadHashesToKeep.Add(appxToKeep.SHA256);
-                                    }
-                                }
-                                break;
-                            }
-                    }
+                                        PackageProperties[] appxsToKeep = AppxSelectionEngine.GetAppxFilesToKeep(cdb, new CompDBXmlClass.CompDB[] { AppCompDB }, Language);
 
-                    foreach (CompDBXmlClass.Package pkg in AppCompDB.Packages.Package)
-                    {
-                        if (pkg.Payload == null)
-                        {
-                            continue;
+                                        foreach (PackageProperties appxToKeep in appxsToKeep)
+                                        {
+                                            payloadHashesToKeep.Add(appxToKeep.SHA256);
+                                        }
+                                    }
+                                    break;
+                                }
+                            // Get language
+                            case (true, false):
+                                {
+                                    foreach (CompDBXmlClass.CompDB cdb in compDBs.GetEditionCompDBs().Where(cdb =>
+                                    {
+                                        bool hasLang = cdb.Tags?.Tag?.Any(x => x.Name.Equals("Language", StringComparison.InvariantCultureIgnoreCase)) == true;
+
+                                        bool langMatching = cdb.Tags?.Tag?.Any(x => x.Name.Equals("Language", StringComparison.InvariantCultureIgnoreCase) && x.Value.Equals(Language, StringComparison.InvariantCultureIgnoreCase)) == true;
+
+                                        return hasLang && langMatching;
+                                    }))
+                                    {
+                                        PackageProperties[] appxsToKeep = AppxSelectionEngine.GetAppxFilesToKeep(cdb, new CompDBXmlClass.CompDB[] { AppCompDB }, Language);
+
+                                        foreach (PackageProperties appxToKeep in appxsToKeep)
+                                        {
+                                            payloadHashesToKeep.Add(appxToKeep.SHA256);
+                                        }
+                                    }
+                                    break;
+                                }
+                            // Get edition + language
+                            case (true, true):
+                                {
+                                    foreach (CompDBXmlClass.CompDB cdb in compDBs.GetEditionCompDBs().Where(cdb =>
+                                    {
+                                        bool hasLang = cdb.Tags?.Tag?.Any(x => x.Name.Equals("Language", StringComparison.InvariantCultureIgnoreCase)) == true;
+                                        bool hasEdition = cdb.Tags?.Tag?.Any(x => x.Name.Equals("Edition", StringComparison.InvariantCultureIgnoreCase)) == true;
+
+                                        bool editionMatching = cdb.Tags?.Tag?.Any(x => x.Name.Equals("Edition", StringComparison.InvariantCultureIgnoreCase) && x.Value.Equals(Edition, StringComparison.InvariantCultureIgnoreCase)) == true;
+                                        bool langMatching = cdb.Tags?.Tag?.Any(x => x.Name.Equals("Language", StringComparison.InvariantCultureIgnoreCase) && x.Value.Equals(Language, StringComparison.InvariantCultureIgnoreCase)) == true;
+
+                                        return hasEdition && editionMatching && hasLang && langMatching;
+                                    }))
+                                    {
+                                        PackageProperties[] appxsToKeep = AppxSelectionEngine.GetAppxFilesToKeep(cdb, new CompDBXmlClass.CompDB[] { AppCompDB }, Language);
+
+                                        foreach (PackageProperties appxToKeep in appxsToKeep)
+                                        {
+                                            payloadHashesToKeep.Add(appxToKeep.SHA256);
+                                        }
+                                    }
+                                    break;
+                                }
                         }
 
-                        foreach (CompDBXmlClass.PayloadItem item in pkg.Payload.PayloadItem)
-                        {
-                            _ = payloadHashesToKeep.Any(x => x == item.PayloadHash) ? payloadItems.Add(item) : bannedPayloadItems.Add(item);
-                        }
-                    }
-
-                    if (AppCompDB.AppX?.AppXPackages?.Package != null)
-                    {
-                        foreach (CompDBXmlClass.AppxPackage pkg in AppCompDB.AppX.AppXPackages.Package)
+                        foreach (CompDBXmlClass.Package pkg in AppCompDB.Packages.Package)
                         {
                             if (pkg.Payload == null)
                             {
@@ -405,6 +392,22 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads
                             foreach (CompDBXmlClass.PayloadItem item in pkg.Payload.PayloadItem)
                             {
                                 _ = payloadHashesToKeep.Any(x => x == item.PayloadHash) ? payloadItems.Add(item) : bannedPayloadItems.Add(item);
+                            }
+                        }
+
+                        if (AppCompDB.AppX?.AppXPackages?.Package != null)
+                        {
+                            foreach (CompDBXmlClass.AppxPackage pkg in AppCompDB.AppX.AppXPackages.Package)
+                            {
+                                if (pkg.Payload == null)
+                                {
+                                    continue;
+                                }
+
+                                foreach (CompDBXmlClass.PayloadItem item in pkg.Payload.PayloadItem)
+                                {
+                                    _ = payloadHashesToKeep.Any(x => x == item.PayloadHash) ? payloadItems.Add(item) : bannedPayloadItems.Add(item);
+                                }
                             }
                         }
                     }
@@ -420,7 +423,7 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads
                     {
                         foreach (CompDBXmlClass.CompDB specificCompDB in specificCompDBs)
                         {
-                            if (specificCompDB == AppCompDB || specificCompDB.Packages == null)
+                            if (AppCompDBs.Contains(specificCompDB) || specificCompDB.Packages == null)
                             {
                                 continue;
                             }
@@ -556,7 +559,7 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads
                             }
                         }
                     }
-                    catch {}
+                    catch { }
 
                     return new UUPFile(
                         boundFile.Item2,

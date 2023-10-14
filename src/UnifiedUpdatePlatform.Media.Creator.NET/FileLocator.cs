@@ -67,7 +67,9 @@ namespace UnifiedUpdatePlatform.Media.Creator.NET
                        compDB.Tags.Tag?.Count == 3 &&
                        compDB.Tags.Tag.Find(x => x.Name.Equals("UpdateType", StringComparison.InvariantCultureIgnoreCase))?.Value?.Equals("Canonical", StringComparison.InvariantCultureIgnoreCase) == true &&
                        compDB.Tags.Tag.Find(x => x.Name.Equals("Language", StringComparison.InvariantCultureIgnoreCase))?.Value?.Equals(LanguageCode, StringComparison.InvariantCultureIgnoreCase) == true &&
-                       compDB.Tags.Tag.Find(x => x.Name.Equals("Edition", StringComparison.InvariantCultureIgnoreCase))?.Value?.Equals(Edition, StringComparison.InvariantCultureIgnoreCase) == true)
+                       compDB.Tags.Tag.Find(x => x.Name.Equals("Edition", StringComparison.InvariantCultureIgnoreCase))?.Value?.Equals(Edition, StringComparison.InvariantCultureIgnoreCase) == true &&
+                       compDB.Name?.EndsWith("~Desktop_Apps~~") != true &&
+                       compDB.Name?.EndsWith("~Desktop_Apps_Moment~~") != true)
                     {
                         return compDB;
                     }
@@ -79,7 +81,9 @@ namespace UnifiedUpdatePlatform.Media.Creator.NET
                 else if (compDB.Features?.Feature?.FirstOrDefault(x =>
                         x.Type?.Contains("DesktopMedia", StringComparison.InvariantCultureIgnoreCase) == true &&
                         x.FeatureID?.Contains(LanguageCode, StringComparison.InvariantCultureIgnoreCase) == true &&
-                        x.FeatureID?.Contains(Edition, StringComparison.InvariantCultureIgnoreCase) == true) != null)
+                        x.FeatureID?.Contains(Edition, StringComparison.InvariantCultureIgnoreCase) == true) != null &&
+                       compDB.Name?.EndsWith("~Desktop_Apps~~") != true &&
+                       compDB.Name?.EndsWith("~Desktop_Apps_Moment~~") != true)
                 {
                     return compDB;
                 }
@@ -147,10 +151,10 @@ namespace UnifiedUpdatePlatform.Media.Creator.NET
                 goto error;
             }
 
-            if (CompositionDatabases.Any(x => x.Name?.StartsWith("Build~") == true && x.Name?.EndsWith("~Desktop_Apps~~") == true))
+            if (CompositionDatabases.Any(x => x.Name?.StartsWith("Build~") == true && (x.Name?.EndsWith("~Desktop_Apps~~") == true || x.Name?.EndsWith("~Desktop_Apps_Moment~~") == true)))
             {
-                CompDBXmlClass.CompDB AppCompDB = CompositionDatabases.First(x => x.Name?.StartsWith("Build~") == true && x.Name?.EndsWith("~Desktop_Apps~~") == true);
-                AppxSelectionEngine.GenerateLicenseXmlFiles(compDB, AppCompDB, UUPPath);
+                IEnumerable<CompDBXmlClass.CompDB> AppCompDBs = CompositionDatabases.Where(x => x.Name?.StartsWith("Build~") == true && (x.Name?.EndsWith("~Desktop_Apps~~") == true || x.Name?.EndsWith("~Desktop_Apps_Moment~~") == true));
+                AppxSelectionEngine.GenerateLicenseXmlFiles(compDB, AppCompDBs, UUPPath);
             }
 
             goto exit;
