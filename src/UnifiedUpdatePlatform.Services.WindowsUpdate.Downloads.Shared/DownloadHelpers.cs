@@ -34,20 +34,20 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads
 {
     public static class UpdateUtils
     {
-        public static string GetFilenameForCEUIFile(CExtendedUpdateInfoXml.File file2, IEnumerable<CompDBXmlClass.PayloadItem> payloadItems)
+        public static string[] GetFilenameForCEUIFile(CExtendedUpdateInfoXml.File file2, IEnumerable<CompDBXmlClass.PayloadItem> payloadItems)
         {
             string filename = file2.FileName.Replace('\\', Path.DirectorySeparatorChar);
             if (payloadItems.Any(x => x.PayloadHash == file2.AdditionalDigest.Text || x.PayloadHash == file2.Digest))
             {
-                CompDBXmlClass.PayloadItem payload = payloadItems.First(x => x.PayloadHash == file2.AdditionalDigest.Text || x.PayloadHash == file2.Digest);
-                return payload.Path.Replace('\\', Path.DirectorySeparatorChar);
+                IEnumerable<CompDBXmlClass.PayloadItem> payloads = payloadItems.Where(x => x.PayloadHash == file2.AdditionalDigest.Text || x.PayloadHash == file2.Digest);
+                return payloads.Select(p => p.Path.Replace('\\', Path.DirectorySeparatorChar)).ToArray();
             }
             else if (!payloadItems.Any() && filename.Contains('_') && !filename.StartsWith("_") && (!filename.Contains('-') || filename.IndexOf('-') > filename.IndexOf('_')))
             {
                 filename = filename[..filename.IndexOf('_')] + Path.DirectorySeparatorChar + filename[(filename.IndexOf('_') + 1)..];
-                return filename.TrimStart(Path.DirectorySeparatorChar);
+                return new string[] { filename.TrimStart(Path.DirectorySeparatorChar) };
             }
-            return filename;
+            return new string[] { filename };
         }
 
         public static bool ShouldFileGetDownloaded(CExtendedUpdateInfoXml.File file2, IEnumerable<CompDBXmlClass.PayloadItem> payloadItems)
@@ -192,7 +192,7 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads
 
                 foreach (CompDBXmlClass.CompDB cdb in selectedCompDBs)
                 {
-                    if (cdb == AppCompDBs || cdb.Packages == null)
+                    if (AppCompDBs.Contains(cdb) || cdb.Packages == null)
                     {
                         continue;
                     }
@@ -233,7 +233,7 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads
 
                 foreach (CompDBXmlClass.CompDB cdb in discardedCompDBs)
                 {
-                    if (cdb == AppCompDBs || cdb.Packages == null)
+                    if (AppCompDBs.Contains(cdb) || cdb.Packages == null)
                     {
                         continue;
                     }
@@ -543,36 +543,37 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads
                     //.Where(x => UpdateUtils.ShouldFileGetDownloaded(x.x, payloadItems))
                     .OrderBy(x => x.Item2.ExpirationDate);
 
-                IEnumerable<UUPFile> fileList = boundList.Select(boundFile =>
+                IEnumerable<UUPFile> fileList = boundList.SelectMany(boundFile =>
                 {
-                    string path = GetFilenameForCEUIFile(boundFile.Item1, payloadItems);
-
-                    try
+                    return GetFilenameForCEUIFile(boundFile.Item1, payloadItems).Select(path =>
                     {
-                        foreach (CompDBXmlClass.CompDB compDb in compDBs)
+                        try
                         {
-                            foreach (CompDBXmlClass.Package pkg in compDb.Packages.Package)
+                            foreach (CompDBXmlClass.CompDB compDb in compDBs)
                             {
-                                string payloadHash = pkg.Payload.PayloadItem[0].PayloadHash;
-                                if (payloadHash == boundFile.Item1.AdditionalDigest.Text || payloadHash == boundFile.Item1.Digest)
+                                foreach (CompDBXmlClass.Package pkg in compDb.Packages.Package)
                                 {
-                                    if (pkg.ID.Contains("-") && pkg.ID.Contains(".inf", StringComparison.InvariantCultureIgnoreCase))
+                                    string payloadHash = pkg.Payload.PayloadItem[0].PayloadHash;
+                                    if (payloadHash == boundFile.Item1.AdditionalDigest.Text || payloadHash == boundFile.Item1.Digest)
                                     {
-                                        path = pkg.ID.Split("-")[1].Replace(".inf", ".cab").Replace(".INF", ".CAB");
+                                        if (pkg.ID.Contains("-") && pkg.ID.Contains(".inf", StringComparison.InvariantCultureIgnoreCase))
+                                        {
+                                            path = pkg.ID.Split("-")[1].Replace(".inf", ".cab").Replace(".INF", ".CAB");
+                                        }
+                                        break;
                                     }
-                                    break;
                                 }
                             }
                         }
-                    }
-                    catch { }
+                        catch { }
 
-                    return new UUPFile(
-                        boundFile.Item2,
-                        path,
-                        long.Parse(boundFile.Item1.Size),
-                        boundFile.Item1.AdditionalDigest.Text,
-                        boundFile.Item1.AdditionalDigest.Algorithm);
+                        return new UUPFile(
+                            boundFile.Item2,
+                            path,
+                            long.Parse(boundFile.Item1.Size),
+                            boundFile.Item1.AdditionalDigest.Text,
+                            boundFile.Item1.AdditionalDigest.Algorithm);
+                    });
                 });
 
                 returnCode = await helperDl.DownloadAsync(fileList.ToList(), generalDownloadProgress) ? 0 : -1;
