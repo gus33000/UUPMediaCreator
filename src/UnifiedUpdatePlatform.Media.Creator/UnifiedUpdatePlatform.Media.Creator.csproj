@@ -34,9 +34,5 @@
     <PackageReference Include="JCRCI.LTRData.DiscUtils.Registry" Version="1.0.31" />
     <PackageReference Include="JCRCI.LTRData.DiscUtils.Streams" Version="1.0.31" />
     <PackageReference Include="ini-parser" Version="2.5.2" />
-    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
-    <PackageReference Include="System.Data.DataSetExtensions" Version="4.6.0-preview3.19128.7" />
-    <PackageReference Include="System.IO.FileSystem.AccessControl" Version="6.0.0-preview.5.21301.5" />
-    <PackageReference Include="System.Security.AccessControl" Version="6.0.2-mauipre.1.22102.15" />
   </ItemGroup>
 </Project>

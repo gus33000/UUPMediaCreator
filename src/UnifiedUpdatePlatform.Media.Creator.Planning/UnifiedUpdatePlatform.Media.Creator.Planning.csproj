@@ -13,8 +13,4 @@
     <ProjectReference Include="..\UnifiedUpdatePlatform.Imaging\UnifiedUpdatePlatform.Services.Imaging.csproj" />
     <ProjectReference Include="..\TempManager\UnifiedUpdatePlatform.Services.Temp.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
-    <PackageReference Include="System.Data.DataSetExtensions" Version="4.6.0-preview3.19128.7" />
-  </ItemGroup>
 </Project>
