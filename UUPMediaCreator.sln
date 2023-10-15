@@ -3,63 +3,41 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31606.5
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Applications", "Applications", "{26CB0999-BDB7-470B-A466-743E180E9EC8}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libraries", "Libraries", "{162FE1A9-890A-4101-AFF8-54F6B1483882}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{24BB6CC7-870A-4A61-BAC0-E22BF57CE5F4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnifiedUpdatePlatform.Common.Messaging", "src\UnifiedUpdatePlatform.Common.Messaging\UnifiedUpdatePlatform.Common.Messaging.csproj", "{F74C9D30-95F1-4A07-BA85-F5DA26824B40}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnifiedUpdatePlatform.Common.Messaging.NET", "src\UnifiedUpdatePlatform.Common.Messaging.NET\UnifiedUpdatePlatform.Common.Messaging.NET.csproj", "{F74C9D30-95F1-4A07-BA85-F5DA26824B40}"
-EndProject
-Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "UnifiedUpdatePlatform.Common.Messaging.Shared", "src\UnifiedUpdatePlatform.Common.Messaging.Shared\UnifiedUpdatePlatform.Common.Messaging.Shared.shproj", "{B8CE22ED-2AD7-4FB2-8B72-88F345E29B86}"
-EndProject
-Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "UnifiedUpdatePlatform.Services.WindowsUpdate.Shared", "src\UnifiedUpdatePlatform.Services.WindowsUpdate.Shared\UnifiedUpdatePlatform.Services.WindowsUpdate.Shared.shproj", "{0D26E90F-2CF6-4BA5-B235-72E646A3FF48}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NET", "NET", "{1FAD29D8-1E0C-4A12-B091-205EAB78C214}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnifiedUpdatePlatform.Media.Creator.NET", "src\UnifiedUpdatePlatform.Media.Creator.NET\UnifiedUpdatePlatform.Media.Creator.NET.csproj", "{464E542C-2E57-46BB-8BEC-4A77E0228A17}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnifiedUpdatePlatform.Media.Creator", "src\UnifiedUpdatePlatform.Media.Creator\UnifiedUpdatePlatform.Media.Creator.csproj", "{464E542C-2E57-46BB-8BEC-4A77E0228A17}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Dism", "thirdparty\Microsoft.Dism\Microsoft.Dism.csproj", "{C3E27D93-4CCE-4EC3-8935-9AED651B233E}"
 EndProject
-Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "CompDB.Shared", "src\CompDB.Shared\CompDB.Shared.shproj", "{113C95B3-1CBB-4B02-8BFE-8A623AD67F84}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VirtualHardDiskLib.NET", "src\VirtualHardDiskLib.NET\VirtualHardDiskLib.NET.csproj", "{6B098DD6-800B-42DF-9309-DB29C64DDD29}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VirtualHardDiskLib", "src\VirtualHardDiskLib\VirtualHardDiskLib.csproj", "{6B098DD6-800B-42DF-9309-DB29C64DDD29}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Wim", "thirdparty\Microsoft.Wim\Microsoft.Wim.csproj", "{5E74B6C3-20F3-4ED8-A1E5-98325B77A515}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Privileges.NET", "thirdparty\Privileges.NET\Privileges.NET.csproj", "{43C8BFCA-DB35-41F6-8602-A3E99BDD8EC6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Privileges", "thirdparty\Privileges\Privileges.csproj", "{43C8BFCA-DB35-41F6-8602-A3E99BDD8EC6}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Forwarders", "Forwarders", "{335D091D-458E-41C2-A2BB-9F8216A8FA6B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnifiedUpdatePlatform.Imaging", "src\UnifiedUpdatePlatform.Imaging\UnifiedUpdatePlatform.Imaging.csproj", "{6A920E9F-BC98-4EAA-AA9B-2C9FA82443E9}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Forwarders", "Forwarders", "{CE03294E-582F-47C6-BAD4-BBFA970FF25D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnifiedUpdatePlatform.Services.WindowsUpdate", "src\UnifiedUpdatePlatform.Services.WindowsUpdate\UnifiedUpdatePlatform.Services.WindowsUpdate.csproj", "{B601B162-CDCD-492A-A8CF-747E0D3F6F83}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnifiedUpdatePlatform.Imaging.NET", "src\UnifiedUpdatePlatform.Imaging.NET\UnifiedUpdatePlatform.Imaging.NET.csproj", "{6A920E9F-BC98-4EAA-AA9B-2C9FA82443E9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnifiedUpdatePlatform.Media.Creator.Planning", "src\UnifiedUpdatePlatform.Media.Creator.Planning\UnifiedUpdatePlatform.Media.Creator.Planning.csproj", "{6FA4B632-E5EB-4DFF-9E11-F1093BDEAA6F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnifiedUpdatePlatform.Services.WindowsUpdate.NET", "src\UnifiedUpdatePlatform.Services.WindowsUpdate.NET\UnifiedUpdatePlatform.Services.WindowsUpdate.NET.csproj", "{B601B162-CDCD-492A-A8CF-747E0D3F6F83}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnifiedUpdatePlatform.Media.Creator.Planning.NET", "src\UnifiedUpdatePlatform.Media.Creator.Planning.NET\UnifiedUpdatePlatform.Media.Creator.Planning.NET.csproj", "{6FA4B632-E5EB-4DFF-9E11-F1093BDEAA6F}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CompDB.NET", "src\CompDB.NET\CompDB.NET.csproj", "{A5EF8678-B621-451A-B58E-D1AFDD92751B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CompDB", "src\CompDB\CompDB.csproj", "{A5EF8678-B621-451A-B58E-D1AFDD92751B}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UUPMediaConverter", "src\Applications\UUPMediaConverter\UUPMediaConverter.csproj", "{0BAE9C75-B86F-4976-B24D-7A4B54853342}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UUPDownload", "src\Applications\UUPDownload\UUPDownload.csproj", "{67CB3F20-E40A-41F8-B159-A8857A7DC409}"
 EndProject
-Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "TempManager.Shared", "src\TempManager.Shared\TempManager.Shared.shproj", "{D021F60B-B14A-442C-BB5D-260C7C26E89D}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CLI", "CLI", "{C4A7DBD6-6FB5-410A-9252-922C7909C82C}"
 EndProject
-Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads.Shared", "src\UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads.Shared\UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads.Shared.shproj", "{DBBCCC74-C90E-40AA-8F62-FA431DE85A1A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads", "src\UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads\UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads.csproj", "{FE5F05DF-B9A1-4EE8-9EFF-FEF6C26075AF}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads.NET", "src\UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads.NET\UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads.NET.csproj", "{FE5F05DF-B9A1-4EE8-9EFF-FEF6C26075AF}"
-EndProject
-Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Cabinet.Shared", "src\Cabinet.Shared\Cabinet.Shared.shproj", "{113C95B3-1CBB-4B02-8BFE-8A623AD67F85}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cabinet.NET", "src\Cabinet.NET\Cabinet.NET.csproj", "{C5835DCF-1A20-414B-865A-AA3F8CACE62D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cabinet", "src\Cabinet\Cabinet.csproj", "{C5835DCF-1A20-414B-865A-AA3F8CACE62D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.StoreServices.DisplayCatalog", "src\Microsoft.StoreServices.DisplayCatalog\Microsoft.StoreServices.DisplayCatalog.csproj", "{09F6A782-B790-4734-82BD-2685AACC489F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TempManager.NET", "src\TempManager.NET\TempManager.NET.csproj", "{1AAC4923-A4E5-41D9-87FA-CFB028F802E5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TempManager", "src\TempManager\TempManager.csproj", "{1AAC4923-A4E5-41D9-87FA-CFB028F802E5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -400,46 +378,31 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{24BB6CC7-870A-4A61-BAC0-E22BF57CE5F4} = {162FE1A9-890A-4101-AFF8-54F6B1483882}
-		{F74C9D30-95F1-4A07-BA85-F5DA26824B40} = {335D091D-458E-41C2-A2BB-9F8216A8FA6B}
-		{B8CE22ED-2AD7-4FB2-8B72-88F345E29B86} = {24BB6CC7-870A-4A61-BAC0-E22BF57CE5F4}
-		{0D26E90F-2CF6-4BA5-B235-72E646A3FF48} = {24BB6CC7-870A-4A61-BAC0-E22BF57CE5F4}
-		{1FAD29D8-1E0C-4A12-B091-205EAB78C214} = {162FE1A9-890A-4101-AFF8-54F6B1483882}
-		{464E542C-2E57-46BB-8BEC-4A77E0228A17} = {1FAD29D8-1E0C-4A12-B091-205EAB78C214}
-		{C3E27D93-4CCE-4EC3-8935-9AED651B233E} = {1FAD29D8-1E0C-4A12-B091-205EAB78C214}
-		{113C95B3-1CBB-4B02-8BFE-8A623AD67F84} = {24BB6CC7-870A-4A61-BAC0-E22BF57CE5F4}
-		{6B098DD6-800B-42DF-9309-DB29C64DDD29} = {1FAD29D8-1E0C-4A12-B091-205EAB78C214}
-		{5E74B6C3-20F3-4ED8-A1E5-98325B77A515} = {1FAD29D8-1E0C-4A12-B091-205EAB78C214}
-		{43C8BFCA-DB35-41F6-8602-A3E99BDD8EC6} = {1FAD29D8-1E0C-4A12-B091-205EAB78C214}
-		{335D091D-458E-41C2-A2BB-9F8216A8FA6B} = {1FAD29D8-1E0C-4A12-B091-205EAB78C214}
-		{6A920E9F-BC98-4EAA-AA9B-2C9FA82443E9} = {1FAD29D8-1E0C-4A12-B091-205EAB78C214}
-		{B601B162-CDCD-492A-A8CF-747E0D3F6F83} = {335D091D-458E-41C2-A2BB-9F8216A8FA6B}
-		{6FA4B632-E5EB-4DFF-9E11-F1093BDEAA6F} = {1FAD29D8-1E0C-4A12-B091-205EAB78C214}
-		{A5EF8678-B621-451A-B58E-D1AFDD92751B} = {335D091D-458E-41C2-A2BB-9F8216A8FA6B}
+		{F74C9D30-95F1-4A07-BA85-F5DA26824B40} = {162FE1A9-890A-4101-AFF8-54F6B1483882}
+		{464E542C-2E57-46BB-8BEC-4A77E0228A17} = {162FE1A9-890A-4101-AFF8-54F6B1483882}
+		{C3E27D93-4CCE-4EC3-8935-9AED651B233E} = {162FE1A9-890A-4101-AFF8-54F6B1483882}
+		{6B098DD6-800B-42DF-9309-DB29C64DDD29} = {162FE1A9-890A-4101-AFF8-54F6B1483882}
+		{5E74B6C3-20F3-4ED8-A1E5-98325B77A515} = {162FE1A9-890A-4101-AFF8-54F6B1483882}
+		{43C8BFCA-DB35-41F6-8602-A3E99BDD8EC6} = {162FE1A9-890A-4101-AFF8-54F6B1483882}
+		{6A920E9F-BC98-4EAA-AA9B-2C9FA82443E9} = {162FE1A9-890A-4101-AFF8-54F6B1483882}
+		{B601B162-CDCD-492A-A8CF-747E0D3F6F83} = {162FE1A9-890A-4101-AFF8-54F6B1483882}
+		{6FA4B632-E5EB-4DFF-9E11-F1093BDEAA6F} = {162FE1A9-890A-4101-AFF8-54F6B1483882}
+		{A5EF8678-B621-451A-B58E-D1AFDD92751B} = {162FE1A9-890A-4101-AFF8-54F6B1483882}
 		{0BAE9C75-B86F-4976-B24D-7A4B54853342} = {C4A7DBD6-6FB5-410A-9252-922C7909C82C}
 		{67CB3F20-E40A-41F8-B159-A8857A7DC409} = {C4A7DBD6-6FB5-410A-9252-922C7909C82C}
-		{D021F60B-B14A-442C-BB5D-260C7C26E89D} = {24BB6CC7-870A-4A61-BAC0-E22BF57CE5F4}
-		{DBBCCC74-C90E-40AA-8F62-FA431DE85A1A} = {24BB6CC7-870A-4A61-BAC0-E22BF57CE5F4}
-		{FE5F05DF-B9A1-4EE8-9EFF-FEF6C26075AF} = {335D091D-458E-41C2-A2BB-9F8216A8FA6B}
-		{113C95B3-1CBB-4B02-8BFE-8A623AD67F85} = {24BB6CC7-870A-4A61-BAC0-E22BF57CE5F4}
-		{C5835DCF-1A20-414B-865A-AA3F8CACE62D} = {335D091D-458E-41C2-A2BB-9F8216A8FA6B}
-		{09F6A782-B790-4734-82BD-2685AACC489F} = {1FAD29D8-1E0C-4A12-B091-205EAB78C214}
-		{1AAC4923-A4E5-41D9-87FA-CFB028F802E5} = {335D091D-458E-41C2-A2BB-9F8216A8FA6B}
+		{FE5F05DF-B9A1-4EE8-9EFF-FEF6C26075AF} = {162FE1A9-890A-4101-AFF8-54F6B1483882}
+		{C5835DCF-1A20-414B-865A-AA3F8CACE62D} = {162FE1A9-890A-4101-AFF8-54F6B1483882}
+		{09F6A782-B790-4734-82BD-2685AACC489F} = {162FE1A9-890A-4101-AFF8-54F6B1483882}
+		{1AAC4923-A4E5-41D9-87FA-CFB028F802E5} = {162FE1A9-890A-4101-AFF8-54F6B1483882}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {FEE89471-4FE8-4620-991F-4EBAD0F4CFEA}
 	EndGlobalSection
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
-		src\UnifiedUpdatePlatform.Services.WindowsUpdate.Shared\UnifiedUpdatePlatform.Services.WindowsUpdate.Shared.projitems*{0d26e90f-2cf6-4ba5-b235-72e646a3ff48}*SharedItemsImports = 13
-		src\CompDB.Shared\CompDB.Shared.projitems*{113c95b3-1cbb-4b02-8bfe-8a623ad67f84}*SharedItemsImports = 13
-		src\Cabinet.Shared\Cabinet.Shared.projitems*{113c95b3-1cbb-4b02-8bfe-8a623ad67f85}*SharedItemsImports = 13
 		src\TempManager.Shared\TempManager.Shared.projitems*{1aac4923-a4e5-41d9-87fa-cfb028f802e5}*SharedItemsImports = 5
 		src\CompDB.Shared\CompDB.Shared.projitems*{a5ef8678-b621-451a-b58e-d1afdd92751b}*SharedItemsImports = 5
 		src\UnifiedUpdatePlatform.Services.WindowsUpdate.Shared\UnifiedUpdatePlatform.Services.WindowsUpdate.Shared.projitems*{b601b162-cdcd-492a-a8cf-747e0d3f6f83}*SharedItemsImports = 5
-		src\UnifiedUpdatePlatform.Common.Messaging.Shared\UnifiedUpdatePlatform.Common.Messaging.Shared.projitems*{b8ce22ed-2ad7-4fb2-8b72-88f345e29b86}*SharedItemsImports = 13
 		src\Cabinet.Shared\Cabinet.Shared.projitems*{c5835dcf-1a20-414b-865a-aa3f8cace62d}*SharedItemsImports = 5
-		src\TempManager.Shared\TempManager.Shared.projitems*{d021f60b-b14a-442c-bb5d-260c7c26e89d}*SharedItemsImports = 13
-		src\UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads.Shared\UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads.Shared.projitems*{dbbccc74-c90e-40aa-8f62-fa431de85a1a}*SharedItemsImports = 13
 		src\UnifiedUpdatePlatform.Common.Messaging.Shared\UnifiedUpdatePlatform.Common.Messaging.Shared.projitems*{f74c9d30-95f1-4a07-ba85-f5da26824b40}*SharedItemsImports = 5
 		src\UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads.Shared\UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads.Shared.projitems*{fe5f05df-b9a1-4ee8-9eff-fef6c26075af}*SharedItemsImports = 5
 	EndGlobalSection

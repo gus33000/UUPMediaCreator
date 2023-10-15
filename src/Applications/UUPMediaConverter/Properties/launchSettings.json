@@ -2,7 +2,7 @@
   "profiles": {
     "UUPMediaConverter": {
       "commandName": "Project",
-      "commandLineArgs": "-u C:\\Users\\Gus\\Documents\\CLI\\10.0.22631.2428.ni_release_svc_prod1.230929-1800_arm64fre_52b4ad2d28a8 -i C:\\Users\\Gus\\Documents\\CLI\\Windows.iso -l en-US -e Professional -c XPRESS"
+      "commandLineArgs": "-l en-US -u C:\\Users\\Gus\\Documents\\CLI\\10.0.22621.2283.ni_release_svc_prod1.230831-1007_amd64fre_8269aebf51bc -i C:\\Users\\Gus\\Documents\\CLI\\Win11_22H2_22621.2283_English_x64.iso -t C:\\Users\\Gus\\Documents\\CLI\\tmp"
     }
   }
 }

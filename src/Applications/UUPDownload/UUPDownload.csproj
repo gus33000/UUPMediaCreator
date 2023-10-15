@@ -10,12 +10,12 @@
     <Platforms>AnyCPU;x64;x86;arm64</Platforms>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Cabinet.NET\Cabinet.NET.csproj" />
-    <ProjectReference Include="..\..\UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads.NET\UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads.NET.csproj" />
-    <ProjectReference Include="..\..\CompDB.NET\CompDB.NET.csproj" />
-    <ProjectReference Include="..\..\UnifiedUpdatePlatform.Media.Creator.Planning.NET\UnifiedUpdatePlatform.Media.Creator.Planning.NET.csproj" />
-    <ProjectReference Include="..\..\TempManager.NET\TempManager.NET.csproj" />
-    <ProjectReference Include="..\..\UnifiedUpdatePlatform.Services.WindowsUpdate.NET\UnifiedUpdatePlatform.Services.WindowsUpdate.NET.csproj" />
+    <ProjectReference Include="..\..\Cabinet\Cabinet.csproj" />
+    <ProjectReference Include="..\..\UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads\UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads.csproj" />
+    <ProjectReference Include="..\..\CompDB\CompDB.csproj" />
+    <ProjectReference Include="..\..\UnifiedUpdatePlatform.Media.Creator.Planning\UnifiedUpdatePlatform.Media.Creator.Planning.csproj" />
+    <ProjectReference Include="..\..\TempManager\TempManager.csproj" />
+    <ProjectReference Include="..\..\UnifiedUpdatePlatform.Services.WindowsUpdate\UnifiedUpdatePlatform.Services.WindowsUpdate.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="CommandLineParser" Version="2.9.1" />

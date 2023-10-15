@@ -71,6 +71,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
 
-```\Privileges.NET``` is licensed under the terms available for https://www.codeproject.com/articles/105506/getting-elevated-privileges-on-demand-using-c
+```\Privileges``` is licensed under the terms available for https://www.codeproject.com/articles/105506/getting-elevated-privileges-on-demand-using-c
 
 ```https://www.codeproject.com/info/cpol10.aspx```

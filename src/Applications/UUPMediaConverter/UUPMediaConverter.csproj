@@ -11,9 +11,9 @@
     <Platforms>AnyCPU;x64;x86;arm64</Platforms>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\UnifiedUpdatePlatform.Common.Messaging.NET\UnifiedUpdatePlatform.Common.Messaging.NET.csproj" />
-    <ProjectReference Include="..\..\UnifiedUpdatePlatform.Media.Creator.NET\UnifiedUpdatePlatform.Media.Creator.NET.csproj" />
-    <ProjectReference Include="..\..\Cabinet.NET\Cabinet.NET.csproj" />
+    <ProjectReference Include="..\..\UnifiedUpdatePlatform.Common.Messaging\UnifiedUpdatePlatform.Common.Messaging.csproj" />
+    <ProjectReference Include="..\..\UnifiedUpdatePlatform.Media.Creator\UnifiedUpdatePlatform.Media.Creator.csproj" />
+    <ProjectReference Include="..\..\Cabinet\Cabinet.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="CommandLineParser" Version="2.9.1" />

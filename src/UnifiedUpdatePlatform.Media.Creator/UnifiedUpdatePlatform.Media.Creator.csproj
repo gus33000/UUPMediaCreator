@@ -1,0 +1,42 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <OutputType>Library</OutputType>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <Platforms>AnyCPU;x64;x86;arm64</Platforms>
+    <OutputPath>$(SolutionDir)build\$(Platform)\$(Configuration)\UnifiedUpdatePlatform.Media.Creator\</OutputPath>
+    <IntermediateOutputPath>$(SolutionDir)intermediate\$(Platform)\$(Configuration)\UnifiedUpdatePlatform.Media.Creator\</IntermediateOutputPath>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\thirdparty\Microsoft.Dism\Microsoft.Dism.csproj" />
+    <ProjectReference Include="..\CompDB\CompDB.csproj" />
+    <ProjectReference Include="..\UnifiedUpdatePlatform.Imaging\UnifiedUpdatePlatform.Imaging.csproj" />
+    <ProjectReference Include="..\UnifiedUpdatePlatform.Common.Messaging\UnifiedUpdatePlatform.Common.Messaging.csproj" />
+    <ProjectReference Include="..\Cabinet\Cabinet.csproj" />
+    <ProjectReference Include="..\..\thirdparty\Microsoft.Wim\Microsoft.Wim.csproj" />
+    <ProjectReference Include="..\..\thirdparty\Privileges\Privileges.csproj" />
+    <ProjectReference Include="..\UnifiedUpdatePlatform.Media.Creator.Planning\UnifiedUpdatePlatform.Media.Creator.Planning.csproj" />
+    <ProjectReference Include="..\TempManager\TempManager.csproj" />
+    <ProjectReference Include="..\VirtualHardDiskLib\VirtualHardDiskLib.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="CDImage\cdimage.exe">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Settings\Settings.ini">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="JCRCI.LTRData.DiscUtils.Core" Version="1.0.31" />
+    <PackageReference Include="JCRCI.LTRData.DiscUtils.Registry" Version="1.0.31" />
+    <PackageReference Include="JCRCI.LTRData.DiscUtils.Streams" Version="1.0.31" />
+    <PackageReference Include="ini-parser" Version="2.5.2" />
+    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+    <PackageReference Include="System.Data.DataSetExtensions" Version="4.6.0-preview3.19128.7" />
+    <PackageReference Include="System.IO.FileSystem.AccessControl" Version="6.0.0-preview.5.21301.5" />
+    <PackageReference Include="System.Security.AccessControl" Version="6.0.2-mauipre.1.22102.15" />
+  </ItemGroup>
+</Project>

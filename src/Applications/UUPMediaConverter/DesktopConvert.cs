@@ -25,7 +25,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Security.Principal;
-using UnifiedUpdatePlatform.Media.Creator.NET;
+using UnifiedUpdatePlatform.Media.Creator;
 
 namespace UUPMediaConverter
 {
