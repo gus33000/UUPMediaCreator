@@ -45,9 +45,9 @@ namespace Microsoft.Wim
             /// Returns TRUE and sets the LastError to ERROR_SUCCESS on the successful completion of this function. Returns
             /// FALSE in case of a failure and sets the LastError to the appropriate Win32® error value.
             /// </returns>
-            [LibraryImport(WimgApiDllName, SetLastError = true, StringMarshalling = StringMarshalling.Utf16)]
+            [DllImport(WimgApiDllName, CallingConvention = WimgApiCallingConvention, CharSet = WimgApiCharSet, SetLastError = true)]
             [return: MarshalAs(UnmanagedType.Bool)]
-            public static partial bool WIMUnregisterLogFile(string pszLogFile);
+            public static extern bool WIMUnregisterLogFile(string pszLogFile);
         }
     }
 }

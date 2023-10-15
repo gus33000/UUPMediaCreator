@@ -89,9 +89,9 @@ namespace Microsoft.Wim
             /// cbMountInfoLength parameter is not large enough to hold the data, the function sets the value of LastError to
             /// ERROR_INSUFFICIENT_BUFFER and stores the required buffer size in the variable pointed to by pcbReturnLength.
             /// </returns>
-            [LibraryImport(WimgApiDllName, SetLastError = true)]
+            [DllImport(WimgApiDllName, CallingConvention = WimgApiCallingConvention, CharSet = WimgApiCharSet, SetLastError = true)]
             [return: MarshalAs(UnmanagedType.Bool)]
-            public static partial bool WIMGetMountedImageInfoFromHandle(WimHandle hImage, WimMountedImageInfoLevels fInfoLevelId, IntPtr pMountInfo, DWORD cbMountInfoLength, out DWORD pcbReturnLength);
+            public static extern bool WIMGetMountedImageInfoFromHandle(WimHandle hImage, WimMountedImageInfoLevels fInfoLevelId, IntPtr pMountInfo, DWORD cbMountInfoLength, out DWORD pcbReturnLength);
         }
     }
 }

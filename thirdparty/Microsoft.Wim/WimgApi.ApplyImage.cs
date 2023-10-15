@@ -111,9 +111,9 @@ namespace Microsoft.Wim
             /// register a callback that handles the WIM_MSG_PROCESS message. To obtain additional file information from the
             /// WIM_MSG_FILEINFO message, specify the WIM_FLAG_FILEINFO.
             /// </remarks>
-            [LibraryImport(WimgApiDllName, SetLastError = true, StringMarshalling = StringMarshalling.Utf16)]
+            [DllImport(WimgApiDllName, CallingConvention = WimgApiCallingConvention, CharSet = WimgApiCharSet, SetLastError = true)]
             [return: MarshalAs(UnmanagedType.Bool)]
-            public static partial bool WIMApplyImage(WimHandle hImage, string pszPath, DWORD dwApplyFlags);
+            public static extern bool WIMApplyImage(WimHandle hImage, string pszPath, DWORD dwApplyFlags);
         }
     }
 }

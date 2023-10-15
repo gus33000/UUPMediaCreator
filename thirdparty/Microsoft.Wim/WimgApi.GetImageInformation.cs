@@ -146,9 +146,9 @@ namespace Microsoft.Wim
             /// When the function succeeds, then the data describing the image is in Unicode XML format. Use the LocalFree
             /// function to free the memory pointed to by the ppvImageInfo parameter when no longer needed.
             /// </remarks>
-            [LibraryImport(WimgApiDllName, SetLastError = true)]
+            [DllImport(WimgApiDllName, CallingConvention = WimgApiCallingConvention, CharSet = WimgApiCharSet, SetLastError = true)]
             [return: MarshalAs(UnmanagedType.Bool)]
-            public static partial bool WIMGetImageInformation(WimHandle hImage, out IntPtr ppvImageInfo, out DWORD pcbImageInfo);
+            public static extern bool WIMGetImageInformation(WimHandle hImage, out IntPtr ppvImageInfo, out DWORD pcbImageInfo);
         }
     }
 }

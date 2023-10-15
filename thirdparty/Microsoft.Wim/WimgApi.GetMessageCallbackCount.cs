@@ -46,8 +46,8 @@ namespace Microsoft.Wim
             /// </summary>
             /// <param name="hWim">The handle to a .wim file returned by WIMCreateFile.</param>
             /// <returns>The return value is the number of message callback functions currently registered.</returns>
-            [LibraryImport(WimgApiDllName, SetLastError = true)]
-            public static partial DWORD WIMGetMessageCallbackCount(WimHandle hWim);
+            [DllImport(WimgApiDllName, CallingConvention = WimgApiCallingConvention, CharSet = WimgApiCharSet, SetLastError = true)]
+            public static extern DWORD WIMGetMessageCallbackCount(WimHandle hWim);
         }
     }
 }

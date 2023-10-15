@@ -124,9 +124,9 @@ namespace Microsoft.Wim
             /// If the function fails, then the return value is zero. To obtain extended error information, call the GetLastError
             /// function.
             /// </returns>
-            [LibraryImport(WimgApiDllName, SetLastError = true)]
+            [DllImport(WimgApiDllName, CallingConvention = WimgApiCallingConvention, CharSet = WimgApiCharSet, SetLastError = true)]
             [return: MarshalAs(UnmanagedType.Bool)]
-            public static partial bool WIMUnregisterMessageCallback([Optional] WimHandle hWim, WimgApi.WIMMessageCallback fpMessageProc);
+            public static extern bool WIMUnregisterMessageCallback([Optional] WimHandle hWim, WimgApi.WIMMessageCallback fpMessageProc);
         }
     }
 }

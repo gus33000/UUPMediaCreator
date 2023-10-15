@@ -118,9 +118,9 @@ namespace Microsoft.Wim
             /// directory. After the successful completion of this operation, users or applications will not be able to access the
             /// contents of the image previously mapped under the mount directory.
             /// </remarks>
-            [LibraryImport(WimgApiDllName, SetLastError = true, StringMarshalling = StringMarshalling.Utf16)]
+            [DllImport(WimgApiDllName, CallingConvention = WimgApiCallingConvention, CharSet = WimgApiCharSet, SetLastError = true)]
             [return: MarshalAs(UnmanagedType.Bool)]
-            public static partial bool WIMUnmountImage(string pszMountPath, string pszWimFileName, DWORD dwImageIndex, [MarshalAs(UnmanagedType.Bool)] bool bCommitChanges);
+            public static extern bool WIMUnmountImage(string pszMountPath, string pszWimFileName, DWORD dwImageIndex, [MarshalAs(UnmanagedType.Bool)] bool bCommitChanges);
 
             /// <summary>
             /// Unmounts an image from a Windows® image (.wim) that was previously mounted with the WIMMountImageHandle function.
@@ -136,9 +136,9 @@ namespace Microsoft.Wim
             /// mount directory. After the successful completion of this operation, users or applications will not be able to access
             /// the contents of the image previously mapped under the mount directory.
             /// </remarks>
-            [LibraryImport(WimgApiDllName, SetLastError = true)]
+            [DllImport(WimgApiDllName, CallingConvention = WimgApiCallingConvention, CharSet = WimgApiCharSet, SetLastError = true)]
             [return: MarshalAs(UnmanagedType.Bool)]
-            public static partial bool WIMUnmountImageHandle(WimHandle hImage, DWORD dwUnmountFlags);
+            public static extern bool WIMUnmountImageHandle(WimHandle hImage, DWORD dwUnmountFlags);
         }
     }
 }

@@ -63,9 +63,9 @@ namespace Microsoft.Wim
             /// FALSE in case of a failure and sets the LastError to the appropriate Win32® error value.
             /// </returns>
             /// <remarks>Use the WIMUnmountImageHandle function to unmount the image from the mount directory.</remarks>
-            [LibraryImport(WimgApiDllName, SetLastError = true, StringMarshalling = StringMarshalling.Utf16)]
+            [DllImport(WimgApiDllName, CallingConvention = WimgApiCallingConvention, CharSet = WimgApiCharSet, SetLastError = true)]
             [return: MarshalAs(UnmanagedType.Bool)]
-            public static partial bool WIMGetMountedImageHandle(string pszMountPath, DWORD dwFlags, out WimHandle phWimHandle, out WimHandle phImageHandle);
+            public static extern bool WIMGetMountedImageHandle(string pszMountPath, DWORD dwFlags, out WimHandle phWimHandle, out WimHandle phImageHandle);
         }
     }
 }

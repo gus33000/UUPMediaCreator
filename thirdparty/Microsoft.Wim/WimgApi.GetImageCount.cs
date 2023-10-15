@@ -31,8 +31,8 @@ namespace Microsoft.Wim
             /// The return value is the number of images in the .wim file. If this value is zero, then the image file is
             /// invalid or does not contain any images that can be applied.
             /// </returns>
-            [LibraryImport(WimgApiDllName, SetLastError = true)]
-            public static partial DWORD WIMGetImageCount(WimHandle hWim);
+            [DllImport(WimgApiDllName, CallingConvention = WimgApiCallingConvention, CharSet = WimgApiCharSet, SetLastError = true)]
+            public static extern DWORD WIMGetImageCount(WimHandle hWim);
         }
     }
 }

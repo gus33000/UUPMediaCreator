@@ -69,7 +69,7 @@ namespace Microsoft.Wim
             /// Gets the current FILETIME as a <see cref="DateTime"/> object.
             /// </summary>
             /// <returns>A <see cref="DateTime"/> object that represents the FILETIME.</returns>
-            public readonly DateTime ToDateTime()
+            public DateTime ToDateTime()
             {
                 // Convert the file time to a long and then to a DateTime
                 return DateTime.FromFileTimeUtc(((long)dwHighDateTime << 32) | dwLowDateTime);
@@ -80,7 +80,7 @@ namespace Microsoft.Wim
             /// </summary>
             /// <returns>A string representation of value of the current FILETIME object.</returns>
             /// <exception cref="ArgumentOutOfRangeException">The date and time is outside the range of dates supported by the calendar used by the current culture.</exception>
-            public override readonly string ToString()
+            public override string ToString()
             {
                 // Call the DateTime.ToString() method
                 return ((DateTime)this).ToString(CultureInfo.CurrentCulture);
@@ -92,7 +92,7 @@ namespace Microsoft.Wim
             /// <param name="provider">An object that supplies culture-specific formatting information.</param>
             /// <returns>A string representation of value of the current FILETIME object as specified by provider.</returns>
             /// <exception cref="ArgumentOutOfRangeException">The date and time is outside the range of dates supported by the calendar used by provider.</exception>
-            public readonly string ToString(IFormatProvider provider)
+            public string ToString(IFormatProvider provider)
             {
                 // Call the DateTime.ToString() method
                 return ((DateTime)this).ToString(provider);
@@ -107,7 +107,7 @@ namespace Microsoft.Wim
             /// -or-
             /// format does not contain a valid custom format pattern.</exception>
             /// <exception cref="ArgumentOutOfRangeException">The date and time is outside the range of dates supported by the calendar used by the current culture.</exception>
-            public readonly string ToString(string format)
+            public string ToString(string format)
             {
                 // Call the DateTime.ToString() method
                 return ((DateTime)this).ToString(format, CultureInfo.CurrentCulture);
@@ -123,7 +123,7 @@ namespace Microsoft.Wim
             /// -or-
             /// format does not contain a valid custom format pattern.</exception>
             /// <exception cref="ArgumentOutOfRangeException">The date and time is outside the range of dates supported by the calendar used by the current culture.</exception>
-            public readonly string ToString(string format, IFormatProvider provider)
+            public string ToString(string format, IFormatProvider provider)
             {
                 // Call the DateTime.ToString() method
                 return ((DateTime)this).ToString(format, provider);
@@ -353,7 +353,7 @@ namespace Microsoft.Wim
             /// <summary>
             /// Gets the file size by combining FileSizeLow and FileSizeHigh.
             /// </summary>
-            public readonly long FileSize => (FileSizeHigh * ((long)DWORD.MaxValue + 1)) + FileSizeLow;
+            public long FileSize => (FileSizeHigh * ((long)DWORD.MaxValue + 1)) + FileSizeLow;
         }
     }
 }

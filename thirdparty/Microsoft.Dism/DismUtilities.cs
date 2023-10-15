@@ -104,7 +104,7 @@ namespace Microsoft.Dism
     /// <summary>
     /// Provides utility functions related to DismApi.
     /// </summary>
-    internal static partial class DismUtilities
+    internal static class DismUtilities
     {
         /// <summary>
         /// The handle of the loaded DISM generational library.
@@ -299,7 +299,7 @@ namespace Microsoft.Dism
         /// <summary>
         /// Native methods necessary for manually loading and unloading Win32 libraries.
         /// </summary>
-        internal static partial class NativeMethods
+        internal static class NativeMethods
         {
             /// <summary>
             /// Frees the loaded dynamic-link library (DLL) module and, if necessary, decrements its reference count. When the reference count reaches zero, the module is unloaded from the address space of the calling process and the handle is no longer valid.
@@ -318,8 +318,8 @@ namespace Microsoft.Dism
             /// <returns>If the function succeeds, the return value is a handle to the module.
             ///
             /// If the function fails, the return value is NULL.To get extended error information, call <see cref="Marshal.GetLastWin32Error" />.</returns>
-            [LibraryImport("kernel32.dll")]
-            public static partial IntPtr LoadLibrary([MarshalAs(UnmanagedType.LPWStr)] string lpFileName);
+            [DllImport("kernel32.dll")]
+            public static extern IntPtr LoadLibrary([MarshalAs(UnmanagedType.LPWStr)] string lpFileName);
         }
     }
 }

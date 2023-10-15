@@ -145,8 +145,8 @@ namespace Microsoft.Wim
             /// specified, then the callback function receives messages for all image handles.
             /// Call the WIMUnregisterMessageCallback function when the callback function is no longer required.
             /// </remarks>
-            [LibraryImport(WimgApiDllName, SetLastError = true)]
-            public static partial DWORD WIMRegisterMessageCallback([Optional] WimHandle hWim, WimgApi.WIMMessageCallback fpMessageProc, IntPtr pvUserData);
+            [DllImport(WimgApiDllName, CallingConvention = WimgApiCallingConvention, CharSet = WimgApiCharSet, SetLastError = true)]
+            public static extern DWORD WIMRegisterMessageCallback([Optional] WimHandle hWim, WimgApi.WIMMessageCallback fpMessageProc, IntPtr pvUserData);
         }
     }
 }

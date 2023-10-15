@@ -96,9 +96,9 @@ namespace Microsoft.Wim
             /// still access the contents of the image mapped under the mount directory. Use the WIMUnmountImageHandle function to
             /// unmount the image from the mount directory using an image handle.
             /// </remarks>
-            [LibraryImport(WimgApiDllName, SetLastError = true)]
+            [DllImport(WimgApiDllName, CallingConvention = WimgApiCallingConvention, CharSet = WimgApiCharSet, SetLastError = true)]
             [return: MarshalAs(UnmanagedType.Bool)]
-            public static partial bool WIMCommitImageHandle(WimHandle hImage, DWORD dwCommitFlags, out WimHandle phNewImageHandle);
+            public static extern bool WIMCommitImageHandle(WimHandle hImage, DWORD dwCommitFlags, out WimHandle phNewImageHandle);
         }
     }
 }

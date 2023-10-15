@@ -121,9 +121,9 @@ namespace Microsoft.Wim
             /// If NULL is passed in for the pszPath parameter and WIM_REFERENCE_REPLACE is passed for the dwFlags parameter,
             /// then the reference list is completely cleared, and no file resources are extracted during the WIMApplyImage function.
             /// </remarks>
-            [LibraryImport(WimgApiDllName, SetLastError = true, StringMarshalling = StringMarshalling.Utf16)]
+            [DllImport(WimgApiDllName, CallingConvention = WimgApiCallingConvention, CharSet = WimgApiCharSet, SetLastError = true)]
             [return: MarshalAs(UnmanagedType.Bool)]
-            public static partial bool WIMSetReferenceFile(WimHandle hWim, string pszPath, DWORD dwFlags);
+            public static extern bool WIMSetReferenceFile(WimHandle hWim, string pszPath, DWORD dwFlags);
         }
     }
 }

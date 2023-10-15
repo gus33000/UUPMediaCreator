@@ -3,6 +3,7 @@
 // Licensed under the MIT license.
 
 using System;
+using System.Runtime.ConstrainedExecution;
 using System.Runtime.InteropServices;
 
 namespace Microsoft.Dism
@@ -86,6 +87,7 @@ namespace Microsoft.Dism
             /// HRESULT WINAPI DismOpenSession(_In_ PCWSTR ImagePath, _In_opt_ PCWSTR WindowsDirectory, _In_opt_ WCHAR* SystemDrive, _Out_ DismSession* Session);
             /// </remarks>
             [DllImport(DismDllName, CharSet = DismCharacterSet)]
+            [ReliabilityContract(Consistency.WillNotCorruptState, Cer.MayFail)]
             [return: MarshalAs(UnmanagedType.Error)]
             public static extern int DismOpenSession(string imagePath, string? windowsDirectory, string? systemDrive, out IntPtr session);
         }

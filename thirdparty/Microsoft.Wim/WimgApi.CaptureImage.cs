@@ -107,8 +107,8 @@ namespace Microsoft.Wim
             /// If the function fails, the return value is NULL. To obtain extended error information, call the GetLastError function.
             /// </returns>
             /// <remarks>To obtain information during an image capture, see the WIMRegisterMessageCallback function.</remarks>
-            [LibraryImport(WimgApiDllName, SetLastError = true, StringMarshalling = StringMarshalling.Utf16)]
-            public static partial WimHandle WIMCaptureImage(WimHandle hWim, string pszPath, DWORD dwCaptureFlags);
+            [DllImport(WimgApiDllName, CallingConvention = WimgApiCallingConvention, CharSet = WimgApiCharSet, SetLastError = true)]
+            public static extern WimHandle WIMCaptureImage(WimHandle hWim, string pszPath, DWORD dwCaptureFlags);
         }
     }
 }

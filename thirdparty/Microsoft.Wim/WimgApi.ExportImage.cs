@@ -89,9 +89,9 @@ namespace Microsoft.Wim
             /// If zero is passed in for the dwFlags parameter and the image is already stored in the destination, the function will
             /// return FALSE and set the LastError to ERROR_ALREADY_EXISTS.
             /// </remarks>
-            [LibraryImport(WimgApiDllName, SetLastError = true)]
+            [DllImport(WimgApiDllName, CallingConvention = WimgApiCallingConvention, CharSet = WimgApiCharSet, SetLastError = true)]
             [return: MarshalAs(UnmanagedType.Bool)]
-            public static partial bool WIMExportImage(WimHandle hImage, WimHandle hWim, uint dwFlags);
+            public static extern bool WIMExportImage(WimHandle hImage, WimHandle hWim, uint dwFlags);
         }
     }
 }

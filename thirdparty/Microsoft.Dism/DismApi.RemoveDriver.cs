@@ -38,8 +38,8 @@ namespace Microsoft.Dism
             /// <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/hh824729.aspx" />
             /// HRESULT WINAPI DismRemoveDriver (_In_ DismSession Session, _In_ PCWSTR DriverPath);
             /// </remarks>
-            [LibraryImport(DismDllName, StringMarshalling = StringMarshalling.Utf16)]
-            public static partial int DismRemoveDriver(DismSession session, string driverPath);
+            [DllImport(DismDllName, CharSet = DismCharacterSet)]
+            public static extern int DismRemoveDriver(DismSession session, string driverPath);
         }
     }
 }

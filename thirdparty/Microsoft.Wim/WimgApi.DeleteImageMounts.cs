@@ -36,9 +36,9 @@ namespace Microsoft.Wim
             /// If the function succeeds, the return value is nonzero.
             /// If the function fails, the return value is zero. To obtain extended error information, call the GetLastError function.
             /// </returns>
-            [LibraryImport(WimgApiDllName, SetLastError = true)]
+            [DllImport(WimgApiDllName, CallingConvention = WimgApiCallingConvention, CharSet = WimgApiCharSet, SetLastError = true)]
             [return: MarshalAs(UnmanagedType.Bool)]
-            public static partial bool WIMDeleteImageMounts(DWORD dwDeleteFlags);
+            public static extern bool WIMDeleteImageMounts(DWORD dwDeleteFlags);
         }
     }
 }

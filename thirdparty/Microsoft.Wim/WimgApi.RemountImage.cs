@@ -61,9 +61,9 @@ namespace Microsoft.Wim
             /// directory. After the successful completion of this operation, users or applications can access the contents of the
             /// image mapped under the mount directory. Use the WIMUnmountImage function to unmount the image from the mount directory.
             /// </remarks>
-            [LibraryImport(WimgApiDllName, SetLastError = true, StringMarshalling = StringMarshalling.Utf16)]
+            [DllImport(WimgApiDllName, CallingConvention = WimgApiCallingConvention, CharSet = WimgApiCharSet, SetLastError = true)]
             [return: MarshalAs(UnmanagedType.Bool)]
-            public static partial bool WIMRemountImage(string pszMountPath, DWORD dwFlags);
+            public static extern bool WIMRemountImage(string pszMountPath, DWORD dwFlags);
         }
     }
 }

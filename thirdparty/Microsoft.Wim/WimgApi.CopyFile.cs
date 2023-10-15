@@ -150,9 +150,9 @@ namespace Microsoft.Wim
             /// If the destination file already exists and has the FILE_ATTRIBUTE_HIDDEN or FILE_ATTRIBUTE_READONLY attribute set, this
             /// function fails with ERROR_ACCESS_DENIED.
             /// </remarks>
-            [LibraryImport(WimgApiDllName, SetLastError = true, StringMarshalling = StringMarshalling.Utf16)]
+            [DllImport(WimgApiDllName, CallingConvention = WimgApiCallingConvention, CharSet = WimgApiCharSet, SetLastError = true)]
             [return: MarshalAs(UnmanagedType.Bool)]
-            public static partial bool WIMCopyFile(string pszExistingFileName, string pszNewFileName, CopyProgressRoutine pProgressRoutine, IntPtr pvData, [MarshalAs(UnmanagedType.Bool)] ref bool pbCancel, DWORD dwCopyFlags);
+            public static extern bool WIMCopyFile(string pszExistingFileName, string pszNewFileName, CopyProgressRoutine pProgressRoutine, IntPtr pvData, [MarshalAs(UnmanagedType.Bool)] ref bool pbCancel, DWORD dwCopyFlags);
         }
     }
 }

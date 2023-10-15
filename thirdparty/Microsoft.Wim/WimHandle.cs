@@ -5,6 +5,7 @@
 using Microsoft.Win32.SafeHandles;
 using System;
 using System.ComponentModel;
+using System.Runtime.ConstrainedExecution;
 using System.Runtime.InteropServices;
 
 namespace Microsoft.Wim
@@ -51,9 +52,9 @@ namespace Microsoft.Wim
             /// Use the WIMCloseHandle function to close handles returned by calls to the WIMCreateFile, WIMLoadImage, and
             /// WIMCaptureImage functions.
             /// </remarks>
-            [LibraryImport(WimgApiDllName, SetLastError = true)]
+            [DllImport(WimgApiDllName, CallingConvention = WimgApiCallingConvention, CharSet = WimgApiCharSet, SetLastError = true)]
             [return: MarshalAs(UnmanagedType.Bool)]
-            public static partial bool WIMCloseHandle(IntPtr hObject);
+            public static extern bool WIMCloseHandle(IntPtr hObject);
         }
     }
 
@@ -70,7 +71,7 @@ namespace Microsoft.Wim
         /// <summary>
         /// Initializes a new instance of the <see cref="WimHandle"/> class.
         /// </summary>
-        public WimHandle()
+        internal WimHandle()
             : base(true)
         {
             // Default to a null handle
@@ -78,6 +79,7 @@ namespace Microsoft.Wim
         }
 
         /// <inheritdoc cref="SafeHandle.ReleaseHandle"/>
+        [ReliabilityContract(Consistency.WillNotCorruptState, Cer.MayFail)]
         protected override bool ReleaseHandle()
         {
             return !IsInvalid && WimgApi.CloseHandle(handle);
