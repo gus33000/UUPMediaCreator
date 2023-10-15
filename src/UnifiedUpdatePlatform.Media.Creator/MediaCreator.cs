@@ -305,9 +305,9 @@ namespace UnifiedUpdatePlatform.Media.Creator
 
             if (filteredCompositionDatabases.Any())
             {
-                foreach (Package feature in filteredCompositionDatabases.First().Features.Feature[0].Packages.Package)
+                foreach (Services.Composition.Database.Package feature in filteredCompositionDatabases.First().Features.Feature[0].Packages.Package)
                 {
-                    Package pkg = filteredCompositionDatabases.First().Packages.Package.First(x => x.ID == feature.ID);
+                    Services.Composition.Database.Package pkg = filteredCompositionDatabases.First().Packages.Package.First(x => x.ID == feature.ID);
 
                     string file = pkg.GetCommonlyUsedIncorrectFileName();
 
