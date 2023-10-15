@@ -47,7 +47,7 @@
 using System;
 using System.IO;
 
-namespace Microsoft.Xna.Framework
+namespace Cabinet.Xna
 {
     internal class LzxDecoder
     {
@@ -89,7 +89,7 @@ namespace Microsoft.Xna.Framework
                 for (int i = 0, j = 0; i <= 50; i += 2)
                 {
                     extra_bits[i] = extra_bits[i + 1] = (byte)j;
-                    if ((i != 0) && (j < 17))
+                    if (i != 0 && j < 17)
                     {
                         j++;
                     }
@@ -254,7 +254,7 @@ namespace Microsoft.Xna.Framework
                 }
 
                 /* buffer exhaustion check */
-                if (inData.Position > (startpos + inLen))
+                if (inData.Position > startpos + inLen)
                 {
                     /* it's possible to have a file where the next run is less than
 				     * 16 bits in size. In this case, the READ_HUFFSYM() macro used
@@ -265,7 +265,7 @@ namespace Microsoft.Xna.Framework
 				     * the compressed data)
 					 */
                     Console.WriteLine("WTF");
-                    if (inData.Position > (startpos + inLen + 2) || bitbuf.GetBitsLeft() < 16)
+                    if (inData.Position > startpos + inLen + 2 || bitbuf.GetBitsLeft() < 16)
                     {
                         return -1; //TODO throw proper exception
                     }
@@ -284,7 +284,7 @@ namespace Microsoft.Xna.Framework
                     /* apply 2^x-1 mask */
                     window_posn &= window_size - 1;
                     /* runs can't straddle the window wraparound */
-                    if ((window_posn + this_run) > window_size)
+                    if (window_posn + this_run > window_size)
                     {
                         return -1; //TODO throw proper exception
                     }
@@ -517,7 +517,7 @@ namespace Microsoft.Xna.Framework
                             break;
 
                         case LzxConstants.BLOCKTYPE.UNCOMPRESSED:
-                            if ((inData.Position + this_run) > endpos)
+                            if (inData.Position + this_run > endpos)
                             {
                                 return -1; //TODO throw proper exception
                             }
@@ -556,7 +556,7 @@ namespace Microsoft.Xna.Framework
             // TODO finish intel E8 decoding
             /* intel E8 decoding */
             //if (m_state.intel_started != 0 && m_state.intel_filesize != 0 && (m_state.frames_read++ < 32768) && outLen > 10)
-            if ((m_state.frames_read++ < 32768) && m_state.intel_filesize != 0)
+            if (m_state.frames_read++ < 32768 && m_state.intel_filesize != 0)
             {
                 if (outLen <= 6 || m_state.intel_started == 0)
                 {
@@ -577,9 +577,9 @@ namespace Microsoft.Xna.Framework
                             continue;
                         }
                         abs_off = (byte)outData.ReadByte() | ((byte)outData.ReadByte() << 8) | ((byte)outData.ReadByte() << 16) | ((byte)outData.ReadByte() << 24);
-                        if ((abs_off >= 0 - curpos) && abs_off < m_state.intel_filesize)
+                        if (abs_off >= 0 - curpos && abs_off < m_state.intel_filesize)
                         {
-                            rel_off = (abs_off >= 0) ? abs_off - curpos : abs_off + m_state.intel_filesize;
+                            rel_off = abs_off >= 0 ? abs_off - curpos : abs_off + m_state.intel_filesize;
                             _ = outData.Seek(-4, SeekOrigin.Current);
                             outData.WriteByte((byte)rel_off);
                             outData.WriteByte((byte)(rel_off >> 8));

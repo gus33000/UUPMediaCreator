@@ -30,6 +30,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
+using UnifiedUpdatePlatform.Services.Temp;
 
 namespace VirtualHardDiskLib
 {
@@ -41,7 +42,7 @@ namespace VirtualHardDiskLib
         /// </summary>
         /// <param name="sizeInGB">The size of the VHD in GB</param>
         /// <returns>The path to the created vhd</returns>
-        internal static string CreateVirtualDisk(TempManager.TempManager tempManager, long sizeInGB = 10)
+        internal static string CreateVirtualDisk(TempManager tempManager, long sizeInGB = 10)
         {
             long diskSize = sizeInGB * 1024 * 1024 * 1024;
             string tempVhd = tempManager.GetTempPath();
@@ -56,7 +57,7 @@ namespace VirtualHardDiskLib
             return tempVhd;
         }
 
-        public static string CreateDiffDisk(string OriginalVirtualDisk, TempManager.TempManager tempManager)
+        public static string CreateDiffDisk(string OriginalVirtualDisk, TempManager tempManager)
         {
             string tempVhd = tempManager.GetTempPath();
             Disk.InitializeDifferencing(tempVhd, OriginalVirtualDisk).Dispose();

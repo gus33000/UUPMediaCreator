@@ -26,8 +26,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using UnifiedUpdatePlatform.Services.Temp;
 
-namespace UnifiedUpdatePlatform.Imaging
+namespace UnifiedUpdatePlatform.Services.Imaging
 {
     public class WimLibImaging : IImaging
     {
@@ -47,33 +48,36 @@ namespace UnifiedUpdatePlatform.Imaging
         {
             // Early false returns because calling update with no operations sounds unintentional
             if (fileList == null)
-                return false;
-            var updateCmds = new List<UpdateCommand>();
-            foreach (var (fileToAdd, destination) in fileList)
             {
-                var backSlashDest = destination.Replace(Path.DirectorySeparatorChar, '\\');
-                UpdateCommand newCmd;
-                if (!string.IsNullOrEmpty(fileToAdd))
-                    newCmd = UpdateCommand.SetAdd(fileToAdd, backSlashDest, null, AddFlags.None);
-                else
-                    newCmd = UpdateCommand.SetDelete(backSlashDest, DeleteFlags.None);
+                return false;
+            }
+
+            List<UpdateCommand> updateCmds = new();
+            foreach ((string fileToAdd, string destination) in fileList)
+            {
+                string backSlashDest = destination.Replace(Path.DirectorySeparatorChar, '\\');
+                UpdateCommand newCmd = !string.IsNullOrEmpty(fileToAdd)
+                    ? UpdateCommand.SetAdd(fileToAdd, backSlashDest, null, AddFlags.None)
+                    : UpdateCommand.SetDelete(backSlashDest, DeleteFlags.None);
                 updateCmds.Add(newCmd);
             }
             if (updateCmds.Count == 0)
+            {
                 return false;
+            }
 
             string title;
             if (updateCmds.Count == 1)
             {
-                var fCmd = updateCmds[0];
-                if (fCmd.Op == UpdateOp.Delete)
-                    title = "Deleting " + fCmd.DelWimPath + " from ";
-                else
-                    title = "Adding " + fCmd.AddWimTargetPath + " to ";
+                UpdateCommand fCmd = updateCmds[0];
+                title = fCmd.Op == UpdateOp.Delete ? "Deleting " + fCmd.DelWimPath + " from " : "Adding " + fCmd.AddWimTargetPath + " to ";
                 title += wimFile.Split(Path.DirectorySeparatorChar).Last() + "...";
             }
             else
+            {
                 title = $"Updating {updateCmds.Count} files in {wimFile.Split(Path.DirectorySeparatorChar).Last()}...";
+            }
+
             try
             {
                 bool originChunked = wimFile.EndsWith(".esd", StringComparison.InvariantCultureIgnoreCase);
@@ -219,7 +223,7 @@ namespace UnifiedUpdatePlatform.Imaging
             string imageDescription,
             string imageFlag,
             string InputDirectory,
-            TempManager.TempManager tempManager,
+            TempManager tempManager,
             string imageDisplayName = null,
             string imageDisplayDescription = null,
             WimCompressionType compressionType = WimCompressionType.Lzx,
@@ -562,7 +566,7 @@ namespace UnifiedUpdatePlatform.Imaging
             return true;
         }
 
-        private ManagedWimLib.ProgressCallback GetCallbackStatus(String title, IImaging.ProgressCallback progressCallback = null)
+        private ProgressCallback GetCallbackStatus(string title, IImaging.ProgressCallback progressCallback = null)
         {
             CallbackStatus ProgressCallback(ProgressMsg msg, object info, object progctx)
             {

@@ -19,7 +19,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-using CompDB;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -31,6 +30,7 @@ using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Serialization;
+using UnifiedUpdatePlatform.Services.Composition.Database;
 
 namespace UnifiedUpdatePlatform.Services.WindowsUpdate
 {
@@ -120,14 +120,14 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate
             {
                 envelope.Header.Security.WindowsUpdateTicketsToken.TicketType = new CSOAPCommon.TicketType[]
                 {
-                    new CSOAPCommon.TicketType()
+                    new()
                     {
                         Name = "MSA",
                         Version = "1.0",
                         Policy = "MBI_SSL",
                         User = authorizationToken
                     },
-                    new CSOAPCommon.TicketType()
+                    new()
                     {
                         Name = "AAD",
                         Version = "1.0",

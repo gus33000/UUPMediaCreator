@@ -24,7 +24,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using UnifiedUpdatePlatform.Services.WindowsUpdate;
-using UnifiedUpdatePlatform.Services.WindowsUpdate.Shared;
 
 namespace UUPDownload
 {

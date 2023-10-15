@@ -26,7 +26,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace UnifiedUpdatePlatform.Media.Creator.Planning.Applications
+namespace UnifiedUpdatePlatform.Services.Composition.Database.Applications
 {
     public class DeploymentProperties
     {
@@ -55,11 +55,11 @@ namespace UnifiedUpdatePlatform.Media.Creator.Planning.Applications
             get; set;
         }
 
-        public void AddApplicablePackages(IEnumerable<CompDB.CompDBXmlClass.Package> packageElements, IEnumerable<string> applicableLanguageTags)
+        public void AddApplicablePackages(IEnumerable<CompDBXmlClass.Package> packageElements, IEnumerable<string> applicableLanguageTags)
         {
             PackageIDs = new HashSet<string>();
             Dictionary<int, string> scaleDictionary = null;
-            foreach (CompDB.CompDBXmlClass.Package package in packageElements)
+            foreach (CompDBXmlClass.Package package in packageElements)
             {
                 string packageId = package.ID;
                 switch (package.PackageType)

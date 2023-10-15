@@ -1,12 +1,9 @@
 ﻿using ManagedWimLib;
 using Microsoft.Wim;
-using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices;
+using UnifiedUpdatePlatform.Services.Temp;
 
-namespace UnifiedUpdatePlatform.Imaging
+namespace UnifiedUpdatePlatform.Services.Imaging
 {
     public class WimImaging : IImaging
     {
@@ -28,7 +25,7 @@ namespace UnifiedUpdatePlatform.Imaging
             return WimgApi.ApplyImage(wimFile, imageIndex, OutputDirectory, referenceWIMs, PreserveACL, progressCallback) || WimLib.ApplyImage(wimFile, imageIndex, OutputDirectory, referenceWIMs, PreserveACL, progressCallback);
         }
 
-        public bool CaptureImage(string wimFile, string imageName, string imageDescription, string imageFlag, string InputDirectory, TempManager.TempManager tempManager, string imageDisplayName = null, string imageDisplayDescription = null, WimCompressionType compressionType = WimCompressionType.Lzx, IImaging.ProgressCallback progressCallback = null, int UpdateFrom = -1, bool PreserveACL = true)
+        public bool CaptureImage(string wimFile, string imageName, string imageDescription, string imageFlag, string InputDirectory, TempManager tempManager, string imageDisplayName = null, string imageDisplayDescription = null, WimCompressionType compressionType = WimCompressionType.Lzx, IImaging.ProgressCallback progressCallback = null, int UpdateFrom = -1, bool PreserveACL = true)
         {
             return (compressionType != WimCompressionType.Lzms && WimgApi.CaptureImage(wimFile, imageName, imageDescription, imageFlag, InputDirectory, tempManager, imageDisplayName = null, imageDisplayDescription = null, compressionType, progressCallback, UpdateFrom, PreserveACL)) ||
                 WimLib.CaptureImage(wimFile, imageName, imageDescription, imageFlag, InputDirectory, tempManager, imageDisplayName = null, imageDisplayDescription = null, compressionType, progressCallback, UpdateFrom, PreserveACL);

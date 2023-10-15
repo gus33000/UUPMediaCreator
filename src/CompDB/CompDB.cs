@@ -23,7 +23,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Xml.Serialization;
 
-namespace CompDB
+namespace UnifiedUpdatePlatform.Services.Composition.Database
 {
     public static class CompDBXmlClass
     {

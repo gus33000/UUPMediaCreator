@@ -19,12 +19,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-using CompDB;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using UnifiedUpdatePlatform.Media.Creator.Planning.Applications;
+using UnifiedUpdatePlatform.Services.Composition.Database;
+using UnifiedUpdatePlatform.Services.Composition.Database.Applications;
 
 #nullable enable
 

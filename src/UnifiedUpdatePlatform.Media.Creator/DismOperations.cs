@@ -26,9 +26,9 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Xml.Linq;
-using UnifiedUpdatePlatform.Media.Creator.Planning.Applications;
+using UnifiedUpdatePlatform.Services.Composition.Database.Applications;
 
-namespace UnifiedUpdatePlatform.Media.Creator.DismOperations
+namespace UnifiedUpdatePlatform.Media.Creator
 {
     public class DismOperations
     {

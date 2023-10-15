@@ -42,6 +42,6 @@
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\TempManager\TempManager.csproj" />
+    <ProjectReference Include="..\TempManager\UnifiedUpdatePlatform.Services.Temp.csproj" />
   </ItemGroup>
 </Project>

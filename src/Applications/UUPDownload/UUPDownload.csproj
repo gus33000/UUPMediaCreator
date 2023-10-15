@@ -12,9 +12,9 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Cabinet\Cabinet.csproj" />
     <ProjectReference Include="..\..\UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads\UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads.csproj" />
-    <ProjectReference Include="..\..\CompDB\CompDB.csproj" />
+    <ProjectReference Include="..\..\CompDB\UnifiedUpdatePlatform.Services.Composition.Database.csproj" />
     <ProjectReference Include="..\..\UnifiedUpdatePlatform.Media.Creator.Planning\UnifiedUpdatePlatform.Media.Creator.Planning.csproj" />
-    <ProjectReference Include="..\..\TempManager\TempManager.csproj" />
+    <ProjectReference Include="..\..\TempManager\UnifiedUpdatePlatform.Services.Temp.csproj" />
     <ProjectReference Include="..\..\UnifiedUpdatePlatform.Services.WindowsUpdate\UnifiedUpdatePlatform.Services.WindowsUpdate.csproj" />
   </ItemGroup>
   <ItemGroup>

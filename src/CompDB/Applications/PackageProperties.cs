@@ -22,7 +22,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-namespace UnifiedUpdatePlatform.Media.Creator.Planning.Applications
+namespace UnifiedUpdatePlatform.Services.Composition.Database.Applications
 {
     public class PackageProperties
     {

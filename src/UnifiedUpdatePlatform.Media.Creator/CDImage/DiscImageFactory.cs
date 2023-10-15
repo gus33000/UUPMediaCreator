@@ -1,6 +1,6 @@
 ﻿using System;
 using System.IO;
-using UnifiedUpdatePlatform.Imaging;
+using UnifiedUpdatePlatform.Services.Imaging;
 
 namespace UnifiedUpdatePlatform.Media.Creator.CDImage
 {

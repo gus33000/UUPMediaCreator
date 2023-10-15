@@ -23,7 +23,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace UnifiedUpdatePlatform.Media.Creator.Planning.Applications
+namespace UnifiedUpdatePlatform.Services.Composition.Database.Applications
 {
     public static class EnumerableExtensions
     {
@@ -37,7 +37,7 @@ namespace UnifiedUpdatePlatform.Media.Creator.Planning.Applications
         /// <exception cref="ArgumentNullException"></exception>
         public static IEnumerable<T[]> Combinations<T>(this IEnumerable<T> source)
         {
-            return null == source ? throw new ArgumentNullException(nameof(source)) : Combinations(source.ToArray());
+            return null == source ? throw new ArgumentNullException(nameof(source)) : source.ToArray().Combinations();
         }
 
         public static IEnumerable<T[]> Combinations<T>(this T[] data)
@@ -45,7 +45,7 @@ namespace UnifiedUpdatePlatform.Media.Creator.Planning.Applications
             return null == data
                 ? throw new ArgumentNullException(nameof(data))
                 : (IEnumerable<T[]>)Enumerable
-              .Range(0, 1 << (data.Length))
+              .Range(0, 1 << data.Length)
               .Select(index => data
                  .Where((v, i) => (index & (1 << i)) != 0)
                  .ToArray()).ToArray();

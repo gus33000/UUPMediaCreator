@@ -7,10 +7,10 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate
     public static class ComputerHardwareIDProvider
     {
         private static readonly byte[] hwidIv = { 0x70, 0xFF, 0xD8, 0x12, 0x4C, 0x7F, 0x4C, 0x7D, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
-        
+
         public static Guid Class5GuidFromString(string input)
         {
-            var hash = GetPartialHash(input);
+            byte[] hash = GetPartialHash(input);
             ScrambleHash(hash);
 
             return new Guid(hash);
@@ -19,11 +19,11 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate
         private static byte[] GetPartialHash(string input)
         {
             byte[] partialHash;
-            using (var sha1Csp = new SHA1CryptoServiceProvider())
+            using (SHA1CryptoServiceProvider sha1Csp = new())
             {
-                sha1Csp.TransformBlock(hwidIv, 0, hwidIv.Length, null, 0);
-                var dataBin = Encoding.Unicode.GetBytes(input);
-                sha1Csp.TransformFinalBlock(dataBin, 0, dataBin.Length);
+                _ = sha1Csp.TransformBlock(hwidIv, 0, hwidIv.Length, null, 0);
+                byte[] dataBin = Encoding.Unicode.GetBytes(input);
+                _ = sha1Csp.TransformFinalBlock(dataBin, 0, dataBin.Length);
                 partialHash = new byte[16];
                 Array.Copy(sha1Csp.Hash, partialHash, partialHash.Length);
             }
@@ -37,7 +37,7 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate
             {
                 *(uint*)shPtr = SwapBytes32(*(uint*)shPtr);
                 *((ushort*)shPtr + 2) = SwapBytes16(*((ushort*)shPtr + 2));
-                *((ushort*)shPtr + 3) = (ushort)(SwapBytes16(*((ushort*)shPtr + 3)) & 0xFFF | 0x5000);
+                *((ushort*)shPtr + 3) = (ushort)((SwapBytes16(*((ushort*)shPtr + 3)) & 0xFFF) | 0x5000);
                 *(shPtr + 8) &= 0x3F;
                 *(shPtr + 8) |= 0x80;
             }

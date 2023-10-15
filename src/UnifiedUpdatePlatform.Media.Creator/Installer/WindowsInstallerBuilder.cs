@@ -24,10 +24,10 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using UnifiedUpdatePlatform.Imaging;
-using UnifiedUpdatePlatform.Media.Creator.DismOperations;
 using UnifiedUpdatePlatform.Media.Creator.Settings;
 using UnifiedUpdatePlatform.Media.Creator.Utils;
+using UnifiedUpdatePlatform.Services.Imaging;
+using UnifiedUpdatePlatform.Services.Temp;
 using VirtualHardDiskLib;
 
 namespace UnifiedUpdatePlatform.Media.Creator.Installer
@@ -42,7 +42,7 @@ namespace UnifiedUpdatePlatform.Media.Creator.Installer
             WimCompressionType compressionType,
             bool RunsAsAdministrator,
             string LanguageCode,
-            TempManager.TempManager tempManager,
+            TempManager tempManager,
             ProgressCallback progressCallback = null
             )
         {
@@ -192,7 +192,7 @@ namespace UnifiedUpdatePlatform.Media.Creator.Installer
 
         private static bool ModifyImageRegistry(
             string MediaPath,
-            TempManager.TempManager tempManager,
+            TempManager tempManager,
             ProgressCallback progressCallback = null
             )
         {
@@ -264,7 +264,7 @@ namespace UnifiedUpdatePlatform.Media.Creator.Installer
 
         private static bool IntegrateSetupFilesIntoImage(
             string MediaPath,
-            TempManager.TempManager tempManager,
+            TempManager tempManager,
             ProgressCallback progressCallback = null
             )
         {
@@ -277,12 +277,12 @@ namespace UnifiedUpdatePlatform.Media.Creator.Installer
 
             string bgfile = new[] { "background_cli.bmp", "background_svr.bmp", "background_cli.png", "background_svr.png" }
             .Select(asset => Path.Combine(MediaPath, "sources", asset))
-            .FirstOrDefault(assetPath => File.Exists(assetPath));
+            .FirstOrDefault(File.Exists);
 
             string winpejpgtmp = tempManager.GetTempPath();
             File.WriteAllBytes(winpejpgtmp, Constants.winpejpg);
 
-            var updateDirectives = new List<(string fileToAdd, string destination)>
+            List<(string fileToAdd, string destination)> updateDirectives = new()
             {
                 (bgfile, Path.Combine("Windows", "System32", "setup.bmp")),
                 (winpejpgtmp, Path.Combine("Windows", "System32", "winpe.jpg"))
@@ -315,7 +315,7 @@ namespace UnifiedUpdatePlatform.Media.Creator.Installer
                     progressCallback?.Log($"Skipping missing {normalizedPath}");
                 }
             }
-            var result = Constants.imagingInterface.UpdateFilesInImage(bootwim, 2, updateDirectives, progressCallback: progressCallback?.GetImagingCallback());
+            bool result = Constants.imagingInterface.UpdateFilesInImage(bootwim, 2, updateDirectives, progressCallback: progressCallback?.GetImagingCallback());
             File.Delete(winpejpgtmp);
 
             return result;
@@ -327,7 +327,7 @@ namespace UnifiedUpdatePlatform.Media.Creator.Installer
             string MediaPath,
             WimCompressionType compressionType,
             string LanguageCode,
-            TempManager.TempManager tempManager,
+            TempManager tempManager,
             ProgressCallback progressCallback = null
             )
         {
@@ -383,7 +383,7 @@ namespace UnifiedUpdatePlatform.Media.Creator.Installer
             string peshellini = Path.Combine(sys32, "winpeshl.ini");
 
             progressCallback?.Log("Preparing PE for cleanup");
-            var updateDirectives = new List<(string fileToAdd, string destination)>
+            List<(string fileToAdd, string destination)> updateDirectives = new()
             {
                 (null, peshellini)
             };
@@ -460,7 +460,7 @@ namespace UnifiedUpdatePlatform.Media.Creator.Installer
             string MediaPath,
             WimCompressionType compressionType,
             WIMInformationXML.IMAGE image,
-            TempManager.TempManager tempManager,
+            TempManager tempManager,
             ProgressCallback progressCallback = null
             )
         {
@@ -485,7 +485,7 @@ namespace UnifiedUpdatePlatform.Media.Creator.Installer
                     progressCallback?.Invoke(Common.Messaging.Common.ProcessPhase.CreatingWindowsInstaller, IsIndeterminate, ProgressInPercentage, SubOperation);
                 }
 
-                result = DismOperations.DismOperations.Instance.UninstallPEComponents(ospath, customCallback);
+                result = DismOperations.Instance.UninstallPEComponents(ospath, customCallback);
 
                 if (!result)
                 {

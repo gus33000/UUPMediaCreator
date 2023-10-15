@@ -19,18 +19,19 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-using CompDB;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using UnifiedUpdatePlatform.Imaging;
 using UnifiedUpdatePlatform.Media.Creator.BaseEditions;
 using UnifiedUpdatePlatform.Media.Creator.BootlegEditions;
 using UnifiedUpdatePlatform.Media.Creator.CDImage;
 using UnifiedUpdatePlatform.Media.Creator.Installer;
-using UnifiedUpdatePlatform.Media.Creator.Utils;
 using UnifiedUpdatePlatform.Media.Creator.Planning;
+using UnifiedUpdatePlatform.Media.Creator.Utils;
+using UnifiedUpdatePlatform.Services.Composition.Database;
+using UnifiedUpdatePlatform.Services.Imaging;
+using UnifiedUpdatePlatform.Services.Temp;
 using VirtualHardDiskLib;
 
 namespace UnifiedUpdatePlatform.Media.Creator
@@ -48,7 +49,7 @@ namespace UnifiedUpdatePlatform.Media.Creator
             string WinREWIMFilePath,
             Common.Messaging.Common.CompressionType CompressionType,
             IEnumerable<CompDBXmlClass.CompDB> CompositionDatabases,
-            TempManager.TempManager tempManager,
+            TempManager tempManager,
             string VHDMountPath = null,
             string CurrentBackupVHD = null,
             ProgressCallback progressCallback = null,
@@ -286,7 +287,7 @@ namespace UnifiedUpdatePlatform.Media.Creator
             string LanguageCode,
             List<CompDBXmlClass.CompDB> CompositionDatabases,
             out List<EditionTarget> EditionTargets,
-            TempManager.TempManager tempManager,
+            TempManager tempManager,
             ProgressCallback progressCallback = null)
         {
             progressCallback?.Invoke(Common.Messaging.Common.ProcessPhase.ReadingMetadata, true, 0, "Acquiring Composition Databases");
@@ -383,7 +384,7 @@ namespace UnifiedUpdatePlatform.Media.Creator
             bool result = true;
             string error = "";
 
-            TempManager.TempManager tempManager = new(Temp);
+            TempManager tempManager = new(Temp);
 
             try
             {

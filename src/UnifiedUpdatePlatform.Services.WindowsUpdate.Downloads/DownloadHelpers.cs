@@ -19,7 +19,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-using CompDB;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -27,7 +26,8 @@ using System.Linq;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using UnifiedUpdatePlatform.Media.Creator.Planning.Applications;
+using UnifiedUpdatePlatform.Services.Composition.Database;
+using UnifiedUpdatePlatform.Services.Composition.Database.Applications;
 using UnifiedUpdatePlatform.Services.WindowsUpdate;
 
 namespace UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads

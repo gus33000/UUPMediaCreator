@@ -17,13 +17,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Wim", "thirdparty
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Privileges", "thirdparty\Privileges\Privileges.csproj", "{43C8BFCA-DB35-41F6-8602-A3E99BDD8EC6}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnifiedUpdatePlatform.Imaging", "src\UnifiedUpdatePlatform.Imaging\UnifiedUpdatePlatform.Imaging.csproj", "{6A920E9F-BC98-4EAA-AA9B-2C9FA82443E9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnifiedUpdatePlatform.Services.Imaging", "src\UnifiedUpdatePlatform.Imaging\UnifiedUpdatePlatform.Services.Imaging.csproj", "{6A920E9F-BC98-4EAA-AA9B-2C9FA82443E9}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnifiedUpdatePlatform.Services.WindowsUpdate", "src\UnifiedUpdatePlatform.Services.WindowsUpdate\UnifiedUpdatePlatform.Services.WindowsUpdate.csproj", "{B601B162-CDCD-492A-A8CF-747E0D3F6F83}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnifiedUpdatePlatform.Media.Creator.Planning", "src\UnifiedUpdatePlatform.Media.Creator.Planning\UnifiedUpdatePlatform.Media.Creator.Planning.csproj", "{6FA4B632-E5EB-4DFF-9E11-F1093BDEAA6F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CompDB", "src\CompDB\CompDB.csproj", "{A5EF8678-B621-451A-B58E-D1AFDD92751B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnifiedUpdatePlatform.Services.Composition.Database", "src\CompDB\UnifiedUpdatePlatform.Services.Composition.Database.csproj", "{A5EF8678-B621-451A-B58E-D1AFDD92751B}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UUPMediaConverter", "src\Applications\UUPMediaConverter\UUPMediaConverter.csproj", "{0BAE9C75-B86F-4976-B24D-7A4B54853342}"
 EndProject
@@ -37,7 +37,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cabinet", "src\Cabinet\Cabi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.StoreServices.DisplayCatalog", "src\Microsoft.StoreServices.DisplayCatalog\Microsoft.StoreServices.DisplayCatalog.csproj", "{09F6A782-B790-4734-82BD-2685AACC489F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TempManager", "src\TempManager\TempManager.csproj", "{1AAC4923-A4E5-41D9-87FA-CFB028F802E5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnifiedUpdatePlatform.Services.Temp", "src\TempManager\UnifiedUpdatePlatform.Services.Temp.csproj", "{1AAC4923-A4E5-41D9-87FA-CFB028F802E5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

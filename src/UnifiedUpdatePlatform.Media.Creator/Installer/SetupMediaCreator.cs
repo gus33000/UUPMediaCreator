@@ -19,10 +19,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-using CompDB;
 using Microsoft.Wim;
 using System.Collections.Generic;
 using UnifiedUpdatePlatform.Media.Creator.Utils;
+using UnifiedUpdatePlatform.Services.Composition.Database;
+using UnifiedUpdatePlatform.Services.Temp;
 
 namespace UnifiedUpdatePlatform.Media.Creator.Installer
 {
@@ -35,7 +36,7 @@ namespace UnifiedUpdatePlatform.Media.Creator.Installer
             string OutputWindowsREPath,
             Common.Messaging.Common.CompressionType CompressionType,
             IEnumerable<CompDBXmlClass.CompDB> CompositionDatabases,
-            TempManager.TempManager tempManager,
+            TempManager tempManager,
             ProgressCallback progressCallback = null)
         {
             bool result = true;

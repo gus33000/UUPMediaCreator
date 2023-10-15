@@ -25,8 +25,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using UnifiedUpdatePlatform.Imaging;
 using UnifiedUpdatePlatform.Media.Creator.Settings;
+using UnifiedUpdatePlatform.Services.Imaging;
+using UnifiedUpdatePlatform.Services.Temp;
 
 namespace UnifiedUpdatePlatform.Media.Creator
 {
@@ -104,12 +105,12 @@ namespace UnifiedUpdatePlatform.Media.Creator
             string OutputInstallImage,
             bool IsVirtual,
             Common.Messaging.Common.CompressionType CompressionType,
-            TempManager.TempManager tempManager,
+            TempManager tempManager,
             ProgressCallback progressCallback = null)
         {
             bool result = true;
 
-            string SourceEdition = DismOperations.DismOperations.Instance.GetCurrentEdition(MountedImagePath);
+            string SourceEdition = DismOperations.Instance.GetCurrentEdition(MountedImagePath);
 
             result = Constants.imagingInterface.GetWIMInformation(OutputInstallImage, out WIMInformationXML.WIM wiminfo);
             if (!result)
@@ -141,7 +142,7 @@ namespace UnifiedUpdatePlatform.Media.Creator
                 progressCallback?.Invoke(Common.Messaging.Common.ProcessPhase.ApplyingImage, IsIndeterminate, ProgressInPercentage, SubOperation);
             }
 
-            DismOperations.DismOperations.Instance.SetTargetEdition(MountedImagePath, EditionID, callback);
+            DismOperations.Instance.SetTargetEdition(MountedImagePath, EditionID, callback);
 
             void callback2(string Operation, int ProgressPercentage, bool IsIndeterminate)
             {

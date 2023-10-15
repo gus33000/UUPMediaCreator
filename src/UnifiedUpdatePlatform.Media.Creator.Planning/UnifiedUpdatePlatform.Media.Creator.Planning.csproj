@@ -9,9 +9,9 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\Cabinet\Cabinet.csproj" />
-    <ProjectReference Include="..\CompDB\CompDB.csproj" />
-    <ProjectReference Include="..\UnifiedUpdatePlatform.Imaging\UnifiedUpdatePlatform.Imaging.csproj" />
-    <ProjectReference Include="..\TempManager\TempManager.csproj" />
+    <ProjectReference Include="..\CompDB\UnifiedUpdatePlatform.Services.Composition.Database.csproj" />
+    <ProjectReference Include="..\UnifiedUpdatePlatform.Imaging\UnifiedUpdatePlatform.Services.Imaging.csproj" />
+    <ProjectReference Include="..\TempManager\UnifiedUpdatePlatform.Services.Temp.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />

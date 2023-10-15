@@ -19,13 +19,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-using CompDB;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using UnifiedUpdatePlatform.Imaging;
-using UnifiedUpdatePlatform.Media.Creator.Planning.Applications;
+using UnifiedUpdatePlatform.Services.Composition.Database;
+using UnifiedUpdatePlatform.Services.Composition.Database.Applications;
+using UnifiedUpdatePlatform.Services.Imaging;
+using UnifiedUpdatePlatform.Services.Temp;
+
 
 #nullable enable
 
@@ -390,7 +392,7 @@ namespace UnifiedUpdatePlatform.Media.Creator.Planning
             string LanguageCode,
             bool IncludeServicingCapableOnlyTargets,
             out List<EditionTarget> EditionTargets,
-            TempManager.TempManager tempManager,
+            TempManager tempManager,
             ProgressCallback? progressCallback = null)
         {
             return GetTargetedPlan("", compDBs, EditionPack, LanguageCode, IncludeServicingCapableOnlyTargets, out EditionTargets, tempManager, progressCallback);
@@ -447,7 +449,7 @@ namespace UnifiedUpdatePlatform.Media.Creator.Planning
             string LanguageCode,
             bool IncludeServicingCapableOnlyTargets,
             out List<EditionTarget> EditionTargets,
-            TempManager.TempManager tempManager,
+            TempManager tempManager,
             ProgressCallback? progressCallback = null)
         {
             bool VerifyFiles = !string.IsNullOrEmpty(UUPPath);

@@ -20,7 +20,6 @@
  * SOFTWARE.
  */
 using Cabinet;
-using CompDB;
 using IniParser;
 using IniParser.Model;
 using Microsoft.Wim;
@@ -29,9 +28,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using UnifiedUpdatePlatform.Imaging;
-using UnifiedUpdatePlatform.Media.Creator.DismOperations;
-using UnifiedUpdatePlatform.Media.Creator.Planning.Applications;
+using UnifiedUpdatePlatform.Services.Composition.Database;
+using UnifiedUpdatePlatform.Services.Composition.Database.Applications;
+using UnifiedUpdatePlatform.Services.Imaging;
+using UnifiedUpdatePlatform.Services.Temp;
 using VirtualHardDiskLib;
 
 namespace UnifiedUpdatePlatform.Media.Creator.BaseEditions
@@ -46,7 +46,7 @@ namespace UnifiedUpdatePlatform.Media.Creator.BaseEditions
             string OutputInstallImage,
             Common.Messaging.Common.CompressionType CompressionType,
             IEnumerable<CompDBXmlClass.CompDB> CompositionDatabases,
-            TempManager.TempManager tempManager,
+            TempManager tempManager,
             ProgressCallback progressCallback = null)
         {
             WimCompressionType compression = WimCompressionType.None;
@@ -179,7 +179,7 @@ namespace UnifiedUpdatePlatform.Media.Creator.BaseEditions
             Common.Messaging.Common.CompressionType CompressionType,
             AppxInstallWorkload[] appxWorkloads,
             IEnumerable<CompDBXmlClass.CompDB> CompositionDatabases,
-            TempManager.TempManager tempManager,
+            TempManager tempManager,
             bool keepVhd,
             out string vhdPath,
             ProgressCallback progressCallback = null)
@@ -257,13 +257,13 @@ namespace UnifiedUpdatePlatform.Media.Creator.BaseEditions
 
                 progressCallback?.Invoke(Common.Messaging.Common.ProcessPhase.ApplyingImage, true, 0, $"Installing Applications");
 
-                result = DismOperations.DismOperations.Instance.PerformAppxWorkloadsInstallation(vhdSession.GetMountedPath(), UUPPath, licenseFolder, appxWorkloads, customCallback);
+                result = DismOperations.Instance.PerformAppxWorkloadsInstallation(vhdSession.GetMountedPath(), UUPPath, licenseFolder, appxWorkloads, customCallback);
                 if (!result)
                 {
                     foreach (AppxInstallWorkload appx in appxWorkloads)
                     {
                         progressCallback?.Invoke(Common.Messaging.Common.ProcessPhase.ApplyingImage, true, 0, $"Installing {appx.AppXPath}");
-                        result = DismOperations.DismOperations.Instance.PerformAppxWorkloadInstallation(vhdSession.GetMountedPath(), UUPPath, licenseFolder, appx);
+                        result = DismOperations.Instance.PerformAppxWorkloadInstallation(vhdSession.GetMountedPath(), UUPPath, licenseFolder, appx);
 
                         if (!result)
                         {
@@ -356,7 +356,7 @@ namespace UnifiedUpdatePlatform.Media.Creator.BaseEditions
             string LanguageCode,
             string EditionID,
             IEnumerable<CompDBXmlClass.CompDB> CompositionDatabases,
-            TempManager.TempManager tempManager,
+            TempManager tempManager,
             ProgressCallback progressCallback = null)
         {
             HashSet<string> ReferencePackages, referencePackagesToConvert;
@@ -371,13 +371,13 @@ namespace UnifiedUpdatePlatform.Media.Creator.BaseEditions
             string unpackedFODEsd = tempManager.GetTempPath();
             _ = Directory.CreateDirectory(unpackedFODEsd);
 
-            var totalToConvert = referencePackagesToConvert.Count;
-            var startedConversions = 0;
+            int totalToConvert = referencePackagesToConvert.Count;
+            int startedConversions = 0;
             ParallelLoopResult parallelResult = Parallel.ForEach(referencePackagesToConvert, (file, parallel) =>
             {
-                Interlocked.Increment(ref startedConversions);
+                _ = Interlocked.Increment(ref startedConversions);
                 string fileName = Path.GetFileName(file);
-                var pconvProgress = (int)(100 * ((double)startedConversions / totalToConvert));
+                int pconvProgress = (int)(100 * ((double)startedConversions / totalToConvert));
                 progressCallback?.Invoke(Common.Messaging.Common.ProcessPhase.PreparingFiles, false, pconvProgress, $"Unpacking {fileName}");
                 try
                 {

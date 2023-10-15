@@ -31,7 +31,7 @@ namespace UUPDownload.DownloadRequest
 
         public static Version Parse(string versionStr)
         {
-            ulong[] verArray = versionStr.Split(".").Select(x => ulong.Parse(x)).ToArray();
+            ulong[] verArray = versionStr.Split(".").Select(ulong.Parse).ToArray();
             return new Version(verArray[0], verArray[1], verArray[2], verArray[3]);
         }
 

@@ -19,11 +19,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-using CompDB;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using UnifiedUpdatePlatform.Media.Creator.Planning;
+using UnifiedUpdatePlatform.Services.Composition.Database;
+using UnifiedUpdatePlatform.Services.Temp;
 using UnifiedUpdatePlatform.Services.WindowsUpdate;
 
 namespace UUPDownload
@@ -53,7 +54,7 @@ namespace UUPDownload
                 return null;
             }
 
-            _ = ConversionPlanBuilder.GetTargetedPlan(compDBs, editionPkg, LanguageCode, true, out List<EditionTarget> targets, new TempManager.TempManager(), null);
+            _ = ConversionPlanBuilder.GetTargetedPlan(compDBs, editionPkg, LanguageCode, true, out List<EditionTarget> targets, new TempManager(), null);
             return new EditionPlanningWithLanguage() { EditionTargets = targets, LanguageCode = LanguageCode };
         }
 

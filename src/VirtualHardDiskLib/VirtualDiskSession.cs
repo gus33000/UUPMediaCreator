@@ -22,6 +22,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using UnifiedUpdatePlatform.Services.Temp;
 
 namespace VirtualHardDiskLib
 {
@@ -32,7 +33,7 @@ namespace VirtualHardDiskLib
         public string VirtualDiskPath;
         private readonly bool delete;
 
-        public VirtualDiskSession(TempManager.TempManager tempManager, long sizeInGB = 20, bool delete = true, string existingVHD = null)
+        public VirtualDiskSession(TempManager tempManager, long sizeInGB = 20, bool delete = true, string existingVHD = null)
         {
             DriveLetter = GetNextAvailableDriveLetter();
 

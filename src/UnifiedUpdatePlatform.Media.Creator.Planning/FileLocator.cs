@@ -20,11 +20,13 @@
  * SOFTWARE.
  */
 using Cabinet;
-using CompDB;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using UnifiedUpdatePlatform.Services.Composition.Database;
+using UnifiedUpdatePlatform.Services.Temp;
+
 
 #nullable enable
 
@@ -32,7 +34,7 @@ namespace UnifiedUpdatePlatform.Media.Creator.Planning
 {
     public static class FileLocator
     {
-        public static List<CompDBXmlClass.CompDB> GetCompDBsFromUUPFiles(string UUPPath, TempManager.TempManager tempManager)
+        public static List<CompDBXmlClass.CompDB> GetCompDBsFromUUPFiles(string UUPPath, TempManager tempManager)
         {
             List<CompDBXmlClass.CompDB> compDBs = new();
 

@@ -3,7 +3,6 @@ using IniParser.Model;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using UnifiedUpdatePlatform.Media.Creator.DismOperations;
 
 namespace UnifiedUpdatePlatform.Media.Creator.Settings
 {

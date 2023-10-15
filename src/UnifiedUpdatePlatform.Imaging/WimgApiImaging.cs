@@ -5,8 +5,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using UnifiedUpdatePlatform.Services.Temp;
 
-namespace UnifiedUpdatePlatform.Imaging
+namespace UnifiedUpdatePlatform.Services.Imaging
 {
     public class WimgApiImaging : IImaging
     {
@@ -201,7 +202,7 @@ namespace UnifiedUpdatePlatform.Imaging
             string imageDescription,
             string imageFlag,
             string InputDirectory,
-            TempManager.TempManager tempManager,
+            TempManager tempManager,
             string imageDisplayName = null,
             string imageDisplayDescription = null,
             WimCompressionType compressionType = WimCompressionType.Lzx,

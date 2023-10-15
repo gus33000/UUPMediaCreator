@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
     <OutputType>Library</OutputType>
@@ -37,7 +37,7 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\thirdparty\Microsoft.Wim\Microsoft.Wim.csproj" />
-    <ProjectReference Include="..\TempManager\TempManager.csproj" />
+    <ProjectReference Include="..\TempManager\UnifiedUpdatePlatform.Services.Temp.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Joveler.DynLoader" Version="2.3.0" />

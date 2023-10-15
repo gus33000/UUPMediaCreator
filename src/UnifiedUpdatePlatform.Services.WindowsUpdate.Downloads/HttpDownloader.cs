@@ -30,7 +30,6 @@ using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
-using UnifiedUpdatePlatform.Services.WindowsUpdate;
 
 namespace UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads
 {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace UnifiedUpdatePlatform.Media.Creator.Planning.Applications
+namespace UnifiedUpdatePlatform.Services.Composition.Database.Applications
 {
     public class AppxInstallWorkload
     {

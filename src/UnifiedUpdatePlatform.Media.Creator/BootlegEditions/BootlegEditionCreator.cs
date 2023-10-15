@@ -27,8 +27,9 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Text;
-using UnifiedUpdatePlatform.Imaging;
 using UnifiedUpdatePlatform.Media.Creator.Settings;
+using UnifiedUpdatePlatform.Services.Imaging;
+using UnifiedUpdatePlatform.Services.Temp;
 
 namespace UnifiedUpdatePlatform.Media.Creator.BootlegEditions
 {
@@ -236,7 +237,7 @@ namespace UnifiedUpdatePlatform.Media.Creator.BootlegEditions
             string EditionID,
             string OutputInstallImage,
             Common.Messaging.Common.CompressionType CompressionType,
-            TempManager.TempManager tempManager,
+            TempManager tempManager,
             ProgressCallback progressCallback = null)
         {
             bool result = true;
@@ -264,7 +265,7 @@ namespace UnifiedUpdatePlatform.Media.Creator.BootlegEditions
             progressCallback?.Invoke(Common.Messaging.Common.ProcessPhase.ApplyingImage, true, 0, "Serial: " + serial);
 
             progressCallback?.Invoke(Common.Messaging.Common.ProcessPhase.ApplyingImage, true, 0, "Getting current edition");
-            string SourceEdition = DismOperations.DismOperations.Instance.GetCurrentEdition(MountedImagePath);
+            string SourceEdition = DismOperations.Instance.GetCurrentEdition(MountedImagePath);
             progressCallback?.Invoke(Common.Messaging.Common.ProcessPhase.ApplyingImage, true, 0, "Current edition is: " + SourceEdition);
 
             progressCallback?.Invoke(Common.Messaging.Common.ProcessPhase.ApplyingImage, true, 0, "Getting wim info for: " + OutputInstallImage);
@@ -570,7 +571,7 @@ namespace UnifiedUpdatePlatform.Media.Creator.BootlegEditions
             // Apply unattend
             //
             progressCallback?.Invoke(Common.Messaging.Common.ProcessPhase.ApplyingImage, true, 0, "Applying unattend");
-            DismOperations.DismOperations.Instance.ApplyUnattend(MountedImagePath, unattendPath);
+            DismOperations.Instance.ApplyUnattend(MountedImagePath, unattendPath);
 
             //
             // Restore OEMDefaultAssociations
@@ -611,14 +612,14 @@ namespace UnifiedUpdatePlatform.Media.Creator.BootlegEditions
             // Apply edition xml as unattend
             //
             progressCallback?.Invoke(Common.Messaging.Common.ProcessPhase.ApplyingImage, true, 0, "Applying Edition Unattend XML");
-            DismOperations.DismOperations.Instance.ApplyUnattend(MountedImagePath, desintationEditionXml);
+            DismOperations.Instance.ApplyUnattend(MountedImagePath, desintationEditionXml);
 
             //
             // Install correct product key
             //
             progressCallback?.Invoke(Common.Messaging.Common.ProcessPhase.ApplyingImage, true, 0, "Installing product key");
 
-            DismOperations.DismOperations.Instance.SetProductKey(MountedImagePath, serial);
+            DismOperations.Instance.SetProductKey(MountedImagePath, serial);
 
             //
             // Application handling

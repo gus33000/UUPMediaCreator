@@ -24,7 +24,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace CompDB
+namespace UnifiedUpdatePlatform.Services.Composition.Database
 {
     public static class CompDBExtensions
     {
@@ -92,7 +92,7 @@ namespace CompDB
                         compDB.Tags.Tag.Find(x => x.Name.Equals("UpdateType", StringComparison.InvariantCultureIgnoreCase))?.Value?.Equals("Canonical", StringComparison.InvariantCultureIgnoreCase) == true &&
                         compDB.Tags.Tag.Find(x => x.Name.Equals("Language", StringComparison.InvariantCultureIgnoreCase))?.Value?.Equals(LanguageCode, StringComparison.InvariantCultureIgnoreCase) == true &&
                         compDB.Tags.Tag.Any(x => x.Name.Equals("Edition", StringComparison.InvariantCultureIgnoreCase)) &&
-                        compDB.Name?.EndsWith("~Desktop_Apps~~") != true && 
+                        compDB.Name?.EndsWith("~Desktop_Apps~~") != true &&
                         compDB.Name?.EndsWith("~Desktop_Apps_Moment~~") != true)
                     {
                         _ = filteredCompDBs.Add(compDB);

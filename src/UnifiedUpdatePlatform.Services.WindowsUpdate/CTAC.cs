@@ -522,7 +522,7 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate
         {
             string inputString = Manufacturer + "&" + Family + "&" + Product + "&" + Sku;
             Guid guidFromString = ComputerHardwareIDProvider.Class5GuidFromString(inputString);
-            string guidString = $"{{{guidFromString.ToString()}}}";
+            string guidString = $"{{{guidFromString}}}";
             return guidString;
         }
     }

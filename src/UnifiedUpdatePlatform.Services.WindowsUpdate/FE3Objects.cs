@@ -199,8 +199,8 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate
             public XmlSerializerNamespaces ns = new(
                 new XmlQualifiedName[]
                 {
-                    new XmlQualifiedName("wsu", "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"),
-                    new XmlQualifiedName("wuws", Constants.WindowsUpdateAuthorizationSchema)
+                    new("wsu", "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"),
+                    new("wuws", Constants.WindowsUpdateAuthorizationSchema)
                 }
             );
 
@@ -242,7 +242,7 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate
             public XmlSerializerNamespaces ns = new(
                 new XmlQualifiedName[]
                 {
-                    new XmlQualifiedName("o", "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd")
+                    new("o", "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd")
                 }
             );
 

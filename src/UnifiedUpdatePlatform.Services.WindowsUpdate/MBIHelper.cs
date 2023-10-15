@@ -27,7 +27,7 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace UnifiedUpdatePlatform.Services.WindowsUpdate.Shared
+namespace UnifiedUpdatePlatform.Services.WindowsUpdate
 {
     public static class MBIHelper
     {

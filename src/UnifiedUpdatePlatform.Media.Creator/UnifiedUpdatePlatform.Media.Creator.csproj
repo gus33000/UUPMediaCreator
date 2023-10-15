@@ -11,14 +11,14 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\thirdparty\Microsoft.Dism\Microsoft.Dism.csproj" />
-    <ProjectReference Include="..\CompDB\CompDB.csproj" />
-    <ProjectReference Include="..\UnifiedUpdatePlatform.Imaging\UnifiedUpdatePlatform.Imaging.csproj" />
+    <ProjectReference Include="..\CompDB\UnifiedUpdatePlatform.Services.Composition.Database.csproj" />
+    <ProjectReference Include="..\UnifiedUpdatePlatform.Imaging\UnifiedUpdatePlatform.Services.Imaging.csproj" />
     <ProjectReference Include="..\UnifiedUpdatePlatform.Common.Messaging\UnifiedUpdatePlatform.Common.Messaging.csproj" />
     <ProjectReference Include="..\Cabinet\Cabinet.csproj" />
     <ProjectReference Include="..\..\thirdparty\Microsoft.Wim\Microsoft.Wim.csproj" />
     <ProjectReference Include="..\..\thirdparty\Privileges\Privileges.csproj" />
     <ProjectReference Include="..\UnifiedUpdatePlatform.Media.Creator.Planning\UnifiedUpdatePlatform.Media.Creator.Planning.csproj" />
-    <ProjectReference Include="..\TempManager\TempManager.csproj" />
+    <ProjectReference Include="..\TempManager\UnifiedUpdatePlatform.Services.Temp.csproj" />
     <ProjectReference Include="..\VirtualHardDiskLib\VirtualHardDiskLib.csproj" />
   </ItemGroup>
   <ItemGroup>

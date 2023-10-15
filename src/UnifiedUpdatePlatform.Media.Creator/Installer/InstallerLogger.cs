@@ -1,4 +1,4 @@
-﻿using UnifiedUpdatePlatform.Imaging;
+﻿using UnifiedUpdatePlatform.Services.Imaging;
 
 namespace UnifiedUpdatePlatform.Media.Creator.Installer
 {
