@@ -32,7 +32,7 @@ using UnifiedUpdatePlatform.Services.WindowsUpdate;
 
 namespace UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads
 {
-    public static class UpdateUtils
+    public static partial class UpdateUtils
     {
         public static string[] GetFilenameForCEUIFile(CExtendedUpdateInfoXml.File file2, IEnumerable<CompDBXmlClass.PayloadItem> payloadItems)
         {
@@ -151,7 +151,7 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads
                         // Get edition + language
                         case (true, true):
                             {
-                                if (((!hasEdition && !hasLang) || (!hasEdition && hasLang && langMatching) || (!hasLang && hasEdition && editionMatching) || (hasEdition && hasLang && langMatching && editionMatching)) && !IsNeutral)
+                                if ((!hasEdition && !hasLang || !hasEdition && hasLang && langMatching || !hasLang && hasEdition && editionMatching || hasEdition && hasLang && langMatching && editionMatching) && !IsNeutral)
                                 {
                                     _ = specificCompDBs.Add(cdb);
                                     _ = selectedCompDBs.Add(cdb);
@@ -497,7 +497,7 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads
             }
 
             string name = $"{buildstr.Replace(" ", ".").Replace("(", "").Replace(")", "")}_{MachineType.ToString().ToLower()}fre_{update.Xml.UpdateIdentity.UpdateID.Split("-").Last()}";
-            Regex illegalCharacters = new(@"[\\/:*?""<>|]");
+            Regex illegalCharacters = invalidCharactersRegex();
             name = illegalCharacters.Replace(name, "");
             string OutputFolder = pOutputFolder;
             if (UseAutomaticDownloadFolder)
@@ -510,20 +510,14 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads
 
             do
             {
-                IEnumerable<FileExchangeV3FileDownloadInformation> fileUrls = await FE3Handler.GetFileUrls(update);
-
-                if (fileUrls == null)
-                {
-                    throw new Exception("Getting file urls failed.");
-                }
-
+                IEnumerable<FileExchangeV3FileDownloadInformation> fileUrls = await FE3Handler.GetFileUrls(update) ?? throw new Exception("Getting file urls failed.");
                 if (!Directory.Exists(OutputFolder))
                 {
                     _ = Directory.CreateDirectory(OutputFolder);
                 }
 
                 string tmpname = update.Xml.LocalizedProperties.Title + " (" + MachineType.ToString() + ").uupmcreplay";
-                illegalCharacters = new Regex(@"[\\/:*?""<>|]");
+                illegalCharacters = invalidCharactersRegex();
                 tmpname = illegalCharacters.Replace(tmpname, "");
                 string filename = Path.Combine(OutputFolder, tmpname);
 
@@ -556,7 +550,7 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads
                                     string payloadHash = pkg.Payload.PayloadItem[0].PayloadHash;
                                     if (payloadHash == boundFile.Item1.AdditionalDigest.Text || payloadHash == boundFile.Item1.Digest)
                                     {
-                                        if (pkg.ID.Contains("-") && pkg.ID.Contains(".inf", StringComparison.InvariantCultureIgnoreCase))
+                                        if (pkg.ID.Contains('-') && pkg.ID.Contains(".inf", StringComparison.InvariantCultureIgnoreCase))
                                         {
                                             path = pkg.ID.Split("-")[1].Replace(".inf", ".cab").Replace(".INF", ".CAB");
                                         }
@@ -587,5 +581,8 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads
 
             return OutputFolder;
         }
+
+        [GeneratedRegex("[\\\\/:*?\"<>|]")]
+        private static partial Regex invalidCharactersRegex();
     }
 }

@@ -9,6 +9,7 @@
     <IntermediateOutputPath>$(SolutionDir)intermediate\$(Platform)\$(Configuration)\VirtualDiskLib\</IntermediateOutputPath>
     <LangVersion>8.0</LangVersion>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
     <LangVersion>9.0</LangVersion>

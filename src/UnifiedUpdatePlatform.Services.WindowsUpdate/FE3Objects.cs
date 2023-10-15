@@ -989,7 +989,7 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate
         public class SecurityData
         {
             [XmlElement(ElementName = "base64Binary", Namespace = Constants.ClientWebServiceServerNamespace)]
-            public string base64Binary
+            public string Base64Binary
             {
                 get; set;
             }

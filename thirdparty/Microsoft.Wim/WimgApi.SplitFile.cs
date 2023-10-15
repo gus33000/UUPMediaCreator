@@ -124,9 +124,9 @@ namespace Microsoft.Wim
             /// This function creates many parts that are required to contain the resources of the original .wim file. The calling
             /// application may alter the path and size of subsequent pieces by responding to the WIM_MSG_SPLIT message.
             /// </remarks>
-            [DllImport(WimgApiDllName, CallingConvention = WimgApiCallingConvention, CharSet = WimgApiCharSet, SetLastError = true)]
+            [LibraryImport(WimgApiDllName, SetLastError = true, StringMarshalling = StringMarshalling.Utf16)]
             [return: MarshalAs(UnmanagedType.Bool)]
-            public static extern bool WIMSplitFile(WimHandle hWim, string pszPartPath, ref long pliPartSize, DWORD dwFlags);
+            public static partial bool WIMSplitFile(WimHandle hWim, string pszPartPath, ref long pliPartSize, DWORD dwFlags);
         }
     }
 }

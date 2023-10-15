@@ -72,6 +72,11 @@ namespace UUPDownload.Downloading
             return "[" + bases + "]";
         }
 
+        public void Dispose()
+        {
+            mutex.Dispose();
+        }
+
         public void Report(GeneralDownloadProgress e)
         {
             _ = mutex.WaitOne();
@@ -117,11 +122,6 @@ namespace UUPDownload.Downloading
             }
 
             mutex.ReleaseMutex();
-        }
-
-        public void Dispose()
-        {
-            throw new NotImplementedException();
         }
     }
 }

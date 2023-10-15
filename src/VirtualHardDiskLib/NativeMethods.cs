@@ -25,7 +25,7 @@ using System.Text;
 
 namespace VirtualHardDiskLib
 {
-    internal static class NativeMethods
+    internal static partial class NativeMethods
     {
         [Flags]
         public enum ATTACH_VIRTUAL_DISK_FLAG
@@ -83,18 +83,18 @@ namespace VirtualHardDiskLib
         public static readonly Guid VIRTUAL_STORAGE_TYPE_VENDOR_MICROSOFT =
             new("EC984AEC-A0F9-47e9-901F-71415A66345B");
 
-        [DllImport("virtdisk.dll", CharSet = CharSet.Unicode)]
-        public static extern int AttachVirtualDisk(IntPtr VirtualDiskHandle, IntPtr SecurityDescriptor,
+        [LibraryImport("virtdisk.dll")]
+        public static partial int AttachVirtualDisk(IntPtr VirtualDiskHandle, IntPtr SecurityDescriptor,
             ATTACH_VIRTUAL_DISK_FLAG Flags, int ProviderSpecificFlags, ref ATTACH_VIRTUAL_DISK_PARAMETERS Parameters,
             IntPtr Overlapped);
 
-        [DllImport("virtdisk.dll", CharSet = CharSet.Unicode)]
-        public static extern int DetachVirtualDisk(IntPtr VirtualDiskHandle, DETACH_VIRTUAL_DISK_FLAG Flags,
+        [LibraryImport("virtdisk.dll")]
+        public static partial int DetachVirtualDisk(IntPtr VirtualDiskHandle, DETACH_VIRTUAL_DISK_FLAG Flags,
             int ProviderSpecificFlags);
 
-        [DllImport("kernel32.dll", SetLastError = true)]
+        [LibraryImport("kernel32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool CloseHandle(IntPtr hObject);
+        public static partial bool CloseHandle(IntPtr hObject);
 
         [DllImport("virtdisk.dll", CharSet = CharSet.Unicode)]
         public static extern int OpenVirtualDisk(ref VIRTUAL_STORAGE_TYPE VirtualStorageType, string Path,
@@ -140,24 +140,24 @@ namespace VirtualHardDiskLib
         [DllImport("kernel32.dll", CharSet = CharSet.Unicode)]
         public static extern IntPtr FindFirstVolume([MarshalAs(UnmanagedType.LPWStr)] StringBuilder volumeName, int bufferLength);
 
-        [DllImport("kernel32.dll", CharSet = CharSet.Unicode)]
+        [LibraryImport("kernel32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool FindVolumeClose(IntPtr findVolumeHandle);
+        public static partial bool FindVolumeClose(IntPtr findVolumeHandle);
 
         [DllImport("kernel32.dll", CharSet = CharSet.Unicode)]
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool FindNextVolume(IntPtr findVolumeHandle, [MarshalAs(UnmanagedType.LPWStr)] StringBuilder volumeName, int bufferLength);
 
-        [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
-        public static extern IntPtr CreateFile([MarshalAs(UnmanagedType.LPWStr)] string fileName, GENERIC_ACCESS_RIGHTS_FLAGS desiredAccess, FILE_SHARE_MODE_FLAGS shareMode, IntPtr securityAttribute, CREATION_DISPOSITION_FLAGS creationDisposition, int flagsAndAttributes, IntPtr templateFile);
+        [LibraryImport("kernel32.dll", SetLastError = true, StringMarshalling = StringMarshalling.Utf16)]
+        public static partial IntPtr CreateFile([MarshalAs(UnmanagedType.LPWStr)] string fileName, GENERIC_ACCESS_RIGHTS_FLAGS desiredAccess, FILE_SHARE_MODE_FLAGS shareMode, IntPtr securityAttribute, CREATION_DISPOSITION_FLAGS creationDisposition, int flagsAndAttributes, IntPtr templateFile);
 
-        [DllImport("kernel32.dll", CharSet = CharSet.Unicode)]
+        [LibraryImport("kernel32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool DeviceIoControl(IntPtr deviceHandle, IO_CONTROL_CODE controlCode, IntPtr inBuffer, uint inBufferSize, ref STORAGE_DEVICE_NUMBER outBuffer, uint outBufferSize, ref uint bytesReturned, IntPtr overlapped);
+        public static partial bool DeviceIoControl(IntPtr deviceHandle, IO_CONTROL_CODE controlCode, IntPtr inBuffer, uint inBufferSize, ref STORAGE_DEVICE_NUMBER outBuffer, uint outBufferSize, ref uint bytesReturned, IntPtr overlapped);
 
-        [DllImport("kernel32.dll", CharSet = CharSet.Unicode)]
+        [LibraryImport("kernel32.dll", StringMarshalling = StringMarshalling.Utf16)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool SetVolumeMountPoint([MarshalAs(UnmanagedType.LPWStr)] string mountPoint, [MarshalAs(UnmanagedType.LPWStr)] string volumeName);
+        public static partial bool SetVolumeMountPoint([MarshalAs(UnmanagedType.LPWStr)] string mountPoint, [MarshalAs(UnmanagedType.LPWStr)] string volumeName);
 
         public static IntPtr INVALID_HANDLE_VALUE = -1;
 

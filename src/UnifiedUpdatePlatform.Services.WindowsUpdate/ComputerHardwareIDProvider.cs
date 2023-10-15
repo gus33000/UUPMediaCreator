@@ -19,7 +19,7 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate
         private static byte[] GetPartialHash(string input)
         {
             byte[] partialHash;
-            using (SHA1CryptoServiceProvider sha1Csp = new())
+            using (SHA1 sha1Csp = SHA1.Create())
             {
                 _ = sha1Csp.TransformBlock(hwidIv, 0, hwidIv.Length, null, 0);
                 byte[] dataBin = Encoding.Unicode.GetBytes(input);

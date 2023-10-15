@@ -101,9 +101,9 @@ namespace Microsoft.Wim
             /// input handle is from the WIMLoadImage or WIMCaptureImage functions, then the XML data must be enclosed by
             /// <IMAGE></IMAGE> tags.
             /// </remarks>
-            [DllImport(WimgApiDllName, CallingConvention = WimgApiCallingConvention, CharSet = WimgApiCharSet, SetLastError = true)]
+            [LibraryImport(WimgApiDllName, SetLastError = true)]
             [return: MarshalAs(UnmanagedType.Bool)]
-            public static extern bool WIMSetImageInformation(WimHandle hImage, IntPtr pvImageInfo, DWORD cbImageInfo);
+            public static partial bool WIMSetImageInformation(WimHandle hImage, IntPtr pvImageInfo, DWORD cbImageInfo);
         }
     }
 }

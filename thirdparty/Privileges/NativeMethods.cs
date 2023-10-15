@@ -48,7 +48,7 @@ namespace Privileges
         Impersonation = 2,
     }
 
-    internal sealed class NativeMethods
+    internal sealed partial class NativeMethods
     {
         internal const uint SE_PRIVILEGE_DISABLED = 0x00000000;
         internal const uint SE_PRIVILEGE_ENABLED = 0x00000002;
@@ -85,10 +85,10 @@ namespace Privileges
         internal const int ERROR_NO_SUCH_PRIVILEGE = 0x521;
         internal const int ERROR_CANT_OPEN_ANONYMOUS = 0x543;
 
-        [DllImport(
-             KERNEL32,
-             SetLastError = true)]
-        internal static extern bool CloseHandle(IntPtr handle);
+        [LibraryImport(
+             KERNEL32, SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        internal static partial bool CloseHandle(IntPtr handle);
 
         [DllImport(
              ADVAPI32,
@@ -102,12 +102,10 @@ namespace Privileges
             [In, Out] ref TOKEN_PRIVILEGE PreviousState,
             [In, Out] ref uint ReturnLength);
 
-        [DllImport(
-             ADVAPI32,
-             CharSet = CharSet.Auto,
-             SetLastError = true)]
-        internal static extern
-            bool RevertToSelf();
+        [LibraryImport(
+             ADVAPI32, SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        internal static partial bool RevertToSelf();
 
         [DllImport(
              ADVAPI32,
@@ -120,19 +118,13 @@ CharSet = CharSet.Unicode,
             [In] string lpName,
             [In, Out] ref LUID Luid);
 
-        [DllImport(
-             KERNEL32,
-             CharSet = CharSet.Auto,
-             SetLastError = true)]
-        internal static extern
-            IntPtr GetCurrentProcess();
+        [LibraryImport(
+             KERNEL32, SetLastError = true)]
+        internal static partial IntPtr GetCurrentProcess();
 
-        [DllImport(
-             KERNEL32,
-             CharSet = CharSet.Auto,
-             SetLastError = true)]
-        internal static extern
-            IntPtr GetCurrentThread();
+        [LibraryImport(
+             KERNEL32, SetLastError = true)]
+        internal static partial IntPtr GetCurrentThread();
 
         [DllImport(
              ADVAPI32,

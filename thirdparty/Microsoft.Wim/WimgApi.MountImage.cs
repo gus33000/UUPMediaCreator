@@ -195,9 +195,9 @@ namespace Microsoft.Wim
             /// the mount directory.
             /// Use the WIMUnmountImage function to unmount the image from the mount directory.
             /// </remarks>
-            [DllImport(WimgApiDllName, CallingConvention = WimgApiCallingConvention, CharSet = WimgApiCharSet, SetLastError = true)]
+            [LibraryImport(WimgApiDllName, SetLastError = true, StringMarshalling = StringMarshalling.Utf16)]
             [return: MarshalAs(UnmanagedType.Bool)]
-            public static extern bool WIMMountImage(string pszMountPath, string pszWimFileName, DWORD dwImageIndex, [Optional] string pszTempPath);
+            public static partial bool WIMMountImage(string pszMountPath, string pszWimFileName, DWORD dwImageIndex, [Optional] string pszTempPath);
 
             /// <summary>
             /// Mounts an image in a Windows® image (.wim) file to the specified directory.
@@ -221,9 +221,9 @@ namespace Microsoft.Wim
             /// image mapped under the mount directory. The WIM file containing the image must be opened with WIM_GENERIC_MOUNT access.
             /// Use the WIMUnmountImageHandle function to unmount the image from the mount directory.
             /// </remarks>
-            [DllImport(WimgApiDllName, CallingConvention = WimgApiCallingConvention, CharSet = WimgApiCharSet, SetLastError = true)]
+            [LibraryImport(WimgApiDllName, SetLastError = true, StringMarshalling = StringMarshalling.Utf16)]
             [return: MarshalAs(UnmanagedType.Bool)]
-            public static extern bool WIMMountImageHandle(WimHandle hImage, string pszMountPath, DWORD dwMountFlags);
+            public static partial bool WIMMountImageHandle(WimHandle hImage, string pszMountPath, DWORD dwMountFlags);
         }
     }
 }

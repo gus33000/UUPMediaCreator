@@ -125,12 +125,8 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads
         {
             HttpClientHandler filter = new()
             {
-#if NET5_0_OR_GREATER
                 AutomaticDecompression = DecompressionMethods.All,
                 MaxConnectionsPerServer = 512,
-#else
-                AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate,
-#endif
             };
 
             if (proxy != null || !useSystemProxy)

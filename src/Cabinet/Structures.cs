@@ -97,12 +97,12 @@ namespace Cabinet
             A_NAME_IS_UTF = 1 << 8,
         }
 
-        internal DateTime GetDateTime()
+        internal readonly DateTime GetDateTime()
         {
             return new DateTime(((date >> 9) & 0b1111_111) + 1980, (date >> 5) & 0b1111, date & 0b1111_1, (time >> 11) & 0b1111_1, (time >> 5) & 0b1111_11, (time & 0b1111_1) * 2);
         }
 
-        internal FileAttributes GetFileAttributes()
+        internal readonly FileAttributes GetFileAttributes()
         {
             FileAttributes a = 0;
 
@@ -129,12 +129,12 @@ namespace Cabinet
             return a;
         }
 
-        internal bool IsFileNameUTF8()
+        internal readonly bool IsFileNameUTF8()
         {
             return (attribs & CFFILEATTRIBUTES.A_NAME_IS_UTF) != 0;
         }
 
-        internal bool ShouldBeExecutedAfterExtraction()
+        internal readonly bool ShouldBeExecutedAfterExtraction()
         {
             return (attribs & CFFILEATTRIBUTES.A_EXEC) != 0;
         }

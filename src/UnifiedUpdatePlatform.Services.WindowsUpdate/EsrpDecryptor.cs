@@ -69,12 +69,7 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate
             using ICryptoTransform dec = aes.CreateDecryptor(key, newIv);
             using MemoryStream ms = new(buffer, 0, bufferLength);
             using CryptoStream cs = new(ms, dec, CryptoStreamMode.Read);
-
-#if NET5_0_OR_GREATER
             await cs.CopyToAsync(to, cancellationToken);
-#else
-            await cs.CopyToAsync(to);
-#endif
         }
 
         public async Task DecryptStreamFullAsync(Stream encryptedFile, Stream decryptedFile, ulong encryptedSize,
@@ -82,11 +77,7 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate
         {
             int readBytes;
             byte[] buffer = new byte[esrp.EncryptionBufferSize];
-#if NET5_0_OR_GREATER
             while ((readBytes = await encryptedFile.ReadAsync(buffer.AsMemory(0, buffer.Length), cancellationToken)) > 0)
-#else
-            while ((readBytes = await encryptedFile.ReadAsync(buffer, 0, buffer.Length, cancellationToken)) > 0)
-#endif
             {
                 bool needsPaddingMode = encryptedSize == (ulong)encryptedFile.Position;
                 long previousSumBlockLength = encryptedFile.Position - readBytes;

@@ -70,9 +70,9 @@ namespace Microsoft.Wim
             /// You must call the WIMSetTemporaryPath function before calling the WIMDeleteImage function so the image
             /// metadata for the image can be extracted and processed from the temporary location.
             /// </remarks>
-            [DllImport(WimgApiDllName, CallingConvention = WimgApiCallingConvention, CharSet = WimgApiCharSet, SetLastError = true)]
+            [LibraryImport(WimgApiDllName, SetLastError = true)]
             [return: MarshalAs(UnmanagedType.Bool)]
-            public static extern bool WIMDeleteImage(WimHandle hWim, DWORD dwImageIndex);
+            public static partial bool WIMDeleteImage(WimHandle hWim, DWORD dwImageIndex);
         }
     }
 }

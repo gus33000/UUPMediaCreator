@@ -257,9 +257,7 @@ namespace UnifiedUpdatePlatform.Services.Composition.Database.Applications
         /// <returns></returns>
         internal static double GetScaleFactorScore(int target, int candidate)
         {
-            return (double)(BuiltInScaleFactorScores.ContainsKey(target) && BuiltInScaleFactorScores[target].ContainsKey(candidate)
-                ? BuiltInScaleFactorScores[target][candidate]
-                : CalculateScaleFactorScore(target, candidate));
+            return (double)(BuiltInScaleFactorScores.TryGetValue(target, out Dictionary<int, double> scaleFactorScoreDictionary) && scaleFactorScoreDictionary.TryGetValue(candidate, out double scaleFactorScore) ? scaleFactorScore : CalculateScaleFactorScore(target, candidate));
         }
     }
 }

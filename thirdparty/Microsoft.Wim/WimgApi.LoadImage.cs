@@ -67,8 +67,8 @@ namespace Microsoft.Wim
             /// extracted and processed from the temporary location.
             /// Use the WIMCloseHandle function to unload the volume image.
             /// </remarks>
-            [DllImport(WimgApiDllName, CallingConvention = WimgApiCallingConvention, CharSet = WimgApiCharSet, SetLastError = true)]
-            public static extern WimHandle WIMLoadImage(WimHandle hWim, DWORD dwImageIndex);
+            [LibraryImport(WimgApiDllName, SetLastError = true)]
+            public static partial WimHandle WIMLoadImage(WimHandle hWim, DWORD dwImageIndex);
         }
     }
 }

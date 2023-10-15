@@ -190,7 +190,7 @@ namespace Cabinet
 
     public class Cabinet
     {
-        private readonly byte[] CabinetMagic = new byte[] { (byte)'M', (byte)'S', (byte)'C', (byte)'F' };
+        private readonly byte[] CabinetMagic = "MSCF"u8.ToArray();
 
         private readonly CabinetHeader cabinetHeader;
         private readonly IReadOnlyCollection<CabinetVolume> volumes;
@@ -429,7 +429,7 @@ namespace Cabinet
                     {
                         byte[] magic = cabinetBinaryReader.ReadBytes(2);
 
-                        if (StructuralComparisons.StructuralComparer.Compare(magic, new byte[] { (byte)'C', (byte)'K' }) != 0)
+                        if (StructuralComparisons.StructuralComparer.Compare(magic, "CK"u8.ToArray()) != 0)
                         {
                             throw new Exception("Bad Cabinet: Invalid Signature for MSZIP block");
                         }
@@ -554,7 +554,7 @@ namespace Cabinet
                 {
                     byte[] magic = cabinetBinaryReader.ReadBytes(2);
 
-                    if (StructuralComparisons.StructuralComparer.Compare(magic, new byte[] { (byte)'C', (byte)'K' }) != 0)
+                    if (StructuralComparisons.StructuralComparer.Compare(magic, "CK"u8.ToArray()) != 0)
                     {
                         throw new Exception("Bad Cabinet: Invalid Signature for MSZIP block");
                     }

@@ -172,8 +172,8 @@ namespace Microsoft.Wim
             /// If the function fails, the return value is NULL. To obtain extended error information, call the GetLastError function.
             /// </returns>
             /// <remarks>Use the WIMCloseHandle function to close the handle returned by the WIMCreateFile function.</remarks>
-            [DllImport(WimgApiDllName, CallingConvention = WimgApiCallingConvention, CharSet = WimgApiCharSet, SetLastError = true)]
-            public static extern WimHandle WIMCreateFile(string pszWimPath, DWORD dwDesiredAccess, DWORD dwCreationDisposition, DWORD dwFlagsAndAttributes, DWORD dwCompressionType, out WimCreationResult pdwCreationResult);
+            [LibraryImport(WimgApiDllName, SetLastError = true, StringMarshalling = StringMarshalling.Utf16)]
+            public static partial WimHandle WIMCreateFile(string pszWimPath, DWORD dwDesiredAccess, DWORD dwCreationDisposition, DWORD dwFlagsAndAttributes, DWORD dwCompressionType, out WimCreationResult pdwCreationResult);
         }
     }
 }

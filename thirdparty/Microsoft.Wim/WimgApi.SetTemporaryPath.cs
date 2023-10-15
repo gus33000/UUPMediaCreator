@@ -61,9 +61,9 @@ namespace Microsoft.Wim
             /// If the function succeeds, then the return value is nonzero.
             /// If the function fails, then the return value is zero. To obtain extended error information, call GetLastError.
             /// </returns>
-            [DllImport(WimgApiDllName, CallingConvention = WimgApiCallingConvention, CharSet = WimgApiCharSet, SetLastError = true)]
+            [LibraryImport(WimgApiDllName, SetLastError = true, StringMarshalling = StringMarshalling.Utf16)]
             [return: MarshalAs(UnmanagedType.Bool)]
-            public static extern bool WIMSetTemporaryPath(WimHandle hWim, string pszPath);
+            public static partial bool WIMSetTemporaryPath(WimHandle hWim, string pszPath);
         }
     }
 }

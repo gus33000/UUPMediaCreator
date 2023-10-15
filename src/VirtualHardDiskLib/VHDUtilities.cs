@@ -104,7 +104,7 @@ namespace VirtualHardDiskLib
                     attachResult));
             }
 
-            int num = _findVhdPhysicalDriveNumber(handle);
+            int num = FindVhdPhysicalDriveNumber(handle);
 
             // close handle to disk
             _ = NativeMethods.CloseHandle(handle);
@@ -151,7 +151,7 @@ namespace VirtualHardDiskLib
             _ = NativeMethods.CloseHandle(handle);
         }
 
-        private static int _findVhdPhysicalDriveNumber(IntPtr vhdHandle)
+        private static int FindVhdPhysicalDriveNumber(IntPtr vhdHandle)
         {
             int bufferSize = 260;
             StringBuilder vhdPhysicalPath = new(bufferSize);
@@ -161,7 +161,7 @@ namespace VirtualHardDiskLib
             return driveNumber;
         }
 
-        private static string _findVhdVolumePath(int vhdPhysicalDrive)
+        private static string FindVhdVolumePath(int vhdPhysicalDrive)
         {
             StringBuilder volumeName = new(260);
             IntPtr findVolumeHandle;
@@ -198,7 +198,7 @@ namespace VirtualHardDiskLib
             return found ? volumeName.ToString() : ""; //when It returns "" then the error occurs
         }
 
-        private static void _mountVhdToDriveLetter(string vhdVolumePath, string mountPoint)
+        private static void MountVhdToDriveLetter(string vhdVolumePath, string mountPoint)
         {
             if (vhdVolumePath[^1] != Path.DirectorySeparatorChar)
             {
@@ -214,8 +214,8 @@ namespace VirtualHardDiskLib
         internal static void AttachDriveLetterToDiskAndPartitionId(int diskid, int partid, char driveletter)
         {
             RemoveFileExplorerAutoRun(driveletter);
-            string volpath = _findVhdVolumePath(diskid);
-            _mountVhdToDriveLetter(volpath, driveletter + ":\\");
+            string volpath = FindVhdVolumePath(diskid);
+            MountVhdToDriveLetter(volpath, driveletter + ":\\");
         }
 
         /// <summary>

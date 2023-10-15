@@ -274,12 +274,12 @@ namespace UnifiedUpdatePlatform.Services.Composition.Database
                 get; set;
             }
             [XmlAttribute(AttributeName = "xsi", Namespace = "http://www.w3.org/2000/xmlns/")]
-            public string xsi
+            public string Xsi
             {
                 get; set;
             }
             [XmlAttribute(AttributeName = "xsd", Namespace = "http://www.w3.org/2000/xmlns/")]
-            public string xsd
+            public string Xsd
             {
                 get; set;
             }
@@ -339,7 +339,7 @@ namespace UnifiedUpdatePlatform.Services.Composition.Database
                 get; set;
             }
             [XmlAttribute(AttributeName = "xmlns", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
-            public string xmlns
+            public string Xmlns
             {
                 get; set;
             }

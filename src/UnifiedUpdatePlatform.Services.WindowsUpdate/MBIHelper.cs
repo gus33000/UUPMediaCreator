@@ -100,7 +100,7 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate
                     if (oLocationBit.Contains("access_token"))
                     {
                         retVal = oLocationBit[(oLocationBit.IndexOf("access_token") + 13)..];
-                        if (retVal.Contains("&"))
+                        if (retVal.Contains('&'))
                         {
                             retVal = retVal[..retVal.IndexOf('&')];
                         }

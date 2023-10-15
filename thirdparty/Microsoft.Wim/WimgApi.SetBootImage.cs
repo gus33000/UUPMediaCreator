@@ -59,9 +59,9 @@ namespace Microsoft.Wim
             /// If the input value for the dwImageIndex is zero, then none of the images in the .wim file are marked for boot.
             /// At any time, only one image in a .wim file can be set to be bootable.
             /// </remarks>
-            [DllImport(WimgApiDllName, CallingConvention = WimgApiCallingConvention, CharSet = WimgApiCharSet, SetLastError = true)]
+            [LibraryImport(WimgApiDllName, SetLastError = true)]
             [return: MarshalAs(UnmanagedType.Bool)]
-            public static extern bool WIMSetBootImage(WimHandle hWim, DWORD dwImageIndex);
+            public static partial bool WIMSetBootImage(WimHandle hWim, DWORD dwImageIndex);
         }
     }
 }

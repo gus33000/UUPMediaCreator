@@ -70,7 +70,7 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate
             isInitialized = true;
         }
 
-        protected static int getCllSettingsAsInt(Settings setting)
+        protected static int GetCllSettingsAsInt(Settings setting)
         {
             int asInt = (int)setting;
             return asInt;
@@ -80,7 +80,7 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate
         {
             int vectorSize = (int)Math.Floor(Math.Log10(currentVector) + 1);
 
-            return baseVector.Length + 1 + vectorSize + 1 + 1 <= getCllSettingsAsInt(Settings.MAXCORRELATIONVECTORLENGTH);
+            return baseVector.Length + 1 + vectorSize + 1 + 1 <= GetCllSettingsAsInt(Settings.MAXCORRELATIONVECTORLENGTH);
         }
 
         private bool CanIncrement(int newVector)
@@ -92,7 +92,7 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate
             int vectorSize = (int)Math.Floor(Math.Log10(newVector) + 1);
 
             // Get the length of the existing string + length of the new extension + the length of the dot
-            return baseVector.Length + vectorSize + 1 <= getCllSettingsAsInt(Settings.MAXCORRELATIONVECTORLENGTH);
+            return baseVector.Length + vectorSize + 1 <= GetCllSettingsAsInt(Settings.MAXCORRELATIONVECTORLENGTH);
         }
 
         internal string Extend()
@@ -135,7 +135,7 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate
 
         private bool IsValid(string vector)
         {
-            if (vector.Length > getCllSettingsAsInt(Settings.MAXCORRELATIONVECTORLENGTH))
+            if (vector.Length > GetCllSettingsAsInt(Settings.MAXCORRELATIONVECTORLENGTH))
             {
                 return false;
             }
