@@ -45,7 +45,7 @@ namespace UnifiedUpdatePlatform.Media.Creator.BaseEditions
             string InputWindowsREPath,
             string OutputInstallImage,
             Common.Messaging.Common.CompressionType CompressionType,
-            IEnumerable<CompDBXmlClass.CompDB> CompositionDatabases,
+            IEnumerable<CompDB> CompositionDatabases,
             TempManager tempManager,
             ProgressCallback progressCallback = null)
         {
@@ -178,7 +178,7 @@ namespace UnifiedUpdatePlatform.Media.Creator.BaseEditions
             string OutputInstallImage,
             Common.Messaging.Common.CompressionType CompressionType,
             AppxInstallWorkload[] appxWorkloads,
-            IEnumerable<CompDBXmlClass.CompDB> CompositionDatabases,
+            IEnumerable<CompDB> CompositionDatabases,
             TempManager tempManager,
             bool keepVhd,
             out string vhdPath,
@@ -355,7 +355,7 @@ namespace UnifiedUpdatePlatform.Media.Creator.BaseEditions
             string UUPPath,
             string LanguageCode,
             string EditionID,
-            IEnumerable<CompDBXmlClass.CompDB> CompositionDatabases,
+            IEnumerable<CompDB> CompositionDatabases,
             TempManager tempManager,
             ProgressCallback progressCallback = null)
         {

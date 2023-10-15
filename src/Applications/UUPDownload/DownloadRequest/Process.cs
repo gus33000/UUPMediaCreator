@@ -102,7 +102,7 @@ namespace UUPDownload.DownloadRequest
                 update.CompDBs = await update.GetCompDBsAsync();
             }
 
-            CompDBXmlClass.CompDB canonicalCompdb = update.CompDBs
+            CompDB canonicalCompdb = update.CompDBs
                 .Where(compDB => compDB.Tags.Tag
                 .Find(x => x.Name
                 .Equals("UpdateType", StringComparison.InvariantCultureIgnoreCase))?.Value?
@@ -121,7 +121,7 @@ namespace UUPDownload.DownloadRequest
                         payloadHash = Convert.ToBase64String(sha.ComputeHash(fileStream));
                     }
 
-                    CompDBXmlClass.AppxPackage package = canonicalCompdb.AppX.AppXPackages.Package.Where(p => p.Payload.PayloadItem.FirstOrDefault().PayloadHash == payloadHash).FirstOrDefault();
+                    AppxPackage package = canonicalCompdb.AppX.AppXPackages.Package.Where(p => p.Payload.PayloadItem.FirstOrDefault().PayloadHash == payloadHash).FirstOrDefault();
                     if (package == null)
                     {
                         Logging.Log($"Could not locate package with payload hash {payloadHash}. Skipping.");
@@ -141,7 +141,7 @@ namespace UUPDownload.DownloadRequest
                     }
                 }
 
-                foreach (CompDBXmlClass.AppxPackage package in canonicalCompdb.AppX.AppXPackages.Package)
+                foreach (AppxPackage package in canonicalCompdb.AppX.AppXPackages.Package)
                 {
                     if (package.LicenseData != null)
                     {
@@ -229,7 +229,7 @@ namespace UUPDownload.DownloadRequest
 
             Logging.Log("Gathering update metadata...");
 
-            HashSet<CompDBXmlClass.CompDB> compDBs = await update.GetCompDBsAsync();
+            HashSet<CompDB> compDBs = await update.GetCompDBsAsync();
 
             await Task.WhenAll(
                 Task.Run(async () => buildstr = await update.GetBuildStringAsync()),
@@ -248,9 +248,9 @@ namespace UUPDownload.DownloadRequest
                 // We need to fallback to CompDB (less accurate but we have no choice, due to CUs etc...
 
                 // Loop through all CompDBs to find the highest version reported
-                CompDBXmlClass.CompDB selectedCompDB = null;
+                CompDB selectedCompDB = null;
                 Version currentHighest = null;
-                foreach (CompDBXmlClass.CompDB compDB in compDBs)
+                foreach (CompDB compDB in compDBs)
                 {
                     if (compDB.TargetOSVersion != null)
                     {
@@ -296,7 +296,7 @@ namespace UUPDownload.DownloadRequest
 
             if (compDBs != null)
             {
-                CompDBXmlClass.Package editionPackPkg = compDBs.GetEditionPackFromCompDBs();
+                Package editionPackPkg = compDBs.GetEditionPackFromCompDBs();
                 if (editionPackPkg != null)
                 {
                     string editionPkg = await update.DownloadFileFromDigestAsync(editionPackPkg.Payload.PayloadItem.First(x => !x.Path.EndsWith(".psf")).PayloadHash);

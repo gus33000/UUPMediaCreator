@@ -28,14 +28,14 @@ namespace UnifiedUpdatePlatform.Services.Composition.Database
 {
     public static class CompDBExtensions
     {
-        public static string GetCommonlyUsedIncorrectFileName(this CompDBXmlClass.Package pkg)
+        public static string GetCommonlyUsedIncorrectFileName(this Package pkg)
         {
             return pkg.Payload.PayloadItem.First(x => !x.Path.EndsWith(".psf")).Path.Replace('\\', Path.DirectorySeparatorChar).Split(Path.DirectorySeparatorChar).Last().Replace("~31bf3856ad364e35", "").Replace("~.", ".").Replace("~", "-").Replace("-.", ".");
         }
 
-        public static CompDBXmlClass.CompDB GetNeutralCompDB(this IEnumerable<CompDBXmlClass.CompDB> compDBs)
+        public static CompDB GetNeutralCompDB(this IEnumerable<CompDB> compDBs)
         {
-            foreach (CompDBXmlClass.CompDB compDB in compDBs)
+            foreach (CompDB compDB in compDBs)
             {
                 if (compDB.Type != "Build")
                 {
@@ -73,13 +73,13 @@ namespace UnifiedUpdatePlatform.Services.Composition.Database
             return null;
         }
 
-        public static HashSet<CompDBXmlClass.CompDB> GetEditionCompDBsForLanguage(
-            this IEnumerable<CompDBXmlClass.CompDB> compDBs,
+        public static HashSet<CompDB> GetEditionCompDBsForLanguage(
+            this IEnumerable<CompDB> compDBs,
             string LanguageCode)
         {
-            HashSet<CompDBXmlClass.CompDB> filteredCompDBs = new();
+            HashSet<CompDB> filteredCompDBs = new();
 
-            foreach (CompDBXmlClass.CompDB compDB in compDBs)
+            foreach (CompDB compDB in compDBs)
             {
                 //
                 // Newer style compdbs have a tag attribute, make use of it.
@@ -114,11 +114,11 @@ namespace UnifiedUpdatePlatform.Services.Composition.Database
             return filteredCompDBs;
         }
 
-        public static HashSet<CompDBXmlClass.CompDB> GetEditionCompDBs(this IEnumerable<CompDBXmlClass.CompDB> compDBs)
+        public static HashSet<CompDB> GetEditionCompDBs(this IEnumerable<CompDB> compDBs)
         {
-            HashSet<CompDBXmlClass.CompDB> filteredCompDBs = new();
+            HashSet<CompDB> filteredCompDBs = new();
 
-            foreach (CompDBXmlClass.CompDB compDB in compDBs)
+            foreach (CompDB compDB in compDBs)
             {
                 //
                 // Newer style compdbs have a tag attribute, make use of it.
@@ -151,7 +151,7 @@ namespace UnifiedUpdatePlatform.Services.Composition.Database
             return filteredCompDBs;
         }
 
-        public static IEnumerable<string> GetAvailableLanguages(this IEnumerable<CompDBXmlClass.CompDB> compDBs)
+        public static IEnumerable<string> GetAvailableLanguages(this IEnumerable<CompDB> compDBs)
         {
             return compDBs.GetEditionCompDBs().Select(x =>
             {
@@ -171,22 +171,22 @@ namespace UnifiedUpdatePlatform.Services.Composition.Database
             }).Where(x => !string.IsNullOrEmpty(x)).Distinct();
         }
 
-        public static CompDBXmlClass.Package GetEditionPackFromCompDBs(this IEnumerable<CompDBXmlClass.CompDB> compDBs)
+        public static Package GetEditionPackFromCompDBs(this IEnumerable<CompDB> compDBs)
         {
-            HashSet<CompDBXmlClass.Package> pkgs = new();
+            HashSet<Package> pkgs = new();
 
             //
             // Get base editions that are available with all their files
             //
-            HashSet<CompDBXmlClass.CompDB> filteredCompDBs = compDBs.GetEditionCompDBs();
+            HashSet<CompDB> filteredCompDBs = compDBs.GetEditionCompDBs();
 
             if (filteredCompDBs.Count > 0)
             {
-                foreach (CompDBXmlClass.CompDB compDB in filteredCompDBs)
+                foreach (CompDB compDB in filteredCompDBs)
                 {
-                    foreach (CompDBXmlClass.Package feature in filteredCompDBs.First().Features.Feature[0].Packages.Package)
+                    foreach (Package feature in filteredCompDBs.First().Features.Feature[0].Packages.Package)
                     {
-                        CompDBXmlClass.Package pkg = filteredCompDBs.First().Packages.Package.First(x => x.ID == feature.ID);
+                        Package pkg = filteredCompDBs.First().Packages.Package.First(x => x.ID == feature.ID);
 
                         IEnumerable<string> files = pkg.Payload.PayloadItem.Select(x => x.Path.Replace('\\', Path.DirectorySeparatorChar));
 
@@ -204,10 +204,10 @@ namespace UnifiedUpdatePlatform.Services.Composition.Database
                 }
             }
 
-            CompDBXmlClass.Package minpkg = null;
+            Package minpkg = null;
             if (pkgs.Count > 0)
             {
-                foreach (CompDBXmlClass.Package pkg in pkgs)
+                foreach (Package pkg in pkgs)
                 {
                     if (minpkg == null)
                     {
@@ -215,9 +215,9 @@ namespace UnifiedUpdatePlatform.Services.Composition.Database
                     }
                     else
                     {
-                        foreach (CompDBXmlClass.PayloadItem minitem in minpkg.Payload.PayloadItem)
+                        foreach (PayloadItem minitem in minpkg.Payload.PayloadItem)
                         {
-                            foreach (CompDBXmlClass.PayloadItem item in minpkg.Payload.PayloadItem)
+                            foreach (PayloadItem item in minpkg.Payload.PayloadItem)
                             {
                                 if (ulong.Parse(minitem.PayloadSize) > ulong.Parse(item.PayloadSize))
                                 {

@@ -30,12 +30,12 @@ namespace UUPDownload
 {
     public static class UpdateUtils
     {
-        public static string GetFilenameForCEUIFile(CExtendedUpdateInfoXml.File file2, IEnumerable<CompDBXmlClass.PayloadItem> payloadItems)
+        public static string GetFilenameForCEUIFile(CExtendedUpdateInfoXml.File file2, IEnumerable<PayloadItem> payloadItems)
         {
             string filename = file2.FileName.Replace('\\', Path.DirectorySeparatorChar);
             if (payloadItems.Any(x => x.PayloadHash == file2.AdditionalDigest.Text || x.PayloadHash == file2.Digest))
             {
-                CompDBXmlClass.PayloadItem payload = payloadItems.First(x => x.PayloadHash == file2.AdditionalDigest.Text || x.PayloadHash == file2.Digest);
+                PayloadItem payload = payloadItems.First(x => x.PayloadHash == file2.AdditionalDigest.Text || x.PayloadHash == file2.Digest);
                 return payload.Path.Replace('\\', Path.DirectorySeparatorChar);
             }
             else if (!payloadItems.Any() && filename.Contains('_') && !filename.StartsWith("_") && (!filename.Contains('-') || filename.IndexOf('-') > filename.IndexOf('_')))
@@ -46,12 +46,12 @@ namespace UUPDownload
             return filename;
         }
 
-        public static bool ShouldFileGetDownloaded(CExtendedUpdateInfoXml.File file2, IEnumerable<CompDBXmlClass.PayloadItem> payloadItems)
+        public static bool ShouldFileGetDownloaded(CExtendedUpdateInfoXml.File file2, IEnumerable<PayloadItem> payloadItems)
         {
             string filename = file2.FileName.Replace('\\', Path.DirectorySeparatorChar);
             if (payloadItems.Any(x => x.PayloadHash == file2.AdditionalDigest.Text || x.PayloadHash == file2.Digest))
             {
-                CompDBXmlClass.PayloadItem payload = payloadItems.First(x => x.PayloadHash == file2.AdditionalDigest.Text || x.PayloadHash == file2.Digest);
+                PayloadItem payload = payloadItems.First(x => x.PayloadHash == file2.AdditionalDigest.Text || x.PayloadHash == file2.Digest);
                 filename = payload.Path.Replace('\\', Path.DirectorySeparatorChar);
 
                 if (payload.PayloadType.Equals("ExpressCab", StringComparison.InvariantCultureIgnoreCase))

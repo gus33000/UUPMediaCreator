@@ -55,11 +55,11 @@ namespace UnifiedUpdatePlatform.Services.Composition.Database.Applications
             get; set;
         }
 
-        public void AddApplicablePackages(IEnumerable<CompDBXmlClass.Package> packageElements, IEnumerable<string> applicableLanguageTags)
+        public void AddApplicablePackages(IEnumerable<Package> packageElements, IEnumerable<string> applicableLanguageTags)
         {
             PackageIDs = new HashSet<string>();
             Dictionary<int, string> scaleDictionary = null;
-            foreach (CompDBXmlClass.Package package in packageElements)
+            foreach (Package package in packageElements)
             {
                 string packageId = package.ID;
                 switch (package.PackageType)

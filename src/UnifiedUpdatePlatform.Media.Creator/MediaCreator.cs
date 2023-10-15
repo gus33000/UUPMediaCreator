@@ -48,7 +48,7 @@ namespace UnifiedUpdatePlatform.Media.Creator
             string InstallWIMFilePath,
             string WinREWIMFilePath,
             Common.Messaging.Common.CompressionType CompressionType,
-            IEnumerable<CompDBXmlClass.CompDB> CompositionDatabases,
+            IEnumerable<CompDB> CompositionDatabases,
             TempManager tempManager,
             string VHDMountPath = null,
             string CurrentBackupVHD = null,
@@ -285,7 +285,7 @@ namespace UnifiedUpdatePlatform.Media.Creator
         public static bool GetTargetedPlan(
             string UUPPath,
             string LanguageCode,
-            List<CompDBXmlClass.CompDB> CompositionDatabases,
+            List<CompDB> CompositionDatabases,
             out List<EditionTarget> EditionTargets,
             TempManager tempManager,
             ProgressCallback progressCallback = null)
@@ -297,7 +297,7 @@ namespace UnifiedUpdatePlatform.Media.Creator
             //
             // Get base editions that are available with all their files
             //
-            IEnumerable<CompDBXmlClass.CompDB> filteredCompositionDatabases = CompositionDatabases.GetEditionCompDBsForLanguage(LanguageCode).Where(x =>
+            IEnumerable<CompDB> filteredCompositionDatabases = CompositionDatabases.GetEditionCompDBsForLanguage(LanguageCode).Where(x =>
             {
                 (bool success, HashSet<string> missingfiles) = Planning.FileLocator.VerifyFilesAreAvailableForCompDB(x, UUPPath);
                 return success;
@@ -305,9 +305,9 @@ namespace UnifiedUpdatePlatform.Media.Creator
 
             if (filteredCompositionDatabases.Any())
             {
-                foreach (CompDBXmlClass.Package feature in filteredCompositionDatabases.First().Features.Feature[0].Packages.Package)
+                foreach (Package feature in filteredCompositionDatabases.First().Features.Feature[0].Packages.Package)
                 {
-                    CompDBXmlClass.Package pkg = filteredCompositionDatabases.First().Packages.Package.First(x => x.ID == feature.ID);
+                    Package pkg = filteredCompositionDatabases.First().Packages.Package.First(x => x.ID == feature.ID);
 
                     string file = pkg.GetCommonlyUsedIncorrectFileName();
 
@@ -388,7 +388,7 @@ namespace UnifiedUpdatePlatform.Media.Creator
 
             try
             {
-                List<CompDBXmlClass.CompDB> CompositionDatabases = Planning.FileLocator.GetCompDBsFromUUPFiles(UUPPath, tempManager);
+                List<CompDB> CompositionDatabases = Planning.FileLocator.GetCompDBsFromUUPFiles(UUPPath, tempManager);
 
                 result = GetTargetedPlan(UUPPath, LanguageCode, CompositionDatabases, out List<EditionTarget> editionTargets, tempManager, progressCallback);
                 if (!result)

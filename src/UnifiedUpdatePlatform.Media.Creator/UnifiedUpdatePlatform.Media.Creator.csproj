@@ -33,6 +33,6 @@
     <PackageReference Include="JCRCI.LTRData.DiscUtils.Core" Version="1.0.31" />
     <PackageReference Include="JCRCI.LTRData.DiscUtils.Registry" Version="1.0.31" />
     <PackageReference Include="JCRCI.LTRData.DiscUtils.Streams" Version="1.0.31" />
-    <PackageReference Include="ini-parser" Version="2.5.2" />
+    <PackageReference Include="ini-parser-new" Version="2.6.2" />
   </ItemGroup>
 </Project>

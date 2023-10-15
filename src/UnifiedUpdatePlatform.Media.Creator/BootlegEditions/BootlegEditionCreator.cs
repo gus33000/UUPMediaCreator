@@ -52,7 +52,7 @@ namespace UnifiedUpdatePlatform.Media.Creator.BootlegEditions
             string TargetEdition = "PPIPro";
             string UUPPath = @"C:\Users\Gus\Downloads\19635.1_amd64_en-us_multi_6d892fb5\UUPs";
 
-            CompDBXmlClass.CompDB neutralCompDB = null;
+            CompDB neutralCompDB = null;
 
             if (Directory.EnumerateFiles(UUPPath, "*aggregatedmetadata*").Count() > 0)
             {

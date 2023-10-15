@@ -2,7 +2,7 @@
   "profiles": {
     "UnifiedUpdatePlatform.Media.Download": {
       "commandName": "Project",
-      "commandLineArgs": "-s Professional -e Professional -v 10.0.22621.100 -r Retail -b Retail -c ni_release -t arm64 -l en-US -o C:\\Users\\Gus\\Documents\\CLI"
+      "commandLineArgs": "-s Professional -v 10.0.22635.2483 -t amd64 -r External -b Dev -a CB -c ni_release -y"
     }
   }
 }

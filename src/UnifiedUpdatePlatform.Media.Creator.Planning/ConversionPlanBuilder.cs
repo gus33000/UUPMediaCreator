@@ -276,7 +276,7 @@ namespace UnifiedUpdatePlatform.Media.Creator.Planning
 
         private static (List<PlannedEdition>, List<PlannedEdition>) GetEditionsThatCanBeTargetedUsingPackageDowngrade(
             string UUPPath,
-            IEnumerable<CompDBXmlClass.CompDB> compDBs,
+            IEnumerable<CompDB> compDBs,
             IEnumerable<PlannedEdition> availableCanonicalEditions,
             List<EditionMappingXML.Edition> possibleEditionUpgrades,
             ProgressCallback? progressCallback = null)
@@ -287,22 +287,22 @@ namespace UnifiedUpdatePlatform.Media.Creator.Planning
             //
             // Attempt to get the neutral Composition Database listing all available files
             //
-            CompDBXmlClass.CompDB? neutralCompDB = compDBs.GetNeutralCompDB();
+            CompDB? neutralCompDB = compDBs.GetNeutralCompDB();
 
             if (neutralCompDB != null &&
                 neutralCompDB.Features.Feature.FirstOrDefault(x => x.FeatureID == "BaseNeutral")?
                 .Packages.Package
-                is List<CompDBXmlClass.Package> packages)
+                is List<Package> packages)
             {
-                IEnumerable<CompDBXmlClass.Package>? editionSpecificPackages = packages.Where(x => x.ID.Count(y => y == '-') == 4 && x.ID.Contains("microsoft-windows-editionspecific", StringComparison.InvariantCultureIgnoreCase));
-                IEnumerable<CompDBXmlClass.Package>? highPriorityPackages = editionSpecificPackages.Where(x => x.ID.Contains("starter", StringComparison.InvariantCultureIgnoreCase) ||
+                IEnumerable<Package>? editionSpecificPackages = packages.Where(x => x.ID.Count(y => y == '-') == 4 && x.ID.Contains("microsoft-windows-editionspecific", StringComparison.InvariantCultureIgnoreCase));
+                IEnumerable<Package>? highPriorityPackages = editionSpecificPackages.Where(x => x.ID.Contains("starter", StringComparison.InvariantCultureIgnoreCase) ||
                                                                             x.ID.Contains("professional", StringComparison.InvariantCultureIgnoreCase) ||
                                                                             x.ID.Contains("core", StringComparison.InvariantCultureIgnoreCase));
                 editionSpecificPackages = editionSpecificPackages.Except(highPriorityPackages);
 
-                foreach (CompDBXmlClass.Package? file in highPriorityPackages)
+                foreach (Package? file in highPriorityPackages)
                 {
-                    CompDBXmlClass.Package pkg = neutralCompDB.Packages.Package.First(x => x.ID == file.ID);
+                    Package pkg = neutralCompDB.Packages.Package.First(x => x.ID == file.ID);
 
                     //
                     // First check if the file exists
@@ -341,9 +341,9 @@ namespace UnifiedUpdatePlatform.Media.Creator.Planning
                     }
                 }
 
-                foreach (CompDBXmlClass.Package? file in editionSpecificPackages)
+                foreach (Package? file in editionSpecificPackages)
                 {
-                    CompDBXmlClass.Package pkg = neutralCompDB.Packages.Package.First(x => x.ID == file.ID);
+                    Package pkg = neutralCompDB.Packages.Package.First(x => x.ID == file.ID);
 
                     //
                     // First check if the file exists
@@ -387,7 +387,7 @@ namespace UnifiedUpdatePlatform.Media.Creator.Planning
         }
 
         public static bool GetTargetedPlan(
-            IEnumerable<CompDBXmlClass.CompDB> compDBs,
+            IEnumerable<CompDB> compDBs,
             string EditionPack,
             string LanguageCode,
             bool IncludeServicingCapableOnlyTargets,
@@ -444,7 +444,7 @@ namespace UnifiedUpdatePlatform.Media.Creator.Planning
 
         public static bool GetTargetedPlan(
             string UUPPath,
-            IEnumerable<CompDBXmlClass.CompDB> compDBs,
+            IEnumerable<CompDB> compDBs,
             string EditionPack,
             string LanguageCode,
             bool IncludeServicingCapableOnlyTargets,
@@ -463,7 +463,7 @@ namespace UnifiedUpdatePlatform.Media.Creator.Planning
             //
             // Get base editions that are available with all their files
             //
-            IEnumerable<CompDBXmlClass.CompDB> filteredCompDBs = compDBs.GetEditionCompDBsForLanguage(LanguageCode).Where(x =>
+            IEnumerable<CompDB> filteredCompDBs = compDBs.GetEditionCompDBsForLanguage(LanguageCode).Where(x =>
             {
                 bool success = !VerifyFiles;
                 if (!success)
@@ -504,7 +504,7 @@ namespace UnifiedUpdatePlatform.Media.Creator.Planning
 
                 if (compDBs.Any(x => x.Name?.StartsWith("Build~") == true && (x.Name?.EndsWith("~Desktop_Apps~~") == true || x.Name?.EndsWith("~Desktop_Apps_Moment~~") == true)))
                 {
-                    IEnumerable<CompDBXmlClass.CompDB> AppCompDBs = compDBs.Where(x => x.Name?.StartsWith("Build~") == true && (x.Name?.EndsWith("~Desktop_Apps~~") == true || x.Name?.EndsWith("~Desktop_Apps_Moment~~") == true));
+                    IEnumerable<CompDB> AppCompDBs = compDBs.Where(x => x.Name?.StartsWith("Build~") == true && (x.Name?.EndsWith("~Desktop_Apps~~") == true || x.Name?.EndsWith("~Desktop_Apps_Moment~~") == true));
                     edition.AppXInstallWorkloads = AppxSelectionEngine.GetAppxInstallationWorkloads(compDB, AppCompDBs, LanguageCode);
                 }
 

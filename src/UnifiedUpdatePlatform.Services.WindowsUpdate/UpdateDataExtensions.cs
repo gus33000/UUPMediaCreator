@@ -142,8 +142,8 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate
             {
                 try
                 {
-                    HashSet<CompDBXmlClass.CompDB> compDBs = await update.GetCompDBsAsync();
-                    CompDBXmlClass.CompDB firstCompDB = compDBs.First();
+                    HashSet<CompDB> compDBs = await update.GetCompDBsAsync();
+                    CompDB firstCompDB = compDBs.First();
 
                     // example:
                     // BuildInfo="co_release.21382.1.210511-1416" OSVersion="10.0.21382.1" TargetBuildInfo="co_release.21382.1.210511-1416" TargetOSVersion="10.0.21382.1"
@@ -227,9 +227,9 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate
             return (await update.GetCompDBsAsync()).GetAvailableLanguages();
         }
 
-        private static async Task<HashSet<CompDBXmlClass.CompDB>> GetCompDBs(UpdateData update)
+        private static async Task<HashSet<CompDB>> GetCompDBs(UpdateData update)
         {
-            HashSet<CompDBXmlClass.CompDB> neutralCompDB = new();
+            HashSet<CompDB> neutralCompDB = new();
             HashSet<CExtendedUpdateInfoXml.File> metadataCabs = new();
 
             foreach (CExtendedUpdateInfoXml.File file in update.Xml.Files.File)
@@ -328,7 +328,7 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate
             return neutralCompDB;
         }
 
-        public static async Task<HashSet<CompDBXmlClass.CompDB>> GetCompDBsAsync(this UpdateData update)
+        public static async Task<HashSet<CompDB>> GetCompDBsAsync(this UpdateData update)
         {
             return update.CompDBs ??= await GetCompDBs(update);
         }

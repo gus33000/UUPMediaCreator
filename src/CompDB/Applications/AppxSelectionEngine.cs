@@ -37,7 +37,7 @@ namespace UnifiedUpdatePlatform.Services.Composition.Database.Applications
         /// <param name="appsCdb"></param>
         /// <param name="repositoryPath"></param>
         /// <returns></returns>
-        private static (Dictionary<string, DeploymentProperties> preinstalledApps, CompDBXmlClass.Feature[] appsFeatures) SetupVariables(CompDBXmlClass.CompDB editionCdb, IEnumerable<CompDBXmlClass.CompDB> appsCdbs)
+        private static (Dictionary<string, DeploymentProperties> preinstalledApps, Feature[] appsFeatures) SetupVariables(CompDB editionCdb, IEnumerable<CompDB> appsCdbs)
         {
             Dictionary<string, DeploymentProperties> preinstalledApps = editionCdb.Features.Feature
                 .First(x => x.Type == "DesktopMedia")
@@ -48,15 +48,15 @@ namespace UnifiedUpdatePlatform.Services.Composition.Database.Applications
                 .Distinct()
                 .ToDictionary(x => x, _ => new DeploymentProperties());
 
-            List<CompDBXmlClass.Feature> appsFeatures = new();
+            List<Feature> appsFeatures = new();
 
-            foreach (CompDBXmlClass.CompDB appsCdb in appsCdbs)
+            foreach (CompDB appsCdb in appsCdbs)
             {
                 appsFeatures.AddRange(appsCdb.Features.Feature);
             }
 
             // Load dependencies & intents
-            foreach (CompDBXmlClass.Feature ftr in appsFeatures)
+            foreach (Feature ftr in appsFeatures)
             {
                 string appFeatureId = ftr.FeatureID;
                 if (!preinstalledApps.ContainsKey(appFeatureId))
@@ -74,14 +74,14 @@ namespace UnifiedUpdatePlatform.Services.Composition.Database.Applications
                     deployProps.PreferStub = true;
                 }
 
-                List<CompDBXmlClass.Feature> dependencies = ftr.Dependencies?.Feature;
+                List<Feature> dependencies = ftr.Dependencies?.Feature;
                 if (dependencies == null)
                 {
                     continue;
                 }
 
                 HashSet<string> depsForApp = new();
-                foreach (CompDBXmlClass.Feature dep in dependencies)
+                foreach (Feature dep in dependencies)
                 {
                     string depAppId = dep.FeatureID;
                     if (!preferStub)
@@ -108,12 +108,12 @@ namespace UnifiedUpdatePlatform.Services.Composition.Database.Applications
         /// <param name="editionCdb">The edition Composition Database to generate licenses for</param>
         /// <param name="appsCdb">The application Composition Database</param>
         /// <param name="repositoryPath">The path to the repository file set</param>
-        public static void GenerateLicenseXmlFiles(CompDBXmlClass.CompDB editionCdb, IEnumerable<CompDBXmlClass.CompDB> appsCdbs, string repositoryPath)
+        public static void GenerateLicenseXmlFiles(CompDB editionCdb, IEnumerable<CompDB> appsCdbs, string repositoryPath)
         {
-            (Dictionary<string, DeploymentProperties> preinstalledApps, CompDBXmlClass.Feature[] appsFeatures) = SetupVariables(editionCdb, appsCdbs);
+            (Dictionary<string, DeploymentProperties> preinstalledApps, Feature[] appsFeatures) = SetupVariables(editionCdb, appsCdbs);
 
             // Pick packages and dump licenses
-            foreach (CompDBXmlClass.Feature ftr in appsFeatures)
+            foreach (Feature ftr in appsFeatures)
             {
                 string appFeatureId = ftr.FeatureID;
                 if (!preinstalledApps.ContainsKey(appFeatureId))
@@ -142,17 +142,17 @@ namespace UnifiedUpdatePlatform.Services.Composition.Database.Applications
         /// <param name="appsCdb">The application Composition Database</param>
         /// <param name="repositoryPath">The path to the repository file set</param>
         /// <returns></returns>
-        public static AppxInstallWorkload[] GetAppxInstallationWorkloads(CompDBXmlClass.CompDB editionCdb, IEnumerable<CompDBXmlClass.CompDB> appsCdbs, string editionLanguage)
+        public static AppxInstallWorkload[] GetAppxInstallationWorkloads(CompDB editionCdb, IEnumerable<CompDB> appsCdbs, string editionLanguage)
         {
             List<AppxInstallWorkload> workloads = new();
 
             IEnumerable<string> applicableLanguageTags = GetAllPossibleLanguageCombinations(editionLanguage);
 
-            (Dictionary<string, DeploymentProperties> preinstalledApps, CompDBXmlClass.Feature[] appsFeatures) = SetupVariables(editionCdb, appsCdbs);
+            (Dictionary<string, DeploymentProperties> preinstalledApps, Feature[] appsFeatures) = SetupVariables(editionCdb, appsCdbs);
 
             HashSet<string> allPackageIDs = new();
             // Pick packages and dump licenses
-            foreach (CompDBXmlClass.Feature ftr in appsFeatures)
+            foreach (Feature ftr in appsFeatures)
             {
                 string appFeatureId = ftr.FeatureID;
                 if (!preinstalledApps.ContainsKey(appFeatureId))
@@ -175,7 +175,7 @@ namespace UnifiedUpdatePlatform.Services.Composition.Database.Applications
                     deployProps.HasLicense = true;
                 }
 
-                List<CompDBXmlClass.Package> appPackages = ftr.Packages.Package;
+                List<Package> appPackages = ftr.Packages.Package;
                 deployProps.AddApplicablePackages(appPackages, applicableLanguageTags);
 
                 foreach (string pid in deployProps.PackageIDs)
@@ -185,9 +185,9 @@ namespace UnifiedUpdatePlatform.Services.Composition.Database.Applications
             }
 
             Dictionary<string, PackageProperties> packageHashDict = new();
-            foreach (CompDBXmlClass.CompDB appsCdb in appsCdbs)
+            foreach (CompDB appsCdb in appsCdbs)
             {
-                foreach (CompDBXmlClass.Package p in appsCdb.Packages.Package)
+                foreach (Package p in appsCdb.Packages.Package)
                 {
                     string packageId = p.ID;
                     if (!allPackageIDs.Contains(packageId))
@@ -195,7 +195,7 @@ namespace UnifiedUpdatePlatform.Services.Composition.Database.Applications
                         continue;
                     }
 
-                    CompDBXmlClass.PayloadItem pCanonical = p
+                    PayloadItem pCanonical = p
                         .Payload
                         .PayloadItem
                         .First(x => x.PayloadType == "Canonical");
@@ -496,15 +496,15 @@ namespace UnifiedUpdatePlatform.Services.Composition.Database.Applications
         /// <param name="appsCdb">The application Composition Database</param>
         /// <param name="repositoryPath">The path to the repository file set</param>
         /// <returns></returns>
-        public static PackageProperties[] GetAppxFilesToKeep(CompDBXmlClass.CompDB editionCdb, IEnumerable<CompDBXmlClass.CompDB> appsCdbs, string editionLanguage)
+        public static PackageProperties[] GetAppxFilesToKeep(CompDB editionCdb, IEnumerable<CompDB> appsCdbs, string editionLanguage)
         {
             IEnumerable<string> applicableLanguageTags = GetAllPossibleLanguageCombinations(editionLanguage);
 
-            (Dictionary<string, DeploymentProperties> preinstalledApps, CompDBXmlClass.Feature[] appsFeatures) = SetupVariables(editionCdb, appsCdbs);
+            (Dictionary<string, DeploymentProperties> preinstalledApps, Feature[] appsFeatures) = SetupVariables(editionCdb, appsCdbs);
 
             HashSet<string> allPackageIDs = new();
             // Pick packages and dump licenses
-            foreach (CompDBXmlClass.Feature ftr in appsFeatures)
+            foreach (Feature ftr in appsFeatures)
             {
                 string appFeatureId = ftr.FeatureID;
                 if (!preinstalledApps.ContainsKey(appFeatureId))
@@ -527,7 +527,7 @@ namespace UnifiedUpdatePlatform.Services.Composition.Database.Applications
                     deployProps.HasLicense = true;
                 }
 
-                List<CompDBXmlClass.Package> appPackages = ftr.Packages.Package;
+                List<Package> appPackages = ftr.Packages.Package;
                 deployProps.AddApplicablePackages(appPackages, applicableLanguageTags);
 
                 foreach (string pid in deployProps.PackageIDs)
@@ -537,9 +537,9 @@ namespace UnifiedUpdatePlatform.Services.Composition.Database.Applications
             }
 
             Dictionary<string, PackageProperties> packageHashDict = new();
-            foreach (CompDBXmlClass.CompDB appsCdb in appsCdbs)
+            foreach (CompDB appsCdb in appsCdbs)
             {
-                foreach (CompDBXmlClass.Package p in appsCdb.Packages.Package)
+                foreach (Package p in appsCdb.Packages.Package)
                 {
                     string packageId = p.ID;
                     if (!allPackageIDs.Contains(packageId))
@@ -547,7 +547,7 @@ namespace UnifiedUpdatePlatform.Services.Composition.Database.Applications
                         continue;
                     }
 
-                    CompDBXmlClass.PayloadItem pCanonical = p
+                    PayloadItem pCanonical = p
                         .Payload
                         .PayloadItem
                         .First(x => x.PayloadType == "Canonical");

@@ -34,9 +34,9 @@ namespace UnifiedUpdatePlatform.Media.Creator.Planning
 {
     public static class FileLocator
     {
-        public static List<CompDBXmlClass.CompDB> GetCompDBsFromUUPFiles(string UUPPath, TempManager tempManager)
+        public static List<CompDB> GetCompDBsFromUUPFiles(string UUPPath, TempManager tempManager)
         {
-            List<CompDBXmlClass.CompDB> compDBs = new();
+            List<CompDB> compDBs = new();
 
             try
             {
@@ -87,13 +87,13 @@ namespace UnifiedUpdatePlatform.Media.Creator.Planning
             return compDBs;
         }
 
-        public static (bool, HashSet<string>) VerifyFilesAreAvailableForCompDB(CompDBXmlClass.CompDB compDB, string UUPPath)
+        public static (bool, HashSet<string>) VerifyFilesAreAvailableForCompDB(CompDB compDB, string UUPPath)
         {
             HashSet<string> missingPackages = new();
 
-            foreach (CompDBXmlClass.Package feature in compDB.Features.Feature[0].Packages.Package)
+            foreach (Package feature in compDB.Features.Feature[0].Packages.Package)
             {
-                CompDBXmlClass.Package pkg = compDB.Packages.Package.First(x => x.ID == feature.ID);
+                Package pkg = compDB.Packages.Package.First(x => x.ID == feature.ID);
 
                 (bool succeeded, string missingFile) = VerifyFileIsAvailableForPackage(pkg, UUPPath);
                 if (!succeeded)
@@ -105,7 +105,7 @@ namespace UnifiedUpdatePlatform.Media.Creator.Planning
             return (missingPackages.Count == 0, missingPackages);
         }
 
-        public static (bool, string) VerifyFileIsAvailableForPackage(CompDBXmlClass.Package pkg, string UUPPath)
+        public static (bool, string) VerifyFileIsAvailableForPackage(Package pkg, string UUPPath)
         {
             string missingPackage = "";
 
