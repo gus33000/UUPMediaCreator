@@ -350,6 +350,8 @@ namespace UnifiedUpdatePlatform.Media.Creator
                     counter++;
                     goto tryagain;
                 }
+
+                throw;
             }
 
             //
@@ -454,6 +456,8 @@ namespace UnifiedUpdatePlatform.Media.Creator
                     counter++;
                     goto tryagain;
                 }
+
+                throw;
             }
 
             //
