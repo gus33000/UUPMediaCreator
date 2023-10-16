@@ -35,15 +35,15 @@ namespace UnifiedUpdatePlatform.Media.Creator.BootlegEditions
 {
     public static class BootlegEditionCreator
     {
-        private static string LPFolder = null;
+        private static string languagePackFolder = null;
 
         public static void CleanupLanguagePackFolderIfRequired()
         {
-            if (!string.IsNullOrEmpty(LPFolder) && Directory.Exists(LPFolder))
+            if (!string.IsNullOrEmpty(languagePackFolder) && Directory.Exists(languagePackFolder))
             {
-                Directory.Delete(LPFolder, true);
+                Directory.Delete(languagePackFolder, true);
             }
-            LPFolder = null;
+            languagePackFolder = null;
         }
 
         /*private static void ProvisionMissingApps()
@@ -371,45 +371,50 @@ namespace UnifiedUpdatePlatform.Media.Creator.BootlegEditions
             //
             // Expand LP to folder
             //
-            if (LPFolder == null)
+            if (languagePackFolder == null)
             {
-                LPFolder = tempManager.GetTempPath();
-                _ = Directory.CreateDirectory(LPFolder);
+                languagePackFolder = tempManager.GetTempPath();
+                _ = Directory.CreateDirectory(languagePackFolder);
 
-                string lpfilter1 = $"*fre_client_{languagecode}_lp.cab";
-                System.Collections.Generic.IEnumerable<string> paths = Directory.EnumerateFiles(UUPPath, lpfilter1, SearchOption.AllDirectories);
+                string languagePackCabinetFilter = $"*fre_client_{languagecode}_lp.cab";
+                System.Collections.Generic.IEnumerable<string> paths = Directory.EnumerateFiles(UUPPath, languagePackCabinetFilter, SearchOption.AllDirectories);
                 if (paths.Any())
                 {
-                    string lppackage = paths.First();
+                    string languagePackPackage = paths.First();
                     void ProgressCallback(int percent, string file)
                     {
                         progressCallback?.Invoke(Common.Messaging.Common.ProcessPhase.PreparingFiles, false, percent, "Unpacking " + file + "...");
                     }
 
-                    CabinetExtractor.ExtractCabinet(lppackage, LPFolder, ProgressCallback);
+                    CabinetExtractor.ExtractCabinet(languagePackPackage, languagePackFolder, ProgressCallback);
                 }
                 else
                 {
-                    string lppackage = "";
+                    string languagePackPackage = "";
 
-                    string lpfilter2 = $"*fre_client_{languagecode}_lp.esd";
-                    if (!Directory.EnumerateFiles(UUPPath, lpfilter2, SearchOption.AllDirectories).Any())
+                    string languagePackEsdFilter = $"*fre_client_{languagecode}_lp.esd";
+                    if (!Directory.EnumerateFiles(UUPPath, languagePackEsdFilter, SearchOption.AllDirectories).Any())
                     {
-                        lpfilter2 = $"microsoft-windows-client-languagepack-package_{languagecode}-*-{languagecode}.esd";
-                        if (!Directory.EnumerateFiles(UUPPath, lpfilter2, SearchOption.AllDirectories).Any())
+                        languagePackEsdFilter = $"microsoft-windows-client-languagepack-package_{languagecode}-*-{languagecode}.esd";
+                        if (!Directory.EnumerateFiles(UUPPath, languagePackEsdFilter, SearchOption.AllDirectories).Any())
                         {
-                            lpfilter2 = $"microsoft-windows-client-languagepack-package_{languagecode}~*~{languagecode}~.esd";
-                            if (!Directory.EnumerateFiles(UUPPath, lpfilter2, SearchOption.AllDirectories).Any())
+                            languagePackEsdFilter = $"microsoft-windows-client-languagepack-package_{languagecode}~*~{languagecode}~.esd";
+                            if (!Directory.EnumerateFiles(UUPPath, languagePackEsdFilter, SearchOption.AllDirectories).Any())
                             {
-                                progressCallback?.Invoke(Common.Messaging.Common.ProcessPhase.Error, true, 0, "Unable to find LP package!");
-                                goto exit;
+                                languagePackEsdFilter = $"microsoft-windows-client-languagepack-package~*~*~{languagecode}~.esd";
+                                if (!Directory.EnumerateFiles(UUPPath, languagePackEsdFilter, SearchOption.AllDirectories).Any())
+                                {
+                                    progressCallback?.Invoke(Common.Messaging.Common.ProcessPhase.Error, true, 0, "Unable to find LP package!");
+                                    result = false;
+                                    goto exit;
+                                }
                             }
                         }
                     }
 
-                    lppackage = Directory.EnumerateFiles(UUPPath, lpfilter2, SearchOption.AllDirectories).First();
+                    languagePackPackage = Directory.EnumerateFiles(UUPPath, languagePackEsdFilter, SearchOption.AllDirectories).First();
 
-                    result = Constants.imagingInterface.ApplyImage(lppackage, 1, LPFolder, PreserveACL: false, progressCallback: callback2);
+                    result = Constants.imagingInterface.ApplyImage(languagePackPackage, 1, languagePackFolder, PreserveACL: false, progressCallback: callback2);
                     if (!result)
                     {
                         goto exit;
@@ -535,7 +540,7 @@ namespace UnifiedUpdatePlatform.Media.Creator.BootlegEditions
                                 "        </package>\n" +
                                 "        <package action=\"install\">\n" +
                                 $"            <assemblyIdentity name=\"Microsoft-Windows-Client-LanguagePack-Package\" version=\"{ver}\" processorArchitecture=\"{arch}\" publicKeyToken=\"31bf3856ad364e35\" language=\"{languagecode}\" />\n" +
-                                $"            <source location=\"{LPFolder}\\update.mum\" />\n" +
+                                $"            <source location=\"{languagePackFolder}\\update.mum\" />\n" +
                                 "        </package>\n" +
                                 "    </servicing>\n" +
                                 "</unattend>";
