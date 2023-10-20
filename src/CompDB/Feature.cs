@@ -23,50 +23,50 @@ using System.Xml.Serialization;
 
 namespace UnifiedUpdatePlatform.Services.Composition.Database
 {
-    [XmlRoot(ElementName = "Feature", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+    [XmlRoot(ElementName = "Feature", Namespace = "")]
     public class Feature
     {
-        [XmlElement(ElementName = "Packages", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+        [XmlElement(ElementName = "Packages", Namespace = "")]
         public Packages Packages
         {
             get; set;
         }
-        [XmlAttribute(AttributeName = "Type", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+        [XmlAttribute(AttributeName = "Type", Namespace = "")]
         public string Type
         {
             get; set;
         }
-        [XmlAttribute(AttributeName = "FeatureID", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+        [XmlAttribute(AttributeName = "FeatureID", Namespace = "")]
         public string FeatureID
         {
             get; set;
         }
-        [XmlAttribute(AttributeName = "FMID", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+        [XmlAttribute(AttributeName = "FMID", Namespace = "")]
         public string FMID
         {
             get; set;
         }
-        [XmlAttribute(AttributeName = "Group", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+        [XmlAttribute(AttributeName = "Group", Namespace = "")]
         public string Group
         {
             get; set;
         }
-        [XmlElement(ElementName = "Dependencies", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+        [XmlElement(ElementName = "Dependencies", Namespace = "")]
         public Dependencies Dependencies
         {
             get; set;
         }
-        [XmlElement(ElementName = "InitialIntents", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+        [XmlElement(ElementName = "InitialIntents", Namespace = "")]
         public InitialIntents InitialIntents
         {
             get; set;
         }
-        [XmlElement(ElementName = "CustomInformation", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+        [XmlElement(ElementName = "CustomInformation", Namespace = "")]
         public CustomInformation CustomInformation
         {
             get; set;
         }
-        [XmlAttribute(AttributeName = "Family", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+        [XmlAttribute(AttributeName = "Family", Namespace = "")]
         public string Family
         {
             get; set;

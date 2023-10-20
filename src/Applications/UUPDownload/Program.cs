@@ -78,7 +78,7 @@ namespace UUPDownload
               (DownloadRequestOptions opts) =>
               {
                   PrintLogo();
-                  return WrapAction(() => DownloadRequest.Process.ParseDownloadOptions(opts));
+                  return WrapAction(() => DownloadRequest.ProcessDrivers.ParseDownloadOptions(opts));
               },
               (DownloadReplayOptions opts) =>
               {

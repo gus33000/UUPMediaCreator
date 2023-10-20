@@ -23,7 +23,7 @@ using System.Xml.Serialization;
 
 namespace UnifiedUpdatePlatform.Services.Composition.Database
 {
-    [XmlRoot(ElementName = "DeviceManifest", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+    [XmlRoot(ElementName = "DeviceManifest", Namespace = "")]
     public class DeviceManifest : CompDB
     {
     }

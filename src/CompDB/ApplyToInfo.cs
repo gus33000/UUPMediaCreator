@@ -24,10 +24,10 @@ using System.Xml.Serialization;
 
 namespace UnifiedUpdatePlatform.Services.Composition.Database
 {
-    [XmlRoot(ElementName = "ApplyToInfo", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+    [XmlRoot(ElementName = "ApplyToInfo", Namespace = "")]
     public class ApplyToInfo
     {
-        [XmlElement(ElementName = "ApplyTo", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+        [XmlElement(ElementName = "ApplyTo", Namespace = "")]
         public List<ApplyTo> ApplyTo
         {
             get; set;

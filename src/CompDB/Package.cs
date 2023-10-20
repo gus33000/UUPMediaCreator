@@ -23,40 +23,40 @@ using System.Xml.Serialization;
 
 namespace UnifiedUpdatePlatform.Services.Composition.Database
 {
-    [XmlRoot(ElementName = "Package", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+    [XmlRoot(ElementName = "Package", Namespace = "")]
     public class Package
     {
-        [XmlAttribute(AttributeName = "ID", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+        [XmlAttribute(AttributeName = "ID", Namespace = "")]
         public string ID
         {
             get; set;
         }
-        [XmlAttribute(AttributeName = "PackageType", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+        [XmlAttribute(AttributeName = "PackageType", Namespace = "")]
         public string PackageType
         {
             get; set;
         }
-        [XmlElement(ElementName = "SatelliteInfo", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+        [XmlElement(ElementName = "SatelliteInfo", Namespace = "")]
         public SatelliteInfo SatelliteInfo
         {
             get; set;
         }
-        [XmlElement(ElementName = "Payload", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+        [XmlElement(ElementName = "Payload", Namespace = "")]
         public Payload Payload
         {
             get; set;
         }
-        [XmlAttribute(AttributeName = "InstalledSize", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+        [XmlAttribute(AttributeName = "InstalledSize", Namespace = "")]
         public string InstalledSize
         {
             get; set;
         }
-        [XmlAttribute(AttributeName = "Version", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+        [XmlAttribute(AttributeName = "Version", Namespace = "")]
         public string Version
         {
             get; set;
         }
-        [XmlAttribute(AttributeName = "UpdateType", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+        [XmlAttribute(AttributeName = "UpdateType", Namespace = "")]
         public string UpdateType
         {
             get; set;

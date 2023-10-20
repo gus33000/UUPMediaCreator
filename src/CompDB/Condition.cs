@@ -23,50 +23,50 @@ using System.Xml.Serialization;
 
 namespace UnifiedUpdatePlatform.Services.Composition.Database
 {
-    [XmlRoot(ElementName = "Condition", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+    [XmlRoot(ElementName = "Condition", Namespace = "")]
     public class Condition
     {
-        [XmlAttribute(AttributeName = "Type", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+        [XmlAttribute(AttributeName = "Type", Namespace = "")]
         public string Type
         {
             get; set;
         }
-        [XmlAttribute(AttributeName = "Name", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+        [XmlAttribute(AttributeName = "Name", Namespace = "")]
         public string Name
         {
             get; set;
         }
-        [XmlAttribute(AttributeName = "FMID", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+        [XmlAttribute(AttributeName = "FMID", Namespace = "")]
         public string FMID
         {
             get; set;
         }
-        [XmlAttribute(AttributeName = "Operator", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+        [XmlAttribute(AttributeName = "Operator", Namespace = "")]
         public string Operator
         {
             get; set;
         }
-        [XmlAttribute(AttributeName = "RegistryKey", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+        [XmlAttribute(AttributeName = "RegistryKey", Namespace = "")]
         public string RegistryKey
         {
             get; set;
         }
-        [XmlAttribute(AttributeName = "Value", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+        [XmlAttribute(AttributeName = "Value", Namespace = "")]
         public string Value
         {
             get; set;
         }
-        [XmlAttribute(AttributeName = "RegistryKeyType", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+        [XmlAttribute(AttributeName = "RegistryKeyType", Namespace = "")]
         public string RegistryKeyType
         {
             get; set;
         }
-        [XmlAttribute(AttributeName = "Status", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+        [XmlAttribute(AttributeName = "Status", Namespace = "")]
         public string Status
         {
             get; set;
         }
-        [XmlAttribute(AttributeName = "FeatureStatus", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+        [XmlAttribute(AttributeName = "FeatureStatus", Namespace = "")]
         public string FeatureStatus
         {
             get; set;

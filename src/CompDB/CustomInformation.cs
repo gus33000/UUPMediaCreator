@@ -23,10 +23,10 @@ using System.Xml.Serialization;
 
 namespace UnifiedUpdatePlatform.Services.Composition.Database
 {
-    [XmlRoot(ElementName = "CustomInformation", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+    [XmlRoot(ElementName = "CustomInformation", Namespace = "")]
     public class CustomInformation
     {
-        [XmlElement(ElementName = "CustomInfo", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+        [XmlElement(ElementName = "CustomInfo", Namespace = "")]
         public CustomInfo[] CustomInfo
         {
             get; set;
