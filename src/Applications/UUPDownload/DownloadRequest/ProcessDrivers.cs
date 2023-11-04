@@ -269,6 +269,41 @@ namespace UUPDownload.DownloadRequest
                 filteredIds = Array.Empty<int>(),
                 excludedIds = Array.Empty<int>()
             },
+            new()
+            {
+                outputFolder = RepoLocation + @"\Samsung\GalaxyBook2Legacy",
+                guid = "{4ddc74f1-1cba-50ac-96c4-baeaf09a117d}",
+                filteredIds = Array.Empty<int>(),
+                excludedIds = Array.Empty<int>()
+            },
+            new()
+            {
+                outputFolder = RepoLocation + @"\Samsung\GalaxyBook2",
+                guid = "{a7271695-80b5-56b3-8e50-56c6ce883b07}",
+                filteredIds = Array.Empty<int>(),
+                excludedIds = Array.Empty<int>()
+            },
+            new()
+            {
+                outputFolder = RepoLocation + @"\HP\EnvyX2",
+                guid = "{79511a83-8e29-5b28-babd-ee57d65eeea2}",
+                filteredIds = Array.Empty<int>(),
+                excludedIds = Array.Empty<int>()
+            },
+            new()
+            {
+                outputFolder = RepoLocation + @"\Asus\NovaGo",
+                guid = "{e2c6ff8b-f787-5c14-a0cb-6d6723e870ec}",
+                filteredIds = Array.Empty<int>(),
+                excludedIds = Array.Empty<int>()
+            },
+            new()
+            {
+                outputFolder = RepoLocation + @"\Lenovo\YogaC630",
+                guid = "{43b71948-9c47-5372-a5cb-18db47bb873f}",
+                filteredIds = Array.Empty<int>(),
+                excludedIds = Array.Empty<int>()
+            }
         };
 
         private static async Task CheckAndDownloadUpdates(OSSkuId ReportingSku,
