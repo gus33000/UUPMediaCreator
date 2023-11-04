@@ -554,7 +554,7 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads
                                     {
                                         if (pkg.ID.Contains('-') && pkg.ID.Contains(".inf", StringComparison.InvariantCultureIgnoreCase))
                                         {
-                                            path = pkg.ID.Split("-")[1].Replace(".inf", ".cab").Replace(".INF", ".CAB");
+                                            path = pkg.ID.Split("-")[1].Replace(".inf", ".cab", StringComparison.InvariantCultureIgnoreCase);
                                         }
                                         break;
                                     }
