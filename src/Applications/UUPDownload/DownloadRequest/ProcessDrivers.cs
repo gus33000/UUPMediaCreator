@@ -67,8 +67,8 @@ namespace UUPDownload.DownloadRequest
 
             if (pevCompDB != null)
             {
-                var prevPackageList = pevCompDB.Packages.Package.Select(pkg => $"| {pkg.Version} | {pkg.ID.Split("-")[1].Replace(".inf", ".cab").Replace(".INF", ".CAB")} |");
-                var curPackageList = curCompDB.Packages.Package.Select(pkg => $"| {pkg.Version} | {pkg.ID.Split("-")[1].Replace(".inf", ".cab").Replace(".INF", ".CAB")} |");
+                var prevPackageList = pevCompDB.Packages.Package.Select(pkg => $"| {pkg.Version} | {pkg.ID.Split("-")[1].Replace(".inf", ".cab", StringComparison.InvariantCultureIgnoreCase)} |");
+                var curPackageList = curCompDB.Packages.Package.Select(pkg => $"| {pkg.Version} | {pkg.ID.Split("-")[1].Replace(".inf", ".cab", StringComparison.InvariantCultureIgnoreCase)} |");
 
                 foreach (var pkg in prevPackageList)
                 {
@@ -85,7 +85,7 @@ namespace UUPDownload.DownloadRequest
 
                 foreach (var package in curCompDB.Packages.Package)
                 {
-                    var pkg = $"| {package.Version} | {package.ID.Split("-")[1].Replace(".inf", ".cab").Replace(".INF", ".CAB")} |";
+                    var pkg = $"| {package.Version} | {package.ID.Split("-")[1].Replace(".inf", ".cab", StringComparison.InvariantCultureIgnoreCase)} |";
 
                     string version = pkg.Split("|")[1];
                     string id = pkg.Split("|")[2];
@@ -119,7 +119,7 @@ namespace UUPDownload.DownloadRequest
             {
                 foreach (var pkg in curCompDB.Packages.Package)
                 {
-                    added.Add($"| {pkg.Version} | {pkg.ID.Split("-")[1].Replace(".inf", ".cab").Replace(".INF", ".CAB")} |");
+                    added.Add($"| {pkg.Version} | {pkg.ID.Split("-")[1].Replace(".inf", ".cab", StringComparison.CurrentCultureIgnoreCase)} |");
                 }
             }
 
