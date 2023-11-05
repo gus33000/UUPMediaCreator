@@ -543,7 +543,7 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads
                 {
                     return GetFilenameForCEUIFile(boundFile.Item1, payloadItems).Select(path =>
                     {
-                        try
+                        /*try
                         {
                             foreach (CompDB compDb in compDBs)
                             {
@@ -561,7 +561,7 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads
                                 }
                             }
                         }
-                        catch { }
+                        catch { }*/
 
                         return new UUPFile(
                             boundFile.Item2,
