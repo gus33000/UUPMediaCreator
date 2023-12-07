@@ -33,7 +33,10 @@ namespace UnifiedUpdatePlatform.Media.Creator.Installer
         private static void ResetWindowsRootInValue(RegistryHive hive, string key, string value)
         {
             RegistryKey key2 = hive.Root.OpenSubKey(key);
-            ResetWindowsRootInValue(key2, value);
+            if (key2 != null)
+            {
+                ResetWindowsRootInValue(key2, value);
+            }
         }
 
         private static void ResetWindowsRootInValue(RegistryKey key2, string value)
@@ -85,7 +88,10 @@ namespace UnifiedUpdatePlatform.Media.Creator.Installer
         private static void CrawlInRegistryKey(RegistryHive hive, string key)
         {
             RegistryKey key2 = hive.Root.OpenSubKey(key);
-            CrawlInRegistryKey(key2);
+            if (key2 != null)
+            {
+                CrawlInRegistryKey(key2);
+            }
         }
 
         private static void CrawlInRegistryKey(RegistryKey key2)
@@ -113,8 +119,8 @@ namespace UnifiedUpdatePlatform.Media.Creator.Installer
                     FileMode.Open,
                     FileAccess.ReadWrite
                 ), DiscUtils.Streams.Ownership.Dispose);
-                hive.Root.OpenSubKey("ControlSet001").CreateSubKey("CI").SetValue("UMCIDisabled", 1, RegistryValueType.Dword);
-                hive.Root.OpenSubKey(@"ControlSet001\Control\CI").SetValue("UMCIAuditMode", 1, RegistryValueType.Dword);
+                hive.Root.OpenSubKey("ControlSet001")?.CreateSubKey("CI").SetValue("UMCIDisabled", 1, RegistryValueType.Dword);
+                hive.Root.OpenSubKey(@"ControlSet001\Control\CI")?.SetValue("UMCIAuditMode", 1, RegistryValueType.Dword);
             }
             catch
             {
@@ -135,17 +141,24 @@ namespace UnifiedUpdatePlatform.Media.Creator.Installer
                     ), DiscUtils.Streams.Ownership.Dispose))
                 {
                     RegistryKey key1 = hive.Root.OpenSubKey(@"ControlSet001\Control\NetDiagFx\Microsoft\HostDLLs\NetCoreHelperClass\HelperClasses\Winsock\Repairs");
-                    foreach (RegistryKey subkey in key1.SubKeys)
+                    if (key1 != null)
                     {
-                        ResetWindowsRootInValue(subkey, "Description");
-                    }
-                    key1 = hive.Root.OpenSubKey(@"ControlSet001\Control\NetDiagFx\Microsoft\HostDLLs\NetCoreHelperClass\HelperClasses\Winsock\RootCauses");
-                    foreach (RegistryKey subkey in key1.SubKeys)
-                    {
-                        ResetWindowsRootInValue(subkey, "Description");
+                        foreach (RegistryKey subkey in key1.SubKeys)
+                        {
+                            ResetWindowsRootInValue(subkey, "Description");
+                        }
                     }
 
-                    hive.Root.OpenSubKey(@"ControlSet001\Services\cdrom").SetValue("Start", 1);
+                    key1 = hive.Root.OpenSubKey(@"ControlSet001\Control\NetDiagFx\Microsoft\HostDLLs\NetCoreHelperClass\HelperClasses\Winsock\RootCauses");
+                    if (key1 != null)
+                    {
+                        foreach (RegistryKey subkey in key1.SubKeys)
+                        {
+                            ResetWindowsRootInValue(subkey, "Description");
+                        }
+                    }
+
+                    hive.Root.OpenSubKey(@"ControlSet001\Services\cdrom")?.SetValue("Start", 1);
 
                     ResetWindowsRootInValue(hive, @"ControlSet001\Services\LSM\Performance", "Library");
                     ResetWindowsRootInValue(hive, @"ControlSet001\Services\RemoteAccess\Performance", "Library");
@@ -175,16 +188,20 @@ namespace UnifiedUpdatePlatform.Media.Creator.Installer
                      * "X:\\Windows\\system32\\Chakra.dll"=-
                      */
                     RegistryKey key1 = hive.Root.OpenSubKey(@"Microsoft\Windows NT\CurrentVersion\MiniDumpAuxiliaryDlls");
-                    foreach (string subval in key1.GetValueNames())
+                    if (key1 != null)
                     {
-                        ResetWindowsRootInValue(key1, subval);
-                    }
-                    foreach (string subval in key1.GetValueNames())
-                    {
-                        if (subval != subval.Replace("X:", @"X:\$windows.~bt"))
+                        foreach (string subval in key1.GetValueNames())
                         {
-                            key1.SetValue(subval.Replace("X:", @"X:\$windows.~bt"), key1.GetValue(subval));
-                            key1.DeleteValue(subval);
+                            ResetWindowsRootInValue(key1, subval);
+                        }
+
+                        foreach (string subval in key1.GetValueNames())
+                        {
+                            if (subval != subval.Replace("X:", @"X:\$windows.~bt"))
+                            {
+                                key1.SetValue(subval.Replace("X:", @"X:\$windows.~bt"), key1.GetValue(subval));
+                                key1.DeleteValue(subval);
+                            }
                         }
                     }
 
@@ -194,21 +211,30 @@ namespace UnifiedUpdatePlatform.Media.Creator.Installer
                     ResetWindowsRootInValue(hive, @"Microsoft\Windows\CurrentVersion", "ProgramFilesDir");
 
                     key1 = hive.Root.OpenSubKey(@"Microsoft\Windows\CurrentVersion\Explorer\Shell Folders");
-                    foreach (string subval in key1.GetValueNames())
+                    if (key1 != null)
                     {
-                        ResetWindowsRootInValue(key1, subval);
+                        foreach (string subval in key1.GetValueNames())
+                        {
+                            ResetWindowsRootInValue(key1, subval);
+                        }
                     }
 
                     key1 = hive.Root.OpenSubKey(@"Microsoft\Windows\CurrentVersion\Management Infrastructure\ErrorResources");
-                    foreach (RegistryKey subkey in key1.SubKeys)
+                    if (key1 != null)
                     {
-                        ResetWindowsRootInValue(subkey, "Directory");
+                        foreach (RegistryKey subkey in key1.SubKeys)
+                        {
+                            ResetWindowsRootInValue(subkey, "Directory");
+                        }
                     }
 
                     key1 = hive.Root.OpenSubKey(@"Microsoft\Windows\CurrentVersion\ShellCompatibility\InboxApp");
-                    foreach (string subval in key1.GetValueNames())
+                    if (key1 != null)
                     {
-                        ResetWindowsRootInValue(key1, subval);
+                        foreach (string subval in key1.GetValueNames())
+                        {
+                            ResetWindowsRootInValue(key1, subval);
+                        }
                     }
                 }
             }
