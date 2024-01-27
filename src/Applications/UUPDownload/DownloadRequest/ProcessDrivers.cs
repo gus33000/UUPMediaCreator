@@ -25,6 +25,7 @@ using System.Data;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Numerics;
 using System.Threading.Tasks;
 using UnifiedUpdatePlatform.Services.Composition.Database;
 using UnifiedUpdatePlatform.Services.WindowsUpdate;
@@ -58,7 +59,7 @@ namespace UUPDownload.DownloadRequest
             File.AppendAllLines(changelogOutput, new string[] { "", $"## {update.Xml.LocalizedProperties.Title} - 200.0.{i}.0" });
 
             HashSet<CompDB> compDBs = await update.GetCompDBsAsync();
-            var curCompDB = compDBs.First();
+            CompDB curCompDB = compDBs.First();
 
             List<string> added = new();
             List<string> updated = new();
@@ -67,10 +68,10 @@ namespace UUPDownload.DownloadRequest
 
             if (pevCompDB != null)
             {
-                var prevPackageList = pevCompDB.Packages.Package.Select(pkg => $"| {pkg.Version} | {pkg.ID.Split("-")[1].Replace(".inf", ".cab", StringComparison.InvariantCultureIgnoreCase)} |");
-                var curPackageList = curCompDB.Packages.Package.Select(pkg => $"| {pkg.Version} | {pkg.ID.Split("-")[1].Replace(".inf", ".cab", StringComparison.InvariantCultureIgnoreCase)} |");
+                IEnumerable<string> prevPackageList = pevCompDB.Packages.Package.Select(pkg => $"| {pkg.Version} | {pkg.ID.Split("-")[1].Replace(".inf", ".cab", StringComparison.InvariantCultureIgnoreCase)} |");
+                IEnumerable<string> curPackageList = curCompDB.Packages.Package.Select(pkg => $"| {pkg.Version} | {pkg.ID.Split("-")[1].Replace(".inf", ".cab", StringComparison.InvariantCultureIgnoreCase)} |");
 
-                foreach (var pkg in prevPackageList)
+                foreach (string pkg in prevPackageList)
                 {
                     string version = pkg.Split("|")[1];
                     string id = pkg.Split("|")[2];
@@ -83,9 +84,9 @@ namespace UUPDownload.DownloadRequest
                     }
                 }
 
-                foreach (var package in curCompDB.Packages.Package)
+                foreach (Package package in curCompDB.Packages.Package)
                 {
-                    var pkg = $"| {package.Version} | {package.ID.Split("-")[1].Replace(".inf", ".cab", StringComparison.InvariantCultureIgnoreCase)} |";
+                    string pkg = $"| {package.Version} | {package.ID.Split("-")[1].Replace(".inf", ".cab", StringComparison.InvariantCultureIgnoreCase)} |";
 
                     string version = pkg.Split("|")[1];
                     string id = pkg.Split("|")[2];
@@ -117,7 +118,7 @@ namespace UUPDownload.DownloadRequest
             }
             else
             {
-                foreach (var pkg in curCompDB.Packages.Package)
+                foreach (Package pkg in curCompDB.Packages.Package)
                 {
                     added.Add($"| {pkg.Version} | {pkg.ID.Split("-")[1].Replace(".inf", ".cab", StringComparison.CurrentCultureIgnoreCase)} |");
                 }
@@ -174,7 +175,7 @@ namespace UUPDownload.DownloadRequest
             public int[] excludedIds;
         }
 
-        private static readonly string RepoLocation = @"D:\a\ID1\Duo\repos\Qualcomm-Reference-Drivers";
+        private static readonly string RepoLocation = @"F:\Git\Qualcomm-Reference-Drivers";
 
         private static readonly DriverPlan[] plans = new DriverPlan[]
         {
@@ -269,17 +270,38 @@ namespace UUPDownload.DownloadRequest
                 filteredIds = Array.Empty<int>(),
                 excludedIds = Array.Empty<int>()
             },
-            new()
+            /*new()
             {
-                outputFolder = RepoLocation + @"\Samsung\GalaxyBook2Legacy",
+                outputFolder = RepoLocation + @"\Samsung\GalaxyBook2_VZW_Legacy",
                 guid = "{4ddc74f1-1cba-50ac-96c4-baeaf09a117d}",
                 filteredIds = Array.Empty<int>(),
                 excludedIds = Array.Empty<int>()
             },
             new()
             {
-                outputFolder = RepoLocation + @"\Samsung\GalaxyBook2",
-                guid = "{a7271695-80b5-56b3-8e50-56c6ce883b07}",
+                outputFolder = RepoLocation + @"\Samsung\GalaxyBook2_VZW",
+                guid = CTAC.GenerateDeviceId("SAMSUNG ELECTRONICS CO., LTD.", "Galaxy Book Series", "Galaxy Book2", "GALAXY A5A5-PAHD"),
+                filteredIds = Array.Empty<int>(),
+                excludedIds = Array.Empty<int>()
+            },
+            new()
+            {
+                outputFolder = RepoLocation + @"\Samsung\GalaxyBook2_Open",
+                guid = CTAC.GenerateDeviceId("SAMSUNG ELECTRONICS CO., LTD.", "Galaxy Book Series", "Galaxy Book2", "GALAXY A5A5-PHAG"),
+                filteredIds = Array.Empty<int>(),
+                excludedIds = Array.Empty<int>()
+            },
+            new()
+            {
+                outputFolder = RepoLocation + @"\Samsung\GalaxyBook2_Unknown",
+                guid = CTAC.GenerateDeviceId("SAMSUNG ELECTRONICS CO., LTD.", "Galaxy Book Series", "Galaxy Book2", "GALAXY A5A5-PAHG"),
+                filteredIds = Array.Empty<int>(),
+                excludedIds = Array.Empty<int>()
+            },
+            new()
+            {
+                outputFolder = RepoLocation + @"\Samsung\GalaxyBook2_Unknown2",
+                guid = CTAC.GenerateDeviceId("SAMSUNG ELECTRONICS CO., LTD.", "Galaxy Book Series", "Galaxy Book2", "GALAXY A5A5-PAHF"),
                 filteredIds = Array.Empty<int>(),
                 excludedIds = Array.Empty<int>()
             },
@@ -303,7 +325,113 @@ namespace UUPDownload.DownloadRequest
                 guid = "{43b71948-9c47-5372-a5cb-18db47bb873f}",
                 filteredIds = Array.Empty<int>(),
                 excludedIds = Array.Empty<int>()
-            }
+            },*/
+
+            /*new()
+            {
+                outputFolder = RepoLocation + @"\Samsung\GalaxyBook1",
+                guid = "{466a496a-c462-554a-89d3-227ff4f51027}",
+                filteredIds = Array.Empty<int>(),
+                excludedIds = Array.Empty<int>()
+            },
+            new()
+            {
+                outputFolder = RepoLocation + @"\Samsung\GalaxyBook2",
+                guid = "{1555c469-8cd9-57dd-bcde-382e459133e3}",
+                filteredIds = Array.Empty<int>(),
+                excludedIds = Array.Empty<int>()
+            },
+            new()
+            {
+                outputFolder = RepoLocation + @"\Samsung\GalaxyBook3",
+                guid = "{b7771242-6905-5b4b-8d5a-b38393aef42d}",
+                filteredIds = Array.Empty<int>(),
+                excludedIds = Array.Empty<int>()
+            },
+            new()
+            {
+                outputFolder = RepoLocation + @"\Samsung\GalaxyBook4",
+                guid = "{0a5f0248-70a0-55b0-a173-8e366ec0ea26}",
+                filteredIds = Array.Empty<int>(),
+                excludedIds = Array.Empty<int>()
+            },
+            new()
+            {
+                outputFolder = RepoLocation + @"\Samsung\GalaxyBook5",
+                guid = "{66df7025-3411-57d4-a799-db22811cf9c9}",
+                filteredIds = Array.Empty<int>(),
+                excludedIds = Array.Empty<int>()
+            },
+            new()
+            {
+                outputFolder = RepoLocation + @"\Samsung\GalaxyBook6",
+                guid = "{c2c614b5-1308-595a-8b42-d8004540acd0}",
+                filteredIds = Array.Empty<int>(),
+                excludedIds = Array.Empty<int>()
+            },
+            new()
+            {
+                outputFolder = RepoLocation + @"\Samsung\GalaxyBook7",
+                guid = "{454e004b-b209-5153-a438-388009a9e1ef}",
+                filteredIds = Array.Empty<int>(),
+                excludedIds = Array.Empty<int>()
+            },
+            new()
+            {
+                outputFolder = RepoLocation + @"\Samsung\GalaxyBook8",
+                guid = "{cfd56d38-8276-5b4d-9e18-611eb33c2ae2}",
+                filteredIds = Array.Empty<int>(),
+                excludedIds = Array.Empty<int>()
+            },
+            new()
+            {
+                outputFolder = RepoLocation + @"\Samsung\GalaxyBook9",
+                guid = "{c565fa23-7336-5fa1-bb05-cf1d85873f7e}",
+                filteredIds = Array.Empty<int>(),
+                excludedIds = Array.Empty<int>()
+            },
+            new()
+            {
+                outputFolder = RepoLocation + @"\Samsung\GalaxyBookA",
+                guid = "{2f1af45d-3918-5580-a25f-adc0e774751f}",
+                filteredIds = Array.Empty<int>(),
+                excludedIds = Array.Empty<int>()
+            },
+            new()
+            {
+                outputFolder = RepoLocation + @"\Samsung\GalaxyBookB",
+                guid = "{1a445de1-9ea7-58ee-ba9f-89679de2e6cd}",
+                filteredIds = Array.Empty<int>(),
+                excludedIds = Array.Empty<int>()
+            },
+            new()
+            {
+                outputFolder = RepoLocation + @"\Samsung\GalaxyBookC",
+                guid = "{f139ecb6-912d-56a7-b140-9ba326833643}",
+                filteredIds = Array.Empty<int>(),
+                excludedIds = Array.Empty<int>()
+            },
+            new()
+            {
+                outputFolder = RepoLocation + @"\Samsung\GalaxyBookD",
+                guid = "{e54f3804-b7ef-5676-bfa1-1d127d594316}",
+                filteredIds = Array.Empty<int>(),
+                excludedIds = Array.Empty<int>()
+            },
+            new()
+            {
+                outputFolder = RepoLocation + @"\Samsung\GalaxyBookE",
+                guid = "{03ec6d4b-c75d-5d99-b541-96f3b0bcb5f8}",
+                filteredIds = Array.Empty<int>(),
+                excludedIds = Array.Empty<int>()
+            },
+            new()
+            {
+                outputFolder = RepoLocation + @"\Samsung\GalaxyBookF",
+                guid = "{ca0158e4-038b-5a84-8037-1b3cbf948d8a}",
+                filteredIds = Array.Empty<int>(),
+                excludedIds = Array.Empty<int>()
+            },*/
         };
 
         private static async Task CheckAndDownloadUpdates(OSSkuId ReportingSku,
@@ -321,8 +449,29 @@ namespace UUPDownload.DownloadRequest
                     string Language,
                     string Edition)
         {
-            foreach (var plan in plans)
+            //"SAMSUNG ELECTRONICS CO., LTD.&Galaxy Book Series&Galaxy Book2&GALAXY A5A5-PHAG"
+            // guid = "{4ddc74f1-1cba-50ac-96c4-baeaf09a117d}",
+            /*
+               guid = CTAC.GenerateDeviceId("SAMSUNG ELECTRONICS CO., LTD.", "Galaxy Book Series", "Galaxy Book2", "GALAXY A5A5-PAHD"),
+               guid = CTAC.GenerateDeviceId("SAMSUNG ELECTRONICS CO., LTD.", "Galaxy Book Series", "Galaxy Book2", "GALAXY A5A5-PAHG"),
+               guid = CTAC.GenerateDeviceId("SAMSUNG ELECTRONICS CO., LTD.", "Galaxy Book Series", "Galaxy Book2", "GALAXY A5A5-PAHF"),
+               guid = CTAC.GenerateDeviceId("SAMSUNG ELECTRONICS CO., LTD.", "Galaxy Book Series", "Galaxy Book2", "GALAXY A5A5-PHAG"),
+             */
+
+            /*var testGuid = CTAC.GenerateDeviceId("SAMSUNG ELECTRONICS CO., LTD.", "Galaxy Book Series", "Galaxy Book2", "GALAXY A5A5-PAHC");
+            Console.WriteLine(testGuid);
+            var plan = new DriverPlan()
             {
+                outputFolder = RepoLocation + @"\Samsung\GalaxyBook2_TEST",
+                guid = testGuid,
+                filteredIds = Array.Empty<int>(),
+                excludedIds = Array.Empty<int>()
+            };
+            await ProcessDriverPlan(plan, ReportingSku, ReportingVersion, MachineType, FlightRing, FlightingBranchName, BranchReadinessLevel, CurrentBranch, ReleaseType, SyncCurrentVersionOnly, ContentType, Mail, Password, Language, Edition);*/
+
+            foreach (DriverPlan plan in plans)
+            {
+                Logging.Log(plan.outputFolder);
                 await ProcessDriverPlan(plan, ReportingSku, ReportingVersion, MachineType, FlightRing, FlightingBranchName, BranchReadinessLevel, CurrentBranch, ReleaseType, SyncCurrentVersionOnly, ContentType, Mail, Password, Language, Edition);
             }
 

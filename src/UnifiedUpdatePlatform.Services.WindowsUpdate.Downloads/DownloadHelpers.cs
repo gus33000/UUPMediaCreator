@@ -539,11 +539,16 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads
                     //.Where(x => UpdateUtils.ShouldFileGetDownloaded(x.x, payloadItems))
                     .OrderBy(x => x.Item2.ExpirationDate);
 
-                IEnumerable<UUPFile> fileList = boundList.SelectMany(boundFile =>
+                List<UUPFile> fileList = new();
+                HashSet<string> pathList = new();
+
+                foreach ((CExtendedUpdateInfoXml.File, FileExchangeV3FileDownloadInformation) boundFile in boundList)
                 {
-                    return GetFilenameForCEUIFile(boundFile.Item1, payloadItems).Select(path =>
+                    string[] paths = GetFilenameForCEUIFile(boundFile.Item1, payloadItems);
+                    foreach (string path in paths)
                     {
-                        /*try
+                        string newPath = path;
+                        try
                         {
                             foreach (CompDB compDb in compDBs)
                             {
@@ -554,23 +559,36 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads
                                     {
                                         if (pkg.ID.Contains('-') && pkg.ID.Contains(".inf", StringComparison.InvariantCultureIgnoreCase))
                                         {
-                                            path = pkg.ID.Split("-")[1].Replace(".inf", ".cab", StringComparison.InvariantCultureIgnoreCase);
+                                            newPath = pkg.ID.Split("-")[1].Replace(".inf", ".cab", StringComparison.InvariantCultureIgnoreCase);
                                         }
                                         break;
                                     }
                                 }
                             }
                         }
-                        catch { }*/
+                        catch { }
 
-                        return new UUPFile(
+                        uint i = 1;
+                        while (!pathList.Add(newPath.ToLower()))
+                        {
+                            if (newPath.Split("\\")[^0].Contains('.'))
+                            {
+                                newPath = Path.Combine(Path.GetDirectoryName(newPath), Path.GetFileNameWithoutExtension(newPath) + $" ({i++})" + Path.GetExtension(newPath));
+                            }
+                            else
+                            {
+                                newPath = Path.Combine(Path.GetDirectoryName(newPath), Path.GetFileName(newPath) + $" ({i++})");
+                            }
+                        }
+
+                        fileList.Add(new UUPFile(
                             boundFile.Item2,
-                            path,
+                            newPath,
                             long.Parse(boundFile.Item1.Size),
                             boundFile.Item1.AdditionalDigest.Text,
-                            boundFile.Item1.AdditionalDigest.Algorithm);
-                    });
-                });
+                            boundFile.Item1.AdditionalDigest.Algorithm));
+                    }
+                }
 
                 returnCode = await helperDl.DownloadAsync(fileList.ToList(), generalDownloadProgress) ? 0 : -1;
 
