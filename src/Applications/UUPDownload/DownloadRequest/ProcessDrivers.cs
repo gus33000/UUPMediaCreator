@@ -183,92 +183,92 @@ namespace UUPDownload.DownloadRequest
             {
                 outputFolder = RepoLocation + @"\1000_CLS",
                 guid = CTAC.GenerateDeviceId("Qualcomm", "SDM1000", "CLS", "6").ToString(),
-                filteredIds = Array.Empty<int>(),
-                excludedIds = Array.Empty<int>()
+                filteredIds = [],
+                excludedIds = []
             },
             new() // Snapdragon 7c Gen 1/2 Clamshell Reference Design
             {
                 outputFolder = RepoLocation + @"\7180_CLS",
                 guid = CTAC.GenerateDeviceId("Qualcomm", "SC7180", "CLS", "6").ToString(),
-                filteredIds = Array.Empty<int>(),
+                filteredIds = [],
                 excludedIds = new int[3] {1, 9, 10}
             },
             new() // Snapdragon 7c+ Gen 3 (Pre-release) Clamshell Reference Design
             {
                 outputFolder = RepoLocation + @"\7280_CLS",
                 guid = CTAC.GenerateDeviceId("Qualcomm", "SC_KODIAK", "CLS", "6").ToString(),
-                filteredIds = Array.Empty<int>(),
-                excludedIds = Array.Empty<int>()
+                filteredIds = [],
+                excludedIds = []
             },
             new() // Snapdragon 7c+ Gen 3 Clamshell Reference Design
             {
                 outputFolder = RepoLocation + @"\7280_WINDOWS_CLS",
                 guid = CTAC.GenerateDeviceId("Qualcomm", "SC_KODIAK_WINDOWS", "CLS", "6").ToString(),
-                filteredIds = Array.Empty<int>(),
-                excludedIds = Array.Empty<int>()
+                filteredIds = [],
+                excludedIds = []
             },
             new() // Snapdragon 8cx Gen 1/2 Clamshell Reference Design
             {
                 outputFolder = RepoLocation + @"\8180_CLS",
                 guid = CTAC.GenerateDeviceId("Qualcomm", "SC8180X", "CLS", "6").ToString(),
-                filteredIds = Array.Empty<int>(),
-                excludedIds = Array.Empty<int>()
+                filteredIds = [],
+                excludedIds = []
             },
             new() // Snapdragon 8cx Gen 3 Clamshell Reference Design
             {
                 outputFolder = RepoLocation + @"\8280_QRD",
                 guid = CTAC.GenerateDeviceId("Qualcomm", "SCP_MAKENA", "QRD", "6").ToString(),
-                filteredIds = Array.Empty<int>(),
-                excludedIds = Array.Empty<int>()
+                filteredIds = [],
+                excludedIds = []
             },
             new() // Snapdragon X Elite Clamshell Reference Design
             {
                 outputFolder = RepoLocation + @"\8380_CRD",
                 guid = CTAC.GenerateDeviceId("Qualcomm", "SCP_HAMOA", "CRD", "6").ToString(),
-                filteredIds = Array.Empty<int>(),
-                excludedIds = Array.Empty<int>()
+                filteredIds = [],
+                excludedIds = []
             },
             new() // Surface Pro X with SQ1 processor
             {
                 outputFolder = RepoLocation + @"\Surface\8180_CAM",
                 guid = CTAC.GenerateDeviceId("Microsoft Corporation", "Surface", "Surface Pro X", "Surface_Pro_X_1876"),
-                filteredIds = Array.Empty<int>(),
-                excludedIds = Array.Empty<int>()
+                filteredIds = [],
+                excludedIds = []
             },
             new() // Surface Pro X with SQ2 processor
             {
                 outputFolder = RepoLocation + @"\Surface\8180_CAR",
                 guid = CTAC.GenerateDeviceId("Microsoft Corporation", "Surface", "Surface Pro X", "Surface_Pro_X_H_1876"),
-                filteredIds = Array.Empty<int>(),
-                excludedIds = Array.Empty<int>()
+                filteredIds = [],
+                excludedIds = []
             },
             new() // Surface Pro X (Wi-Fi)
             {
                 outputFolder = RepoLocation + @"\Surface\8180_CAS",
                 guid = CTAC.GenerateDeviceId("Microsoft Corporation", "Surface", "Surface Pro X", "Surface_Pro_X_2010"),
-                filteredIds = Array.Empty<int>(),
-                excludedIds = Array.Empty<int>()
+                filteredIds = [],
+                excludedIds = []
             },
             new() // Surface Pro 9 with 5G (outside of U.S.)
             {
                 outputFolder = RepoLocation + @"\Surface\8280_ARC_1996",
                 guid = CTAC.GenerateDeviceId("Microsoft Corporation", "Surface", "Surface Pro 9", "Surface_Pro_9_With_5G_1996"),
-                filteredIds = Array.Empty<int>(),
-                excludedIds = Array.Empty<int>()
+                filteredIds = [],
+                excludedIds = []
             },
             new() // Surface Pro 9 with 5G (U.S.)
             {
                 outputFolder = RepoLocation + @"\Surface\8280_ARC_1997",
                 guid = CTAC.GenerateDeviceId("Microsoft Corporation", "Surface", "Surface Pro 9", "Surface_Pro_9_With_5G_1997"),
-                filteredIds = Array.Empty<int>(),
-                excludedIds = Array.Empty<int>()
+                filteredIds = [],
+                excludedIds = []
             },
             new() // Windows Dev Kit 2023
             {
                 outputFolder = RepoLocation + @"\Surface\8280_BLK",
                 guid = CTAC.GenerateDeviceId("Microsoft Corporation", "Surface", "Windows Dev Kit 2023", "2043"),
-                filteredIds = Array.Empty<int>(),
-                excludedIds = Array.Empty<int>()
+                filteredIds = [],
+                excludedIds = []
             },
             /*new()
             {
@@ -431,6 +431,13 @@ namespace UUPDownload.DownloadRequest
                 guid = "{ca0158e4-038b-5a84-8037-1b3cbf948d8a}",
                 filteredIds = Array.Empty<int>(),
                 excludedIds = Array.Empty<int>()
+            },
+            new()
+            {
+                outputFolder = RepoLocation + @"\Testing",
+                guid = CTAC.GenerateDeviceId("Acer", "Aspire 1", "Aspire A114-61", "0000000000000000"),
+                filteredIds = [],
+                excludedIds = []
             },*/
         };
 
@@ -635,7 +642,7 @@ namespace UUPDownload.DownloadRequest
                         string fwOutput = $"{outputFolder}\\200.0.{i}.0";
                         if (!Directory.Exists(fwOutput) || !Directory.EnumerateFiles(fwOutput).Any())
                         {
-                            await ProcessUpdateAsync(update, fwOutput, MachineType, Language, Edition, true);
+                            await ProcessUpdateAsync(update, fwOutput, MachineType, Language, Edition, false);
                         }
 
                         pevCompDB = await GenerateChangelog(update, changelogOutput, i, pevCompDB);
