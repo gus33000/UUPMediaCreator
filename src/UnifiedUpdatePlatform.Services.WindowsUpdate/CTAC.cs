@@ -289,9 +289,10 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate
                     string ReleaseType,
                     bool SyncCurrentVersionOnly,
                     bool IsStore = false,
-                    string ContentType = "Mainline") : base()
+                    string ContentType = "Mainline",
+                    bool IsVbsEnabled = true) : base()
         {
-            BuildCTAC(ReportingSku, ReportingVersion, MachineType, FlightRing, FlightingBranchName, BranchReadinessLevel, CurrentBranch, ReleaseType, SyncCurrentVersionOnly, IsStore, ContentType);
+            BuildCTAC(ReportingSku, ReportingVersion, MachineType, FlightRing, FlightingBranchName, BranchReadinessLevel, CurrentBranch, ReleaseType, SyncCurrentVersionOnly, IsStore, ContentType, IsVbsEnabled);
         }
 
         private void BuildCTAC(
@@ -305,7 +306,8 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate
             string ReleaseType,
             bool SyncCurrentVersionOnly,
             bool IsStore = false,
-            string content = "Mainline"
+            string content = "Mainline",
+            bool IsVbsEnabled = true
         )
         {
             int flightEnabled = FlightRing == "Retail" ? 0 : 1;
@@ -398,7 +400,7 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate
                                     "InstallLanguage=en-US&" +
                                     "OEMName_Uncleaned=MICROSOFTMDG&" +
                                     $"InstallationType={InstallType}&" +
-                                    "AttrDataVer=177&" +
+                                    "AttrDataVer=264&" +
                                     "IsEdgeWithChromiumInstalled=1&" +
                                     "TimestampEpochString_20H1=1593425114&" +
                                     $"OSVersion={ReportingVersion}&" +
@@ -459,7 +461,8 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate
                                     "UpgradeEligible=1&" +
                                     "Version_RS5=2000000000&" +
                                     $"IsRetailOS={FlightRing == "Retail"}&" +
-                                    $"MediaVersion={ReportingVersion}";
+                                    $"MediaVersion={ReportingVersion}" +
+                                    $"IsVbsEnabled={(IsVbsEnabled ? 1 : 0)}";
 
             if (ReportingSku is OSSkuId.EnterpriseS or OSSkuId.EnterpriseSN || ReportingSku.ToString().Contains("Server", StringComparison.InvariantCultureIgnoreCase))
             {

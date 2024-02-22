@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0-windows10.0.22621.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Windows.CsWinRT" Version="2.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Windows.Internal.Flighting">
+      <HintPath>..\..\winmds\Windows.Internal.Flighting.winmd</HintPath>
+      <IsWinMDFile>true</IsWinMDFile>
+    </Reference>
+  </ItemGroup>
+
+  <!--CsWinRT properties-->
+  <PropertyGroup>
+    <!--Specify namespaces to create a C# projection for-->
+    <CsWinRTIncludes>Windows.Internal.Flighting</CsWinRTIncludes>
+    <!--Set output path for generated source files/projection dll to OutDir (defined in Directory.Build.props)-->
+    <CsWinRTGeneratedFilesDir>$(OutDir)</CsWinRTGeneratedFilesDir>
+  </PropertyGroup>
+
+</Project>
