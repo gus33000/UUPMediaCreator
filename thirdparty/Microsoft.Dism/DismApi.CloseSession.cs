@@ -37,7 +37,9 @@ namespace Microsoft.Dism
             /// <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/hh825839.aspx" />
             /// HRESULT WINAPI DismCloseSession(_In_ DismSession Session);
             [DllImport(DismDllName, CharSet = DismCharacterSet)]
+#pragma warning disable SYSLIB0004 // Type or member is obsolete
             [ReliabilityContract(Consistency.WillNotCorruptState, Cer.MayFail)]
+#pragma warning restore SYSLIB0004 // Type or member is obsolete
             [return: MarshalAs(UnmanagedType.Error)]
             public static extern int DismCloseSession(IntPtr session);
         }

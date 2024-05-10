@@ -102,23 +102,23 @@ namespace UUPDownload.Downloading
                 switch (status.FileStatus)
                 {
                     case FileStatus.Completed:
-                        msg = "C";
+                        msg = "Cp";
                         break;
                     case FileStatus.Downloading:
-                        msg = "D";
+                        msg = "Dl";
                         break;
                     case FileStatus.Expired:
-                        msg = "E";
+                        msg = "Ex";
                         break;
                     case FileStatus.Failed:
-                        msg = "F";
+                        msg = "Fd";
                         break;
                     case FileStatus.Verifying:
-                        msg = "V";
+                        msg = "Vr";
                         break;
                 }
 
-                Console.WriteLine($"{DateTime.Now:'['HH':'mm':'ss']'}[{e.NumFilesDownloadedSuccessfully}/{e.NumFiles}][E:{e.NumFilesDownloadedUnsuccessfully}][{msg}] {status.File.FileName} ({FormatBytes(status.File.FileSize)})");
+                Console.WriteLine($"{DateTime.Now:'['MMMM' 'dd'--'HH':'mm':'ss':'fff']'} [S:{e.NumFilesDownloadedSuccessfully}/{e.NumFiles}][F:{e.NumFilesDownloadedUnsuccessfully}] [{msg}] {status.File.FileName} ({FormatBytes(status.File.FileSize)})");
             }
 
             mutex.ReleaseMutex();

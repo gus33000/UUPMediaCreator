@@ -5,7 +5,7 @@ namespace Windows.Internal.Flighting
 {
     public class PlatformCTAC : IEquatable<PlatformCTAC>
     {
-        private static ClientAttributes ClientAttributes;
+        private static ClientAttributes ClientAttributes = null!;
 
         public string JSON
         {

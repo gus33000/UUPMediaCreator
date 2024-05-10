@@ -75,7 +75,9 @@ namespace Microsoft.Dism
         /// Releases the DismSession handle.
         /// </summary>
         /// <returns><c>true</c> if the handle is released successfully; otherwise, in the event of a catastrophic failure, <c>false</c>.</returns>
+#pragma warning disable SYSLIB0004 // Type or member is obsolete
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.MayFail)]
+#pragma warning restore SYSLIB0004 // Type or member is obsolete
         protected override bool ReleaseHandle()
         {
             // See if the handle is valid and hasn't already been closed
