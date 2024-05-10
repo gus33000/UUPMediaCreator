@@ -29,7 +29,7 @@ namespace UUPDownload
 {
     public static class FeatureManifestService
     {
-        private const int MAXIMUM_CANDIDATE_CAB_SIZE = 1024 * 48; // Feature manifest cabinets have not been observed to be larger than 48KiB
+        private const int MAXIMUM_CANDIDATE_CAB_SIZE = 1024 * 128; // Feature manifest cabinets have not been observed to be larger than 48KiB
 
         public static IDictionary<string, string> GetAppxPackageLicenseFileMapFromCabs(IList<string> cabPaths)
         {

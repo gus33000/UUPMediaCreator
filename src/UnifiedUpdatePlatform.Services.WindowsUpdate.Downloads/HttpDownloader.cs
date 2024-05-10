@@ -100,7 +100,7 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads
 
     public class HttpDownloader : IDisposable
     {
-        private const long CHUNK_SIZE = 8_388_608 + 65_536; //Slice 8MB+64KB
+        private const long CHUNK_SIZE = 16_777_216 + 65_536; //Slice 16MB+64KB
         private const string TEMP_DOWNLOAD_EXTENSION = ".dlTmp";
 
         private readonly HttpClient _hc;
@@ -121,12 +121,12 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads
             get; set;
         }
 
-        public HttpDownloader(string downloadFolderPath, int downloadThreads = 4, bool verifyFiles = true, IWebProxy proxy = null, bool useSystemProxy = true)
+        public HttpDownloader(string downloadFolderPath, int downloadThreads = 8, bool verifyFiles = true, IWebProxy proxy = null, bool useSystemProxy = true)
         {
             HttpClientHandler filter = new()
             {
                 AutomaticDecompression = DecompressionMethods.All,
-                MaxConnectionsPerServer = 512,
+                MaxConnectionsPerServer = 256,
             };
 
             if (proxy != null || !useSystemProxy)
@@ -376,7 +376,7 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads
                 _ = Directory.CreateDirectory(Path.GetDirectoryName(filePath));
 
                 //Open the file as stream.
-                using FileStream streamToWriteTo = File.Open(tempFilePath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.Read);
+                await using FileStream streamToWriteTo = File.Open(tempFilePath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.Read);
 
                 //Set the seek position to current range position (via totalBytesRead or currRange). This is needed.
                 _ = streamToWriteTo.Seek(totalBytesRead, SeekOrigin.Begin);
@@ -406,7 +406,7 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads
                     //TODO: may throw an exception if the server suddently closes the connection (e.g. file expired.)
 
                     using HttpResponseMessage fullFileResp = await httpClient.GetAsync(downloadFile.WUFile.DownloadUrl, cancellationToken);
-                    using Stream streamToReadFrom = await fullFileResp.Content.ReadAsStreamAsync();
+                    await using Stream streamToReadFrom = await fullFileResp.Content.ReadAsStreamAsync();
 
                     if (esrpDecrypter != null)
                     {
@@ -448,7 +448,7 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads
                     if (filePartResp.IsSuccessStatusCode)
                     {
                         //get the underlying stream
-                        using Stream streamToReadFrom = await filePartResp.Content.ReadAsStreamAsync();
+                        await using Stream streamToReadFrom = await filePartResp.Content.ReadAsStreamAsync();
 
                         int bytesRead;
                         byte[] buffer = new byte[blockBufferSize];
@@ -497,7 +497,7 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads
                             else
                             {
                                 //simply write to the file
-                                await streamToWriteTo.WriteAsync(buffer, 0, bytesRead, cancellationToken);
+                                await streamToWriteTo.WriteAsync(buffer.AsMemory(0, bytesRead), cancellationToken);
                             }
 
                             //report progress
@@ -656,11 +656,11 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads
             long totalBytesRead = 0;
             long bufSizeEffective = Math.Min(bufferSize, fileStream.Length);
             byte[] buffer = new byte[bufSizeEffective];
-            using MemoryStream ms = new(buffer);
-            using CryptoStream cs = new(ms, hashAlgorithm, CryptoStreamMode.Write);
-            while ((readBytes = await fileStream.ReadAsync(buffer, 0, buffer.Length, cancellationToken)) > 0)
+            await using MemoryStream ms = new(buffer);
+            await using CryptoStream cs = new(ms, hashAlgorithm, CryptoStreamMode.Write);
+            while ((readBytes = await fileStream.ReadAsync(buffer, cancellationToken)) > 0)
             {
-                await cs.WriteAsync(buffer, 0, readBytes, cancellationToken);
+                await cs.WriteAsync(buffer.AsMemory(0, readBytes), cancellationToken);
                 ms.Position = 0;
                 totalBytesRead += readBytes;
                 progress?.Report(totalBytesRead);

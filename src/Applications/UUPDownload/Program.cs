@@ -32,15 +32,11 @@ namespace UUPDownload
         private static void PrintLogo()
         {
             Logging.Log($"UnifiedUpdatePlatform.Media.Download {Assembly.GetExecutingAssembly().GetName().Version} - Download from the Microsoft Unified Update Platform");
-            Logging.Log("Copyright (c) Gustave Monce and Contributors");
+            Logging.Log("Copyright (c) Gustave Monce and Contributors. This program comes with ABSOLUTELY NO WARRANTY.");
             Logging.Log("https://github.com/gus33000/UUPMediaCreator");
-            Logging.Log("");
-            Logging.Log("This program comes with ABSOLUTELY NO WARRANTY.");
             Logging.Log("This is free software, and you are welcome to redistribute it under certain conditions.");
-            Logging.Log("");
             Logging.Log("This software contains work derived from libmspack licensed under the LGPL-2.1 license.");
-            Logging.Log("(C) 2003-2004 Stuart Caie.");
-            Logging.Log("(C) 2011 Ali Scissons.");
+            Logging.Log("(C) 2003-2004 Stuart Caie. (C) 2011 Ali Scissons.");
             Logging.Log("");
         }
 
@@ -52,7 +48,7 @@ namespace UUPDownload
             }
             catch (Exception ex)
             {
-                Logging.Log("Something happened.", Logging.LoggingLevel.Error);
+                Logging.Log("Something happened. Yes, just something.", Logging.LoggingLevel.Error);
                 while (ex != null)
                 {
                     Logging.Log(ex.Message, Logging.LoggingLevel.Error);

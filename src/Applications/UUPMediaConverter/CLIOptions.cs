@@ -23,7 +23,7 @@ using CommandLine;
 
 namespace UUPMediaConverter
 {
-    [Verb("desktop-convert", isDefault: true, HelpText = "Converts an UUP set to a Desktop ISO Media")]
+    [Verb("desktop-convert", isDefault: true, HelpText = "Converts a UUP set to a Desktop ISO Media")]
     internal class DesktopConvertOptions
     {
         [Option('u', "uup-path", HelpText = "The path to the downloaded files from UUP (Unified Update Platform)", Required = true)]
@@ -38,7 +38,8 @@ namespace UUPMediaConverter
             get; set;
         }
 
-        [Option('l', "language-code", HelpText = "The language to make media for. e.g. en-US", Required = true)]
+        [Option('l', "language-code", HelpText = "The language to make media for." +
+            "   Example: en-US, de-DE, zh-CN", Required = true)]
         public string LanguageCode
         {
             get; set;
@@ -62,7 +63,7 @@ namespace UUPMediaConverter
             get; set;
         }
 
-        [Option("no-key-prompt", HelpText = "Use the alternate efisys and cdboot implementations to suppress the 'press any key' prompt", Required = false)]
+        [Option('k', "no-key-prompt", HelpText = "Use the alternate efisys and cdboot implementations to suppress the 'press any key' prompt", Required = false)]
         public bool SuppressAnyKeyPrompt { get; set; }
     }
 }
