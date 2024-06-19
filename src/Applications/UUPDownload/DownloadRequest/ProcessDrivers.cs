@@ -56,7 +56,7 @@ namespace UUPDownload.DownloadRequest
 
         private static async Task<CompDB> GenerateChangelog(UpdateData update, string changelogOutput, int i, CompDB pevCompDB)
         {
-            File.AppendAllLines(changelogOutput, new string[] { "", $"## {update.Xml.LocalizedProperties.Title} - 200.0.{i}.0" });
+            File.AppendAllLines(changelogOutput, ["", $"## {update.Xml.LocalizedProperties.Title} - 200.0.{i}.0"]);
 
             HashSet<CompDB> compDBs = await update.GetCompDBsAsync();
             CompDB curCompDB = compDBs.First();
@@ -131,36 +131,36 @@ namespace UUPDownload.DownloadRequest
 
             if (added.Count > 0)
             {
-                File.AppendAllLines(changelogOutput, new string[] { "", $"### Added", "" });
-                File.AppendAllLines(changelogOutput, new string[] { "| Driver version | Package |" });
-                File.AppendAllLines(changelogOutput, new string[] { "|----------------|---------|" });
+                File.AppendAllLines(changelogOutput, ["", $"### Added", ""]);
+                File.AppendAllLines(changelogOutput, ["| Driver version | Package |"]);
+                File.AppendAllLines(changelogOutput, ["|----------------|---------|"]);
                 File.AppendAllLines(changelogOutput, added);
             }
 
 
             if (updated.Count > 0)
             {
-                File.AppendAllLines(changelogOutput, new string[] { "", $"### Updated", "" });
-                File.AppendAllLines(changelogOutput, new string[] { "| Driver version | Package |" });
-                File.AppendAllLines(changelogOutput, new string[] { "|----------------|---------|" });
+                File.AppendAllLines(changelogOutput, ["", $"### Updated", ""]);
+                File.AppendAllLines(changelogOutput, ["| Driver version | Package |"]);
+                File.AppendAllLines(changelogOutput, ["|----------------|---------|"]);
                 File.AppendAllLines(changelogOutput, updated);
             }
 
 
             if (modified.Count > 0)
             {
-                File.AppendAllLines(changelogOutput, new string[] { "", $"### Modified", "" });
-                File.AppendAllLines(changelogOutput, new string[] { "| Driver version | Package |" });
-                File.AppendAllLines(changelogOutput, new string[] { "|----------------|---------|" });
+                File.AppendAllLines(changelogOutput, ["", $"### Modified", ""]);
+                File.AppendAllLines(changelogOutput, ["| Driver version | Package |"]);
+                File.AppendAllLines(changelogOutput, ["|----------------|---------|"]);
                 File.AppendAllLines(changelogOutput, modified);
             }
 
 
             if (removed.Count > 0)
             {
-                File.AppendAllLines(changelogOutput, new string[] { "", $"### Removed", "" });
-                File.AppendAllLines(changelogOutput, new string[] { "| Driver version | Package |" });
-                File.AppendAllLines(changelogOutput, new string[] { "|----------------|---------|" });
+                File.AppendAllLines(changelogOutput, ["", $"### Removed", ""]);
+                File.AppendAllLines(changelogOutput, ["| Driver version | Package |"]);
+                File.AppendAllLines(changelogOutput, ["|----------------|---------|"]);
                 File.AppendAllLines(changelogOutput, removed);
             }
 
@@ -177,8 +177,8 @@ namespace UUPDownload.DownloadRequest
 
         private static readonly string RepoLocation = @"F:\Git\Qualcomm-Reference-Drivers";
 
-        private static readonly DriverPlan[] plans = new DriverPlan[]
-        {
+        private static readonly DriverPlan[] plans =
+        [
             new() // Snapdragon 8cx Gen 1 (Pre-release) Clamshell Reference Design
             {
                 outputFolder = RepoLocation + @"\1000_CLS",
@@ -267,6 +267,27 @@ namespace UUPDownload.DownloadRequest
             {
                 outputFolder = RepoLocation + @"\Surface\8280_BLK",
                 guid = CTAC.GenerateDeviceId("Microsoft Corporation", "Surface", "Windows Dev Kit 2023", "2043"),
+                filteredIds = [],
+                excludedIds = []
+            },
+            new() // Surface Laptop 7 (13 inch)
+            {
+                outputFolder = RepoLocation + @"\Surface\8380_ROM_2036",
+                guid = CTAC.GenerateDeviceId("Microsoft Corporation", "Surface", "Microsoft Surface Laptop, 7th Edition", "Surface_Laptop_7th_Edition_2036"),
+                filteredIds = [],
+                excludedIds = []
+            },
+            new() // Surface Laptop 7 (15 inch)
+            {
+                outputFolder = RepoLocation + @"\Surface\8380_ROM_2037",
+                guid = CTAC.GenerateDeviceId("Microsoft Corporation", "Surface", "Microsoft Surface Laptop, 7th Edition", "Surface_Laptop_7th_Edition_2037"),
+                filteredIds = [],
+                excludedIds = []
+            },
+            new() // Surface Pro 11
+            {
+                outputFolder = RepoLocation + @"\Surface\8380_DEN",
+                guid = CTAC.GenerateDeviceId("Microsoft Corporation", "Surface", "Microsoft Surface Pro, 11th Edition", "Surface_Pro_11th_Edition_2076"),
                 filteredIds = [],
                 excludedIds = []
             },
@@ -439,7 +460,7 @@ namespace UUPDownload.DownloadRequest
                 filteredIds = [],
                 excludedIds = []
             },*/
-        };
+        ];
 
         private static async Task CheckAndDownloadUpdates(OSSkuId ReportingSku,
                     string ReportingVersion,
