@@ -54,42 +54,43 @@ Right now the tooling includes:
 
 ## Usage
 
-UUPDownload might be a little too complicated to use for some people. For reference purposes, here's a current set of parameters you can try as of ```2024-04-30```:
+UUPDownload might be a little too complicated to use for some people. For reference purposes, here's a current set of parameters you can try as of ```2024-07-11```:
 
 | Primary Commands          | Effect   |
-|---------------------------|----------------------------------------------------------------------------------------------------------------------------|
-| request-download          | (default) Request a download from zero using a number of different request parameters.                                     |
-| replay-download           | Replay a download from zero using a .uupmcreplay file.                                                                     |                                                                  
-| get-builds                | Get builds in all rings matching the request type                                                                          |
-| help                      | Display more information on a specific command.                                                                            |
-| version                   | Display version information.                                                                                               |
+|---------------------------|--------------------------------------------------------------------------------------------------------------------------|
+| request-download          | (default) Request a download from zero using a number of different request parameters.                                   |
+| replay-download           | Replay a download from zero using a .uupmcreplay file.                                                                   |
+| get-builds                | Get builds in all rings matching the request type                                                                        |
+| help                      | Display more information on a specific command.                                                                          |
+| version                   | Display version information.                                                                                             |
 
 
 | Channel                   | Command |
-|---------------------------|----------------------------------------------------------------------------------------------------------------------------|
-| Retail (Desktop)          | -s Professional -v 10.0.22631.1 -r Retail -b Retail -c vb_release -t [your architecture]                                   |
-| Retail (IoT)              | -s IoTUAP -v 10.0.17763.1 -r Retail -b Retail -c rs5_release -t [your architecture]                                        |
-| Retail (Mobile)           | -s MobileCore -v 10.0.15254.1 -r Retail -b Retail -c feature2 -t [your architecture]                                       |
-| Retail (Team)             | -s PPIPro -v 10.0.22631.1 -r Retail -b Retail -c vb_release -t [your architecture]                                         |
-| Retail (Server)           | -s DatacenterServer -v 10.0.22631.1 -r Retail -b Retail -c ni_release -t [your architecture]                               |
-| Release Preview (Desktop) | -s Professional -v 10.0.19043.1 -r External -b ReleasePreview -c vb_release -t [your architecture]                         |
-| Release Preview (HCI)     | -s AzureStackHCIServerCore -v 10.0.26100.1 -r External -b ReleasePreview -c ge_prerelease -t amd64 [your architecture]     |
-| Beta (Desktop)            | -s Professional -v 10.0.22635.3566 -r External -b Beta -c ni_release -t [your architecture]                                |
-| Beta (Team)               | -s PPIPro -v 10.0.22635.3566 -r External -b Beta -c ni_release -t [your architecture]                                      |
-| Dev (Desktop)             | -s Professional -v 10.0.26200.5001 -r External -b Dev -c ge_release -t [your architecture]                                 |
-| Dev (Team)                | -s PPIPro -v 10.0.26200.5001 -r External -b Dev -c vb_release -t [your architecture]                                       |
-| Canary (Desktop)          | -s Professional -v 10.0.26200.5001 -r External -b canarychannel -c ge_prerelease -t [your architecture]                    |
-| Client (All)              | -s 4 -v 10.0.26100.1 -r external -c ge_release_svc_oem  -l en-us -t [your architecture]                                    |
-| Server (All)              | -s 408 -v 10.0.26100.1 -r external -c ge_release_svc_oem  -l en-us-t [your architecture]                                   |
+|---------------------------|--------------------------------------------------------------------------------------------------------------------------|
+| Retail (Desktop)          | -s Professional -v 10.0.22631.1 -r Retail -b Retail -c vb_release -t [your architecture]                                 |
+| Retail (IoT Core)         | -s IoTUAP -v 10.0.17763.1 -r Retail -b Retail -c rs5_release -t [your architecture]                                      |
+| Retail (Mobile)           | -s MobileCore -v 10.0.15254.1 -r Retail -b Retail -c feature2 -t [your architecture]                                     |
+| Retail (Team)             | -s PPIPro -v 10.0.22631.1 -r Retail -b Retail -c vb_release -t [your architecture]                                       |
+| Retail (Server)           | -s DatacenterServer -v 10.0.22631.1 -r Retail -b Retail -c ni_release -t [your architecture]                             |
+| Release Preview (Desktop) | -s Professional -v 10.0.19043.1 -r External -b ReleasePreview -c vb_release -t [your architecture]                       |
+| Release Preview (HCI)     | -s AzureStackHCIServerCore -v 10.0.26100.1 -r External -b ReleasePreview -c ge_release -t amd64 [your architecture]      |
+| Beta (Desktop)            | -s Professional -v 10.0.22635.3566 -r External -b Beta -c ni_release -t [your architecture]                              |
+| Beta (Team)               | -s PPIPro -v 10.0.22635.3566 -r External -b Beta -c ni_release -t [your architecture]                                    |
+| Dev (Desktop)             | -s Professional -v 10.0.26120.961 -r External -b Dev -c ge_release -t [your architecture]                                |
+| Dev (Team)                | -s PPIPro -v 10.0.26120.961 -r External -b Dev -c ge_release -t [your architecture]                                      |
+| Canary (Desktop)          | -s Professional -v 10.0.26252.5000 -r External -b canarychannel -c ge_prerelease -t [your architecture]                  |
+| Client (All)              | -s 4 -v 10.0.26100.1 -r external -c ge_release_svc_oem  -l en-us -t [your architecture]                                  |
+| Server (All)              | -s 408 -v 10.0.26100.1 -r external -c ge_release_svc_oem  -l en-us-t [your architecture]                                 |
 
 **TIP 1:** You can append ```-e [Edition to download]``` to get the files needed only for a specific edition
+**TIP 1.1:** You dont even need edition names, use product numbers if you know them.
 
 **TIP 2:** You can append ```-l [Language to download]``` to get the files needed only for a specific language
 
-**TIP 3:** Example architectures:   amd64, arm64, x86, unknown, wcemipsv2, axp, sh3, sh3dsp, sh4, sh5, arm, thumb,
+**TIP 3:** Possible architectures:   amd64, arm64, x86, unknown, wcemipsv2, axp, sh3, sh3dsp, sh4, sh5, arm, thumb,
                                      woa, am33, powerpc, powerpcfp, ia64, mips16, mipsfpu, mipsfpu16, ebc, m32r
 
-**TIP 4:** See 'Editions.txt' for a full list of currently known SKUs, you can use their numbers instead of names!
+**TIP 4:** See 'editions.txt' for a full list of currently known SKUs, as well as experimental options.
 
 
 ### Important
