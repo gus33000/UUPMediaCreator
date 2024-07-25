@@ -175,10 +175,17 @@ namespace UUPDownload.DownloadRequest
             public int[] excludedIds;
         }
 
-        private static readonly string RepoLocation = @"F:\Git\Qualcomm-Reference-Drivers";
+        private static readonly string RepoLocation = @"C:\Users\gus33\Documents\GitHub\Qualcomm-Reference-Drivers";
 
         private static readonly DriverPlan[] plans =
         [
+            new() // Snapdragon X Elite Clamshell Reference Design
+            {
+                outputFolder = RepoLocation + @"\8380PA_CRD",
+                guid = CTAC.GenerateDeviceId("Qualcomm", "SCP_PURWA", "CRD", "6").ToString(),
+                filteredIds = [],
+                excludedIds = []
+            },
             new() // Snapdragon 8cx Gen 1 (Pre-release) Clamshell Reference Design
             {
                 outputFolder = RepoLocation + @"\1000_CLS",
