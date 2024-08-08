@@ -179,7 +179,7 @@ namespace UUPDownload.DownloadRequest
 
         private static readonly DriverPlan[] plans =
         [
-            new() // Snapdragon X Elite Clamshell Reference Design
+            new() // Snapdragon X Clamshell Reference Design
             {
                 outputFolder = RepoLocation + @"\8380PA_CRD",
                 guid = CTAC.GenerateDeviceId("Qualcomm", "SCP_PURWA", "CRD", "6").ToString(),
