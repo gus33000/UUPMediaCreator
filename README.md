@@ -55,23 +55,25 @@ Right now the tooling includes:
 
 UUPDownload might be a little too complicated to use for some people. For reference purposes, here's the current set of parameters you can use as of ```2021-05-18```:
 
-| Channel                   | Command |
-|---------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Retail (Desktop)          | -s Professional -v 10.0.19043.1 -r Retail -b Retail -c vb_release -t [your architecture] |
-| Retail (IoT)              | -s IoTUAP -v 10.0.17763.1 -r Retail -b Retail -c rs5_release -t [your architecture] |
-| Retail (Holographic)      | -s Holographic -v 10.0.20346.1 -r Retail -b Retail -c fe_release -t [your architecture] |
-| Retail (Mobile)           | -s MobileCore -v 10.0.15254.1 -r Retail -b Retail -c feature2 -t [your architecture] |
-| Retail (Team)             | -s PPIPro -v 10.0.19043.1 -r Retail -b Retail -c vb_release -t [your architecture] |
-| Retail (Server)           | -s DatacenterServer -v 10.0.20348.1 -r Retail -b Retail -c fe_release -t [your architecture] |
-| Release Preview (Desktop) | -s Professional -v 10.0.19043.1 -r External -b ReleasePreview -c vb_release -t [your architecture] |
-| Release Preview (HCI)     | -s AzureStackHCIServerCore -v 10.0.22000.1 -r External -b ReleasePreview -c rs_prerelease -t [your architecture] |
-| Beta (Desktop)            | -s Professional -v 10.0.19043.1 -r External -b Beta -c vb_release -t [your architecture] |
-| Beta (Holographic)        | -s Holographic -v 10.0.19043.1 -r External -b Beta -c vb_release -t [your architecture] |
-| Beta (Team)               | -s PPIPro -v 10.0.19043.1 -r External -b Beta -c vb_release -t [your architecture] |
-| Dev (Desktop)             | -s Professional -v 10.0.19043.1 -r External -b Dev -c vb_release -t [your architecture] |
-| Dev (Holographic)         | -s Holographic -v 10.0.19043.1 -r External -b Dev -c vb_release -t [your architecture] |
-| Dev (Team)                | -s PPIPro -v 10.0.19043.1 -r External -b Dev -c vb_release -t [your architecture] |
-| Canary (Desktop)          | -s Professional -v 10.0.22621.1 -r External -b CanaryChannel -c ni_release -t [your architecture] |
+| Channel                               | Command |
+|---------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Retail (Desktop)                      | -s Professional -v 10.0.19043.1 -r Retail -b Retail -c vb_release -t [your architecture] |
+| Retail (IoT)                          | -s IoTUAP -v 10.0.17763.1 -r Retail -b Retail -c rs5_release -t [your architecture] |
+| Retail (Holographic)                  | -s Holographic -v 10.0.20346.1 -r Retail -b Retail -c fe_release -t [your architecture] |
+| Retail (Mobile)                       | -s MobileCore -v 10.0.15254.1 -r Retail -b Retail -c feature2 -t [your architecture] |
+| Retail (Team)                         | -s PPIPro -v 10.0.19043.1 -r Retail -b Retail -c vb_release -t [your architecture] |
+| Retail (Server)                       | -s DatacenterServer -v 10.0.20348.1 -r Retail -b Retail -c fe_release -t [your architecture] |
+| Release Preview (Windows 10, Desktop) | -s Professional -v 10.0.19043.1 -r External -b ReleasePreview -c vb_release -t [your architecture] |
+| Release Preview (Windows 11, Desktop) | -s Professional -v 10.0.22621.1 -r External -b ReleasePreview -c ni_release -t [your architecture] |
+| Release Preview (HCI)                 | -s AzureStackHCIServerCore -v 10.0.22000.1 -r External -b ReleasePreview -c rs_prerelease -t [your architecture] |
+| Beta (Windows 10, Desktop)            | -s Professional -v 10.0.19043.1 -r External -b Beta -c vb_release -t [your architecture] |
+| Beta (Windows 11, Desktop)            | -s Professional -v 10.0.22621.1 -r External -b Beta -c ni_release -t [your architecture] |
+| Beta (Holographic)                    | -s Holographic -v 10.0.19043.1 -r External -b Beta -c vb_release -t [your architecture] |
+| Beta (Team)                           | -s PPIPro -v 10.0.19043.1 -r External -b Beta -c vb_release -t [your architecture] |
+| Dev (Desktop)                         | -s Professional -v 10.0.19043.1 -r External -b Dev -c vb_release -t [your architecture] |
+| Dev (Holographic)                     | -s Holographic -v 10.0.19043.1 -r External -b Dev -c vb_release -t [your architecture] |
+| Dev (Team)                            | -s PPIPro -v 10.0.19043.1 -r External -b Dev -c vb_release -t [your architecture] |
+| Canary (Desktop)                      | -s Professional -v 10.0.22621.1 -r External -b CanaryChannel -c ni_release -t [your architecture] |
 
 **TIP 1:** You can append ```-e [Edition to download]``` to get the files needed only for a specific edition
 

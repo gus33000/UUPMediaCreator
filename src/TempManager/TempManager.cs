@@ -33,11 +33,16 @@ namespace UnifiedUpdatePlatform.Services.Temp
 
         }
 
-        public TempManager(string Temp)
+        public TempManager(string temp)
         {
-            if (!string.IsNullOrEmpty(Temp))
+            if (!string.IsNullOrEmpty(temp))
             {
-                this.Temp = Temp;
+                Temp = temp;
+            }
+
+            if (!Directory.Exists(Temp))
+            {
+                throw new DirectoryNotFoundException("The specified temporary directory cannot be accessed or does not exist.");
             }
         }
 
