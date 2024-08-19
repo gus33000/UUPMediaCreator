@@ -289,9 +289,10 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate
                     string ReleaseType,
                     bool SyncCurrentVersionOnly,
                     bool IsStore = false,
-                    string ContentType = "Mainline") : base()
+                    string ContentType = "Mainline",
+                    bool IsVbsEnabled = true) : base()
         {
-            BuildCTAC(ReportingSku, ReportingVersion, MachineType, FlightRing, FlightingBranchName, BranchReadinessLevel, CurrentBranch, ReleaseType, SyncCurrentVersionOnly, IsStore, ContentType);
+            BuildCTAC(ReportingSku, ReportingVersion, MachineType, FlightRing, FlightingBranchName, BranchReadinessLevel, CurrentBranch, ReleaseType, SyncCurrentVersionOnly, IsStore, ContentType, IsVbsEnabled);
         }
 
         private void BuildCTAC(
@@ -305,7 +306,8 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate
             string ReleaseType,
             bool SyncCurrentVersionOnly,
             bool IsStore = false,
-            string content = "Mainline"
+            string content = "Mainline",
+            bool IsVbsEnabled = true
         )
         {
             int flightEnabled = FlightRing == "Retail" ? 0 : 1;
@@ -371,7 +373,7 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate
             DeviceAttributes = "E:ActivationChannel=OEM:DM&" +
                                 $"App={App}&" +
                                 $"AppVer={ReportingVersion}&" +
-                                "AttrDataVer=208&" +
+                                "AttrDataVer=264&" +
                                 $"BranchReadinessLevel={BranchReadinessLevel}&" +
                                 $"CurrentBranch={CurrentBranch}&" +
                                 "DefaultUserRegion=244&" +
@@ -391,7 +393,7 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate
                                 "IsEdgeWithChromiumInstalled=1&" +
                                 $"IsFlightingEnabled={flightEnabled}&" +
                                 "IsMDMEnrolled=0&" +
-                                "IsVbsEnabled=1&" +
+                                $"IsVbsEnabled={(IsVbsEnabled ? 1 : 0)}" +
                                 "OEMModel=Windows Dev Kit 2023&" +
                                 "OEMModelBaseBoard=Windows Dev Kit 2023&" +
                                 "OEMName_Uncleaned=Microsoft Corporation&" +
