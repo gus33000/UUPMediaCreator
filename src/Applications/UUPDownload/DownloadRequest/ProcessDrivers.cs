@@ -34,9 +34,6 @@ namespace UUPDownload.DownloadRequest
 {
     public static class ProcessDrivers
     {
-        private static readonly string RepoLocation = @"C:\Users\gus33\Documents\GitHub\WOA-Project\Reference\Qualcomm-Reference-Drivers";
-        private static readonly string ConfigLocation = @"C:\Users\gus33\Documents\GitHub\UUPMediaCreator\DriverConfig.json";
-
         internal static void ParseDownloadOptions(DownloadRequestOptions opts)
         {
             CheckAndDownloadUpdates(
@@ -53,7 +50,8 @@ namespace UUPDownload.DownloadRequest
                 opts.Mail,
                 opts.Password,
                 opts.Language,
-                opts.Edition).Wait();
+                opts.Edition,
+                opts.OutputFolder).Wait();
         }
 
         private static async Task<CompDB> GenerateChangelog(UpdateData update, string changelogOutput, int i, CompDB pevCompDB)
@@ -63,10 +61,10 @@ namespace UUPDownload.DownloadRequest
             HashSet<CompDB> compDBs = await update.GetCompDBsAsync();
             CompDB curCompDB = compDBs.First();
 
-            List<string> added = new();
-            List<string> updated = new();
-            List<string> removed = new();
-            List<string> modified = new();
+            List<string> added = [];
+            List<string> updated = [];
+            List<string> removed = [];
+            List<string> modified = [];
 
             if (pevCompDB != null)
             {
@@ -182,14 +180,15 @@ namespace UUPDownload.DownloadRequest
                     string Mail,
                     string Password,
                     string Language,
-                    string Edition)
+                    string Edition,
+                    string OutputFolder)
         {
-            DriverPlan[] plans = System.Text.Json.JsonSerializer.Deserialize<DriverPlan[]>(File.ReadAllText(ConfigLocation));
+            DriverPlan[] plans = System.Text.Json.JsonSerializer.Deserialize<DriverPlan[]>(File.ReadAllText("DriverConfig.json"));
 
             foreach (DriverPlan plan in plans)
             {
                 Logging.Log(plan.outputFolder);
-                await ProcessDriverPlan(plan, ReportingSku, ReportingVersion, MachineType, FlightRing, FlightingBranchName, BranchReadinessLevel, CurrentBranch, ReleaseType, SyncCurrentVersionOnly, ContentType, Mail, Password, Language, Edition);
+                await ProcessDriverPlan(plan, ReportingSku, ReportingVersion, MachineType, FlightRing, FlightingBranchName, BranchReadinessLevel, CurrentBranch, ReleaseType, SyncCurrentVersionOnly, ContentType, Mail, Password, Language, Edition, OutputFolder);
             }
 
             if (Debugger.IsAttached)
@@ -214,7 +213,8 @@ namespace UUPDownload.DownloadRequest
                     string Mail,
                     string Password,
                     string Language,
-                    string Edition)
+                    string Edition,
+                    string RepoLocation)
         {
             CompDB previousCompositionDatabase = null;
 
@@ -228,7 +228,7 @@ namespace UUPDownload.DownloadRequest
             }
 
             string ProductGUID = DriverPlan.guid;
-            if (!string.IsNullOrEmpty(ProductGUID))
+            if (string.IsNullOrEmpty(ProductGUID))
             {
                 ProductGUID = CTAC.GenerateDeviceId(DriverPlan.Manufacturer, DriverPlan.Family, DriverPlan.Product, DriverPlan.Sku);
             }
@@ -237,15 +237,13 @@ namespace UUPDownload.DownloadRequest
 
             IEnumerable<UpdateData> NewestDriverProductUpdateData = await FE3Handler.GetUpdates(null, NewestDriverProductCTAC, token, FileExchangeV3UpdateFilter.ProductRelease);
 
-            string outputFolder = RepoLocation + DriverPlan.outputFolder;
+            string outputFolder = (RepoLocation + DriverPlan.outputFolder).Replace('\\', Path.DirectorySeparatorChar).Replace('/', Path.DirectorySeparatorChar);
 
             if (!NewestDriverProductUpdateData.Any())
             {
                 Logging.Log("No updates found that matched the specified criteria.", Logging.LoggingLevel.Error);
                 return;
             }
-
-            Logging.Log($"Found {NewestDriverProductUpdateData.Count()} update(s):");
 
             string newestDriverVersion = "0.0.0.0";
 
@@ -268,13 +266,13 @@ namespace UUPDownload.DownloadRequest
                 newestDriverVersion = compDBs.First().UUPProductVersion;
             }
 
-            string newestDriverOutput = $"{outputFolder}\\{newestDriverVersion}";
+            string newestDriverOutput = $"{outputFolder}{Path.DirectorySeparatorChar}{newestDriverVersion}";
             if (Directory.Exists(newestDriverOutput) && Directory.EnumerateFiles(newestDriverOutput).Any())
             {
                 return;
             }
 
-            string changelogOutput = $"{outputFolder}\\CHANGELOG.md";
+            string changelogOutput = $"{outputFolder}{Path.DirectorySeparatorChar}CHANGELOG.md";
 
             if (File.Exists(changelogOutput))
             {
@@ -309,21 +307,6 @@ namespace UUPDownload.DownloadRequest
                 }
                 else
                 {
-                    Logging.Log($"Found {PreciseDriverProductVersionUpdateData.Count()} update(s):");
-
-                    for (int UpdateIndex = 0; UpdateIndex < PreciseDriverProductVersionUpdateData.Count(); UpdateIndex++)
-                    {
-                        UpdateData update = PreciseDriverProductVersionUpdateData.ElementAt(UpdateIndex);
-
-                        if (update.Xml.LocalizedProperties.Title.Contains("Windows"))
-                        {
-                            continue;
-                        }
-
-                        Logging.Log($"{UpdateIndex}: Title: {update.Xml.LocalizedProperties.Title}");
-                        Logging.Log($"{UpdateIndex}: Description: {update.Xml.LocalizedProperties.Description}");
-                    }
-
                     foreach (UpdateData update in PreciseDriverProductVersionUpdateData)
                     {
                         if (update.Xml.LocalizedProperties.Title.Contains("Windows"))
@@ -334,7 +317,7 @@ namespace UUPDownload.DownloadRequest
                         Logging.Log("Title: " + update.Xml.LocalizedProperties.Title);
                         Logging.Log("Description: " + update.Xml.LocalizedProperties.Description);
 
-                        string fwOutput = $"{outputFolder}\\200.0.{driverBuildNumber}.0";
+                        string fwOutput = $"{outputFolder}{Path.DirectorySeparatorChar}200.0.{driverBuildNumber}.0";
                         if (!Directory.Exists(fwOutput) || !Directory.EnumerateFiles(fwOutput).Any())
                         {
                             _ = await UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads.UpdateUtils.ProcessUpdateAsync(update, fwOutput, MachineType, new ReportProgress(), Language, Edition, false, false);
