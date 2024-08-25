@@ -8,6 +8,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.Management.Infrastructure" Version="3.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\UnifiedUpdatePlatform.Services.WindowsUpdate\UnifiedUpdatePlatform.Services.WindowsUpdate.csproj" />
     <ProjectReference Include="..\..\Windows.Internal.Flighting\Windows.Internal.Flighting.csproj" />
   </ItemGroup>
 
