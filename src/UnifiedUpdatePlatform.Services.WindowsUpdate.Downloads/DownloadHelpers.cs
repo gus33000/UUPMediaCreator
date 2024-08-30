@@ -571,7 +571,7 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads
                         uint i = 1;
                         while (!pathList.Add(newPath.ToLower()))
                         {
-                            if (newPath.Split("\\")[^0].Contains('.'))
+                            if (Path.HasExtension(newPath))
                             {
                                 newPath = Path.Combine(Path.GetDirectoryName(newPath), Path.GetFileNameWithoutExtension(newPath) + $" ({i++})" + Path.GetExtension(newPath));
                             }
