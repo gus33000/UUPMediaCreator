@@ -568,17 +568,23 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads
                         }
                         catch { }
 
-                        uint i = 1;
-                        while (!pathList.Add(newPath.ToLower()))
+                        if (!pathList.Add(newPath.ToLower()))
                         {
-                            if (newPath.Split("\\")[^0].Contains('.'))
+                            string basePath, suffix;
+                            if (Path.HasExtension(newPath))
                             {
-                                newPath = Path.Combine(Path.GetDirectoryName(newPath), Path.GetFileNameWithoutExtension(newPath) + $" ({i++})" + Path.GetExtension(newPath));
+                                basePath = Path.Combine(Path.GetDirectoryName(newPath), Path.GetFileNameWithoutExtension(newPath));
+                                suffix = Path.GetExtension(newPath);
                             }
                             else
                             {
-                                newPath = Path.Combine(Path.GetDirectoryName(newPath), Path.GetFileName(newPath) + $" ({i++})");
+                                basePath = Path.Combine(Path.GetDirectoryName(newPath), Path.GetFileName(newPath));
+                                suffix = "";
                             }
+
+                            uint i = 1;
+                            while (!pathList.Add(newPath.ToLower()))
+                                newPath = basePath + $" ({i++})" + suffix;
                         }
 
                         fileList.Add(new UUPFile(
