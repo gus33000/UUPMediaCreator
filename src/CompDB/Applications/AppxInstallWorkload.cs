@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace UnifiedUpdatePlatform.Services.Composition.Database.Applications
+﻿namespace UnifiedUpdatePlatform.Services.Composition.Database.Applications
 {
     public class AppxInstallWorkload
     {

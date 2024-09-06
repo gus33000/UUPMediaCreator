@@ -36,8 +36,8 @@ namespace UnifiedUpdatePlatform.Media.Creator.Planning
     public class EditionTarget
     {
         public PlannedEdition PlannedEdition { get; set; } = new PlannedEdition();
-        public List<EditionTarget> NonDestructiveTargets = new();
-        public List<EditionTarget> DestructiveTargets = new();
+        public List<EditionTarget> NonDestructiveTargets = [];
+        public List<EditionTarget> DestructiveTargets = [];
     }
 
     public class PlannedEdition
@@ -281,8 +281,8 @@ namespace UnifiedUpdatePlatform.Media.Creator.Planning
             List<EditionMappingXML.Edition> possibleEditionUpgrades,
             ProgressCallback? progressCallback = null)
         {
-            List<PlannedEdition> availableEditionsByDowngradingInPriority = new();
-            List<PlannedEdition> availableEditionsByDowngrading = new();
+            List<PlannedEdition> availableEditionsByDowngradingInPriority = [];
+            List<PlannedEdition> availableEditionsByDowngrading = [];
 
             //
             // Attempt to get the neutral Composition Database listing all available files
@@ -400,10 +400,10 @@ namespace UnifiedUpdatePlatform.Media.Creator.Planning
 
         public static List<string> PrintEditionTarget(EditionTarget editionTarget, int padding = 0)
         {
-            List<string> lines = new()
-            {
+            List<string> lines =
+            [
                 $"-> Name: {editionTarget.PlannedEdition.EditionName}, Availability: {editionTarget.PlannedEdition.AvailabilityType}"
-            };
+            ];
 
             if (editionTarget.PlannedEdition.AppXInstallWorkloads?.Length > 0)
             {
@@ -454,7 +454,7 @@ namespace UnifiedUpdatePlatform.Media.Creator.Planning
         {
             bool VerifyFiles = !string.IsNullOrEmpty(UUPPath);
 
-            EditionTargets = new List<EditionTarget>();
+            EditionTargets = [];
 
             bool result = true;
 
@@ -523,13 +523,13 @@ namespace UnifiedUpdatePlatform.Media.Creator.Planning
                 // This dictionary holds the possible virtual edition upgrades
                 // Example: Professional -> ProfessionalEducation
                 //
-                List<EditionMappingXML.Edition> virtualWindowsEditions = new();
+                List<EditionMappingXML.Edition> virtualWindowsEditions = [];
 
                 //
                 // This dictionary holds the possible edition upgrades
                 // Example: Core -> Professional
                 //
-                List<EditionMappingXML.Edition> possibleEditionUpgrades = new();
+                List<EditionMappingXML.Edition> possibleEditionUpgrades = [];
 
                 if (!string.IsNullOrEmpty(EditionPack) && File.Exists(EditionPack))
                 {
@@ -648,7 +648,7 @@ namespace UnifiedUpdatePlatform.Media.Creator.Planning
 
                 progressCallback?.Invoke("Building Targets");
 
-                List<string> editionsAdded = new();
+                List<string> editionsAdded = [];
 
                 foreach (PlannedEdition? ed in availableCanonicalEditions)
                 {

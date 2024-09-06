@@ -29,12 +29,13 @@ using System.Threading.Tasks;
 using UnifiedUpdatePlatform.Services.Composition.Database;
 using UnifiedUpdatePlatform.Services.Composition.Database.Applications;
 using UnifiedUpdatePlatform.Services.WindowsUpdate;
+using UnifiedUpdatePlatform.Services.WindowsUpdate.Targeting;
 
 namespace UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads
 {
     public static partial class UpdateUtils
     {
-        public static string[] GetFilenameForCEUIFile(CExtendedUpdateInfoXml.File file2, IEnumerable<PayloadItem> payloadItems)
+        public static string[] GetFilenameForCEUIFile(Models.FE3.XML.ExtendedUpdateInfo.File file2, IEnumerable<PayloadItem> payloadItems)
         {
             string filename = file2.FileName.Replace('\\', Path.DirectorySeparatorChar);
             if (payloadItems.Any(x => x.PayloadHash == file2.AdditionalDigest.Text || x.PayloadHash == file2.Digest))
@@ -50,7 +51,7 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads
             return new string[] { filename };
         }
 
-        public static bool ShouldFileGetDownloaded(CExtendedUpdateInfoXml.File file2, IEnumerable<PayloadItem> payloadItems)
+        public static bool ShouldFileGetDownloaded(Models.FE3.XML.ExtendedUpdateInfo.File file2, IEnumerable<PayloadItem> payloadItems)
         {
             string filename = file2.FileName.Replace('\\', Path.DirectorySeparatorChar);
             if (payloadItems.Any(x => x.PayloadHash == file2.AdditionalDigest.Text || x.PayloadHash == file2.Digest))
@@ -77,7 +78,7 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads
             return update;
         }
 
-        private static bool IsFileBanned(CExtendedUpdateInfoXml.File file2, IEnumerable<PayloadItem> bannedItems)
+        private static bool IsFileBanned(Models.FE3.XML.ExtendedUpdateInfo.File file2, IEnumerable<PayloadItem> bannedItems)
         {
             return bannedItems.Any(x => x.PayloadHash == file2.AdditionalDigest.Text || x.PayloadHash == file2.Digest);
         }
@@ -90,9 +91,9 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads
         )
         FilterCompDBs(HashSet<CompDB> compDBs, string Edition, string Language)
         {
-            HashSet<CompDB> selectedCompDBs = new();
-            HashSet<CompDB> discardedCompDBs = new();
-            HashSet<CompDB> specificCompDBs = new();
+            HashSet<CompDB> selectedCompDBs = [];
+            HashSet<CompDB> discardedCompDBs = [];
+            HashSet<CompDB> specificCompDBs = [];
 
             foreach (CompDB cdb in compDBs)
             {
@@ -151,7 +152,7 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads
                         // Get edition + language
                         case (true, true):
                             {
-                                if ((!hasEdition && !hasLang || !hasEdition && hasLang && langMatching || !hasLang && hasEdition && editionMatching || hasEdition && hasLang && langMatching && editionMatching) && !IsNeutral)
+                                if (((!hasEdition && !hasLang) || (!hasEdition && hasLang && langMatching) || (!hasLang && hasEdition && editionMatching) || (hasEdition && hasLang && langMatching && editionMatching)) && !IsNeutral)
                                 {
                                     _ = specificCompDBs.Add(cdb);
                                     _ = selectedCompDBs.Add(cdb);
@@ -176,8 +177,8 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads
         )
         BuildListOfPayloads(HashSet<CompDB> compDBs, string Edition, string Language)
         {
-            HashSet<PayloadItem> payloadItems = new();
-            HashSet<PayloadItem> bannedPayloadItems = new();
+            HashSet<PayloadItem> payloadItems = [];
+            HashSet<PayloadItem> bannedPayloadItems = [];
 
             if (compDBs == null)
             {
@@ -273,7 +274,7 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads
 
             if (AppCompDBs != null)
             {
-                List<string> payloadHashesToKeep = new();
+                List<string> payloadHashesToKeep = [];
 
                 switch (!string.IsNullOrEmpty(Language), !string.IsNullOrEmpty(Edition))
                 {
@@ -478,7 +479,7 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads
             IEnumerable<string> languages = null;
 
             int returnCode = 0;
-            IEnumerable<CExtendedUpdateInfoXml.File> filesToDownload = null;
+            IEnumerable<Models.FE3.XML.ExtendedUpdateInfo.File> filesToDownload = null;
 
             HashSet<CompDB> compDBs = await update.GetCompDBsAsync();
 
@@ -533,7 +534,7 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads
 
                 returnCode = 0;
 
-                IEnumerable<(CExtendedUpdateInfoXml.File, FileExchangeV3FileDownloadInformation)> boundList = filesToDownload
+                IEnumerable<(Models.FE3.XML.ExtendedUpdateInfo.File, FileExchangeV3FileDownloadInformation)> boundList = filesToDownload
                     .AsParallel()
                     .Select(x => (x, fileUrls.First(y => y.Digest == x.Digest)))
                     //.Where(x => UpdateUtils.ShouldFileGetDownloaded(x.x, payloadItems))

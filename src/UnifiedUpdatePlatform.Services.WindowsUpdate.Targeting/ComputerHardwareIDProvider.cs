@@ -2,11 +2,11 @@
 using System.Security.Cryptography;
 using System.Text;
 
-namespace UnifiedUpdatePlatform.Services.WindowsUpdate
+namespace UnifiedUpdatePlatform.Services.WindowsUpdate.Targeting
 {
     public static class ComputerHardwareIDProvider
     {
-        private static readonly byte[] hwidIv = { 0x70, 0xFF, 0xD8, 0x12, 0x4C, 0x7F, 0x4C, 0x7D, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+        private static readonly byte[] hardwareIDIv = { 0x70, 0xFF, 0xD8, 0x12, 0x4C, 0x7F, 0x4C, 0x7D, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 
         public static Guid Class5GuidFromString(string input)
         {
@@ -19,14 +19,17 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate
         private static byte[] GetPartialHash(string input)
         {
             byte[] partialHash;
-            using (SHA1 sha1Csp = SHA1.Create())
-            {
-                _ = sha1Csp.TransformBlock(hwidIv, 0, hwidIv.Length, null, 0);
-                byte[] dataBin = Encoding.Unicode.GetBytes(input);
-                _ = sha1Csp.TransformFinalBlock(dataBin, 0, dataBin.Length);
-                partialHash = new byte[16];
-                Array.Copy(sha1Csp.Hash, partialHash, partialHash.Length);
-            }
+
+            using SHA1 sha1Csp = SHA1.Create();
+
+            _ = sha1Csp.TransformBlock(hardwareIDIv, 0, hardwareIDIv.Length, null, 0);
+
+            byte[] dataBin = Encoding.Unicode.GetBytes(input);
+            _ = sha1Csp.TransformFinalBlock(dataBin, 0, dataBin.Length);
+
+            partialHash = new byte[16];
+            Array.Copy(sha1Csp.Hash, partialHash, partialHash.Length);
+
             return partialHash;
         }
 

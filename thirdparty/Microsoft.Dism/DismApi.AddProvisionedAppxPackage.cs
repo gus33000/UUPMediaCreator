@@ -26,7 +26,7 @@ namespace Microsoft.Dism
                 appPath,
                 dependencyPackages,
                 optionalPackages: null,
-                licensePaths: string.IsNullOrEmpty(licensePath) ? null : new List<string> { licensePath! },
+                licensePaths: string.IsNullOrEmpty(licensePath) ? null : [licensePath!],
                 customDataPath: customDataPath,
                 regions: "all",
                 stubPackageOption: stubPackageOption);
@@ -48,7 +48,7 @@ namespace Microsoft.Dism
                 appPath,
                 dependencyPackages,
                 optionalPackages: null,
-                licensePaths: string.IsNullOrEmpty(licensePath) ? null : new List<string> { licensePath! },
+                licensePaths: string.IsNullOrEmpty(licensePath) ? null : [licensePath!],
                 customDataPath: customDataPath,
                 regions: null);
         }

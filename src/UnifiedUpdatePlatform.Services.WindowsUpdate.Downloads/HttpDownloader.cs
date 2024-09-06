@@ -30,6 +30,8 @@ using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
+using UnifiedUpdatePlatform.Services.WindowsUpdate.ESRP;
+using UnifiedUpdatePlatform.Services.WindowsUpdate.Models.FE3.JSON.ESRP;
 
 namespace UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads
 {
@@ -244,7 +246,7 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads
             int blockBufferSize = bufferSize;
 
             //These variables are used to decrypt files if esrp is available.
-            EsrpDecryptor esrpDecrypter = null; //Implements IDisposable
+            ESRPCryptography esrpDecrypter = null; //Implements IDisposable
             byte[] backBuffer = null;
             int backBufferLength = 0;
             long blockCount = 0;
@@ -255,7 +257,7 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads
             {
                 esrp = downloadFile.WUFile.EsrpDecryptionInformation;
                 backBuffer = new byte[blockBufferSize];
-                esrpDecrypter = new EsrpDecryptor(esrp);
+                esrpDecrypter = new ESRPCryptography(esrp);
                 blockBufferSize = (int)esrp.EncryptionBufferSize;
             }
 

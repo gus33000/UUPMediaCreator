@@ -77,9 +77,9 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate
 
             try
             {
-                CExtendedUpdateInfoXml.File deploymentCab = null;
+                Models.FE3.XML.ExtendedUpdateInfo.File deploymentCab = null;
 
-                foreach (CExtendedUpdateInfoXml.File file in update.Xml.Files.File)
+                foreach (Models.FE3.XML.ExtendedUpdateInfo.File file in update.Xml.Files.File)
                 {
                     if (file.FileName.Replace('\\', Path.DirectorySeparatorChar).EndsWith("deployment.cab", StringComparison.InvariantCultureIgnoreCase))
                     {
@@ -168,13 +168,13 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate
 
         private static string GetBuildStringFromUpdateAgent(byte[] updateAgentFile)
         {
-            byte[] sign = new byte[] {
+            byte[] sign = [
                 0x46, 0x00, 0x69, 0x00, 0x6c, 0x00, 0x65, 0x00, 0x56, 0x00, 0x65, 0x00, 0x72,
                 0x00, 0x73, 0x00, 0x69, 0x00, 0x6f, 0x00, 0x6e, 0x00, 0x00, 0x00, 0x00, 0x00
-            };
+            ];
 
             int fIndex = IndexOf(updateAgentFile, sign) + sign.Length;
-            int lIndex = IndexOf(updateAgentFile, new byte[] { 0x00, 0x00, 0x00 }, fIndex) + 1;
+            int lIndex = IndexOf(updateAgentFile, [0x00, 0x00, 0x00], fIndex) + 1;
 
             byte[] sliced = SliceByteArray(updateAgentFile, lIndex - fIndex, fIndex);
 
@@ -229,10 +229,10 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate
 
         private static async Task<HashSet<CompDB>> GetCompDBs(UpdateData update)
         {
-            HashSet<CompDB> neutralCompDB = new();
-            HashSet<CExtendedUpdateInfoXml.File> metadataCabs = new();
+            HashSet<CompDB> neutralCompDB = [];
+            HashSet<Models.FE3.XML.ExtendedUpdateInfo.File> metadataCabs = [];
 
-            foreach (CExtendedUpdateInfoXml.File file in update.Xml.Files.File)
+            foreach (Models.FE3.XML.ExtendedUpdateInfo.File file in update.Xml.Files.File)
             {
                 if (file.PatchingType.Equals("metadata", StringComparison.InvariantCultureIgnoreCase))
                 {
@@ -245,7 +245,7 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate
                 return neutralCompDB;
             }
 
-            foreach (CExtendedUpdateInfoXml.File metadataCab in metadataCabs)
+            foreach (Models.FE3.XML.ExtendedUpdateInfo.File metadataCab in metadataCabs)
             {
                 FileExchangeV3FileDownloadInformation fileDownloadInfo = await FE3Handler.GetFileUrl(update, metadataCab.Digest);
                 if (fileDownloadInfo == null)

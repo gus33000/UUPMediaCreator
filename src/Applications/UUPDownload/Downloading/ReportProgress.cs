@@ -28,7 +28,7 @@ namespace UUPDownload.Downloading
 {
     public class ReportProgress : IProgress<GeneralDownloadProgress>, IDisposable
     {
-        private readonly Dictionary<string, FileStatus> files = new();
+        private readonly Dictionary<string, FileStatus> files = [];
 
         private readonly Mutex mutex = new();
 

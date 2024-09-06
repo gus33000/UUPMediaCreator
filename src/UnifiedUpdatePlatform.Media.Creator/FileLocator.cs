@@ -34,7 +34,7 @@ namespace UnifiedUpdatePlatform.Media.Creator
     {
         internal static (bool, HashSet<string>) VerifyFilesAreAvailableForCompositionDatabases(HashSet<CompDB> CompositionDatabases, string UUPPath)
         {
-            HashSet<string> missingPackages = new();
+            HashSet<string> missingPackages = [];
 
             foreach (CompDB compDB in CompositionDatabases)
             {
@@ -175,8 +175,8 @@ namespace UnifiedUpdatePlatform.Media.Creator
         {
             bool success = true;
 
-            HashSet<string> ReferencePackages = new();
-            HashSet<string> referencePackagesToConvert = new();
+            HashSet<string> ReferencePackages = [];
+            HashSet<string> referencePackagesToConvert = [];
             string? BaseESD = null;
             progressCallback?.Invoke(Common.Messaging.Common.ProcessPhase.ReadingMetadata, true, 0, "Enumerating files");
 

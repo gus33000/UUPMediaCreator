@@ -30,6 +30,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using UnifiedUpdatePlatform.Services.Composition.Database;
 using UnifiedUpdatePlatform.Services.WindowsUpdate;
+using UnifiedUpdatePlatform.Services.WindowsUpdate.Targeting;
 using UUPDownload.Downloading;
 
 namespace UUPDownload.DownloadRequest

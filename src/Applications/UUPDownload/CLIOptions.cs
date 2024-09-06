@@ -20,7 +20,7 @@
  * SOFTWARE.
  */
 using CommandLine;
-using UnifiedUpdatePlatform.Services.WindowsUpdate;
+using UnifiedUpdatePlatform.Services.WindowsUpdate.Targeting;
 
 namespace UUPDownload
 {

@@ -272,7 +272,7 @@ namespace Cabinet
         {
             BinaryReader cabinetBinaryReader = new(cabinetStream);
 
-            List<CabinetVolume> volumes = new();
+            List<CabinetVolume> volumes = [];
             for (int i = 0; i < cabinetHeader.CabinetFileHeader.cFolders; i++)
             {
                 CabinetVolume volume = new()
@@ -311,7 +311,7 @@ namespace Cabinet
                 throw new Exception("Bad Cabinet: First File Block does not match header");
             }
 
-            List<CabinetVolumeFile> files = new();
+            List<CabinetVolumeFile> files = [];
             for (int i = 0; i < cabinetHeader.CabinetFileHeader.cFiles; i++)
             {
                 CFFILE file = cabinetBinaryReader.BaseStream.ReadStruct<CFFILE>();
@@ -330,7 +330,7 @@ namespace Cabinet
 
         private List<(CFDATA dataStruct, int dataOffsetCabinet, int beginFolderOffset, int endFolderOffset, int index)> BuildDataMap(CabinetVolume volume)
         {
-            List<(CFDATA dataStruct, int dataOffsetCabinet, int beginFolderOffset, int endFolderOffset, int index)> datas = new();
+            List<(CFDATA dataStruct, int dataOffsetCabinet, int beginFolderOffset, int endFolderOffset, int index)> datas = [];
 
             // Build Data Map
             using BinaryReader cabinetBinaryReader = new(InputStream, System.Text.Encoding.UTF8, true);
@@ -351,7 +351,7 @@ namespace Cabinet
 
         private List<(CabinetVolumeFile file, int startingBlock, int startingBlockOffset, int endingBlock, int endingBlockOffset)> BuildBlockMap(int volumeIndex, List<(CFDATA dataStruct, int dataOffsetCabinet, int beginFolderOffset, int endFolderOffset, int index)> datas)
         {
-            List<(CabinetVolumeFile file, int startingBlock, int startingBlockOffset, int endingBlock, int endingBlockOffset)> fileBlockMap = new();
+            List<(CabinetVolumeFile file, int startingBlock, int startingBlockOffset, int endingBlock, int endingBlockOffset)> fileBlockMap = [];
 
             // Build Block Map
             foreach (CabinetVolumeFile file in files)

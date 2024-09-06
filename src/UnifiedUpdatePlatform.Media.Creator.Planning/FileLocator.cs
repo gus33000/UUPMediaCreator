@@ -36,7 +36,7 @@ namespace UnifiedUpdatePlatform.Media.Creator.Planning
     {
         public static List<CompDB> GetCompDBsFromUUPFiles(string UUPPath, TempManager tempManager)
         {
-            List<CompDB> compDBs = new();
+            List<CompDB> compDBs = [];
 
             try
             {
@@ -89,7 +89,7 @@ namespace UnifiedUpdatePlatform.Media.Creator.Planning
 
         public static (bool, HashSet<string>) VerifyFilesAreAvailableForCompDB(CompDB compDB, string UUPPath)
         {
-            HashSet<string> missingPackages = new();
+            HashSet<string> missingPackages = [];
 
             foreach (Package feature in compDB.Features.Feature[0].Packages.Package)
             {

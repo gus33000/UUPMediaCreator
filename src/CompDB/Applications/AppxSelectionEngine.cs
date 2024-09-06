@@ -48,7 +48,7 @@ namespace UnifiedUpdatePlatform.Services.Composition.Database.Applications
                 .Distinct()
                 .ToDictionary(x => x, _ => new DeploymentProperties());
 
-            List<Feature> appsFeatures = new();
+            List<Feature> appsFeatures = [];
 
             foreach (CompDB appsCdb in appsCdbs)
             {
@@ -80,7 +80,7 @@ namespace UnifiedUpdatePlatform.Services.Composition.Database.Applications
                     continue;
                 }
 
-                HashSet<string> depsForApp = new();
+                HashSet<string> depsForApp = [];
                 foreach (Feature dep in dependencies)
                 {
                     string depAppId = dep.FeatureID;
@@ -144,13 +144,13 @@ namespace UnifiedUpdatePlatform.Services.Composition.Database.Applications
         /// <returns></returns>
         public static AppxInstallWorkload[] GetAppxInstallationWorkloads(CompDB editionCdb, IEnumerable<CompDB> appsCdbs, string editionLanguage)
         {
-            List<AppxInstallWorkload> workloads = new();
+            List<AppxInstallWorkload> workloads = [];
 
             IEnumerable<string> applicableLanguageTags = GetAllPossibleLanguageCombinations(editionLanguage);
 
             (Dictionary<string, DeploymentProperties> preinstalledApps, Feature[] appsFeatures) = SetupVariables(editionCdb, appsCdbs);
 
-            HashSet<string> allPackageIDs = new();
+            HashSet<string> allPackageIDs = [];
             // Pick packages and dump licenses
             foreach (Feature ftr in appsFeatures)
             {
@@ -184,7 +184,7 @@ namespace UnifiedUpdatePlatform.Services.Composition.Database.Applications
                 }
             }
 
-            Dictionary<string, PackageProperties> packageHashDict = new();
+            Dictionary<string, PackageProperties> packageHashDict = [];
             foreach (CompDB appsCdb in appsCdbs)
             {
                 foreach (Package p in appsCdb.Packages.Package)
@@ -217,7 +217,7 @@ namespace UnifiedUpdatePlatform.Services.Composition.Database.Applications
 
                 if (deployProps.Dependencies != null)
                 {
-                    List<string> dependencies = new();
+                    List<string> dependencies = [];
                     foreach (string dependency in deployProps.Dependencies)
                     {
                         DeploymentProperties dependProps = preinstalledApps[dependency];
@@ -502,7 +502,7 @@ namespace UnifiedUpdatePlatform.Services.Composition.Database.Applications
 
             (Dictionary<string, DeploymentProperties> preinstalledApps, Feature[] appsFeatures) = SetupVariables(editionCdb, appsCdbs);
 
-            HashSet<string> allPackageIDs = new();
+            HashSet<string> allPackageIDs = [];
             // Pick packages and dump licenses
             foreach (Feature ftr in appsFeatures)
             {
@@ -536,7 +536,7 @@ namespace UnifiedUpdatePlatform.Services.Composition.Database.Applications
                 }
             }
 
-            Dictionary<string, PackageProperties> packageHashDict = new();
+            Dictionary<string, PackageProperties> packageHashDict = [];
             foreach (CompDB appsCdb in appsCdbs)
             {
                 foreach (Package p in appsCdb.Packages.Package)

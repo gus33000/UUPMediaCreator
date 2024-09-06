@@ -77,7 +77,7 @@ namespace UnifiedUpdatePlatform.Services.Composition.Database
             this IEnumerable<CompDB> compDBs,
             string LanguageCode)
         {
-            HashSet<CompDB> filteredCompDBs = new();
+            HashSet<CompDB> filteredCompDBs = [];
 
             foreach (CompDB compDB in compDBs)
             {
@@ -116,7 +116,7 @@ namespace UnifiedUpdatePlatform.Services.Composition.Database
 
         public static HashSet<CompDB> GetEditionCompDBs(this IEnumerable<CompDB> compDBs)
         {
-            HashSet<CompDB> filteredCompDBs = new();
+            HashSet<CompDB> filteredCompDBs = [];
 
             foreach (CompDB compDB in compDBs)
             {
@@ -173,7 +173,7 @@ namespace UnifiedUpdatePlatform.Services.Composition.Database
 
         public static Package GetEditionPackFromCompDBs(this IEnumerable<CompDB> compDBs)
         {
-            HashSet<Package> pkgs = new();
+            HashSet<Package> pkgs = [];
 
             //
             // Get base editions that are available with all their files

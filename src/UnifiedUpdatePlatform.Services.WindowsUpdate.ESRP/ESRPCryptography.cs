@@ -19,11 +19,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-using System;
-using System.IO;
 using System.Security.Cryptography;
-using System.Threading;
-using System.Threading.Tasks;
+using UnifiedUpdatePlatform.Services.WindowsUpdate.Models.FE3.JSON.ESRP;
 
 //
 // Source: https://raw.githubusercontent.com/ADeltaX/ProtoBuildBot/5cce37197c44792f3401b63d876795b5bc2072a4/src/BuildChecker/Classes/Helpers/EsrpDecryptor.cs
@@ -31,17 +28,17 @@ using System.Threading.Tasks;
 // And Updated with original author input on 2021-04-15
 //
 
-namespace UnifiedUpdatePlatform.Services.WindowsUpdate
+namespace UnifiedUpdatePlatform.Services.WindowsUpdate.ESRP
 {
-    public class EsrpDecryptor : IDisposable
+    public class ESRPCryptography : IDisposable
     {
-        private readonly EsrpDecryptionInformation esrp;
+        private readonly EsrpDecryptionInformation ESRP;
         private readonly Aes aes;
         private readonly byte[] key;
 
-        public EsrpDecryptor(EsrpDecryptionInformation esrp)
+        public ESRPCryptography(EsrpDecryptionInformation esrp)
         {
-            this.esrp = esrp;
+            ESRP = esrp;
 
             key = new byte[32];
             Array.Copy(Convert.FromBase64String(esrp.KeyData), 0, key, 0, 32);
@@ -76,7 +73,7 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate
             CancellationToken cancellationToken = default)
         {
             int readBytes;
-            byte[] buffer = new byte[esrp.EncryptionBufferSize];
+            byte[] buffer = new byte[ESRP.EncryptionBufferSize];
             while ((readBytes = await encryptedFile.ReadAsync(buffer.AsMemory(0, buffer.Length), cancellationToken)) > 0)
             {
                 bool needsPaddingMode = encryptedSize == (ulong)encryptedFile.Position;

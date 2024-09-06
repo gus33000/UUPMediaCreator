@@ -398,7 +398,7 @@ namespace UnifiedUpdatePlatform.Media.Creator.BaseEditions
                 goto exit;
             }
 
-            Dictionary<string, List<string>> iniSections = new();
+            Dictionary<string, List<string>> iniSections = [];
 
             foreach (string referencePackageToConvert in referencePackagesToConvert)
             {
@@ -413,7 +413,7 @@ namespace UnifiedUpdatePlatform.Media.Creator.BaseEditions
                 {
                     if (!iniSections.ContainsKey(section.SectionName))
                     {
-                        iniSections.Add(section.SectionName, new List<string>());
+                        iniSections.Add(section.SectionName, []);
                     }
 
                     foreach (KeyData element in section.Keys)
