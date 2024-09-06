@@ -342,7 +342,7 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate
                     },
                     OtherCachedUpdateIDs = new CSyncUpdatesRequest.OtherCachedUpdateIDs()
                     {
-                        Int = OtherCachedUpdateIDs != null ? OtherCachedUpdateIDs.ToArray() : Array.Empty<string>()
+                        Int = OtherCachedUpdateIDs != null ? OtherCachedUpdateIDs.ToArray() : []
                     },
                     SkipSoftwareSync = "false",
                     NeedTwoGroupOutOfScopeUpdates = "true",
@@ -350,7 +350,7 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate
                     {
                         CategoryIdentifier = new CSyncUpdatesRequest.CategoryIdentifier()
                         {
-                            Id = CategoryIdentifiers ?? Array.Empty<string>()
+                            Id = CategoryIdentifiers ?? []
                         }
                     } : null,
                     AlsoPerformRegularSync = "false",
@@ -413,7 +413,7 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate
             //
             while (true)
             {
-                (CSyncUpdatesResponse.SyncUpdatesResponse, string) result = await SyncUpdates(cookie.GetCookieResult, token, InstalledNonLeafUpdateIDs, OtherCachedUpdateIDs, categoryIds ?? Array.Empty<string>(), ctac);
+                (CSyncUpdatesResponse.SyncUpdatesResponse, string) result = await SyncUpdates(cookie.GetCookieResult, token, InstalledNonLeafUpdateIDs, OtherCachedUpdateIDs, categoryIds ?? [], ctac);
 
                 // Refresh the cookie
                 cookie.GetCookieResult.EncryptedData = result.Item1.SyncUpdatesResult.NewCookie.EncryptedData;

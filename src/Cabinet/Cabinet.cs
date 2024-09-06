@@ -224,7 +224,7 @@ namespace Cabinet
         {
             byte cbCFFolder = 0;
             byte cbCFData = 0;
-            byte[] AdditionalData = Array.Empty<byte>();
+            byte[] AdditionalData = [];
 
             BinaryReader cabinetBinaryReader = new(cabinetStream);
 
@@ -278,7 +278,7 @@ namespace Cabinet
                 CabinetVolume volume = new()
                 {
                     CabinetFileVolume = cabinetStream.ReadStruct<CFFOLDER>(),
-                    AdditionalApplicationData = cabinetHeader.VolumeAdditionalApplicationDataSize > 0 ? cabinetBinaryReader.ReadBytes(cabinetHeader.VolumeAdditionalApplicationDataSize) : Array.Empty<byte>()
+                    AdditionalApplicationData = cabinetHeader.VolumeAdditionalApplicationDataSize > 0 ? cabinetBinaryReader.ReadBytes(cabinetHeader.VolumeAdditionalApplicationDataSize) : []
                 };
 
                 if (volume.CabinetFileVolume.typeCompress is not CFFOLDER.CFTYPECOMPRESS.TYPE_LZX and

@@ -47,7 +47,7 @@ namespace UnifiedUpdatePlatform.Media.Creator.Planning
         {
             get; set;
         }
-        public AppxInstallWorkload[] AppXInstallWorkloads { get; set; } = Array.Empty<AppxInstallWorkload>();
+        public AppxInstallWorkload[] AppXInstallWorkloads { get; set; } = [];
     }
 
     public enum AvailabilityType

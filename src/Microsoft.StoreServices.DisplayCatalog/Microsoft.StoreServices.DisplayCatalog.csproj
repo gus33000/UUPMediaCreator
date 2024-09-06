@@ -1,14 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <Platforms>AnyCPU;x64;x86;arm64</Platforms>
     <OutputPath>$(SolutionDir)build\$(Platform)\$(Configuration)\Microsoft.StoreServices.DisplayCatalog\</OutputPath>
     <IntermediateOutputPath>$(SolutionDir)intermediate\$(Platform)\$(Configuration)\Microsoft.StoreServices.DisplayCatalog\</IntermediateOutputPath>
   </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="System.Text.Json" Version="8.0.4" />
   </ItemGroup>
-
 </Project>
