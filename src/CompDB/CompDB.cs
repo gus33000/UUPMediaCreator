@@ -24,15 +24,15 @@ using System.Xml.Serialization;
 namespace UnifiedUpdatePlatform.Services.Composition.Database
 {
 
-    [XmlRoot(ElementName = "CompDB", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+    [XmlRoot(ElementName = "CompDB", Namespace = Constants.ImageUpdateNamespace)]
     public class CompDB
     {
-        [XmlElement(ElementName = "Tags", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+        [XmlElement(ElementName = "Tags", Namespace = Constants.ImageUpdateNamespace)]
         public Tags Tags
         {
             get; set;
         }
-        [XmlElement(ElementName = "Features", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+        [XmlElement(ElementName = "Features", Namespace = Constants.ImageUpdateNamespace)]
         public Features Features
         {
             get; set;
@@ -47,102 +47,102 @@ namespace UnifiedUpdatePlatform.Services.Composition.Database
         {
             get; set;
         }
-        [XmlAttribute(AttributeName = "CreatedDate", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+        [XmlAttribute(AttributeName = "CreatedDate", Namespace = Constants.ImageUpdateNamespace)]
         public string CreatedDate
         {
             get; set;
         }
-        [XmlAttribute(AttributeName = "Revision", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+        [XmlAttribute(AttributeName = "Revision", Namespace = Constants.ImageUpdateNamespace)]
         public string Revision
         {
             get; set;
         }
-        [XmlAttribute(AttributeName = "SchemaVersion", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+        [XmlAttribute(AttributeName = "SchemaVersion", Namespace = Constants.ImageUpdateNamespace)]
         public string SchemaVersion
         {
             get; set;
         }
-        [XmlAttribute(AttributeName = "Product", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+        [XmlAttribute(AttributeName = "Product", Namespace = Constants.ImageUpdateNamespace)]
         public string Product
         {
             get; set;
         }
-        [XmlAttribute(AttributeName = "BuildID", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+        [XmlAttribute(AttributeName = "BuildID", Namespace = Constants.ImageUpdateNamespace)]
         public string BuildID
         {
             get; set;
         }
-        [XmlAttribute(AttributeName = "BuildInfo", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+        [XmlAttribute(AttributeName = "BuildInfo", Namespace = Constants.ImageUpdateNamespace)]
         public string BuildInfo
         {
             get; set;
         }
-        [XmlAttribute(AttributeName = "OSVersion", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+        [XmlAttribute(AttributeName = "OSVersion", Namespace = Constants.ImageUpdateNamespace)]
         public string OSVersion
         {
             get; set;
         }
-        [XmlAttribute(AttributeName = "BuildArch", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+        [XmlAttribute(AttributeName = "BuildArch", Namespace = Constants.ImageUpdateNamespace)]
         public string BuildArch
         {
             get; set;
         }
-        [XmlAttribute(AttributeName = "ReleaseType", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+        [XmlAttribute(AttributeName = "ReleaseType", Namespace = Constants.ImageUpdateNamespace)]
         public string ReleaseType
         {
             get; set;
         }
-        [XmlAttribute(AttributeName = "Type", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+        [XmlAttribute(AttributeName = "Type", Namespace = Constants.ImageUpdateNamespace)]
         public string Type
         {
             get; set;
         }
-        [XmlAttribute(AttributeName = "Name", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+        [XmlAttribute(AttributeName = "Name", Namespace = Constants.ImageUpdateNamespace)]
         public string Name
         {
             get; set;
         }
-        [XmlAttribute(AttributeName = "xmlns", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+        [XmlAttribute(AttributeName = "xmlns", Namespace = Constants.ImageUpdateNamespace)]
         public string Xmlns
         {
             get; set;
         }
-        [XmlElement(ElementName = "Packages", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+        [XmlElement(ElementName = "Packages", Namespace = Constants.ImageUpdateNamespace)]
         public Packages Packages
         {
             get; set;
         }
-        [XmlElement(ElementName = "AppX", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+        [XmlElement(ElementName = "AppX", Namespace = Constants.ImageUpdateNamespace)]
         public Appx AppX
         {
             get; set;
         }
-        [XmlElement(ElementName = "MSConditionalFeatures", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+        [XmlElement(ElementName = "MSConditionalFeatures", Namespace = Constants.ImageUpdateNamespace)]
         public MSConditionalFeatures MSConditionalFeatures
         {
             get; set;
         }
-        [XmlAttribute(AttributeName = "TargetBuildID", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+        [XmlAttribute(AttributeName = "TargetBuildID", Namespace = Constants.ImageUpdateNamespace)]
         public string TargetBuildID
         {
             get; set;
         }
-        [XmlAttribute(AttributeName = "TargetBuildInfo", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+        [XmlAttribute(AttributeName = "TargetBuildInfo", Namespace = Constants.ImageUpdateNamespace)]
         public string TargetBuildInfo
         {
             get; set;
         }
-        [XmlAttribute(AttributeName = "TargetOSVersion", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+        [XmlAttribute(AttributeName = "TargetOSVersion", Namespace = Constants.ImageUpdateNamespace)]
         public string TargetOSVersion
         {
             get; set;
         }
-        [XmlAttribute(AttributeName = "UUPProduct", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+        [XmlAttribute(AttributeName = "UUPProduct", Namespace = Constants.ImageUpdateNamespace)]
         public string UUPProduct
         {
             get; set;
         }
-        [XmlAttribute(AttributeName = "UUPProductVersion", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+        [XmlAttribute(AttributeName = "UUPProductVersion", Namespace = Constants.ImageUpdateNamespace)]
         public string UUPProductVersion
         {
             get; set;

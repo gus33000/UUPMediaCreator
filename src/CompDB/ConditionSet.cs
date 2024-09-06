@@ -23,20 +23,20 @@ using System.Xml.Serialization;
 
 namespace UnifiedUpdatePlatform.Services.Composition.Database
 {
-    [XmlRoot(ElementName = "ConditionSet", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+    [XmlRoot(ElementName = "ConditionSet", Namespace = Constants.ImageUpdateNamespace)]
     public class ConditionSet
     {
-        [XmlElement(ElementName = "Conditions", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+        [XmlElement(ElementName = "Conditions", Namespace = Constants.ImageUpdateNamespace)]
         public Conditions Conditions
         {
             get; set;
         }
-        [XmlAttribute(AttributeName = "Operator", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+        [XmlAttribute(AttributeName = "Operator", Namespace = Constants.ImageUpdateNamespace)]
         public string Operator
         {
             get; set;
         }
-        [XmlElement(ElementName = "ConditionSets", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+        [XmlElement(ElementName = "ConditionSets", Namespace = Constants.ImageUpdateNamespace)]
         public ConditionSets ConditionSets
         {
             get; set;

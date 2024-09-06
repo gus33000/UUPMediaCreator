@@ -23,40 +23,40 @@ using System.Xml.Serialization;
 
 namespace UnifiedUpdatePlatform.Services.Composition.Database
 {
-    [XmlRoot(ElementName = "Package", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+    [XmlRoot(ElementName = "Package", Namespace = Constants.ImageUpdateNamespace)]
     public class Package
     {
-        [XmlAttribute(AttributeName = "ID", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+        [XmlAttribute(AttributeName = "ID", Namespace = Constants.ImageUpdateNamespace)]
         public string ID
         {
             get; set;
         }
-        [XmlAttribute(AttributeName = "PackageType", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+        [XmlAttribute(AttributeName = "PackageType", Namespace = Constants.ImageUpdateNamespace)]
         public string PackageType
         {
             get; set;
         }
-        [XmlElement(ElementName = "SatelliteInfo", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+        [XmlElement(ElementName = "SatelliteInfo", Namespace = Constants.ImageUpdateNamespace)]
         public SatelliteInfo SatelliteInfo
         {
             get; set;
         }
-        [XmlElement(ElementName = "Payload", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+        [XmlElement(ElementName = "Payload", Namespace = Constants.ImageUpdateNamespace)]
         public Payload Payload
         {
             get; set;
         }
-        [XmlAttribute(AttributeName = "InstalledSize", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+        [XmlAttribute(AttributeName = "InstalledSize", Namespace = Constants.ImageUpdateNamespace)]
         public string InstalledSize
         {
             get; set;
         }
-        [XmlAttribute(AttributeName = "Version", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+        [XmlAttribute(AttributeName = "Version", Namespace = Constants.ImageUpdateNamespace)]
         public string Version
         {
             get; set;
         }
-        [XmlAttribute(AttributeName = "UpdateType", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+        [XmlAttribute(AttributeName = "UpdateType", Namespace = Constants.ImageUpdateNamespace)]
         public string UpdateType
         {
             get; set;

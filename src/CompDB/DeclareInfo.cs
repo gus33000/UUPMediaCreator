@@ -23,10 +23,10 @@ using System.Xml.Serialization;
 
 namespace UnifiedUpdatePlatform.Services.Composition.Database
 {
-    [XmlRoot(ElementName = "DeclareInfo", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+    [XmlRoot(ElementName = "DeclareInfo", Namespace = Constants.ImageUpdateNamespace)]
     public class DeclareInfo
     {
-        [XmlElement(ElementName = "Declare", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+        [XmlElement(ElementName = "Declare", Namespace = Constants.ImageUpdateNamespace)]
         public Declare Declare
         {
             get; set;

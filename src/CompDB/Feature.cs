@@ -23,50 +23,50 @@ using System.Xml.Serialization;
 
 namespace UnifiedUpdatePlatform.Services.Composition.Database
 {
-    [XmlRoot(ElementName = "Feature", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+    [XmlRoot(ElementName = "Feature", Namespace = Constants.ImageUpdateNamespace)]
     public class Feature
     {
-        [XmlElement(ElementName = "Packages", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+        [XmlElement(ElementName = "Packages", Namespace = Constants.ImageUpdateNamespace)]
         public Packages Packages
         {
             get; set;
         }
-        [XmlAttribute(AttributeName = "Type", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+        [XmlAttribute(AttributeName = "Type", Namespace = Constants.ImageUpdateNamespace)]
         public string Type
         {
             get; set;
         }
-        [XmlAttribute(AttributeName = "FeatureID", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+        [XmlAttribute(AttributeName = "FeatureID", Namespace = Constants.ImageUpdateNamespace)]
         public string FeatureID
         {
             get; set;
         }
-        [XmlAttribute(AttributeName = "FMID", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+        [XmlAttribute(AttributeName = "FMID", Namespace = Constants.ImageUpdateNamespace)]
         public string FMID
         {
             get; set;
         }
-        [XmlAttribute(AttributeName = "Group", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+        [XmlAttribute(AttributeName = "Group", Namespace = Constants.ImageUpdateNamespace)]
         public string Group
         {
             get; set;
         }
-        [XmlElement(ElementName = "Dependencies", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+        [XmlElement(ElementName = "Dependencies", Namespace = Constants.ImageUpdateNamespace)]
         public Dependencies Dependencies
         {
             get; set;
         }
-        [XmlElement(ElementName = "InitialIntents", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+        [XmlElement(ElementName = "InitialIntents", Namespace = Constants.ImageUpdateNamespace)]
         public InitialIntents InitialIntents
         {
             get; set;
         }
-        [XmlElement(ElementName = "CustomInformation", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+        [XmlElement(ElementName = "CustomInformation", Namespace = Constants.ImageUpdateNamespace)]
         public CustomInformation CustomInformation
         {
             get; set;
         }
-        [XmlAttribute(AttributeName = "Family", Namespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate")]
+        [XmlAttribute(AttributeName = "Family", Namespace = Constants.ImageUpdateNamespace)]
         public string Family
         {
             get; set;

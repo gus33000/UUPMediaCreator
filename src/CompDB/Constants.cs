@@ -19,18 +19,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-using System.Collections.Generic;
-using System.Xml.Serialization;
-
 namespace UnifiedUpdatePlatform.Services.Composition.Database
 {
-    [XmlRoot(ElementName = "InitialIntents", Namespace = Constants.ImageUpdateNamespace)]
-    public class InitialIntents
+    public static class Constants
     {
-        [XmlElement(ElementName = "InitialIntent", Namespace = Constants.ImageUpdateNamespace)]
-        public List<InitialIntent> InitialIntent
-        {
-            get; set;
-        }
+        public const string ImageUpdateNamespace = "http://schemas.microsoft.com/embedded/2004/10/ImageUpdate";
     }
 }
