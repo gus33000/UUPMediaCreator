@@ -24,8 +24,8 @@ using UnifiedUpdatePlatform.Services.WindowsUpdate.Targeting;
 
 namespace UUPDownload.Options
 {
-    [Verb("request-bsp-download", HelpText = "Request a BSP download from zero using a number of different request parameters.")]
-    internal class BSPDownloadRequestOptions
+    [Verb("request-bsp-download2", HelpText = "Request a BSP download from zero using a number of different request parameters.")]
+    internal class BSPDownloadRequestOptions2
     {
         [Option('s', "reporting-sku", HelpText = "The sku to report to the Windows Update servers. Example: Professional", Required = true)]
         public OSSkuId ReportingSku
@@ -81,6 +81,18 @@ namespace UUPDownload.Options
             get; set;
         }
 
+        [Option('e', "edition", HelpText = "The edition to get. Must be used with the language parameter. Omit either of these to download everything. Example: Professional", Required = false, Default = "")]
+        public string Edition
+        {
+            get; set;
+        }
+
+        [Option('l', "language", HelpText = "The language to get. Must be used with the edition parameter. Omit either of these to download everything. Example: en-US", Required = false, Default = "")]
+        public string Language
+        {
+            get; set;
+        }
+
         [Option('z', "releasetype", HelpText = "The release type to report to the Windows Update servers. Example: Production", Required = false, Default = "Production")]
         public string ReleaseType
         {
@@ -101,97 +113,6 @@ namespace UUPDownload.Options
 
         [Option('p', "password", HelpText = "Password for the Windows Insider account to use to generate authorization tokens (If 2FA, must be generated app password) (Optional)", Required = false, Default = "")]
         public string Password
-        {
-            get; set;
-        }
-
-        // Used above:
-        // a
-        // b
-        // c
-        // m
-        // n
-        // o
-        // p
-        // r
-        // s
-        // t
-        // v
-        // y
-        // z
-
-        [Option('d', "bsp-product-version", HelpText = "", Required = false, Default = "0.0.0.0")]
-        public string BSPProductVersion
-        {
-            get; set;
-        }
-
-        //
-        // Targeting for the BSP Product, see the ComputerHardwareIds.Windows project for knowing what these map to, programmatically
-        //
-
-        [Option('e', "targeting-manufacturer", HelpText = "", Required = true)]
-        public string Manufacturer
-        {
-            get; set;
-        }
-
-        [Option('f', "targeting-family", HelpText = "", Required = false, Default = null)]
-        public string Family
-        {
-            get; set;
-        }
-
-        [Option('g', "targeting-productname", HelpText = "", Required = false, Default = null)]
-        public string ProductName
-        {
-            get; set;
-        }
-
-        [Option('h', "targeting-skunumber", HelpText = "", Required = false, Default = null)]
-        public string SKUNumber
-        {
-            get; set;
-        }
-
-        [Option('i', "targeting-biosvendor", HelpText = "", Required = false, Default = null)]
-        public string BIOSVendor
-        {
-            get; set;
-        }
-
-        [Option('j', "targeting-baseboardmanufacturer", HelpText = "", Required = false, Default = null)]
-        public string BaseboardManufacturer
-        {
-            get; set;
-        }
-
-        [Option('k', "targeting-baseboardproduct", HelpText = "", Required = false, Default = null)]
-        public string BaseboardProduct
-        {
-            get; set;
-        }
-
-        [Option('l', "targeting-enclosuretype", HelpText = "", Required = false, Default = null)]
-        public string EnclosureType
-        {
-            get; set;
-        }
-
-        [Option('q', "targeting-biosversion", HelpText = "", Required = false, Default = null)]
-        public string BIOSVersion
-        {
-            get; set;
-        }
-
-        [Option('u', "targeting-biosmajorrelease", HelpText = "", Required = false, Default = null)]
-        public string BIOSMajorRelease
-        {
-            get; set;
-        }
-
-        [Option('w', "targeting-biosminorrelease", HelpText = "", Required = false, Default = null)]
-        public string BIOSMinorRelease
         {
             get; set;
         }

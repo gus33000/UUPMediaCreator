@@ -30,13 +30,12 @@ using UnifiedUpdatePlatform.Services.WindowsUpdate;
 using UnifiedUpdatePlatform.Services.WindowsUpdate.Targeting;
 using UUPDownload.Options;
 using UUPDownload.Downloading;
-using UUPDownload.DownloadRequest.Drivers;
 
 namespace UUPDownload.DownloadRequest.ReferenceDriversRepo
 {
     public partial class ProcessDrivers
     {
-        internal static void ParseDownloadOptions(BSPDownloadRequestOptions opts)
+        internal static void ParseDownloadOptions(BSPDownloadRequestOptions2 opts)
         {
             CheckAndDownloadUpdates(
                 opts.ReportingSku,

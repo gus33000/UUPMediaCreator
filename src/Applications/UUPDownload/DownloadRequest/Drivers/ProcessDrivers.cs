@@ -30,7 +30,6 @@ using UnifiedUpdatePlatform.Services.WindowsUpdate;
 using UnifiedUpdatePlatform.Services.WindowsUpdate.Targeting;
 using UUPDownload.Options;
 using UUPDownload.Downloading;
-using UUPDownload.DownloadRequest.Drivers;
 
 namespace UUPDownload.DownloadRequest.Drivers
 {
@@ -52,8 +51,18 @@ namespace UUPDownload.DownloadRequest.Drivers
                 opts.Mail,
                 opts.Password,
                 opts.OutputFolder,
-                opts.Language,
-                opts.Edition).Wait();
+                opts.BSPProductVersion,
+                opts.Manufacturer,
+                opts.Family,
+                opts.ProductName,
+                opts.SKUNumber,
+                opts.BIOSVendor,
+                opts.BaseboardManufacturer,
+                opts.BaseboardProduct,
+                opts.EnclosureType,
+                opts.BIOSVersion,
+                opts.BIOSMajorRelease,
+                opts.BIOSMinorRelease).Wait();
         }
 
         private static async Task CheckAndDownloadUpdates(OSSkuId ReportingSku,
@@ -69,78 +78,44 @@ namespace UUPDownload.DownloadRequest.Drivers
                     string Mail,
                     string Password,
                     string OutputFolder,
-                    string Language,
-                    string Edition)
+                    string BSPProductVersion,
+                    string Manufacturer,
+                    string Family,
+                    string ProductName,
+                    string SKUNumber,
+                    string BIOSVendor,
+                    string BaseboardManufacturer,
+                    string BaseboardProduct,
+                    string EnclosureType,
+                    string BIOSVersion,
+                    string BIOSMajorRelease,
+                    string BIOSMinorRelease)
         {
-            if (!File.Exists("DriverConfig.json"))
-            {
-                Logging.Log("Driver Configuration file (DriverConfig.json) could not be found in the current working directory.", Logging.LoggingLevel.Error);
-                return;
-            }
-
-            DriverPlan[] plans = System.Text.Json.JsonSerializer.Deserialize<DriverPlan[]>(File.ReadAllText("DriverConfig.json"));
-
-            foreach (DriverPlan plan in plans)
-            {
-                Logging.Log(plan.outputFolder);
-                await ProcessDriverPlan(plan, ReportingSku, ReportingVersion, MachineType, FlightRing, FlightingBranchName, BranchReadinessLevel, CurrentBranch, ReleaseType, SyncCurrentVersionOnly, ContentType, Mail, Password, Language, Edition, OutputFolder);
-            }
-
-            if (Debugger.IsAttached)
-            {
-                _ = Console.ReadLine();
-            }
-
-            Logging.Log("Completed.");
-        }
-
-        private static async Task ProcessDriverPlan(DriverPlan DriverPlan,
-                    OSSkuId ReportingSku,
-                    string ReportingVersion,
-                    MachineType MachineType,
-                    string FlightRing,
-                    string FlightingBranchName,
-                    string BranchReadinessLevel,
-                    string CurrentBranch,
-                    string ReleaseType,
-                    bool SyncCurrentVersionOnly,
-                    string ContentType,
-                    string Mail,
-                    string Password,
-                    string Language,
-                    string Edition,
-                    string RepoLocation)
-        {
-            BaseManifest previousCompositionDatabase = null;
-
             Logging.Log("Checking for updates...");
 
-            CTAC NewestDriverProductCTAC = new(ReportingSku, ReportingVersion, MachineType, FlightRing, FlightingBranchName, BranchReadinessLevel, CurrentBranch, ReleaseType, false, ContentType: ContentType, IsDriverCheck: true);
+            CTAC NewestDriverProductCTAC = new(ReportingSku, ReportingVersion, MachineType, FlightRing, FlightingBranchName, BranchReadinessLevel, CurrentBranch, ReleaseType, SyncCurrentVersionOnly, ContentType: ContentType, IsDriverCheck: true);
             string token = string.Empty;
             if (!string.IsNullOrEmpty(Mail) && !string.IsNullOrEmpty(Password))
             {
                 token = await MBIHelper.GenerateMicrosoftAccountTokenAsync(Mail, Password);
             }
 
-            string ProductGUID = DriverPlan.guid;
-            if (string.IsNullOrEmpty(ProductGUID))
-            {
-                ProductGUID = ComputerHardwareID.GenerateHardwareId5(DriverPlan.Manufacturer, DriverPlan.Family, DriverPlan.Product, DriverPlan.Sku);
-            }
+            string[] ProductGUIDs = ComputerHardwareID.GenerateHardwareIds(Manufacturer, Family, ProductName, SKUNumber, BIOSVendor, BaseboardManufacturer, BaseboardProduct, EnclosureType, BIOSVersion, BIOSMajorRelease, BIOSMinorRelease);
 
-            NewestDriverProductCTAC.Products += $"PN={ProductGUID}_{MachineType}&V=0.0.0.0&Source=SMBIOS;";
+            foreach (string ProductGUID in ProductGUIDs)
+            {
+                NewestDriverProductCTAC.Products += $"PN={ProductGUID}_{MachineType}&V={BSPProductVersion}&Source=SMBIOS;";
+            }
 
             IEnumerable<UpdateData> NewestDriverProductUpdateData = await FE3Handler.GetUpdates(null, NewestDriverProductCTAC, token, FileExchangeV3UpdateFilter.ProductRelease);
 
-            string outputFolder = (RepoLocation + DriverPlan.outputFolder).Replace('\\', Path.DirectorySeparatorChar).Replace('/', Path.DirectorySeparatorChar);
+            string outputFolder = OutputFolder.Replace('\\', Path.DirectorySeparatorChar).Replace('/', Path.DirectorySeparatorChar);
 
             if (!NewestDriverProductUpdateData.Any())
             {
                 Logging.Log("No updates found that matched the specified criteria.", Logging.LoggingLevel.Error);
                 return;
             }
-
-            string newestDriverVersion = "0.0.0.0";
 
             for (int i = 0; i < NewestDriverProductUpdateData.Count(); i++)
             {
@@ -158,88 +133,18 @@ namespace UUPDownload.DownloadRequest.Drivers
 
                 HashSet<BaseManifest> compDBs = await update.GetCompDBsAsync();
 
-                newestDriverVersion = compDBs.First().UUPProductVersion;
+                Logging.Log("BSP Product Name: " + compDBs.First().UUPProduct);
+                Logging.Log("BSP Product Version: " + compDBs.First().UUPProductVersion);
+
+                _ = await UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads.UpdateUtils.ProcessUpdateAsync(update, outputFolder, MachineType, new ReportProgress());
             }
 
-            if (SyncCurrentVersionOnly)
+            if (Debugger.IsAttached)
             {
-                foreach (UpdateData update in NewestDriverProductUpdateData)
-                {
-                    if (update.Xml.LocalizedProperties.Title.Contains("Windows"))
-                    {
-                        continue;
-                    }
-
-                    Logging.Log("Title: " + update.Xml.LocalizedProperties.Title);
-                    Logging.Log("Description: " + update.Xml.LocalizedProperties.Description);
-
-                    _ = await UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads.UpdateUtils.ProcessUpdateAsync(update, outputFolder, MachineType, new ReportProgress(), Language: Language, Edition: Edition);
-                }
+                _ = Console.ReadLine();
             }
-            else
-            {
-                string newestDriverOutput = $"{outputFolder}{Path.DirectorySeparatorChar}{newestDriverVersion}";
-                if (Directory.Exists(newestDriverOutput) && Directory.EnumerateFiles(newestDriverOutput).Any())
-                {
-                    return;
-                }
 
-                string changelogOutput = $"{outputFolder}{Path.DirectorySeparatorChar}CHANGELOG.md";
-
-                if (File.Exists(changelogOutput))
-                {
-                    File.Delete(changelogOutput);
-                }
-
-                int newestDriverBuildNumber = int.Parse(newestDriverVersion.Split(".")[2]);
-
-                for (int driverBuildNumber = 0; driverBuildNumber <= newestDriverBuildNumber; driverBuildNumber++)
-                {
-                    if (DriverPlan.filteredIds.Length != 0 && !DriverPlan.filteredIds.Contains(driverBuildNumber))
-                    {
-                        continue;
-                    }
-
-                    if (DriverPlan.excludedIds.Length != 0 && DriverPlan.excludedIds.Contains(driverBuildNumber))
-                    {
-                        continue;
-                    }
-
-                    CTAC PreciseDriverProductVersionCTAC = new(ReportingSku, ReportingVersion, MachineType, FlightRing, FlightingBranchName, BranchReadinessLevel, CurrentBranch, ReleaseType, SyncCurrentVersionOnly, ContentType: ContentType, IsDriverCheck: true);
-
-                    PreciseDriverProductVersionCTAC.Products += $"PN={ProductGUID}_{MachineType}&V=200.0.{driverBuildNumber}.0&Source=SMBIOS;";
-                    PreciseDriverProductVersionCTAC.SyncCurrentVersionOnly = true;
-
-                    Logging.Log($"Checking for updates... 200.0.{driverBuildNumber}.0 / {newestDriverVersion}");
-                    IEnumerable<UpdateData> PreciseDriverProductVersionUpdateData = await FE3Handler.GetUpdates(null, PreciseDriverProductVersionCTAC, token, FileExchangeV3UpdateFilter.ProductRelease);
-
-                    if (!PreciseDriverProductVersionUpdateData.Any())
-                    {
-                        Logging.Log("No updates found that matched the specified criteria.", Logging.LoggingLevel.Error);
-                    }
-                    else
-                    {
-                        foreach (UpdateData update in PreciseDriverProductVersionUpdateData)
-                        {
-                            if (update.Xml.LocalizedProperties.Title.Contains("Windows"))
-                            {
-                                continue;
-                            }
-
-                            Logging.Log("Title: " + update.Xml.LocalizedProperties.Title);
-                            Logging.Log("Description: " + update.Xml.LocalizedProperties.Description);
-
-                            string fwOutput = $"{outputFolder}{Path.DirectorySeparatorChar}200.0.{driverBuildNumber}.0";
-                            if (!Directory.Exists(fwOutput) || !Directory.EnumerateFiles(fwOutput).Any())
-                            {
-                                _ = await UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads.UpdateUtils.ProcessUpdateAsync(update, fwOutput, MachineType, new ReportProgress(), Language, Edition, false, false);
-                            }
-
-                            previousCompositionDatabase = await GenerateChangelog(update, changelogOutput, driverBuildNumber, previousCompositionDatabase);
-                        }
-                    }
-                }
-            }
+            Logging.Log("Completed.");
         }
     }
 }
