@@ -2,7 +2,7 @@
 
 namespace UnifiedUpdatePlatform.Services.WindowsUpdate.Targeting
 {
-    internal class ComputerHardwareID
+    public class ComputerHardwareID
     {
         public static string GenerateDeviceId(string Manufacturer, string Family, string Product, string Sku)
         {
