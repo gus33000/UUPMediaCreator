@@ -13,10 +13,10 @@ namespace UUPDownload.DownloadRequest.DriversAuto
                     string BIOSVendor,
                     string BaseboardManufacturer,
                     string BaseboardProduct,
-                    string EnclosureType,
+                    ushort EnclosureType,
                     string BIOSVersion,
-                    string BIOSMajorRelease,
-                    string BIOSMinorRelease) FetchComputerInformation()
+                    byte BIOSMajorRelease,
+                    byte BIOSMinorRelease) FetchComputerInformation()
         {
             using DComSessionOptions dcomSessionOptions = new DComSessionOptions();
             using CimSession cimSession = CimSession.Create("localhost", dcomSessionOptions);
@@ -51,10 +51,10 @@ namespace UUPDownload.DownloadRequest.DriversAuto
                     BIOSVendor,
                     BaseboardManufacturer,
                     BaseboardProductName,
-                    SystemEnclosureorChassisType.ToString(),
+                    SystemEnclosureorChassisType,
                     BIOSVersionString,
-                    SystemBIOSMajorRelease.ToString("X").ToLower(),
-                    SystemBIOSMinorRelease.ToString("X").ToLower());
+                    SystemBIOSMajorRelease,
+                    SystemBIOSMinorRelease);
         }
     }
 }

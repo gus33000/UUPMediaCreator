@@ -31,7 +31,6 @@ using UnifiedUpdatePlatform.Services.WindowsUpdate.Targeting;
 using UUPDownload.Options;
 using UUPDownload.Downloading;
 using System.Runtime.InteropServices;
-using System.Text.RegularExpressions;
 
 namespace UUPDownload.DownloadRequest.DriversAuto
 {
@@ -65,10 +64,10 @@ namespace UUPDownload.DownloadRequest.DriversAuto
                    string BIOSVendor,
                    string BaseboardManufacturer,
                    string BaseboardProduct,
-                   string EnclosureType,
+                   ushort EnclosureType,
                    string BIOSVersion,
-                   string BIOSMajorRelease,
-                   string BIOSMinorRelease) = ComputerInformationFetcher.FetchComputerInformation();
+                   byte BIOSMajorRelease,
+                   byte BIOSMinorRelease) = ComputerInformationFetcher.FetchComputerInformation();
 
             CheckAndDownloadUpdates(
                 opts.ReportingSku,
@@ -92,10 +91,10 @@ namespace UUPDownload.DownloadRequest.DriversAuto
                 BIOSVendor,
                 BaseboardManufacturer,
                 BaseboardProduct,
-                EnclosureType,
+                EnclosureType.ToString(),
                 BIOSVersion,
-                BIOSMajorRelease,
-                BIOSMinorRelease).Wait();
+                BIOSMajorRelease.ToString("X").ToLower(),
+                BIOSMinorRelease.ToString("X").ToLower()).Wait();
         }
 
         private static async Task CheckAndDownloadUpdates(OSSkuId ReportingSku,
