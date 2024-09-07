@@ -24,6 +24,7 @@ using System;
 using System.Diagnostics;
 using System.Net;
 using System.Reflection;
+using UUPDownload.Options;
 
 namespace UUPDownload
 {

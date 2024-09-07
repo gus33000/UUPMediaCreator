@@ -22,7 +22,7 @@
 using CommandLine;
 using UnifiedUpdatePlatform.Services.WindowsUpdate.Targeting;
 
-namespace UUPDownload
+namespace UUPDownload.Options
 {
     [Verb("get-builds", isDefault: false, HelpText = "Get builds in all rings matching the request type")]
     internal class GetBuildsOptions

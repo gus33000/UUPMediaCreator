@@ -25,6 +25,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using UnifiedUpdatePlatform.Services.WindowsUpdate;
 using UnifiedUpdatePlatform.Services.WindowsUpdate.Targeting;
+using UUPDownload.Options;
 
 namespace UUPDownload
 {

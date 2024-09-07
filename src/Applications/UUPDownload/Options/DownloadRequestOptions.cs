@@ -22,7 +22,7 @@
 using CommandLine;
 using UnifiedUpdatePlatform.Services.WindowsUpdate.Targeting;
 
-namespace UUPDownload
+namespace UUPDownload.Options
 {
     [Verb("request-download", isDefault: true, HelpText = "Request a download from zero using a number of different request parameters.")]
     internal class DownloadRequestOptions

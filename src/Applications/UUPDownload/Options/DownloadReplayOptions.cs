@@ -22,7 +22,7 @@
 using CommandLine;
 using UnifiedUpdatePlatform.Services.WindowsUpdate.Targeting;
 
-namespace UUPDownload
+namespace UUPDownload.Options
 {
     [Verb("replay-download", isDefault: false, HelpText = "Replay a download from zero using a *.uupmcreplay file.")]
     internal class DownloadReplayOptions
