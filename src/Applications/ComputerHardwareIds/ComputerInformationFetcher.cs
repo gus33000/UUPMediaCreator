@@ -1,5 +1,5 @@
-﻿using Microsoft.Management.Infrastructure.Options;
-using Microsoft.Management.Infrastructure;
+﻿using Microsoft.Management.Infrastructure;
+using Microsoft.Management.Infrastructure.Options;
 
 namespace ComputerHardwareIds
 {
@@ -17,7 +17,7 @@ namespace ComputerHardwareIds
                     byte BIOSMajorRelease,
                     byte BIOSMinorRelease) FetchComputerInformation()
         {
-            using DComSessionOptions dcomSessionOptions = new DComSessionOptions();
+            using DComSessionOptions dcomSessionOptions = new();
             using CimSession cimSession = CimSession.Create("localhost", dcomSessionOptions);
 
             CimInstance result = cimSession.QueryInstances(@"root\cimv2", "WQL", "SELECT * FROM Win32_BIOS").Single();

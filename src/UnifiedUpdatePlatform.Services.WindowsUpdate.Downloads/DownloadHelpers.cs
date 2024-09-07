@@ -578,7 +578,11 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads
             (HashSet<PayloadItem> payloadItems, HashSet<PayloadItem> bannedPayloadItems) =
                 BuildListOfPayloads(compDBs, Edition, Language);
 
-            JsonSerializerOptions jsonSerializerOptions = new JsonSerializerOptions() { WriteIndented = true, IncludeFields = true };
+            JsonSerializerOptions jsonSerializerOptions = new()
+            {
+                WriteIndented = true,
+                IncludeFields = true
+            };
 
             do
             {

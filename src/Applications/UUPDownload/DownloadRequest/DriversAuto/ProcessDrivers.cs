@@ -24,13 +24,13 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using UnifiedUpdatePlatform.Services.Composition.Database;
 using UnifiedUpdatePlatform.Services.WindowsUpdate;
 using UnifiedUpdatePlatform.Services.WindowsUpdate.Targeting;
-using UUPDownload.Options;
 using UUPDownload.Downloading;
-using System.Runtime.InteropServices;
+using UUPDownload.Options;
 
 namespace UUPDownload.DownloadRequest.DriversAuto
 {
