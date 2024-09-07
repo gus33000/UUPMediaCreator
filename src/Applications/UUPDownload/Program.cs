@@ -75,7 +75,7 @@ namespace UUPDownload
         {
             ServicePointManager.DefaultConnectionLimit = int.MaxValue;
 
-            return Parser.Default.ParseArguments<DownloadRequestOptions, BSPDownloadRequestOptions, BSPDownloadRequestOptions2, DownloadReplayOptions, GetBuildsOptions>(args).MapResult(
+            return Parser.Default.ParseArguments<DownloadRequestOptions, BSPDownloadRequestOptions, BSPDownloadRequestOptions2, BSPDownloadRequestOptions3, DownloadReplayOptions, GetBuildsOptions>(args).MapResult(
               (DownloadRequestOptions opts) =>
               {
                   PrintLogo();
@@ -90,6 +90,11 @@ namespace UUPDownload
               {
                   PrintLogo();
                   return WrapAction(() => DownloadRequest.ReferenceDriversRepo.ProcessDrivers.ParseDownloadOptions(opts));
+              },
+              (BSPDownloadRequestOptions3 opts) =>
+              {
+                  PrintLogo();
+                  return WrapAction(() => DownloadRequest.DriversAuto.ProcessDrivers.ParseDownloadOptions(opts));
               },
               (DownloadReplayOptions opts) =>
               {

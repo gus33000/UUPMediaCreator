@@ -2,7 +2,7 @@
   "profiles": {
     "UnifiedUpdatePlatform.Media.Download": {
       "commandName": "Project",
-      "commandLineArgs": "request-bsp-download -s Professional -v 10.0.26200.2483 -t arm64 -r Retail -b Retail -a CB -c ge_release -o C:\\Users\\gus33\\Documents\\GitHub\\WOA-Project\\Reference\\Qualcomm-Reference-Drivers\\TESTING --targeting-manufacturer \"Microsoft Corporation\" --targeting-family \"Surface\" --targeting-productname \"Microsoft Surface Pro, 11th Edition\" --targeting-skunumber \"Surface_Pro_11th_Edition_2076\" --targeting-biosvendor \"Microsoft Corporation\" --targeting-baseboardmanufacturer \"Microsoft Corporation\" --targeting-baseboardproduct \"Microsoft Surface Pro, 11th Edition\" --targeting-enclosuretype \"9\" --targeting-biosversion \"160.2002.235\" --targeting-biosmajorrelease \"ff\" --targeting-biosminorrelease \"ff\" -y --bsp-product-version 200.0.9.0"
+      "commandLineArgs": "request-bsp-download3 -s Professional -v 10.0.26200.2483 -t arm64 -r Retail -b Retail -a CB -c ge_release -o C:\\Users\\gus33\\Documents\\GitHub\\WOA-Project\\Reference\\Qualcomm-Reference-Drivers\\TESTING -y --bsp-product-version 200.0.9.0"
     }
   }
 }
