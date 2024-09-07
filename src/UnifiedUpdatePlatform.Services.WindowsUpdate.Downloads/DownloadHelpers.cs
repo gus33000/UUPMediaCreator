@@ -42,7 +42,7 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads
             if (payloadItems.Any(x => x.PayloadHash == extendedUpdateInfoFile.AdditionalDigest.Text || x.PayloadHash == extendedUpdateInfoFile.Digest))
             {
                 IEnumerable<PayloadItem> payloads = payloadItems.Where(x => x.PayloadHash == extendedUpdateInfoFile.AdditionalDigest.Text || x.PayloadHash == extendedUpdateInfoFile.Digest);
-                return payloads.Select(p => p.Path.Replace('\\', Path.DirectorySeparatorChar)).ToArray();
+                return payloads.Select(p => p.Path.Replace('\\', Path.DirectorySeparatorChar)).DistinctBy(x => x.ToLower()).ToArray();
             }
             else if (!payloadItems.Any() && filename.Contains('_') && !filename.StartsWith("_") && (!filename.Contains('-') || filename.IndexOf('-') > filename.IndexOf('_')))
             {
@@ -79,6 +79,8 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads
 
             if (!pathList.Add(newPath.ToLower()))
             {
+                throw new Exception("WHAT");
+
                 string basePath, suffix;
 
                 if (Path.HasExtension(newPath))
@@ -94,10 +96,11 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads
 
                 uint i = 1;
 
-                while (!pathList.Add(newPath.ToLower()))
+                do
                 {
                     newPath = $"{basePath} ({i++}){suffix}";
                 }
+                while (!pathList.Add(newPath.ToLower()));
             }
 
             return newPath;
@@ -563,6 +566,8 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads
             (HashSet<PayloadItem> payloadItems, HashSet<PayloadItem> bannedPayloadItems) =
                 BuildListOfPayloads(compDBs, Edition, Language);
 
+            JsonSerializerOptions jsonSerializerOptions = new JsonSerializerOptions() { WriteIndented = true, IncludeFields = true };
+
             do
             {
                 IEnumerable<FileExchangeV3FileDownloadInformation> fileUrls = await FE3Handler.GetFileUrls(update) ?? throw new Exception("Getting file urls failed.");
@@ -571,18 +576,19 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads
                     _ = Directory.CreateDirectory(OutputFolder);
                 }
 
-                string tmpname = update.Xml.LocalizedProperties.Title + " (" + MachineType.ToString() + ").uupmcreplay";
+                string tmpname = $"{update.Xml.LocalizedProperties.Title} ({MachineType}).uupmcreplay";
                 illegalCharacters = invalidCharactersRegex();
                 tmpname = illegalCharacters.Replace(tmpname, "");
                 string filename = Path.Combine(OutputFolder, tmpname);
 
                 if (WriteMetadata && !File.Exists(filename))
                 {
-                    File.WriteAllText(filename, JsonSerializer.Serialize(update, new JsonSerializerOptions() { WriteIndented = true, IncludeFields = true }));
+                    File.WriteAllText(filename, JsonSerializer.Serialize(update, jsonSerializerOptions));
                 }
 
                 using HttpDownloader helperDl = new(OutputFolder, downloadThreads);
-                filesToDownload = update.Xml.Files.File.AsParallel().Where(x => !IsFileBanned(x, bannedPayloadItems));
+
+                filesToDownload = update.Xml.Files.File.DistinctBy(x => $"{x.Digest}|{x.DigestAlgorithm}|{x.AdditionalDigest.Algorithm}|{x.AdditionalDigest.Text}").AsParallel().Where(x => !IsFileBanned(x, bannedPayloadItems));
 
                 returnCode = 0;
 
@@ -592,8 +598,8 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads
                     //.Where(x => UpdateUtils.ShouldFileGetDownloaded(x.x, payloadItems))
                     .OrderBy(x => x.Item2.ExpirationDate);
 
-                List<UUPFile> fileList = new();
-                HashSet<string> pathList = new();
+                List<UUPFile> fileList = [];
+                HashSet<string> pathList = [];
 
                 foreach ((Models.FE3.XML.ExtendedUpdateInfo.File, FileExchangeV3FileDownloadInformation) boundFile in boundList)
                 {
@@ -609,7 +615,7 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads
                     }
                 }
 
-                returnCode = await helperDl.DownloadAsync(fileList.ToList(), generalDownloadProgress) ? 0 : -1;
+                returnCode = await helperDl.DownloadAsync([.. fileList], generalDownloadProgress) ? 0 : -1;
 
                 if (returnCode != 0)
                 {

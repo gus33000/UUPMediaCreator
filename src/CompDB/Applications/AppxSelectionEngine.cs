@@ -223,7 +223,7 @@ namespace UnifiedUpdatePlatform.Services.Composition.Database.Applications
                         DeploymentProperties dependProps = preinstalledApps[dependency];
                         dependencies.Add(packageHashDict[dependProps.MainPackageID].Path);
                     }
-                    workload.DependenciesPath = dependencies.ToArray();
+                    workload.DependenciesPath = [.. dependencies];
                 }
 
                 if (deployProps.HasLicense)
@@ -239,7 +239,7 @@ namespace UnifiedUpdatePlatform.Services.Composition.Database.Applications
                 workloads.Add(workload);
             }
 
-            return workloads.ToArray();
+            return [.. workloads];
         }
 
         private static readonly Dictionary<string, string[]> languageMap = new()

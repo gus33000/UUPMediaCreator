@@ -155,7 +155,7 @@ namespace UnifiedUpdatePlatform.Media.Creator.Planning
             //
             // Sort editions by name
             //
-            target.NonDestructiveTargets = target.NonDestructiveTargets.OrderBy(x => x.PlannedEdition.EditionName).ToList();
+            target.NonDestructiveTargets = [.. target.NonDestructiveTargets.OrderBy(x => x.PlannedEdition.EditionName)];
 
             //
             // Handle editions that we can upgrade to using a full upgrade process
@@ -269,7 +269,7 @@ namespace UnifiedUpdatePlatform.Media.Creator.Planning
                 }
             }
 
-            target.DestructiveTargets = target.DestructiveTargets.OrderBy(x => x.PlannedEdition.EditionName).ToList();
+            target.DestructiveTargets = [.. target.DestructiveTargets.OrderBy(x => x.PlannedEdition.EditionName)];
 
             return target;
         }
@@ -576,7 +576,7 @@ namespace UnifiedUpdatePlatform.Media.Creator.Planning
                                     !string.IsNullOrEmpty(x.Virtual) &&
                                     x.Virtual.Equals("true", StringComparison.InvariantCultureIgnoreCase)).OrderBy(x => x.ParentEdition);
 
-                                virtualWindowsEditions = virtualeditions.ToList();
+                                virtualWindowsEditions = [.. virtualeditions];
                             }
                             catch { }
                         }
