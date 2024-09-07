@@ -35,20 +35,72 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads
 {
     public static partial class UpdateUtils
     {
-        public static string[] GetFilenameForCEUIFile(Models.FE3.XML.ExtendedUpdateInfo.File file2, IEnumerable<PayloadItem> payloadItems)
+        public static string[] GetFilenameForCEUIFile(Models.FE3.XML.ExtendedUpdateInfo.File extendedUpdateInfoFile, IEnumerable<PayloadItem> payloadItems)
         {
-            string filename = file2.FileName.Replace('\\', Path.DirectorySeparatorChar);
-            if (payloadItems.Any(x => x.PayloadHash == file2.AdditionalDigest.Text || x.PayloadHash == file2.Digest))
+            string filename = extendedUpdateInfoFile.FileName.Replace('\\', Path.DirectorySeparatorChar);
+
+            if (payloadItems.Any(x => x.PayloadHash == extendedUpdateInfoFile.AdditionalDigest.Text || x.PayloadHash == extendedUpdateInfoFile.Digest))
             {
-                IEnumerable<PayloadItem> payloads = payloadItems.Where(x => x.PayloadHash == file2.AdditionalDigest.Text || x.PayloadHash == file2.Digest);
+                IEnumerable<PayloadItem> payloads = payloadItems.Where(x => x.PayloadHash == extendedUpdateInfoFile.AdditionalDigest.Text || x.PayloadHash == extendedUpdateInfoFile.Digest);
                 return payloads.Select(p => p.Path.Replace('\\', Path.DirectorySeparatorChar)).ToArray();
             }
             else if (!payloadItems.Any() && filename.Contains('_') && !filename.StartsWith("_") && (!filename.Contains('-') || filename.IndexOf('-') > filename.IndexOf('_')))
             {
                 filename = filename[..filename.IndexOf('_')] + Path.DirectorySeparatorChar + filename[(filename.IndexOf('_') + 1)..];
-                return new string[] { filename.TrimStart(Path.DirectorySeparatorChar) };
+                return [filename.TrimStart(Path.DirectorySeparatorChar)];
             }
-            return new string[] { filename };
+
+            return [filename];
+        }
+
+        public static string FixFilePath((Models.FE3.XML.ExtendedUpdateInfo.File, FileExchangeV3FileDownloadInformation) boundFile, HashSet<string> pathList, HashSet<BaseManifest> compDBs, string path)
+        {
+            string newPath = path;
+
+            try
+            {
+                foreach (BaseManifest compDb in compDBs)
+                {
+                    foreach (Package pkg in compDb.Packages.Package)
+                    {
+                        string payloadHash = pkg.Payload.PayloadItem[0].PayloadHash;
+                        if (payloadHash == boundFile.Item1.AdditionalDigest.Text || payloadHash == boundFile.Item1.Digest)
+                        {
+                            if (pkg.ID.Contains('-') && pkg.ID.Contains(".inf", StringComparison.InvariantCultureIgnoreCase))
+                            {
+                                newPath = pkg.ID.Split("-")[1].Replace(".inf", ".cab", StringComparison.InvariantCultureIgnoreCase);
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
+            catch { }
+
+            if (!pathList.Add(newPath.ToLower()))
+            {
+                string basePath, suffix;
+
+                if (Path.HasExtension(newPath))
+                {
+                    basePath = Path.Combine(Path.GetDirectoryName(newPath), Path.GetFileNameWithoutExtension(newPath));
+                    suffix = Path.GetExtension(newPath);
+                }
+                else
+                {
+                    basePath = Path.Combine(Path.GetDirectoryName(newPath), Path.GetFileName(newPath));
+                    suffix = "";
+                }
+
+                uint i = 1;
+
+                while (!pathList.Add(newPath.ToLower()))
+                {
+                    newPath = $"{basePath} ({i++}){suffix}";
+                }
+            }
+
+            return newPath;
         }
 
         public static bool ShouldFileGetDownloaded(Models.FE3.XML.ExtendedUpdateInfo.File file2, IEnumerable<PayloadItem> payloadItems)
@@ -540,33 +592,16 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads
                     //.Where(x => UpdateUtils.ShouldFileGetDownloaded(x.x, payloadItems))
                     .OrderBy(x => x.Item2.ExpirationDate);
 
-                IEnumerable<UUPFile> fileList = boundList.SelectMany(boundFile =>
+                List<UUPFile> fileList = [];
+                HashSet<string> pathList = [];
+
+                foreach ((Models.FE3.XML.ExtendedUpdateInfo.File, FileExchangeV3FileDownloadInformation) boundFile in boundList)
                 {
                     return GetFilenameForCEUIFile(boundFile.Item1, payloadItems).Select(path =>
                     {
-                        /*try
-                        {
-                            foreach (BaseManifest compDb in compDBs)
-                            {
-                                foreach (Package pkg in compDb.Packages.Package)
-                                {
-                                    string payloadHash = pkg.Payload.PayloadItem[0].PayloadHash;
-                                    if (payloadHash == boundFile.Item1.AdditionalDigest.Text || payloadHash == boundFile.Item1.Digest)
-                                    {
-                                        if (pkg.ID.Contains('-') && pkg.ID.Contains(".inf", StringComparison.InvariantCultureIgnoreCase))
-                                        {
-                                            path = pkg.ID.Split("-")[1].Replace(".inf", ".cab", StringComparison.InvariantCultureIgnoreCase);
-                                        }
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                        catch { }*/
-
-                        return new UUPFile(
+                        fileList.Add(new UUPFile(
                             boundFile.Item2,
-                            path,
+                            FixFilePath(boundFile, pathList, compDBs, path),
                             long.Parse(boundFile.Item1.Size),
                             boundFile.Item1.AdditionalDigest.Text,
                             boundFile.Item1.AdditionalDigest.Algorithm);

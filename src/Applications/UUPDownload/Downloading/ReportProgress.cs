@@ -34,7 +34,7 @@ namespace UUPDownload.Downloading
 
         private static string FormatBytes(double bytes)
         {
-            string[] suffix = { "B", "KB", "MB", "GB", "TB" };
+            string[] suffix = ["B", "KB", "MB", "GB", "TB"];
             int i;
             double dblSByte = bytes;
             for (i = 0; i < suffix.Length && bytes >= 1024; i++, bytes /= 1024)

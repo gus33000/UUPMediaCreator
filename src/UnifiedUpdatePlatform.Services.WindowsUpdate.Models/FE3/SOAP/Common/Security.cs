@@ -29,10 +29,9 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate.Models.FE3.SOAP.Common
     {
         [XmlNamespaceDeclarations]
         public XmlSerializerNamespaces ns = new(
-            new XmlQualifiedName[]
-            {
+            [
                     new("o", "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd")
-            }
+            ]
         );
 
         [XmlElement(ElementName = "Timestamp", Namespace = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd")]
