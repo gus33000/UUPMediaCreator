@@ -23,50 +23,50 @@ using System.Xml.Serialization;
 
 namespace UnifiedUpdatePlatform.Services.Composition.Database
 {
-    [XmlRoot(ElementName = "Condition", Namespace = Constants.ImageUpdateNamespace)]
+    [XmlRoot(ElementName = "Condition")]
     public class Condition
     {
-        [XmlAttribute(AttributeName = "Type", Namespace = Constants.ImageUpdateNamespace)]
+        [XmlAttribute(AttributeName = "Type")]
         public string Type
         {
             get; set;
         }
-        [XmlAttribute(AttributeName = "Name", Namespace = Constants.ImageUpdateNamespace)]
+        [XmlAttribute(AttributeName = "Name")]
         public string Name
         {
             get; set;
         }
-        [XmlAttribute(AttributeName = "FMID", Namespace = Constants.ImageUpdateNamespace)]
+        [XmlAttribute(AttributeName = "FMID")]
         public string FMID
         {
             get; set;
         }
-        [XmlAttribute(AttributeName = "Operator", Namespace = Constants.ImageUpdateNamespace)]
+        [XmlAttribute(AttributeName = "Operator")]
         public string Operator
         {
             get; set;
         }
-        [XmlAttribute(AttributeName = "RegistryKey", Namespace = Constants.ImageUpdateNamespace)]
+        [XmlAttribute(AttributeName = "RegistryKey")]
         public string RegistryKey
         {
             get; set;
         }
-        [XmlAttribute(AttributeName = "Value", Namespace = Constants.ImageUpdateNamespace)]
+        [XmlAttribute(AttributeName = "Value")]
         public string Value
         {
             get; set;
         }
-        [XmlAttribute(AttributeName = "RegistryKeyType", Namespace = Constants.ImageUpdateNamespace)]
+        [XmlAttribute(AttributeName = "RegistryKeyType")]
         public string RegistryKeyType
         {
             get; set;
         }
-        [XmlAttribute(AttributeName = "Status", Namespace = Constants.ImageUpdateNamespace)]
+        [XmlAttribute(AttributeName = "Status")]
         public string Status
         {
             get; set;
         }
-        [XmlAttribute(AttributeName = "FeatureStatus", Namespace = Constants.ImageUpdateNamespace)]
+        [XmlAttribute(AttributeName = "FeatureStatus")]
         public string FeatureStatus
         {
             get; set;

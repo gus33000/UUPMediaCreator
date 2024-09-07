@@ -24,10 +24,10 @@ using System.Xml.Serialization;
 
 namespace UnifiedUpdatePlatform.Services.Composition.Database
 {
-    [XmlRoot(ElementName = "MSConditionalFeatures", Namespace = Constants.ImageUpdateNamespace)]
+    [XmlRoot(ElementName = "MSConditionalFeatures")]
     public class MSConditionalFeatures
     {
-        [XmlElement(ElementName = "ConditionalFeature", Namespace = Constants.ImageUpdateNamespace)]
+        [XmlElement(ElementName = "ConditionalFeature")]
         public List<ConditionalFeature> ConditionalFeature
         {
             get; set;

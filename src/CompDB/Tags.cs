@@ -24,15 +24,15 @@ using System.Xml.Serialization;
 
 namespace UnifiedUpdatePlatform.Services.Composition.Database
 {
-    [XmlRoot(ElementName = "Tags", Namespace = Constants.ImageUpdateNamespace)]
+    [XmlRoot(ElementName = "Tags")]
     public class Tags
     {
-        [XmlElement(ElementName = "Tag", Namespace = Constants.ImageUpdateNamespace)]
+        [XmlElement(ElementName = "Tag")]
         public List<Tag> Tag
         {
             get; set;
         }
-        [XmlAttribute(AttributeName = "Type", Namespace = Constants.ImageUpdateNamespace)]
+        [XmlAttribute(AttributeName = "Type")]
         public string Type
         {
             get; set;

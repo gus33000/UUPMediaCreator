@@ -23,50 +23,50 @@ using System.Xml.Serialization;
 
 namespace UnifiedUpdatePlatform.Services.Composition.Database
 {
-    [XmlRoot(ElementName = "Feature", Namespace = Constants.ImageUpdateNamespace)]
+    [XmlRoot(ElementName = "Feature")]
     public class Feature
     {
-        [XmlElement(ElementName = "Packages", Namespace = Constants.ImageUpdateNamespace)]
+        [XmlElement(ElementName = "Packages")]
         public Packages Packages
         {
             get; set;
         }
-        [XmlAttribute(AttributeName = "Type", Namespace = Constants.ImageUpdateNamespace)]
+        [XmlAttribute(AttributeName = "Type")]
         public string Type
         {
             get; set;
         }
-        [XmlAttribute(AttributeName = "FeatureID", Namespace = Constants.ImageUpdateNamespace)]
+        [XmlAttribute(AttributeName = "FeatureID")]
         public string FeatureID
         {
             get; set;
         }
-        [XmlAttribute(AttributeName = "FMID", Namespace = Constants.ImageUpdateNamespace)]
+        [XmlAttribute(AttributeName = "FMID")]
         public string FMID
         {
             get; set;
         }
-        [XmlAttribute(AttributeName = "Group", Namespace = Constants.ImageUpdateNamespace)]
+        [XmlAttribute(AttributeName = "Group")]
         public string Group
         {
             get; set;
         }
-        [XmlElement(ElementName = "Dependencies", Namespace = Constants.ImageUpdateNamespace)]
+        [XmlElement(ElementName = "Dependencies")]
         public Dependencies Dependencies
         {
             get; set;
         }
-        [XmlElement(ElementName = "InitialIntents", Namespace = Constants.ImageUpdateNamespace)]
+        [XmlElement(ElementName = "InitialIntents")]
         public InitialIntents InitialIntents
         {
             get; set;
         }
-        [XmlElement(ElementName = "CustomInformation", Namespace = Constants.ImageUpdateNamespace)]
+        [XmlElement(ElementName = "CustomInformation")]
         public CustomInformation CustomInformation
         {
             get; set;
         }
-        [XmlAttribute(AttributeName = "Family", Namespace = Constants.ImageUpdateNamespace)]
+        [XmlAttribute(AttributeName = "Family")]
         public string Family
         {
             get; set;

@@ -23,10 +23,10 @@ using System.Xml.Serialization;
 
 namespace UnifiedUpdatePlatform.Services.Composition.Database
 {
-    [XmlRoot(ElementName = "InitialIntent", Namespace = Constants.ImageUpdateNamespace)]
+    [XmlRoot(ElementName = "InitialIntent")]
     public class InitialIntent
     {
-        [XmlAttribute(AttributeName = "Value", Namespace = Constants.ImageUpdateNamespace)]
+        [XmlAttribute(AttributeName = "Value")]
         public string Value
         {
             get; set;

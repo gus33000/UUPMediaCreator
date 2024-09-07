@@ -23,35 +23,35 @@ using System.Xml.Serialization;
 
 namespace UnifiedUpdatePlatform.Services.Composition.Database
 {
-    [XmlRoot(ElementName = "PayloadItem", Namespace = Constants.ImageUpdateNamespace)]
+    [XmlRoot(ElementName = "PayloadItem")]
     public class PayloadItem
     {
-        [XmlAttribute(AttributeName = "PayloadHash", Namespace = Constants.ImageUpdateNamespace)]
+        [XmlAttribute(AttributeName = "PayloadHash")]
         public string SourceHash
         {
             get; set;
         }
-        [XmlAttribute(AttributeName = "PayloadSize", Namespace = Constants.ImageUpdateNamespace)]
+        [XmlAttribute(AttributeName = "PayloadSize")]
         public string PayloadSize
         {
             get; set;
         }
-        [XmlAttribute(AttributeName = "Path", Namespace = Constants.ImageUpdateNamespace)]
+        [XmlAttribute(AttributeName = "Path")]
         public string SourceName
         {
             get; set;
         }
-        [XmlAttribute(AttributeName = "PayloadType", Namespace = Constants.ImageUpdateNamespace)]
+        [XmlAttribute(AttributeName = "PayloadType")]
         public string PayloadType
         {
             get; set;
         }
-        [XmlAttribute(AttributeName = "AltSourceName", Namespace = Constants.ImageUpdateNamespace)]
+        [XmlAttribute(AttributeName = "AltSourceName")]
         public string AltSourceName
         {
             get; set;
         }
-        [XmlAttribute(AttributeName = "AltSourceHash", Namespace = Constants.ImageUpdateNamespace)]
+        [XmlAttribute(AttributeName = "AltSourceHash")]
         public string AltSourceHash
         {
             get; set;

@@ -23,40 +23,40 @@ using System.Xml.Serialization;
 
 namespace UnifiedUpdatePlatform.Services.Composition.Database
 {
-    [XmlRoot(ElementName = "Package", Namespace = Constants.ImageUpdateNamespace)]
+    [XmlRoot(ElementName = "Package")]
     public class Package
     {
-        [XmlAttribute(AttributeName = "ID", Namespace = Constants.ImageUpdateNamespace)]
+        [XmlAttribute(AttributeName = "ID")]
         public string ID
         {
             get; set;
         }
-        [XmlAttribute(AttributeName = "PackageType", Namespace = Constants.ImageUpdateNamespace)]
+        [XmlAttribute(AttributeName = "PackageType")]
         public string PackageType
         {
             get; set;
         }
-        [XmlElement(ElementName = "SatelliteInfo", Namespace = Constants.ImageUpdateNamespace)]
+        [XmlElement(ElementName = "SatelliteInfo")]
         public SatelliteInfo SatelliteInfo
         {
             get; set;
         }
-        [XmlElement(ElementName = "Payload", Namespace = Constants.ImageUpdateNamespace)]
+        [XmlElement(ElementName = "Payload")]
         public Payload Payload
         {
             get; set;
         }
-        [XmlAttribute(AttributeName = "InstalledSize", Namespace = Constants.ImageUpdateNamespace)]
+        [XmlAttribute(AttributeName = "InstalledSize")]
         public string InstalledSize
         {
             get; set;
         }
-        [XmlAttribute(AttributeName = "Version", Namespace = Constants.ImageUpdateNamespace)]
+        [XmlAttribute(AttributeName = "Version")]
         public string Version
         {
             get; set;
         }
-        [XmlAttribute(AttributeName = "UpdateType", Namespace = Constants.ImageUpdateNamespace)]
+        [XmlAttribute(AttributeName = "UpdateType")]
         public string UpdateType
         {
             get; set;

@@ -23,10 +23,10 @@ using System.Xml.Serialization;
 
 namespace UnifiedUpdatePlatform.Services.Composition.Database
 {
-    [XmlRoot(ElementName = "CustomInfo", Namespace = Constants.ImageUpdateNamespace)]
+    [XmlRoot(ElementName = "CustomInfo")]
     public class CustomInfo
     {
-        [XmlAttribute(AttributeName = "Key", Namespace = Constants.ImageUpdateNamespace)]
+        [XmlAttribute(AttributeName = "Key")]
         public string Key
         {
             get; set;

@@ -23,10 +23,10 @@ using System.Xml.Serialization;
 
 namespace UnifiedUpdatePlatform.Services.Composition.Database
 {
-    [XmlRoot(ElementName = "ConditionSets", Namespace = Constants.ImageUpdateNamespace)]
+    [XmlRoot(ElementName = "ConditionSets")]
     public class ConditionSets
     {
-        [XmlElement(ElementName = "ConditionSet", Namespace = Constants.ImageUpdateNamespace)]
+        [XmlElement(ElementName = "ConditionSet")]
         public ConditionSet ConditionSet
         {
             get; set;

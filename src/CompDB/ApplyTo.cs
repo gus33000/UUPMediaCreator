@@ -23,15 +23,15 @@ using System.Xml.Serialization;
 
 namespace UnifiedUpdatePlatform.Services.Composition.Database
 {
-    [XmlRoot(ElementName = "ApplyTo", Namespace = Constants.ImageUpdateNamespace)]
+    [XmlRoot(ElementName = "ApplyTo")]
     public class ApplyTo
     {
-        [XmlAttribute(AttributeName = "Type", Namespace = Constants.ImageUpdateNamespace)]
+        [XmlAttribute(AttributeName = "Type")]
         public string Type
         {
             get; set;
         }
-        [XmlAttribute(AttributeName = "Value", Namespace = Constants.ImageUpdateNamespace)]
+        [XmlAttribute(AttributeName = "Value")]
         public string Value
         {
             get; set;
