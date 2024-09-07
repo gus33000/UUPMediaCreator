@@ -29,14 +29,8 @@ using UnifiedUpdatePlatform.Services.WindowsUpdate;
 
 namespace UUPDownload
 {
-    public static class BuildTargets
+    public static partial class BuildTargets
     {
-        public class EditionPlanningWithLanguage
-        {
-            public List<EditionTarget> EditionTargets;
-            public string LanguageCode;
-        }
-
         public static async Task<EditionPlanningWithLanguage> GetTargetedPlanAsync(this UpdateData update, string LanguageCode)
         {
             HashSet<CompDB> compDBs = await update.GetCompDBsAsync();
