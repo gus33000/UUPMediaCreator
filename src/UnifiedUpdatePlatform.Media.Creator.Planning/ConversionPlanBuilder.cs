@@ -276,7 +276,7 @@ namespace UnifiedUpdatePlatform.Media.Creator.Planning
 
         private static (List<PlannedEdition>, List<PlannedEdition>) GetEditionsThatCanBeTargetedUsingPackageDowngrade(
             string UUPPath,
-            IEnumerable<CompDB> compDBs,
+            IEnumerable<BaseManifest> compDBs,
             IEnumerable<PlannedEdition> availableCanonicalEditions,
             List<EditionMappingXML.Edition> possibleEditionUpgrades,
             ProgressCallback? progressCallback = null)
@@ -287,7 +287,7 @@ namespace UnifiedUpdatePlatform.Media.Creator.Planning
             //
             // Attempt to get the neutral Composition Database listing all available files
             //
-            CompDB? neutralCompDB = compDBs.GetNeutralCompDB();
+            BaseManifest? neutralCompDB = compDBs.GetNeutralCompDB();
 
             if (neutralCompDB != null &&
                 neutralCompDB.Features.Feature.FirstOrDefault(x => x.FeatureID == "BaseNeutral")?
@@ -387,7 +387,7 @@ namespace UnifiedUpdatePlatform.Media.Creator.Planning
         }
 
         public static bool GetTargetedPlan(
-            IEnumerable<CompDB> compDBs,
+            IEnumerable<BaseManifest> compDBs,
             string EditionPack,
             string LanguageCode,
             bool IncludeServicingCapableOnlyTargets,
@@ -444,7 +444,7 @@ namespace UnifiedUpdatePlatform.Media.Creator.Planning
 
         public static bool GetTargetedPlan(
             string UUPPath,
-            IEnumerable<CompDB> compDBs,
+            IEnumerable<BaseManifest> compDBs,
             string EditionPack,
             string LanguageCode,
             bool IncludeServicingCapableOnlyTargets,
@@ -463,7 +463,7 @@ namespace UnifiedUpdatePlatform.Media.Creator.Planning
             //
             // Get base editions that are available with all their files
             //
-            IEnumerable<CompDB> filteredCompDBs = compDBs.GetEditionCompDBsForLanguage(LanguageCode).Where(x =>
+            IEnumerable<BaseManifest> filteredCompDBs = compDBs.GetEditionCompDBsForLanguage(LanguageCode).Where(x =>
             {
                 bool success = !VerifyFiles;
                 if (!success)
@@ -504,7 +504,7 @@ namespace UnifiedUpdatePlatform.Media.Creator.Planning
 
                 if (compDBs.Any(x => x.Name?.StartsWith("Build~") == true && (x.Name?.EndsWith("~Desktop_Apps~~") == true || x.Name?.EndsWith("~Desktop_Apps_Moment~~") == true)))
                 {
-                    IEnumerable<CompDB> AppCompDBs = compDBs.Where(x => x.Name?.StartsWith("Build~") == true && (x.Name?.EndsWith("~Desktop_Apps~~") == true || x.Name?.EndsWith("~Desktop_Apps_Moment~~") == true));
+                    IEnumerable<BaseManifest> AppCompDBs = compDBs.Where(x => x.Name?.StartsWith("Build~") == true && (x.Name?.EndsWith("~Desktop_Apps~~") == true || x.Name?.EndsWith("~Desktop_Apps_Moment~~") == true));
                     edition.AppXInstallWorkloads = AppxSelectionEngine.GetAppxInstallationWorkloads(compDB, AppCompDBs, LanguageCode);
                 }
 

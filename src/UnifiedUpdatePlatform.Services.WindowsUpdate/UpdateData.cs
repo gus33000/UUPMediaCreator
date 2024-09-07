@@ -75,7 +75,7 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate
         }
 
         [JsonPropertyName("CompDBs")]
-        public HashSet<CompDB> CompDBs
+        public HashSet<BaseManifest> CompDBs
         {
             get; set;
         }

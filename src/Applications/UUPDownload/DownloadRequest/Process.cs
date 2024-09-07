@@ -103,7 +103,7 @@ namespace UUPDownload.DownloadRequest
                 update.CompDBs = await update.GetCompDBsAsync();
             }
 
-            CompDB canonicalCompdb = update.CompDBs
+            BaseManifest canonicalCompdb = update.CompDBs
                 .Where(compDB => compDB.Tags.Tag
                 .Find(x => x.Name
                 .Equals("UpdateType", StringComparison.InvariantCultureIgnoreCase))?.Value?
@@ -230,7 +230,7 @@ namespace UUPDownload.DownloadRequest
 
             Logging.Log("Gathering update metadata...");
 
-            HashSet<CompDB> compDBs = await update.GetCompDBsAsync();
+            HashSet<BaseManifest> compDBs = await update.GetCompDBsAsync();
 
             await Task.WhenAll(
                 Task.Run(async () => buildstr = await update.GetBuildStringAsync()),
@@ -249,9 +249,9 @@ namespace UUPDownload.DownloadRequest
                 // We need to fallback to CompDB (less accurate but we have no choice, due to CUs etc...
 
                 // Loop through all CompDBs to find the highest version reported
-                CompDB selectedCompDB = null;
+                BaseManifest selectedCompDB = null;
                 Version currentHighest = null;
-                foreach (CompDB compDB in compDBs)
+                foreach (BaseManifest compDB in compDBs)
                 {
                     if (compDB.TargetOSVersion != null)
                     {

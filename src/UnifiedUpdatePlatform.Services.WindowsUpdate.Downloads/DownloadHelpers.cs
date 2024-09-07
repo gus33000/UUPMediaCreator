@@ -85,17 +85,17 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads
 
         private static
         (
-            HashSet<CompDB> selectedCompDBs,
-            HashSet<CompDB> discardedCompDBs,
-            HashSet<CompDB> specificCompDBs
+            HashSet<BaseManifest> selectedCompDBs,
+            HashSet<BaseManifest> discardedCompDBs,
+            HashSet<BaseManifest> specificCompDBs
         )
-        FilterCompDBs(HashSet<CompDB> compDBs, string Edition, string Language)
+        FilterCompDBs(HashSet<BaseManifest> compDBs, string Edition, string Language)
         {
-            HashSet<CompDB> selectedCompDBs = [];
-            HashSet<CompDB> discardedCompDBs = [];
-            HashSet<CompDB> specificCompDBs = [];
+            HashSet<BaseManifest> selectedCompDBs = [];
+            HashSet<BaseManifest> discardedCompDBs = [];
+            HashSet<BaseManifest> specificCompDBs = [];
 
-            foreach (CompDB cdb in compDBs)
+            foreach (BaseManifest cdb in compDBs)
             {
                 bool IsDiff = cdb.Tags?.Tag?.Any(x => x.Name.Equals("UpdateType", StringComparison.InvariantCultureIgnoreCase) && (x.Value.Equals("Diff", StringComparison.InvariantCultureIgnoreCase) || x.Value.Equals("Baseless", StringComparison.InvariantCultureIgnoreCase))) == true;
 
@@ -175,7 +175,7 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads
             HashSet<PayloadItem> payloadItems,
             HashSet<PayloadItem> bannedPayloadItems
         )
-        BuildListOfPayloads(HashSet<CompDB> compDBs, string Edition, string Language)
+        BuildListOfPayloads(HashSet<BaseManifest> compDBs, string Edition, string Language)
         {
             HashSet<PayloadItem> payloadItems = [];
             HashSet<PayloadItem> bannedPayloadItems = [];
@@ -185,16 +185,16 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads
                 return (payloadItems, bannedPayloadItems);
             }
 
-            IEnumerable<CompDB> AppCompDBs = null;
+            IEnumerable<BaseManifest> AppCompDBs = null;
 
-            (HashSet<CompDB> selectedCompDBs, HashSet<CompDB> discardedCompDBs, HashSet<CompDB> specificCompDBs) = FilterCompDBs(compDBs, Edition, Language);
+            (HashSet<BaseManifest> selectedCompDBs, HashSet<BaseManifest> discardedCompDBs, HashSet<BaseManifest> specificCompDBs) = FilterCompDBs(compDBs, Edition, Language);
 
             if (compDBs.Any(x => x.Name?.StartsWith("Build~") == true && (x.Name?.EndsWith("~Desktop_Apps~~") == true || x.Name?.EndsWith("~Desktop_Apps_Moment~~") == true)))
             {
                 AppCompDBs = compDBs.Where(x => x.Name?.StartsWith("Build~") == true && (x.Name?.EndsWith("~Desktop_Apps~~") == true || x.Name?.EndsWith("~Desktop_Apps_Moment~~") == true));
             }
 
-            foreach (CompDB cdb in selectedCompDBs)
+            foreach (BaseManifest cdb in selectedCompDBs)
             {
                 if (AppCompDBs?.Contains(cdb) == true || cdb.Packages == null)
                 {
@@ -235,7 +235,7 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads
                 }
             }
 
-            foreach (CompDB cdb in discardedCompDBs)
+            foreach (BaseManifest cdb in discardedCompDBs)
             {
                 if (AppCompDBs?.Contains(cdb) == true || cdb.Packages == null)
                 {
@@ -281,7 +281,7 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads
                     // Get everything
                     case (false, false):
                         {
-                            foreach (CompDB AppCompDB in AppCompDBs)
+                            foreach (BaseManifest AppCompDB in AppCompDBs)
                             {
                                 foreach (Package pkg in AppCompDB.Packages.Package)
                                 {
@@ -323,7 +323,7 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads
                     // Get edition
                     case (false, true):
                         {
-                            foreach (CompDB cdb in compDBs.GetEditionCompDBs().Where(cdb =>
+                            foreach (BaseManifest cdb in compDBs.GetEditionCompDBs().Where(cdb =>
                             {
                                 bool hasEdition = cdb.Tags?.Tag?.Any(x => x.Name.Equals("Edition", StringComparison.InvariantCultureIgnoreCase)) == true;
 
@@ -344,7 +344,7 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads
                     // Get language
                     case (true, false):
                         {
-                            foreach (CompDB cdb in compDBs.GetEditionCompDBs().Where(cdb =>
+                            foreach (BaseManifest cdb in compDBs.GetEditionCompDBs().Where(cdb =>
                             {
                                 bool hasLang = cdb.Tags?.Tag?.Any(x => x.Name.Equals("Language", StringComparison.InvariantCultureIgnoreCase)) == true;
 
@@ -365,7 +365,7 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads
                     // Get edition + language
                     case (true, true):
                         {
-                            foreach (CompDB cdb in compDBs.GetEditionCompDBs().Where(cdb =>
+                            foreach (BaseManifest cdb in compDBs.GetEditionCompDBs().Where(cdb =>
                             {
                                 bool hasLang = cdb.Tags?.Tag?.Any(x => x.Name.Equals("Language", StringComparison.InvariantCultureIgnoreCase)) == true;
                                 bool hasEdition = cdb.Tags?.Tag?.Any(x => x.Name.Equals("Edition", StringComparison.InvariantCultureIgnoreCase)) == true;
@@ -387,7 +387,7 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads
                         }
                 }
 
-                foreach (CompDB AppCompDB in AppCompDBs)
+                foreach (BaseManifest AppCompDB in AppCompDBs)
                 {
                     foreach (Package pkg in AppCompDB.Packages.Package)
                     {
@@ -403,7 +403,7 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads
                     }
                 }
 
-                foreach (CompDB AppCompDB in AppCompDBs)
+                foreach (BaseManifest AppCompDB in AppCompDBs)
                 {
                     if (AppCompDB.AppX?.AppXPackages?.Package != null)
                     {
@@ -431,7 +431,7 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads
                 }
                 else
                 {
-                    foreach (CompDB specificCompDB in specificCompDBs)
+                    foreach (BaseManifest specificCompDB in specificCompDBs)
                     {
                         if (AppCompDBs?.Contains(specificCompDB) == true || specificCompDB.Packages == null)
                         {
@@ -481,7 +481,7 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads
             int returnCode = 0;
             IEnumerable<Models.FE3.XML.ExtendedUpdateInfo.File> filesToDownload = null;
 
-            HashSet<CompDB> compDBs = await update.GetCompDBsAsync();
+            HashSet<BaseManifest> compDBs = await update.GetCompDBsAsync();
 
             await Task.WhenAll(
                 Task.Run(async () => buildstr = await update.GetBuildStringAsync()),
@@ -546,7 +546,7 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads
                     {
                         /*try
                         {
-                            foreach (CompDB compDb in compDBs)
+                            foreach (BaseManifest compDb in compDBs)
                             {
                                 foreach (Package pkg in compDb.Packages.Package)
                                 {

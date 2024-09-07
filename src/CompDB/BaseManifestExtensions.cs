@@ -26,134 +26,134 @@ using System.Linq;
 
 namespace UnifiedUpdatePlatform.Services.Composition.Database
 {
-    public static class CompDBExtensions
+    public static class BaseManifestExtensions
     {
         public static string GetCommonlyUsedIncorrectFileName(this Package pkg)
         {
             return pkg.Payload.PayloadItem.First(x => !x.Path.EndsWith(".psf")).Path.Replace('\\', Path.DirectorySeparatorChar).Split(Path.DirectorySeparatorChar).Last().Replace("~31bf3856ad364e35", "").Replace("~.", ".").Replace("~", "-").Replace("-.", ".");
         }
 
-        public static CompDB GetNeutralCompDB(this IEnumerable<CompDB> compDBs)
+        public static BaseManifest GetNeutralCompDB(this IEnumerable<BaseManifest> BaseManifests)
         {
-            foreach (CompDB compDB in compDBs)
+            foreach (BaseManifest BaseManifest in BaseManifests)
             {
-                if (compDB.Type != "Build")
+                if (BaseManifest.Type != "Build")
                 {
                     continue;
                 }
 
-                if (compDB.Name?.Contains("Desktop_FOD") == true)
+                if (BaseManifest.Name?.Contains("Desktop_FOD") == true)
                 {
                     continue;
                 }
 
                 //
-                // Newer style compdbs have a tag attribute, make use of it.
+                // Newer style BaseManifests have a tag attribute, make use of it.
                 //
-                if (compDB.Tags != null)
+                if (BaseManifest.Tags != null)
                 {
-                    if (compDB.Tags.Type.Equals("Neutral", StringComparison.InvariantCultureIgnoreCase) &&
-                        compDB.Tags.Tag?.Find(x => x.Name.Equals("UpdateType", StringComparison.InvariantCultureIgnoreCase))?.Value?.Equals("Canonical", StringComparison.InvariantCultureIgnoreCase) == true &&
-                        compDB.Features?.Feature != null &&
-                        compDB.Packages?.Package != null)
+                    if (BaseManifest.Tags.Type.Equals("Neutral", StringComparison.InvariantCultureIgnoreCase) &&
+                        BaseManifest.Tags.Tag?.Find(x => x.Name.Equals("UpdateType", StringComparison.InvariantCultureIgnoreCase))?.Value?.Equals("Canonical", StringComparison.InvariantCultureIgnoreCase) == true &&
+                        BaseManifest.Features?.Feature != null &&
+                        BaseManifest.Packages?.Package != null)
                     {
-                        return compDB;
+                        return BaseManifest;
                     }
                 }
                 //
-                // Older style compdbs have no tag elements, we need to find out if it's a neutral compdb using another way
+                // Older style BaseManifests have no tag elements, we need to find out if it's a neutral BaseManifest using another way
                 //
-                else if (compDB.Features?.Feature?.FirstOrDefault(x =>
+                else if (BaseManifest.Features?.Feature?.FirstOrDefault(x =>
                     x.Type?.Contains("BaseNeutral", StringComparison.InvariantCultureIgnoreCase) == true) != null)
                 {
-                    return compDB;
+                    return BaseManifest;
                 }
             }
 
             return null;
         }
 
-        public static HashSet<CompDB> GetEditionCompDBsForLanguage(
-            this IEnumerable<CompDB> compDBs,
+        public static HashSet<BaseManifest> GetEditionCompDBsForLanguage(
+            this IEnumerable<BaseManifest> BaseManifests,
             string LanguageCode)
         {
-            HashSet<CompDB> filteredCompDBs = [];
+            HashSet<BaseManifest> filteredBaseManifests = [];
 
-            foreach (CompDB compDB in compDBs)
+            foreach (BaseManifest BaseManifest in BaseManifests)
             {
                 //
-                // Newer style compdbs have a tag attribute, make use of it.
+                // Newer style BaseManifests have a tag attribute, make use of it.
                 // TODO: Do not do contains
                 //
-                if (compDB.Tags != null)
+                if (BaseManifest.Tags != null)
                 {
-                    if (compDB.Tags.Type.Equals("Edition", StringComparison.InvariantCultureIgnoreCase) &&
-                        compDB.Tags.Tag?.Count == 3 &&
-                        compDB.Tags.Tag.Find(x => x.Name.Equals("UpdateType", StringComparison.InvariantCultureIgnoreCase))?.Value?.Equals("Canonical", StringComparison.InvariantCultureIgnoreCase) == true &&
-                        compDB.Tags.Tag.Find(x => x.Name.Equals("Language", StringComparison.InvariantCultureIgnoreCase))?.Value?.Equals(LanguageCode, StringComparison.InvariantCultureIgnoreCase) == true &&
-                        compDB.Tags.Tag.Any(x => x.Name.Equals("Edition", StringComparison.InvariantCultureIgnoreCase)) &&
-                        compDB.Name?.EndsWith("~Desktop_Apps~~") != true &&
-                        compDB.Name?.EndsWith("~Desktop_Apps_Moment~~") != true)
+                    if (BaseManifest.Tags.Type.Equals("Edition", StringComparison.InvariantCultureIgnoreCase) &&
+                        BaseManifest.Tags.Tag?.Count == 3 &&
+                        BaseManifest.Tags.Tag.Find(x => x.Name.Equals("UpdateType", StringComparison.InvariantCultureIgnoreCase))?.Value?.Equals("Canonical", StringComparison.InvariantCultureIgnoreCase) == true &&
+                        BaseManifest.Tags.Tag.Find(x => x.Name.Equals("Language", StringComparison.InvariantCultureIgnoreCase))?.Value?.Equals(LanguageCode, StringComparison.InvariantCultureIgnoreCase) == true &&
+                        BaseManifest.Tags.Tag.Any(x => x.Name.Equals("Edition", StringComparison.InvariantCultureIgnoreCase)) &&
+                        BaseManifest.Name?.EndsWith("~Desktop_Apps~~") != true &&
+                        BaseManifest.Name?.EndsWith("~Desktop_Apps_Moment~~") != true)
                     {
-                        _ = filteredCompDBs.Add(compDB);
+                        _ = filteredBaseManifests.Add(BaseManifest);
                     }
                 }
                 //
-                // Older style compdbs have no tag elements, we need to find out if it's an edition compdb using another way
+                // Older style BaseManifests have no tag elements, we need to find out if it's an edition BaseManifest using another way
                 //
-                else if (compDB.Features?.Feature?.FirstOrDefault(x =>
+                else if (BaseManifest.Features?.Feature?.FirstOrDefault(x =>
                         x.Type?.Contains("DesktopMedia", StringComparison.InvariantCultureIgnoreCase) == true &&
                         x.FeatureID?.Contains(LanguageCode, StringComparison.InvariantCultureIgnoreCase) == true) != null &&
-                        compDB.Name?.EndsWith("~Desktop_Apps~~") != true &&
-                        compDB.Name?.EndsWith("~Desktop_Apps_Moment~~") != true)
+                        BaseManifest.Name?.EndsWith("~Desktop_Apps~~") != true &&
+                        BaseManifest.Name?.EndsWith("~Desktop_Apps_Moment~~") != true)
                 {
-                    _ = filteredCompDBs.Add(compDB);
+                    _ = filteredBaseManifests.Add(BaseManifest);
                 }
             }
 
-            return filteredCompDBs;
+            return filteredBaseManifests;
         }
 
-        public static HashSet<CompDB> GetEditionCompDBs(this IEnumerable<CompDB> compDBs)
+        public static HashSet<BaseManifest> GetEditionCompDBs(this IEnumerable<BaseManifest> BaseManifests)
         {
-            HashSet<CompDB> filteredCompDBs = [];
+            HashSet<BaseManifest> filteredBaseManifests = [];
 
-            foreach (CompDB compDB in compDBs)
+            foreach (BaseManifest BaseManifest in BaseManifests)
             {
                 //
-                // Newer style compdbs have a tag attribute, make use of it.
+                // Newer style BaseManifests have a tag attribute, make use of it.
                 // TODO: Do not do contains
                 //
-                if (compDB.Tags != null)
+                if (BaseManifest.Tags != null)
                 {
-                    if (compDB.Tags.Type.Equals("Edition", StringComparison.InvariantCultureIgnoreCase) &&
-                        compDB.Tags.Tag?.Count == 3 &&
-                        compDB.Tags.Tag.Find(x => x.Name.Equals("UpdateType", StringComparison.InvariantCultureIgnoreCase))?.Value?.Equals("Canonical", StringComparison.InvariantCultureIgnoreCase) == true &&
-                        compDB.Tags.Tag.Any(x => x.Name.Equals("Edition", StringComparison.InvariantCultureIgnoreCase)) &&
-                        compDB.Name?.EndsWith("~Desktop_Apps~~") != true &&
-                        compDB.Name?.EndsWith("~Desktop_Apps_Moment~~") != true)
+                    if (BaseManifest.Tags.Type.Equals("Edition", StringComparison.InvariantCultureIgnoreCase) &&
+                        BaseManifest.Tags.Tag?.Count == 3 &&
+                        BaseManifest.Tags.Tag.Find(x => x.Name.Equals("UpdateType", StringComparison.InvariantCultureIgnoreCase))?.Value?.Equals("Canonical", StringComparison.InvariantCultureIgnoreCase) == true &&
+                        BaseManifest.Tags.Tag.Any(x => x.Name.Equals("Edition", StringComparison.InvariantCultureIgnoreCase)) &&
+                        BaseManifest.Name?.EndsWith("~Desktop_Apps~~") != true &&
+                        BaseManifest.Name?.EndsWith("~Desktop_Apps_Moment~~") != true)
                     {
-                        _ = filteredCompDBs.Add(compDB);
+                        _ = filteredBaseManifests.Add(BaseManifest);
                     }
                 }
                 //
-                // Older style compdbs have no tag elements, we need to find out if it's an edition compdb using another way
+                // Older style BaseManifests have no tag elements, we need to find out if it's an edition BaseManifest using another way
                 //
-                else if (compDB.Features?.Feature?.FirstOrDefault(x =>
+                else if (BaseManifest.Features?.Feature?.FirstOrDefault(x =>
                         x.Type?.Contains("DesktopMedia", StringComparison.InvariantCultureIgnoreCase) == true) != null &&
-                        compDB.Name?.EndsWith("~Desktop_Apps~~") != true &&
-                        compDB.Name?.EndsWith("~Desktop_Apps_Moment~~") != true)
+                        BaseManifest.Name?.EndsWith("~Desktop_Apps~~") != true &&
+                        BaseManifest.Name?.EndsWith("~Desktop_Apps_Moment~~") != true)
                 {
-                    _ = filteredCompDBs.Add(compDB);
+                    _ = filteredBaseManifests.Add(BaseManifest);
                 }
             }
 
-            return filteredCompDBs;
+            return filteredBaseManifests;
         }
 
-        public static IEnumerable<string> GetAvailableLanguages(this IEnumerable<CompDB> compDBs)
+        public static IEnumerable<string> GetAvailableLanguages(this IEnumerable<BaseManifest> BaseManifests)
         {
-            return compDBs.GetEditionCompDBs().Select(x =>
+            return BaseManifests.GetEditionCompDBs().Select(x =>
             {
                 if (x.Tags != null)
                 {
@@ -171,22 +171,22 @@ namespace UnifiedUpdatePlatform.Services.Composition.Database
             }).Where(x => !string.IsNullOrEmpty(x)).Distinct();
         }
 
-        public static Package GetEditionPackFromCompDBs(this IEnumerable<CompDB> compDBs)
+        public static Package GetEditionPackFromCompDBs(this IEnumerable<BaseManifest> BaseManifests)
         {
             HashSet<Package> pkgs = [];
 
             //
             // Get base editions that are available with all their files
             //
-            HashSet<CompDB> filteredCompDBs = compDBs.GetEditionCompDBs();
+            HashSet<BaseManifest> filteredBaseManifests = BaseManifests.GetEditionCompDBs();
 
-            if (filteredCompDBs.Count > 0)
+            if (filteredBaseManifests.Count > 0)
             {
-                foreach (CompDB compDB in filteredCompDBs)
+                foreach (BaseManifest BaseManifest in filteredBaseManifests)
                 {
-                    foreach (Package feature in filteredCompDBs.First().Features.Feature[0].Packages.Package)
+                    foreach (Package feature in filteredBaseManifests.First().Features.Feature[0].Packages.Package)
                     {
-                        Package pkg = filteredCompDBs.First().Packages.Package.First(x => x.ID == feature.ID);
+                        Package pkg = filteredBaseManifests.First().Packages.Package.First(x => x.ID == feature.ID);
 
                         IEnumerable<string> files = pkg.Payload.PayloadItem.Select(x => x.Path.Replace('\\', Path.DirectorySeparatorChar));
 

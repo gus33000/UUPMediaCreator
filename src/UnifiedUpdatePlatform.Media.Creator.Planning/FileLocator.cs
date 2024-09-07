@@ -34,9 +34,9 @@ namespace UnifiedUpdatePlatform.Media.Creator.Planning
 {
     public static class FileLocator
     {
-        public static List<CompDB> GetCompDBsFromUUPFiles(string UUPPath, TempManager tempManager)
+        public static List<BaseManifest> GetCompDBsFromUUPFiles(string UUPPath, TempManager tempManager)
         {
-            List<CompDB> compDBs = [];
+            List<BaseManifest> compDBs = [];
 
             try
             {
@@ -87,7 +87,7 @@ namespace UnifiedUpdatePlatform.Media.Creator.Planning
             return compDBs;
         }
 
-        public static (bool, HashSet<string>) VerifyFilesAreAvailableForCompDB(CompDB compDB, string UUPPath)
+        public static (bool, HashSet<string>) VerifyFilesAreAvailableForCompDB(BaseManifest compDB, string UUPPath)
         {
             HashSet<string> missingPackages = [];
 
