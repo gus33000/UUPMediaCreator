@@ -51,7 +51,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnifiedUpdatePlatform.Servi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnifiedUpdatePlatform.Services.WindowsUpdate.Targeting.Tests", "src\UnifiedUpdatePlatform.Services.WindowsUpdate.Targeting.Tests\UnifiedUpdatePlatform.Services.WindowsUpdate.Targeting.Tests.csproj", "{95007D84-20A1-4711-9CBC-DEE3B1798E74}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ComputerHardwareIds.Windows", "src\Applications\ComputerHardwareIds.Windows\ComputerHardwareIds.Windows.csproj", "{7955FADE-628E-4E41-B48B-350EFB5418E7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ComputerHardwareIds", "src\Applications\ComputerHardwareIds\ComputerHardwareIds.csproj", "{7955FADE-628E-4E41-B48B-350EFB5418E7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

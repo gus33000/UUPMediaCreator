@@ -133,10 +133,16 @@ namespace UUPDownload.DownloadRequest.Drivers
 
                 HashSet<BaseManifest> compDBs = await update.GetCompDBsAsync();
 
-                Logging.Log("BSP Product Name: " + compDBs.First().UUPProduct);
-                Logging.Log("BSP Product Version: " + compDBs.First().UUPProductVersion);
+                BaseManifest firstCompDB = compDBs.First();
+                string UUPProduct = firstCompDB.UUPProduct;
+                string UUPProductVersion = firstCompDB.UUPProductVersion;
 
-                _ = await UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads.UpdateUtils.ProcessUpdateAsync(update, outputFolder, MachineType, new ReportProgress());
+                Logging.Log("BSP Product Name: " + UUPProduct);
+                Logging.Log("BSP Product Version: " + UUPProductVersion);
+
+                string outputName = Path.Combine(outputFolder, $"{UUPProductVersion}_{UUPProduct}_{update.Xml.UpdateIdentity.UpdateID.Split("-").Last()}");
+
+                _ = await UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads.UpdateUtils.ProcessUpdateAsync(update, outputName, MachineType, new ReportProgress(), UseAutomaticDownloadFolder: false);
             }
 
             if (Debugger.IsAttached)
