@@ -592,21 +592,22 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads
                     //.Where(x => UpdateUtils.ShouldFileGetDownloaded(x.x, payloadItems))
                     .OrderBy(x => x.Item2.ExpirationDate);
 
-                List<UUPFile> fileList = [];
-                HashSet<string> pathList = [];
+                List<UUPFile> fileList = new();
+                HashSet<string> pathList = new();
 
                 foreach ((Models.FE3.XML.ExtendedUpdateInfo.File, FileExchangeV3FileDownloadInformation) boundFile in boundList)
                 {
-                    return GetFilenameForCEUIFile(boundFile.Item1, payloadItems).Select(path =>
+                    string[] paths = GetFilenameForCEUIFile(boundFile.Item1, payloadItems);
+                    foreach (string path in paths)
                     {
                         fileList.Add(new UUPFile(
                             boundFile.Item2,
                             FixFilePath(boundFile, pathList, compDBs, path),
                             long.Parse(boundFile.Item1.Size),
                             boundFile.Item1.AdditionalDigest.Text,
-                            boundFile.Item1.AdditionalDigest.Algorithm);
-                    });
-                });
+                            boundFile.Item1.AdditionalDigest.Algorithm));
+                    }
+                }
 
                 returnCode = await helperDl.DownloadAsync(fileList.ToList(), generalDownloadProgress) ? 0 : -1;
 
