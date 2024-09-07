@@ -32,7 +32,7 @@ using UUPDownload.Options;
 using UUPDownload.Downloading;
 using UUPDownload.DownloadRequest.Drivers;
 
-namespace UUPDownload.DownloadRequest.Drivers
+namespace UUPDownload.DownloadRequest.ReferenceDriversRepo
 {
     public partial class ProcessDrivers
     {

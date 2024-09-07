@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using UnifiedUpdatePlatform.Services.Composition.Database;
 using UnifiedUpdatePlatform.Services.WindowsUpdate;
 
-namespace UUPDownload.DownloadRequest.Drivers
+namespace UUPDownload.DownloadRequest.ReferenceDriversRepo
 {
     public partial class ProcessDrivers
     {
