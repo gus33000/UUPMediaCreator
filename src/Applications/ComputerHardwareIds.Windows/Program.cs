@@ -3,11 +3,11 @@ using Microsoft.Management.Infrastructure;
 using System.Diagnostics;
 using UnifiedUpdatePlatform.Services.WindowsUpdate.Targeting;
 
-namespace Playground
+namespace ComputerHardwareIds
 {
     internal class Program
     {
-        public static async Task Main(string[] args)
+        public static void Main(string[] _)
         {
             Process currentProcess = Process.GetCurrentProcess();
             ProcessModule MainModule = currentProcess.MainModule!;
