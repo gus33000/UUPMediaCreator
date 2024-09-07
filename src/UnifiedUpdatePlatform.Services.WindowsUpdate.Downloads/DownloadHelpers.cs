@@ -57,6 +57,20 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads
         {
             string newPath = path;
 
+            MatchCollection guidMatches = guidRegex().Matches(newPath);
+
+            // Some file packages (especially for device manifests) contain guids as part of their name and often the actual name of the file after, so trim that right away
+            foreach (Match match in guidMatches.OrderByDescending(x => x.Index + x.Length))
+            {
+                newPath = string.Concat(newPath.AsSpan(0, match.Index), newPath.AsSpan(match.Index + match.Length));
+            }
+
+            // It is possible that above operation caused the file to go empty, check for that and if thats the case, revert now.
+            if (newPath != path && (string.IsNullOrEmpty(newPath) || newPath.StartsWith('.')))
+            {
+                newPath = path;
+            }
+
             try
             {
                 foreach (BaseManifest compDb in compDBs)
@@ -79,8 +93,6 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads
 
             if (!pathList.Add(newPath.ToLower()))
             {
-                throw new Exception("WHAT");
-
                 string basePath, suffix;
 
                 if (Path.HasExtension(newPath))
@@ -629,5 +641,8 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate.Downloads
 
         [GeneratedRegex("[\\\\/:*?\"<>|]")]
         private static partial Regex invalidCharactersRegex();
+
+        [GeneratedRegex("[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}")]
+        private static partial Regex guidRegex();
     }
 }

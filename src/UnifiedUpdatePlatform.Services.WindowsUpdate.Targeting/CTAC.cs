@@ -59,9 +59,11 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate.Targeting
                     bool SyncCurrentVersionOnly,
                     bool IsStore = false,
                     string ContentType = "Mainline",
-                    bool IsVbsEnabled = true) : base()
+                    bool IsVbsEnabled = true,
+                    bool IsDriverCheck = false,
+                    string DriverPartnerRing = "Drivers") : base()
         {
-            BuildCTAC(ReportingSku, ReportingVersion, MachineType, FlightRing, FlightingBranchName, BranchReadinessLevel, CurrentBranch, ReleaseType, SyncCurrentVersionOnly, IsStore, ContentType, IsVbsEnabled);
+            BuildCTAC(ReportingSku, ReportingVersion, MachineType, FlightRing, FlightingBranchName, BranchReadinessLevel, CurrentBranch, ReleaseType, SyncCurrentVersionOnly, IsStore, ContentType, IsVbsEnabled, IsDriverCheck, DriverPartnerRing);
         }
 
         private void BuildCTAC(
@@ -76,7 +78,9 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate.Targeting
             bool SyncCurrentVersionOnly,
             bool IsStore = false,
             string content = "Mainline",
-            bool IsVbsEnabled = true
+            bool IsVbsEnabled = true,
+            bool IsDriverCheck = false,
+            string DriverPartnerRing = "Drivers"
         )
         {
             int flightEnabled = FlightRing == "Retail" ? 0 : 1;
@@ -141,99 +145,151 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate.Targeting
 
             Dictionary<string, string> deviceAttributeDictionary = [];
 
-            deviceAttributeDictionary.Add("IsContainerMgrInstalled", "1");
-            deviceAttributeDictionary.Add("FlightRing", FlightRing);
-            deviceAttributeDictionary.Add("TelemetryLevel", "3");
-            deviceAttributeDictionary.Add("HidOverGattReg", "C:\\WINDOWS\\System32\\DriverStore\\FileRepository\\hidbthle.inf_amd64_0fc6b7cd4ccbc55c\\Microsoft.Bluetooth.Profiles.HidOverGatt.dll");
-            deviceAttributeDictionary.Add("AppVer", "0.0.0.0");
-            deviceAttributeDictionary.Add("IsAutopilotRegistered", "0");
-            deviceAttributeDictionary.Add("ProcessorIdentifier", "Intel64 Family 6 Model 151 Stepping 2");
-            deviceAttributeDictionary.Add("OEMModel", "RM-1085_1045");
-            deviceAttributeDictionary.Add("ProcessorManufacturer", "GenuineIntel");
-            deviceAttributeDictionary.Add("InstallDate", "1577722757");
-            deviceAttributeDictionary.Add("OEMModelBaseBoard", "OEM Board Name");
-            deviceAttributeDictionary.Add("BranchReadinessLevel", BranchReadinessLevel);
-            deviceAttributeDictionary.Add("DataExpDateEpoch_20H1", "1593425114");
-            deviceAttributeDictionary.Add("IsCloudDomainJoined", "0");
-            deviceAttributeDictionary.Add("Bios", "2019");
-            deviceAttributeDictionary.Add("DchuAmdGrfxVen", "4098");
-            deviceAttributeDictionary.Add("IsDeviceRetailDemo", "0");
-            deviceAttributeDictionary.Add("FlightingBranchName", FlightingBranchName);
-            deviceAttributeDictionary.Add("OSUILocale", "en-US");
-            deviceAttributeDictionary.Add("DeviceFamily", DeviceFamily);
-            deviceAttributeDictionary.Add("UpgEx_20H1", "Green");
-            deviceAttributeDictionary.Add("WuClientVer", ReportingVersion);
-            deviceAttributeDictionary.Add("IsFlightingEnabled", flightEnabled.ToString());
-            deviceAttributeDictionary.Add("OSSkuId", ((int)ReportingSku).ToString());
-            deviceAttributeDictionary.Add("GStatus_20H1", "2");
-            deviceAttributeDictionary.Add("App", App);
-            deviceAttributeDictionary.Add("CurrentBranch", CurrentBranch);
-            deviceAttributeDictionary.Add("InstallLanguage", "en-US");
-            deviceAttributeDictionary.Add("OEMName_Uncleaned", "MICROSOFTMDG");
-            deviceAttributeDictionary.Add("InstallationType", InstallType);
-            deviceAttributeDictionary.Add("AttrDataVer", "264");
-            deviceAttributeDictionary.Add("IsEdgeWithChromiumInstalled", "1");
-            deviceAttributeDictionary.Add("TimestampEpochString_20H1", "1593425114");
-            deviceAttributeDictionary.Add("OSVersion", ReportingVersion);
-            deviceAttributeDictionary.Add("IsMDMEnrolled", "0");
-            deviceAttributeDictionary.Add("TencentType", "1");
-            deviceAttributeDictionary.Add("FlightContent", content);
-            deviceAttributeDictionary.Add("ActivationChannel", "Retail");
-            deviceAttributeDictionary.Add("Steam", "URL:steam protocol");
-            deviceAttributeDictionary.Add("Free", "gt64");
-            deviceAttributeDictionary.Add("TencentReg", "79 d0 01 d7 9f 54 d5 01");
-            deviceAttributeDictionary.Add("FirmwareVersion", "7704");
-            deviceAttributeDictionary.Add("DchuAmdGrfxExists", "1");
-            deviceAttributeDictionary.Add("SdbVer_20H1", "2000000000");
-            deviceAttributeDictionary.Add("UpgEx_CO21H2", "Green");
-            //deviceAttributeDictionary.Add("OSArchitecture", MachineType.ToString().ToUpper());
-            deviceAttributeDictionary.Add("OSArchitecture", "AMD64");
-            deviceAttributeDictionary.Add("DefaultUserRegion", "244");
-            deviceAttributeDictionary.Add("ReleaseType", ReleaseType);
-            deviceAttributeDictionary.Add("UpdateManagementGroup", "2");
-            deviceAttributeDictionary.Add("MobileOperatorCommercialized", "000-88");
-            deviceAttributeDictionary.Add("PhoneTargetingName", "Lumia 950 XL");
-            deviceAttributeDictionary.Add("AllowInPlaceUpgrade", "1");
-            deviceAttributeDictionary.Add("AllowUpgradesWithUnsupportedTPMOrCPU", "1");
-            deviceAttributeDictionary.Add("CloudPBR", "1");
-            deviceAttributeDictionary.Add("DataExpDateEpoch_19H1", "1593425114");
-            deviceAttributeDictionary.Add("DataExpDateEpoch_21H1", "1593425114");
-            deviceAttributeDictionary.Add("DataExpDateEpoch_21H2", "1593425114");
-            deviceAttributeDictionary.Add("DataExpDateEpoch_CO21H2", "1593425114");
-            deviceAttributeDictionary.Add("DataExpDateEpoch_CO21H2Setup", "1593425114");
-            deviceAttributeDictionary.Add("DataVer_RS5", "2000000000");
-            deviceAttributeDictionary.Add("DUScan", "1");
-            deviceAttributeDictionary.Add("EKB19H2InstallCount", "1");
-            deviceAttributeDictionary.Add("EKB19H2InstallTimeEpoch", "1255000000");
-            deviceAttributeDictionary.Add("GenTelRunTimestamp_19H1", "1593425114");
-            deviceAttributeDictionary.Add("GStatus_19H1", "2");
-            deviceAttributeDictionary.Add("GStatus_19H1Setup", "2");
-            deviceAttributeDictionary.Add("GStatus_20H1Setup", "2");
-            deviceAttributeDictionary.Add("GStatus_21H2", "2");
-            deviceAttributeDictionary.Add("GStatus_CO21H2", "2");
-            deviceAttributeDictionary.Add("GStatus_CO21H2Setup", "2");
-            deviceAttributeDictionary.Add("GStatus_RS5", "2");
-            deviceAttributeDictionary.Add("MediaBranch", "");
-            deviceAttributeDictionary.Add("ProcessorModel", "12th Gen Intel(R) Core(TM) i9-12900K");
-            deviceAttributeDictionary.Add("SdbVer_19H1", "2000000000");
-            deviceAttributeDictionary.Add("SecureBootCapable", "1");
-            deviceAttributeDictionary.Add("TimestampEpochString_19H1", "1593425114");
-            deviceAttributeDictionary.Add("TimestampEpochString_21H1", "1593425114");
-            deviceAttributeDictionary.Add("TimestampEpochString_21H2", "1593425114");
-            deviceAttributeDictionary.Add("TimestampEpochString_CO21H2", "1593425114");
-            deviceAttributeDictionary.Add("TimestampEpochString_CO21H2Setup", "1593425114");
-            deviceAttributeDictionary.Add("TPMVersion", "2");
-            deviceAttributeDictionary.Add("UpdateOfferedDays", "0");
-            deviceAttributeDictionary.Add("UpgEx_19H1", "Green");
-            deviceAttributeDictionary.Add("UpgEx_21H1", "Green");
-            deviceAttributeDictionary.Add("UpgEx_21H2", "Green");
-            deviceAttributeDictionary.Add("UpgEx_NI22H2", "Green");
-            deviceAttributeDictionary.Add("UpgEx_RS5", "Green");
-            deviceAttributeDictionary.Add("UpgradeEligible", "1");
-            deviceAttributeDictionary.Add("Version_RS5", "2000000000");
-            deviceAttributeDictionary.Add("IsRetailOS", (FlightRing == "Retail").ToString());
-            deviceAttributeDictionary.Add("MediaVersion", ReportingVersion);
-            deviceAttributeDictionary.Add("IsVbsEnabled", (IsVbsEnabled ? 1 : 0).ToString());
+            if (IsDriverCheck)
+            {
+                deviceAttributeDictionary.Add("ActivationChannel", "OEM:DM");
+                deviceAttributeDictionary.Add("App", App);
+                deviceAttributeDictionary.Add("AppVer", ReportingVersion);
+                deviceAttributeDictionary.Add("AttrDataVer", "264");
+                deviceAttributeDictionary.Add("BranchReadinessLevel", BranchReadinessLevel);
+                deviceAttributeDictionary.Add("CurrentBranch", CurrentBranch);
+                deviceAttributeDictionary.Add("DefaultUserRegion", "244");
+                deviceAttributeDictionary.Add("DeviceFamily", DeviceFamily);
+                if (!string.IsNullOrEmpty(DriverPartnerRing))
+                {
+                    deviceAttributeDictionary.Add("DriverPartnerRing", DriverPartnerRing);
+                }
+                deviceAttributeDictionary.Add("FirmwareVersion", "7.31.139");
+                deviceAttributeDictionary.Add("FlightContent", content);
+                deviceAttributeDictionary.Add("FlightingBranchName", FlightingBranchName);
+                deviceAttributeDictionary.Add("FlightRing", FlightRing);
+                deviceAttributeDictionary.Add("HidparseDriversVer", ReportingVersion);
+                deviceAttributeDictionary.Add("InstallationType", InstallType);
+                deviceAttributeDictionary.Add("InstallDate", "1677314327");
+                deviceAttributeDictionary.Add("InstallLanguage", "en-US");
+                deviceAttributeDictionary.Add("IsAutopilotRegistered", "0");
+                deviceAttributeDictionary.Add("IsCloudDomainJoined", "0");
+                deviceAttributeDictionary.Add("IsDeviceRetailDemo", "0");
+                deviceAttributeDictionary.Add("IsEdgeWithChromiumInstalled", "1");
+                deviceAttributeDictionary.Add("IsFlightingEnabled", flightEnabled.ToString());
+                deviceAttributeDictionary.Add("IsMDMEnrolled", "0");
+                deviceAttributeDictionary.Add("IsVbsEnabled", (IsVbsEnabled ? 1 : 0).ToString());
+                deviceAttributeDictionary.Add("OEMModel", "Windows Dev Kit 2023");
+                deviceAttributeDictionary.Add("OEMModelBaseBoard", "Windows Dev Kit 2023");
+                deviceAttributeDictionary.Add("OEMName_Uncleaned", "Microsoft Corporation");
+                deviceAttributeDictionary.Add("OEMSubModel", "2043");
+                deviceAttributeDictionary.Add("OSArchitecture", "ARM64");
+                deviceAttributeDictionary.Add("OSSkuId", ((int)ReportingSku).ToString());
+                deviceAttributeDictionary.Add("OSUILocale", "en-US");
+                deviceAttributeDictionary.Add("OSVersion", ReportingVersion);
+                deviceAttributeDictionary.Add("ProcessorClockSpeed", "1440");
+                deviceAttributeDictionary.Add("ProcessorCores", "8");
+                deviceAttributeDictionary.Add("ProcessorIdentifier", "ARMv8 (64-bit) Family 8 Model D4B Revision   0");
+                deviceAttributeDictionary.Add("ProcessorManufacturer", "Qualcomm Technologies Inc");
+                deviceAttributeDictionary.Add("ProcessorModel", "Snapdragon Compute Platform");
+                deviceAttributeDictionary.Add("SecureBootCapable", "1");
+                deviceAttributeDictionary.Add("TelemetryLevel", "3");
+                deviceAttributeDictionary.Add("TotalPhysicalRAM", "32768");
+                deviceAttributeDictionary.Add("TPMVersion", "2");
+                deviceAttributeDictionary.Add("UpdateManagementGroup", "2");
+                deviceAttributeDictionary.Add("WuClientVer", "1101.2301.31021.0");
+            }
+            else
+            {
+                deviceAttributeDictionary.Add("IsContainerMgrInstalled", "1");
+                deviceAttributeDictionary.Add("FlightRing", FlightRing);
+                deviceAttributeDictionary.Add("TelemetryLevel", "3");
+                deviceAttributeDictionary.Add("HidOverGattReg", "C:\\WINDOWS\\System32\\DriverStore\\FileRepository\\hidbthle.inf_amd64_0fc6b7cd4ccbc55c\\Microsoft.Bluetooth.Profiles.HidOverGatt.dll");
+                deviceAttributeDictionary.Add("AppVer", "0.0.0.0");
+                deviceAttributeDictionary.Add("IsAutopilotRegistered", "0");
+                deviceAttributeDictionary.Add("ProcessorIdentifier", "Intel64 Family 6 Model 151 Stepping 2");
+                deviceAttributeDictionary.Add("OEMModel", "RM-1085_1045");
+                deviceAttributeDictionary.Add("ProcessorManufacturer", "GenuineIntel");
+                deviceAttributeDictionary.Add("InstallDate", "1577722757");
+                deviceAttributeDictionary.Add("OEMModelBaseBoard", "OEM Board Name");
+                deviceAttributeDictionary.Add("BranchReadinessLevel", BranchReadinessLevel);
+                deviceAttributeDictionary.Add("DataExpDateEpoch_20H1", "1593425114");
+                deviceAttributeDictionary.Add("IsCloudDomainJoined", "0");
+                deviceAttributeDictionary.Add("Bios", "2019");
+                deviceAttributeDictionary.Add("DchuAmdGrfxVen", "4098");
+                deviceAttributeDictionary.Add("IsDeviceRetailDemo", "0");
+                deviceAttributeDictionary.Add("FlightingBranchName", FlightingBranchName);
+                deviceAttributeDictionary.Add("OSUILocale", "en-US");
+                deviceAttributeDictionary.Add("DeviceFamily", DeviceFamily);
+                deviceAttributeDictionary.Add("UpgEx_20H1", "Green");
+                deviceAttributeDictionary.Add("WuClientVer", ReportingVersion);
+                deviceAttributeDictionary.Add("IsFlightingEnabled", flightEnabled.ToString());
+                deviceAttributeDictionary.Add("OSSkuId", ((int)ReportingSku).ToString());
+                deviceAttributeDictionary.Add("GStatus_20H1", "2");
+                deviceAttributeDictionary.Add("App", App);
+                deviceAttributeDictionary.Add("CurrentBranch", CurrentBranch);
+                deviceAttributeDictionary.Add("InstallLanguage", "en-US");
+                deviceAttributeDictionary.Add("OEMName_Uncleaned", "MICROSOFTMDG");
+                deviceAttributeDictionary.Add("InstallationType", InstallType);
+                deviceAttributeDictionary.Add("AttrDataVer", "264");
+                deviceAttributeDictionary.Add("IsEdgeWithChromiumInstalled", "1");
+                deviceAttributeDictionary.Add("TimestampEpochString_20H1", "1593425114");
+                deviceAttributeDictionary.Add("OSVersion", ReportingVersion);
+                deviceAttributeDictionary.Add("IsMDMEnrolled", "0");
+                deviceAttributeDictionary.Add("TencentType", "1");
+                deviceAttributeDictionary.Add("FlightContent", content);
+                deviceAttributeDictionary.Add("ActivationChannel", "Retail");
+                deviceAttributeDictionary.Add("Steam", "URL:steam protocol");
+                deviceAttributeDictionary.Add("Free", "gt64");
+                deviceAttributeDictionary.Add("TencentReg", "79 d0 01 d7 9f 54 d5 01");
+                deviceAttributeDictionary.Add("FirmwareVersion", "7704");
+                deviceAttributeDictionary.Add("DchuAmdGrfxExists", "1");
+                deviceAttributeDictionary.Add("SdbVer_20H1", "2000000000");
+                deviceAttributeDictionary.Add("UpgEx_CO21H2", "Green");
+                //deviceAttributeDictionary.Add("OSArchitecture", MachineType.ToString().ToUpper());
+                deviceAttributeDictionary.Add("OSArchitecture", "AMD64");
+                deviceAttributeDictionary.Add("DefaultUserRegion", "244");
+                deviceAttributeDictionary.Add("ReleaseType", ReleaseType);
+                deviceAttributeDictionary.Add("UpdateManagementGroup", "2");
+                deviceAttributeDictionary.Add("MobileOperatorCommercialized", "000-88");
+                deviceAttributeDictionary.Add("PhoneTargetingName", "Lumia 950 XL");
+                deviceAttributeDictionary.Add("AllowInPlaceUpgrade", "1");
+                deviceAttributeDictionary.Add("AllowUpgradesWithUnsupportedTPMOrCPU", "1");
+                deviceAttributeDictionary.Add("CloudPBR", "1");
+                deviceAttributeDictionary.Add("DataExpDateEpoch_19H1", "1593425114");
+                deviceAttributeDictionary.Add("DataExpDateEpoch_21H1", "1593425114");
+                deviceAttributeDictionary.Add("DataExpDateEpoch_21H2", "1593425114");
+                deviceAttributeDictionary.Add("DataExpDateEpoch_CO21H2", "1593425114");
+                deviceAttributeDictionary.Add("DataExpDateEpoch_CO21H2Setup", "1593425114");
+                deviceAttributeDictionary.Add("DataVer_RS5", "2000000000");
+                deviceAttributeDictionary.Add("DUScan", "1");
+                deviceAttributeDictionary.Add("EKB19H2InstallCount", "1");
+                deviceAttributeDictionary.Add("EKB19H2InstallTimeEpoch", "1255000000");
+                deviceAttributeDictionary.Add("GenTelRunTimestamp_19H1", "1593425114");
+                deviceAttributeDictionary.Add("GStatus_19H1", "2");
+                deviceAttributeDictionary.Add("GStatus_19H1Setup", "2");
+                deviceAttributeDictionary.Add("GStatus_20H1Setup", "2");
+                deviceAttributeDictionary.Add("GStatus_21H2", "2");
+                deviceAttributeDictionary.Add("GStatus_CO21H2", "2");
+                deviceAttributeDictionary.Add("GStatus_CO21H2Setup", "2");
+                deviceAttributeDictionary.Add("GStatus_RS5", "2");
+                deviceAttributeDictionary.Add("MediaBranch", "");
+                deviceAttributeDictionary.Add("ProcessorModel", "12th Gen Intel(R) Core(TM) i9-12900K");
+                deviceAttributeDictionary.Add("SdbVer_19H1", "2000000000");
+                deviceAttributeDictionary.Add("SecureBootCapable", "1");
+                deviceAttributeDictionary.Add("TimestampEpochString_19H1", "1593425114");
+                deviceAttributeDictionary.Add("TimestampEpochString_21H1", "1593425114");
+                deviceAttributeDictionary.Add("TimestampEpochString_21H2", "1593425114");
+                deviceAttributeDictionary.Add("TimestampEpochString_CO21H2", "1593425114");
+                deviceAttributeDictionary.Add("TimestampEpochString_CO21H2Setup", "1593425114");
+                deviceAttributeDictionary.Add("TPMVersion", "2");
+                deviceAttributeDictionary.Add("UpdateOfferedDays", "0");
+                deviceAttributeDictionary.Add("UpgEx_19H1", "Green");
+                deviceAttributeDictionary.Add("UpgEx_21H1", "Green");
+                deviceAttributeDictionary.Add("UpgEx_21H2", "Green");
+                deviceAttributeDictionary.Add("UpgEx_NI22H2", "Green");
+                deviceAttributeDictionary.Add("UpgEx_RS5", "Green");
+                deviceAttributeDictionary.Add("UpgradeEligible", "1");
+                deviceAttributeDictionary.Add("Version_RS5", "2000000000");
+                deviceAttributeDictionary.Add("IsRetailOS", (FlightRing == "Retail").ToString());
+                deviceAttributeDictionary.Add("MediaVersion", ReportingVersion);
+                deviceAttributeDictionary.Add("IsVbsEnabled", (IsVbsEnabled ? 1 : 0).ToString());
+            }
 
             DeviceAttributes = $"E:{string.Join("&", deviceAttributeDictionary.Select(x => $"{x.Key}={x.Value}"))}";
 

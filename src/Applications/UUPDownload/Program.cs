@@ -75,11 +75,16 @@ namespace UUPDownload
         {
             ServicePointManager.DefaultConnectionLimit = int.MaxValue;
 
-            return Parser.Default.ParseArguments<DownloadRequestOptions, DownloadReplayOptions, GetBuildsOptions>(args).MapResult(
+            return Parser.Default.ParseArguments<DownloadRequestOptions, BSPDownloadRequestOptions, DownloadReplayOptions, GetBuildsOptions>(args).MapResult(
               (DownloadRequestOptions opts) =>
               {
                   PrintLogo();
                   return WrapAction(() => DownloadRequest.Process.ParseDownloadOptions(opts));
+              },
+              (BSPDownloadRequestOptions opts) =>
+              {
+                  PrintLogo();
+                  return WrapAction(() => DownloadRequest.ProcessDrivers.ParseDownloadOptions(opts));
               },
               (DownloadReplayOptions opts) =>
               {
