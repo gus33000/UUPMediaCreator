@@ -74,6 +74,16 @@
     "Sku": "6"
   },
   {
+    "outputFolder": "\\8380_RUN",
+    "guid": null,
+    "filteredIds": [],
+    "excludedIds": [],
+    "Manufacturer": "Qualcomm",
+    "Family": "SCP_HAMOA",
+    "Product": "Snapdragon-Devkit",
+    "Sku": "6"
+  },
+  {
     "outputFolder": "\\8380PA_CRD",
     "guid": null,
     "filteredIds": [],
