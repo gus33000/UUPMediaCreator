@@ -251,6 +251,7 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate
         XboxDurangoHostOS = 0x000000C4,
         XboxScarlettHostOS = 0x000000C5,
         XboxKeystone = 0x000000C6,
+        WNC = 0x000000D2,
         AzureStackHCIServerCore = 0x00000196,
         DatacenterServerAzureEdition = 0x00000197,
         DatacenterServerCoreAzureEdition = 0x00000198
@@ -340,6 +341,12 @@ namespace UnifiedUpdatePlatform.Services.WindowsUpdate
                 InstallType = "FactoryOS";
                 ReportingPFN = "WCOSDevice0.OS";
                 DeviceFamily = "Windows.Core";
+            }
+            else if (ReportingSku == OSSkuId.WNC)
+            {
+                InstallType = "Client";
+                ReportingPFN = "WNC.OS";
+                DeviceFamily = "Windows.Desktop";
             }
             else if (ReportingSku == OSSkuId.Andromeda)
             {
