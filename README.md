@@ -35,8 +35,7 @@ Right now the tooling includes:
 | Converting Desktop UUP files to an ISO for one base edition (UUPMediaConverter)          | ✅       | ✅       | ✅       |
 | Does not require administrative privileges for base edition ISO images                   | ✅       | ✅       | ✅       |
 | CLI available                                                                            | ✅       | ✅       | ✅       |
-| ARM64 Support (aka works on @sinclairinat0r device (TM))                                 | ✅       | ✅       | ✅       |
-| GUI available                                                                            | ✅       | ❌       | ❌       |
+| ARM64 Support (aka works on @sinclairinat0r device (TM))                                 | ✅       | ✅       | ✅       |                                
 | Converting Desktop UUP files to an ISO for all possible editions (UUPMediaConverter)     | ✅       | ❌       | ❌       |
 | ISO Preinstallation Environment close to original (UUPMediaConverter)                    | ✅       | ❌       | ❌       |
 | ISO built by CDImage Mastering Utility with UDF and boot sector (UUPMediaConverter)      | ✅       | ❌       | ❌       |
