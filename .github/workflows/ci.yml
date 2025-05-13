@@ -37,10 +37,10 @@ jobs:
             architecture: arm64
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.1.7
+        uses: actions/checkout@v4.2.2
 
       - name: Install .NET SDK
-        uses: actions/setup-dotnet@v4.0.1
+        uses: actions/setup-dotnet@v4.1.0
         with:
           dotnet-version: "7.0.x"
 
@@ -63,13 +63,13 @@ jobs:
           move ${{ github.workspace }}\artifacts\${{ matrix.platform }}-${{ matrix.architecture }}\CLIs\*.pdb ${{ github.workspace }}\artifacts\${{ matrix.platform }}-${{ matrix.architecture }}\PDBs\
 
       - name: Upload artifact (Binaries)
-        uses: actions/upload-artifact@v4.4.0
+        uses: actions/upload-artifact@v4.4.3
         with:
           name: ${{ matrix.platform }}-${{ matrix.architecture }}-binaries
           path: ${{ github.workspace }}/artifacts/${{ matrix.platform }}-${{ matrix.architecture }}\CLIs
 
       - name: Upload artifact (Symbols)
-        uses: actions/upload-artifact@v4.4.0
+        uses: actions/upload-artifact@v4.4.3
         with:
           name: ${{ matrix.platform }}-${{ matrix.architecture }}-symbols
           path: ${{ github.workspace }}/artifacts/${{ matrix.platform }}-${{ matrix.architecture }}\PDBs
